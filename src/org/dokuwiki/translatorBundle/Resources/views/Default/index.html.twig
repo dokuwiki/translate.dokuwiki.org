@@ -1,0 +1,106 @@
+<!Doctype html>
+<html lang="en">
+<head>
+    <title>DokuWiki Localisation</title>
+    {% stylesheets filter='less' output='css/compiled-main.css'
+            '@dokuwikiTranslatorBundle/Resources/public/less/bootstrap.less'
+             %}
+        <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="all" />
+    {% endstylesheets %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ asset('bundles/dokuwikitranslator/images/favicon.ico') }}" />
+    <link rel="apple-touch-icon" href="{{ asset('bundles/dokuwikitranslator/images/apple-touch-icon.png') }}" />
+</head>
+<body>
+
+<div class="navbar navbar-inverse">
+    <div class="navbar-inner">
+        <a class="brand" href="#">DokuWiki</a>
+        <ul class="nav">
+            <li class="active"><a href="#">Translation</a></li>
+            <li><a href="#">Plug-Ins</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="span12">
+            <div class="page-header">
+                <h1>DokuWiki Localization</h1>
+            </div>
+            <img src="{{ asset('bundles/dokuwikitranslator/images/dwloc.png') }}" alt="" id="logo" />
+            <p>
+                This is the central hub for localization of the
+                <a href="https://dokuwiki.org">DokuWiki</a> Open Source wiki software.
+                All translation efforts are coordinated through the
+                <a href="http://www.dokuwiki.org/mailinglist#i18n_mailing_list">
+                    I18N Mailing List.
+                </a>
+                You are welcome to join and contribute.
+            </p>
+            <p>
+                Below is a list of interface languages available for DokuWiki.
+                The completeness of a translation is indicated by the percent
+                value (with English being the master language with always 100%).
+                Languages with a status of less than 15% are not included in the
+                official DokuWiki releases.
+            </p>
+            <p>
+                <b>Please help with translating! Each tiny bit helps!</b>
+                Next to each language you'll find a link to edit the current translations.
+                Please use the linked tool to add new translations and send the
+                translations to <em>andi at splitbrain dot org</em> or the
+                <a href="http://www.dokuwiki.org/mailinglist#i18n_mailing_list">
+                    I18N Mailing List</a>.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span6">
+            <table class="table table-striped table-hover table-condensed">
+                <tbody>
+                <tr>
+                    <td class="lang-code">en</td>
+                    <td class="lang">English</td>
+                    <td class="translation-progress">
+                        <div class="progress">
+                            <div class="bar" style="width: 40%"></div>
+                        </div>
+                    </td>
+                    <td class="translation-progress-text">
+                        40%
+                    </td>
+                    <td class="translation-update">
+                        <a href="#">update</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="span6">
+            <div class="well">
+                <label for="new__translation">
+                    Is your language not listed, yet? Just add the language code in the box below and start a new translation:
+                </label>
+                <form class="form-inline">
+                    <input id="new__translation" type="text" class="input-mini" placeholder="en" />
+                    <input type="submit" value="Start translation" class="btn btn-primary" />
+                </form>
+            </div>
+        </div>
+        <div class="span6">
+            <em>Note</em>: this list uses a (relatively) current development version of DokuWiki
+        </div>
+    </div>
+</div>
+
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+{% javascripts
+    '@dokuwikiTranslatorBundle/Resources/public/js/*' %}
+    <script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+</body>
+</html>

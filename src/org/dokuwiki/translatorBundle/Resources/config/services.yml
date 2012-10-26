@@ -1,0 +1,7 @@
+parameters:
+#    dokuwiki_translator.example.class: org\dokuwiki\translatorBundle\Example
+
+services:
+#    dokuwiki_translator.example:
+#        class: %dokuwiki_translator.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

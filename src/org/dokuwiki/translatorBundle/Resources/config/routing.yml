@@ -1,0 +1,3 @@
+dokuwiki_translator_homepage:
+    pattern:  /
+    defaults: { _controller: dokuwikiTranslatorBundle:Default:index }
