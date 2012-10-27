@@ -5,3 +5,7 @@ dokuwiki_translator_homepage:
 dokuwiki_translator_plugins:
     pattern:  /plugins
     defaults: { _controller: dokuwikiTranslatorBundle:Plugin:index}
+
+dokuwiki_translator_plugin_add:
+    pattern:  /plugin/add
+    defaults: { _controller: dokuwikiTranslatorBundle:Plugin:add}

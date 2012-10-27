@@ -1,0 +1,78 @@
+{% extends 'dokuwikiTranslatorBundle:Default:index.html.twig' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="span12">
+            <div class="page-header">
+                <h1>Plug-in Translation</h1>
+            </div>
+        </div>
+        <div class="span8">
+            <p>
+                Welcome to the plug-in translation page.
+                The translation tool provides a simple translation interface.
+                Everybody will be able to use this tool and create a translation
+                of your plugin.
+                The workflow is:
+            </p>
+            <ol>
+                <li>plug-in added</li>
+                <li>a translator creates a translation of your plug-in.</li>
+                <li>
+                    You get an email with the git patch to approve the translation.
+                    If you're using GitHub the patch will be provided as pull request.
+                </li>
+                <li>You add the translation to your plug-in</li>
+            </ol>
+            <h2>Get on the list</h2>
+            <p>
+                You are a plug-in developer and want to be
+                listed in the translation tool?
+                That's possible! Just ensure that your plug-in:
+            </p>
+            <ul>
+                <li>
+                    has a public GIT repository. We just need read access.
+                    To gain the best experience this repository is hosted on GitHub.
+                </li>
+                <li>
+                    uses the <a href="#">DokuWiki localisation</a> functions.
+                </li>
+            </ul>
+        </div>
+        <div class="span8">
+            <form action="#" class="form-horizontal">
+                <div class="control-group">
+                    <div class="control-label">
+                        <label for="formMail">E-Mail address</label>
+                    </div>
+                    <div class="controls">
+                        <input id="formMail" type="text" name="mail" />
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <label for="formGit">Git URL</label>
+                    </div>
+                    <div class="controls">
+                        <input id="formGit" type="text" name="git" />
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <input type="submit" class="btn btn-primary" value="Submit" />
+                    <input type="reset" class="btn" value="Reset" />
+                    <a href="{{ path('dokuwiki_translator_plugins') }}" class="btn">
+                        Abort
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
