@@ -1,7 +1,7 @@
 <!Doctype html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-    <title>DokuWiki Localisation</title>
+    <title>{% block title %}DokuWiki Localisation{% endblock %}</title>
     {% stylesheets filter='less' output='css/compiled-main.css'
             '@dokuwikiTranslatorBundle/Resources/public/less/bootstrap.less' %}
         <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="all" />
@@ -13,22 +13,15 @@
 </head>
 <body>
 
-<div class="navbar navbar-inverse">
-    <div class="navbar-inner">
-        <a class="brand" href="#">DokuWiki</a>
-        <ul class="nav">
-            <li class="active"><a href="#">Translation</a></li>
-            <li><a href="#">Plug-Ins</a></li>
-        </ul>
-    </div>
-</div>
-
+{% block content %}
 <div class="container">
     <div class="row">
         <div class="span12">
             <div class="page-header">
                 <h1>DokuWiki Localization</h1>
             </div>
+        </div>
+        <div class="span8">
             <img src="{{ asset('bundles/dokuwikitranslator/images/dwloc.png') }}" alt="" id="logo" />
             <p>
                 This is the central hub for localization of the
@@ -55,10 +48,29 @@
                     I18N Mailing List</a>.
             </p>
         </div>
+        <div class="span4">
+            <div class="well well-small">
+                <p>
+                    <strong>Plug-In Developers</strong>
+                    you want to use the translation tool for your plug-in?
+                    That's possible
+                    <a href="#">learn more about plug-in translation!</a>
+                </p>
+            </div>
+            <div class="well well-small">
+                <p>
+                    <strong>Translators</strong>
+                    have a look at the
+                    <a href="{{ path('dokuwiki_translator_plugins') }}">
+                        list of <nobr>plug-ins</nobr></a>
+                    to translate and start contributing.
+                </p>
+            </div>
+        </div>
     </div>
 
     <div class="row">
-        <div class="span6">
+        <div class="span8">
             <table class="table table-striped table-hover table-condensed">
                 <tbody>
                 <tr>
@@ -79,10 +91,10 @@
                 </tbody>
             </table>
         </div>
-        <div class="span6">
-            <div class="well">
+        <div class="span4">
+            <div class="well well-small">
                 <label for="new__translation">
-                    Is your language not listed, yet? Just add the language code in the box below and start a new translation:
+                    Is your language not listed, yet? Just start a new translation:
                 </label>
                 <form class="form-inline">
                     <input id="new__translation" type="text" class="input-mini" placeholder="en" />
@@ -90,12 +102,12 @@
                 </form>
             </div>
         </div>
-        <div class="span6">
+        <div class="span8">
             <em>Note</em>: this list uses a (relatively) current development version of DokuWiki
         </div>
     </div>
 </div>
-
+{% endblock %}
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 {% javascripts
     '@dokuwikiTranslatorBundle/Resources/public/js/*' %}

@@ -4879,3 +4879,16 @@ a.badge:hover {
 .affix {
   position: fixed;
 }
+img#logo {
+  float: right;
+  padding: 0 1em;
+}
+.table .progress {
+  margin-bottom: 0;
+}
+.table td.translation-progress {
+  width: 200px;
+}
+.table td.translation-update {
+  width: 5em;
+}
