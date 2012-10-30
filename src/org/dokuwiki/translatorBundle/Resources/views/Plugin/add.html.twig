@@ -1,7 +1,11 @@
 {% extends 'dokuwikiTranslatorBundle:Default:index.html.twig' %}
 
 {% block content %}
-
+<ul class="breadcrumb">
+    <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a> <span class="divider">/</span></li>
+    <li><a href="{{ path('dokuwiki_translator_plugins') }}">Plug-Ins</a> <span class="divider">/</span></li>
+    <li class="active"><a href="#">Add a Plug-In</a></li>
+</ul>
 <div class="container">
     <div class="row">
         <div class="span12">
@@ -38,7 +42,7 @@
                     To gain the best experience this repository is hosted on GitHub.
                 </li>
                 <li>
-                    uses the <a href="#">DokuWiki localisation</a> functions.
+                    uses the <a href="https://www.dokuwiki.org/devel:localization">DokuWiki localisation</a> functions.
                 </li>
             </ul>
         </div>
@@ -49,7 +53,8 @@
                         <label for="formMail">E-Mail address</label>
                     </div>
                     <div class="controls">
-                        <input id="formMail" type="text" name="mail" />
+                        <input id="formMail" type="text" name="mail" class="input-xlarge"
+                                placeholder="user@example.com" />
                     </div>
                 </div>
 
@@ -58,7 +63,8 @@
                         <label for="formGit">Git URL</label>
                     </div>
                     <div class="controls">
-                        <input id="formGit" type="text" name="git" />
+                        <input id="formGit" type="text" name="git" class="input-xlarge"
+                                placeholder="git://github.com/splitbrain/dokuwiki.git" />
                     </div>
                 </div>
 
