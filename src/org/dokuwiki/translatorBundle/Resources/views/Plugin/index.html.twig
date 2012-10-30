@@ -25,14 +25,7 @@
             </p>
         </div>
         <div class="span4">
-            <div class="well well-small">
-                <p>
-                    <strong>Plug-In Developers</strong>
-                    you want to use the translation tool for your plug-in?
-                    That's possible
-                    <a href="{{ path('dokuwiki_translator_plugin_add') }}">learn more about plug-in translation!</a>
-                </p>
-            </div>
+            {% include 'dokuwikiTranslatorBundle::developer_box.html.twig' %}
         </div>
     </div>
     <div class="row">
