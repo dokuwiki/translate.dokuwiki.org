@@ -9,3 +9,7 @@ dokuwiki_translator_plugins:
 dokuwiki_translator_plugin_add:
     pattern:  /plugin/add
     defaults: { _controller: dokuwikiTranslatorBundle:Plugin:add}
+
+dokuwiki_translator_plugin_add_description:
+    pattern:  /plugin/add/description
+    defaults: { _controller: dokuwikiTranslatorBundle:Plugin:description}
