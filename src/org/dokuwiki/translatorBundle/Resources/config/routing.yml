@@ -7,9 +7,13 @@ dokuwiki_translator_plugins:
     defaults: { _controller: dokuwikiTranslatorBundle:Plugin:index}
 
 dokuwiki_translator_plugin_add:
-    pattern:  /plugin/add
+    pattern:  /plugins/add
     defaults: { _controller: dokuwikiTranslatorBundle:Plugin:add}
 
 dokuwiki_translator_plugin_add_description:
-    pattern:  /plugin/add/description
+    pattern:  /plugins/add/description
     defaults: { _controller: dokuwikiTranslatorBundle:Plugin:description}
+
+dokuwiki_translator_plugin_show:
+    pattern:  /plugin/{name}
+    defaults: { _controller: dokuwikiTranslatorBundle:Plugin:show }

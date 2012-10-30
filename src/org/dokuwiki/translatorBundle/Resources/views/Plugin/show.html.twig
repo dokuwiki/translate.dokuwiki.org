@@ -1,0 +1,99 @@
+{% extends 'dokuwikiTranslatorBundle:Default:index.html.twig' %}
+
+{% block content %}
+<ul class="breadcrumb">
+    <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a> <span class="divider">/</span></li>
+    <li><a href="{{ path('dokuwiki_translator_plugins') }}">Plug-Ins</a> <span class="divider">/</span></li>
+    <li class="active"><a href="#">Plug-in: data</a></li>
+</ul>
+
+<div class="container">
+    <div class="row">
+        <div class="span12">
+            <div class="page-header">
+                <h1>Data Plug-in Translation</h1>
+            </div>
+        </div>
+        <div class="span8">
+            <p>
+                Here you can find the current translations of the data plug-in.
+                You are welcome to join and contribute.
+                Below is a list of interface languages available.
+                The completeness of a translation is indicated by the percent value
+                (with English being the master language with always 100%).
+            </p>
+            <p>
+                <b>Please help with translating! Each tiny bit helps!</b>
+                Next to each language you'll find a link to edit the current translations.
+                Please use the linked tool to add new translations.
+            </p>
+        </div>
+        <div class="span4">
+            <div class="well">
+            <table class="table table-condensed">
+                <tbody>
+                <tr>
+                    <th>Name</th>
+                    <td>data</td>
+                </tr>
+                <tr>
+                    <th>Author</th>
+                    <td>someone</td>
+                </tr>
+                <tr>
+                    <th>Languages</th>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <th>Repository</th>
+                    <td>git://github.com/splitbrain/ dokuwiki-plugin-data.git</td>
+                </tr>
+                <tr>
+                    <th>URL</th>
+                    <td><a href="https://dokuwiki.org/plugin:data">dokuwiki.org/plugin:data</a></td>
+                </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8">
+            <table class="table table-striped table-hover table-condensed">
+                <tbody>
+                <tr>
+                    <td class="lang-code">en</td>
+                    <td class="lang">English</td>
+                    <td class="translation-progress">
+                        <div class="progress">
+                            <div class="bar" style="width: 40%"></div>
+                        </div>
+                    </td>
+                    <td class="translation-progress-text">
+                        40%
+                    </td>
+                    <td class="translation-update">
+                        <a href="#">update</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="span4">
+            <div class="well well-small">
+                <label for="new__translation">
+                    Is your language not listed, yet? Just start a new translation:
+                </label>
+                <form class="form-inline">
+                    <input id="new__translation" type="text" class="input-mini" placeholder="en" />
+                    <input type="submit" value="Start translation" class="btn btn-primary" />
+                </form>
+            </div>
+        </div>
+        <div class="span8">
+            <em>Note</em>: this list uses a (relatively) current development version of data plug-in.
+        </div>
+    </div>
+</div>
+
+{% endblock %}
