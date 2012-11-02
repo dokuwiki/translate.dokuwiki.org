@@ -358,7 +358,7 @@ class Form extends Link implements \ArrayAccess
         $root->appendChild($button);
         $xpath = new \DOMXPath($document);
 
-        foreach ($xpath->query('descendant::input | descendant::textarea | descendant::select', $root) as $node) {
+        foreach ($xpath->query('descendant::input | descendant::button | descendant::textarea | descendant::select', $root) as $node) {
             if (!$node->hasAttribute('name')) {
                 continue;
             }
@@ -494,13 +494,13 @@ class FormFieldRegistry
     public function set($name, $value)
     {
         $target =& $this->get($name);
-        if (is_array($value)) {
+        if (!is_array($value) || $target instanceof Field\ChoiceFormField) {
+            $target->setValue($value);
+        } else {
             $fields = self::create($name, $value);
             foreach ($fields->all() as $k => $v) {
                 $this->set($k, $v);
             }
-        } else {
-            $target->setValue($value);
         }
     }
 

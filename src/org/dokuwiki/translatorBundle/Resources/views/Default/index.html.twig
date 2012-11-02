@@ -2,8 +2,8 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>{% block title %}DokuWiki Localisation{% endblock %}</title>
-    {% stylesheets filter='less' output='css/compiled-main.css'
-            '@dokuwikiTranslatorBundle/Resources/public/less/bootstrap.less' %}
+    {% stylesheets filter='lessphp' output='css/compiled-main.css'
+            '@dokuwikiTranslatorBundle/Resources/public/less/start.less' %}
         <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="all" />
     {% endstylesheets %}
     <meta charset="utf-8">

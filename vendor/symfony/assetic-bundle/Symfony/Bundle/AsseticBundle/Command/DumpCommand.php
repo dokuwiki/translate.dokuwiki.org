@@ -95,6 +95,9 @@ class DumpCommand extends ContainerAwareCommand
             $previously = array();
         } else {
             $previously = unserialize(file_get_contents($cache));
+            if (!is_array($previously)) {
+                $previously = array();
+            }
         }
 
         $error = '';
@@ -112,14 +115,13 @@ class DumpCommand extends ContainerAwareCommand
 
                 file_put_contents($cache, serialize($previously));
                 $error = '';
-
-                sleep($input->getOption('period'));
             } catch (\Exception $e) {
                 if ($error != $msg = $e->getMessage()) {
                     $output->writeln('<error>[error]</error> '.$msg);
                     $error = $msg;
                 }
             }
+            sleep($input->getOption('period'));
         }
     }
 
@@ -135,7 +137,27 @@ class DumpCommand extends ContainerAwareCommand
     {
         $formula = $this->am->hasFormula($name) ? serialize($this->am->getFormula($name)) : null;
         $asset = $this->am->get($name);
-        $mtime = $asset->getLastModified();
+
+        $values = $this->getContainer()->getParameter('assetic.variables');
+        $values = array_intersect_key($values, array_flip($asset->getVars()));
+
+        if (empty($values)) {
+            $mtime = $asset->getLastModified();
+        } else {
+            $writer = new AssetWriter(sys_get_temp_dir(), $this->getContainer()->getParameter('assetic.variables'));
+            $ref = new \ReflectionMethod($writer, 'getCombinations');
+            $ref->setAccessible(true);
+            $combinations = $ref->invoke($writer, $asset->getVars());
+
+            $mtime = 0;
+            foreach ($combinations as $combination) {
+                $asset->setValues($combination);
+                $assetMtime = $asset->getLastModified();
+                if ($assetMtime > $mtime) {
+                    $mtime = $assetMtime;
+                }
+            }
+        }
 
         if (isset($previously[$name])) {
             $changed = $previously[$name]['mtime'] != $mtime || $previously[$name]['formula'] != $formula;

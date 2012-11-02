@@ -521,7 +521,8 @@ class PropertyPath implements \IteratorAggregate, PropertyPathInterface
                 } else {
                     $adderRemoverError = ', nor could adders and removers be found based on the ';
                     if (null === $singular) {
-                        $adderRemoverError .= 'guessed singulars: '.implode(', ', $singulars).' (provide a singular by suffixing the property path with "|{singular}" to override the guesser)';
+                        // $adderRemoverError .= 'guessed singulars: '.implode(', ', $singulars).' (provide a singular by suffixing the property path with "|{singular}" to override the guesser)';
+                        $adderRemoverError .= 'guessed singulars: '.implode(', ', $singulars);
                     } else {
                         $adderRemoverError .= 'passed singular: '.$singular;
                     }
@@ -571,7 +572,7 @@ class PropertyPath implements \IteratorAggregate, PropertyPathInterface
      * Searches for add and remove methods.
      *
      * @param \ReflectionClass $reflClass The reflection class for the given object
-     * @param string|null      $singulars The singular form of the property name or null.
+     * @param array            $singulars The singular form of the property name or null.
      *
      * @return array|null An array containing the adder and remover when found, null otherwise.
      *

@@ -219,6 +219,7 @@ class MonologExtension extends Extension
                 $handler['facility'],
                 $handler['level'],
                 $handler['bubble'],
+                $handler['logopts'],
             ));
             break;
 
@@ -257,6 +258,23 @@ class MonologExtension extends Extension
                 $handler['level'],
                 $handler['bubble'],
             ));
+            break;
+
+        case 'socket':
+            $definition->setArguments(array(
+                $handler['connection_string'],
+                $handler['level'],
+                $handler['bubble'],
+            ));
+            if (isset($handler['timeout'])) {
+                $definition->addMethodCall('setTimeout', array($handler['timeout']));
+            }
+            if (isset($handler['connection_timeout'])) {
+                $definition->addMethodCall('setConnectionTimeout', array($handler['connection_timeout']));
+            }
+            if (isset($handler['persistent'])) {
+                $definition->addMethodCall('setPersistent', array($handler['persistent']));
+            }
             break;
 
         // Handlers using the constructor of AbstractHandler without adding their own arguments

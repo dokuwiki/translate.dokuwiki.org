@@ -29,6 +29,7 @@ class UglifyJsFilter implements FilterInterface
     private $noCopyright;
     private $beautify;
     private $unsafe;
+    private $mangle;
 
     /**
      * @param string $uglifyJsPath Absolute path to the uglifyjs executable
@@ -68,6 +69,15 @@ class UglifyJsFilter implements FilterInterface
     }
 
     /**
+     * Safely mangle variable and function names for greater file compress.
+     * @param bool $mangle True to enable
+     */
+    public function setMangle($mangle)
+    {
+        $this->mangle = $mangle;
+    }
+
+    /**
      * @see Assetic\Filter\FilterInterface::filterLoad()
      */
     public function filterLoad(AssetInterface $asset)
@@ -103,6 +113,10 @@ class UglifyJsFilter implements FilterInterface
             $pb->add('--unsafe');
         }
 
+        if ($this->mangle) {
+            $pb->add('--mangle');
+        }
+
         // input and output files
         $input = tempnam(sys_get_temp_dir(), 'input');
         $output = tempnam(sys_get_temp_dir(), 'output');
@@ -124,7 +138,9 @@ class UglifyJsFilter implements FilterInterface
             }
 
             throw FilterException::fromProcess($proc)->setInput($asset->getContent());
-        } elseif (!file_exists($output)) {
+        }
+
+        if (!file_exists($output)) {
             throw new \RuntimeException('Error creating output file.');
         }
 
