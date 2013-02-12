@@ -10,10 +10,6 @@ class PluginController extends Controller {
         return $this->render('dokuwikiTranslatorBundle:Plugin:add.html.twig');
     }
 
-    public function descriptionAction() {
-        return $this->render('dokuwikiTranslatorBundle:Plugin:addDescription.html.twig');
-    }
-
     public function showAction($name) {
         return $this->render('dokuwikiTranslatorBundle:Plugin:show.html.twig');
     }
