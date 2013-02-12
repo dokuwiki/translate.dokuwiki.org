@@ -12,40 +12,30 @@
                 <h1>Plug-in Translation</h1>
             </div>
         </div>
-        <div class="span8">
+        <div class="span6">
             <p>
                 Welcome to the plug-in translation page.
                 The translation tool provides a simple translation interface.
                 Everybody will be able to use this tool and create a translation
                 of your plugin.
-                The workflow is:
+                When you've added your plug-in you will receive translations as git patch via email or as
+                <a href="https://help.github.com/articles/using-pull-requests" target="_blank">GitHub pull request</a>.
             </p>
-            <ol>
-                <li>plug-in added</li>
-                <li>a translator creates a translation of your plug-in.</li>
-                <li>
-                    You get an email with the git patch to approve the translation.
-                    If you're using GitHub the patch will be provided as pull request.
-                </li>
-                <li>You add the translation to your plug-in</li>
-            </ol>
-            <h2>Get on the list</h2>
+        </div>
+        <div class="span6">
             <p>
-                You are a plug-in developer and want to be
-                listed in the translation tool?
-                That's possible! Just ensure that your plug-in:
+                To use this tool your plug-in must
             </p>
             <ul>
+                <li>a public Git repository.</li>
+                <li>listed on the <a href="https://www.dokuwiki.org/plugins">plugins list</a></li>
                 <li>
-                    has a public GIT repository. We just need read access.
-                    To gain the best experience this repository is hosted on GitHub.
-                </li>
-                <li>
-                    uses the <a href="https://www.dokuwiki.org/devel:localization">DokuWiki localisation</a> functions.
+                    use the <a href="https://www.dokuwiki.org/devel:localization">DokuWiki localization functions</a>
                 </li>
             </ul>
         </div>
-        <div class="span8">
+
+        <div class="span8 offset2">
             <form action="{{ path('dokuwiki_translator_plugin_add_description') }}" class="form-horizontal" method="post">
                 <div class="control-group">
                     <div class="control-label">
@@ -68,7 +58,7 @@
                 </div>
 
                 <div class="controls">
-                    <input type="submit" class="btn btn-primary" value="Submit" />
+                    <input type="submit" class="btn btn-primary" value="Add my plug-in!" />
                     <input type="reset" class="btn" value="Reset" />
                     <a href="{{ path('dokuwiki_translator_homepage') }}" class="btn">
                         Abort
