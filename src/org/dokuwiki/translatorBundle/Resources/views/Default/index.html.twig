@@ -60,7 +60,11 @@
                 </thead>
                 <tbody>
                 {% for i in 0..200 %}
-                        <tr {% if i == 0 %}class="info"{% endif %}}>
+                    {% if i == 0 %}
+                        <tr class="info">
+                    {% else %}
+                        <tr>
+                    {% endif %}
                     <td class="name">DokuWiki</td>
                     <td class="translation-progress">
                         <div class="progress progress-striped progress-success">
