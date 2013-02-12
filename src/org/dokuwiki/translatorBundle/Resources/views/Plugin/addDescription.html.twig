@@ -3,7 +3,6 @@
 {% block content %}
 <ul class="breadcrumb">
     <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a> <span class="divider">/</span></li>
-    <li><a href="{{ path('dokuwiki_translator_plugins') }}">Plug-Ins</a> <span class="divider">/</span></li>
     <li class="active"><a href="#">Add a Plug-In</a></li>
 </ul>
 <div class="container">
@@ -14,7 +13,7 @@
             </div>
         </div>
         <div class="span8">
-            <form action="{{ path('dokuwiki_translator_plugins') }}" method="post" class="form-horizontal">
+            <form action="{{ path('dokuwiki_translator_homepage') }}" method="post" class="form-horizontal">
 
                 <div class="control-group">
                     <div class="control-label">
@@ -59,7 +58,7 @@
                 <div class="controls">
                     <input type="submit" class="btn btn-primary" value="Submit" />
                     <input type="reset" class="btn" value="Reset" />
-                    <a href="{{ path('dokuwiki_translator_plugins') }}" class="btn">
+                    <a href="{{ path('dokuwiki_translator_homepage') }}" class="btn">
                         Abort
                     </a>
                 </div>
