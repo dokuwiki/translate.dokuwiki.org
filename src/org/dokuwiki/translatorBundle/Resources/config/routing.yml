@@ -5,3 +5,11 @@ dokuwiki_translator_homepage:
 dokuwiki_translator_plugin_add:
     pattern:  /plugin/add
     defaults: { _controller: dokuwikiTranslatorBundle:Plugin:add}
+
+dokuwiki_translate:
+    pattern:  /translate
+    defaults: { _controller: dokuwikiTranslatorBundle:Translation:translateCore}
+
+dokuwiki_translate_plugin:
+    pattern:  /translate/plugin/{name}
+    defaults: { _controller: dokuwikiTranslatorBundle:Translation:translatePlugin}

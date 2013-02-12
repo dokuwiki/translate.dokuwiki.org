@@ -1,0 +1,84 @@
+{% extends 'dokuwikiTranslatorBundle:Default:index.html.twig' %}
+
+{% block content %}
+    <ul class="breadcrumb">
+        <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a> <span class="divider">/</span></li>
+        <li class="active"><a href="#">Add a Plug-In</a></li>
+    </ul>
+
+    <div class="container">
+        <div class="row">
+            <div class="span12">
+                <div class="page-header">
+                    <h1>Translate {{ name }}</h1>
+                </div>
+
+                <p>
+                    Thank you for translating {{ name }}! This tool helps you sending translations to the developers.
+                    Just
+                </p>
+                <p>
+                    <b>Don't be discouraged by the amount of strings!</b>
+                    If you don't feel like translating it all, just do a few strings and send the package.
+                    Each tiny step helps. Strings at top of the list are more important than those at the bottom,
+                    so please start at top.
+                </p>
+                <p>
+                    When your done click the submit button. Your changes will be automatically submitted to the developers.
+                </p>
+
+                <h2>Pirate translation</h2>
+
+
+                    <form>
+                        <div class="form-horizontal well">
+                            <p>
+                                <strong>Important</strong>: To be proper credited in the language files, give your name and email address here.
+                            </p>
+
+                            <div class="control-group">
+                                <label class="control-label" for="author">Name</label>
+                                <div class="controls">
+                                    <input type="text" id="author" placeholder="Your name" />
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label" for="email">E-mail</label>
+                                <div class="controls">
+                                    <input type="email" id="email" placeholder="you@example.com" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>English</th>
+                                <th>Pirate</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in 1..200 %}
+                            <tr>
+                                <td>target____wiki</td>
+                                <td>Target window for internal links</td>
+                                <td><textarea rows="2">Target window fer internal links</textarea></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="form-actions">
+                            <input type="submit" value="Submit" class="btn btn-primary" />
+                            <input type="reset" class="btn" value="Reset" />
+                            <input type="submit" class="btn" value="Cancel" />
+                        </div>
+
+                    </form>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}

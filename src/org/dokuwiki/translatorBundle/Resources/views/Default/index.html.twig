@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>{% block title %}DokuWiki Localisation{% endblock %}</title>
-    {% stylesheets filter='lessphp' output='css/compiled-main.css'
+    {% stylesheets filter='lessphp,cssrewrite' output='css/compiled-main.css'
             '@dokuwikiTranslatorBundle/Resources/public/less/start.less' %}
         <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="all" />
     {% endstylesheets %}
@@ -74,7 +74,11 @@
                         40%
                     </td>
                     <td class="translation-update">
-                        <a href="#">update</a>
+                        {% if i == 0 %}
+                            <a href="{{ path("dokuwiki_translate") }}">update</a>
+                        {% else %}
+                            <a href="{{ path("dokuwiki_translate_plugin", {"name":"data"}) }}">update</a>
+                        {% endif %}
                     </td>
                     </tr>
                 {% endfor %}
