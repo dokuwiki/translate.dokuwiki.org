@@ -61,6 +61,7 @@
                     </tr>
                     </thead>
                     <tbody>
+                    {% for i in 1..10 %}
                     <tr>
                         <td>en</td>
                         <td>English</td>
@@ -76,6 +77,7 @@
                             <a href="{{ path("dokuwiki_translate_plugin", {"name":"data"}) }}">update</a>
                         </td>
                     </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
