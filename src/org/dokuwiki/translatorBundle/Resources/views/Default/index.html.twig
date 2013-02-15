@@ -64,7 +64,9 @@
                     {% else %}
                         <tr>
                     {% endif %}
-                    <td class="name">DokuWiki</td>
+                    <td class="name">
+                        <a href="{{ path("dokuwiki_translator_show", {'name':'DokuWiki'}) }}">DokuWiki</a>
+                    </td>
                     <td class="translation-progress">
                         <div class="progress progress-striped progress-success">
                             <div class="bar" style="width: 40%"></div>

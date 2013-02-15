@@ -1,0 +1,85 @@
+{% extends 'dokuwikiTranslatorBundle:Default:index.html.twig' %}
+
+{% block content %}
+    <ul class="breadcrumb">
+        <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a> <span class="divider">/</span></li>
+        <li class="active"><a href="#">Show {{ name }}</a></li>
+    </ul>
+    <div class="container">
+        <div class="row">
+            <div class="span12">
+                <div class="page-header">
+                    <h1>{{ name }} Plug-in</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="span8">
+                <p>
+                    On this page you see the Translation status of the {{ name }} plug-In.
+                    English is the master language which has always 100% progress.
+                    Please help to add translations to this plug-in.
+                </p>
+
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Language</th>
+                        <th colspan="2">Progress</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>en</td>
+                        <td>English</td>
+                        <td class="translation-progress">
+                            <div class="progress progress-striped progress-success">
+                                <div class="bar" style="width: 40%"></div>
+                            </div>
+                        </td>
+                        <td class="translation-progress-text">
+                            40%
+                        </td>
+                        <td class="translation-update">
+                            <a href="{{ path("dokuwiki_translate_plugin", {"name":"data"}) }}">update</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="span4">
+                <table class="table table-striped table-condensed">
+                    <caption>
+                        <b>Plug-In details</b>
+                    </caption>
+                    <tr>
+                        <th>Plug-in</th>
+                        <td><a href="https://www.dokuwiki.org/plugin:data">Data</a></td>
+                    </tr>
+                    <tr>
+                        <th>Author</th>
+                        <td>Andreas Gohr</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>Manage your wiki's configuration settings (bundled with DokuWiki)</td>
+                    </tr>
+                    <tr>
+                        <th>Translations</th>
+                        <td>8</td>
+                    </tr>
+                    <tr>
+                        <th>Tags</th>
+                        <td>!bundled, acl, groups, users</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
