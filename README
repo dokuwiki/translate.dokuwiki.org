@@ -1,12 +1,6 @@
-====== ======
+===== Setup =====
 
-
-===== Install =====
-  aptitude install nodejs-dev nodejs npm
-  npm install less
-
-===== Issues =====
-
+  composer install
   php app/console cache:clear
   php app/console cache:clear --env=prod
   php app/console assetic:dump --env=dev
