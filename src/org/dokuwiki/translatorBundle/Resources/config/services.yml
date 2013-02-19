@@ -3,7 +3,11 @@ parameters:
     git_bin: C:\Program Files (x86)\Git\bin\git.exe # path to the git executable
     data: D:\Temp\test 1                            # path to the working directory
 
+    language.class: org\dokuwiki\translatorBundle\Services\Language
+
 services:
 #    dokuwiki_translator.example:
 #        class: %dokuwiki_translator.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
+    language:
+        class: "%language.class%"
