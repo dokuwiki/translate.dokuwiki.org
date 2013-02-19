@@ -7,3 +7,10 @@ Set variables in src/org/dokuwiki/translatorBundle/Resources/config/services.yml
   php app/console cache:clear
   php app/console cache:clear --env=prod
   php app/console assetic:dump --env=dev
+
+===== Tests =====
+Install test suite:
+  composer install --dev
+
+Run tests:
+  vendor/bin/phpunit -c app
