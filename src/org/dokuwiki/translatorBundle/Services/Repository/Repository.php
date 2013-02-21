@@ -1,5 +1,5 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Services;
+namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Symfony\Component\DependencyInjection\Container;
 
