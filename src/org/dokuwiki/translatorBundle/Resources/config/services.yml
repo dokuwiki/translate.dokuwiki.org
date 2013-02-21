@@ -1,5 +1,4 @@
 parameters:
-#    dokuwiki_translator.example.class: org\dokuwiki\translatorBundle\Example
     git_bin: C:\Program Files (x86)\Git\bin\git.exe # path to the git executable
     data: D:\Temp\test 1                            # path to the working directory
 
@@ -8,9 +7,6 @@ parameters:
     repository_manager.class: org\dokuwiki\translatorBundle\Services\RepositoryManager
 
 services:
-#    dokuwiki_translator.example:
-#        class: %dokuwiki_translator.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
     language:
         class: "%language.class%"
     repository:
