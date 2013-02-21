@@ -4,6 +4,8 @@ parameters:
     data: D:\Temp\test 1                            # path to the working directory
 
     language.class: org\dokuwiki\translatorBundle\Services\Language
+    repository.class: org\dokuwiki\translatorBundle\Services\Repository
+    repository_manager.class: org\dokuwiki\translatorBundle\Services\RepositoryManager
 
 services:
 #    dokuwiki_translator.example:
@@ -11,3 +13,8 @@ services:
 #        arguments: [@service_id, "plain_value", %parameter%]
     language:
         class: "%language.class%"
+    repository:
+        class: "%repository.class%"
+    repository_manager:
+        class: "%repository_manager.class%"
+        arguments: ["%data%"]
