@@ -144,10 +144,11 @@ class LanguageFileParser {
         $commentLines = explode("\n", $comment);
         foreach($commentLines as $line) {
             $line = ltrim($line);
-            if(!preg_match('/\* @author (.*?) <(.*?)>/i', $line, $matches)) {
+            $line .= "\n";
+            if(!preg_match('/\* @author (.+?)(?: <(.*?)>)?\n/i', $line, $matches)) {
                 continue;
             }
-            $this->author[$matches[1]] = $matches[2];
+            $this->author[$matches[1]] = isset($matches[2])?$matches[2]:'';
         }
 
         $this->content = substr($this->content, $end + 2);

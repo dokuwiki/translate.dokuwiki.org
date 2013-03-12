@@ -21,6 +21,10 @@ class LanguageFileParserTestDummy extends LanguageFileParser {
     public function getLang($key) {
         return $this->lang[$key];
     }
+
+    public function getAllLang() {
+        return $this->lang;
+    }
 }
 
 class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
@@ -212,7 +216,12 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
 
 
         $parser = new LanguageFileParserTestDummy();
-        $parser->parseLangPHP(dirname(__FILE__) . '/testLang.php');
+        $parser->loadFile(dirname(__FILE__) . '/testLang.php');
+        $parser->parse();
+
+        $this->assertEquals(18, count($parser->getAuthor()));
+        $this->assertEquals(268, count($parser->getAllLang()));
+        $this->assertEquals(41, count($parser->getLang('js')));
 
     }
 }
