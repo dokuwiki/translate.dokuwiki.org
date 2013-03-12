@@ -17,6 +17,10 @@ class LanguageFileParserTestDummy extends LanguageFileParser {
     public function getAuthor() {
         return $this->author;
     }
+
+    public function getLang($key) {
+        return $this->lang[$key];
+    }
 }
 
 class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
@@ -109,4 +113,84 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('more php code', $parser->getContent());
     }
 
+    function testGetFirstString() {
+        $parser = new LanguageFileParserTestDummy();
+
+        $parser->setContent('"Hello"');
+        $this->assertEquals('Hello', $parser->getFirstString());
+        $this->assertEquals('', $parser->getContent());
+
+        $parser->setContent('"Hello" some other meaningful stuff');
+        $this->assertEquals('Hello', $parser->getFirstString());
+        $this->assertEquals(' some other meaningful stuff', $parser->getContent());
+
+        $parser->setContent("'Hello'");
+        $this->assertEquals('Hello', $parser->getFirstString());
+        $this->assertEquals('', $parser->getContent());
+
+        $parser->setContent('"\""');
+        $this->assertEquals('\"', $parser->getFirstString());
+        $this->assertEquals('', $parser->getContent());
+
+        $parser->setContent("'\\''");
+        $this->assertEquals("\\'", $parser->getFirstString());
+        $this->assertEquals('', $parser->getContent());
+    }
+
+    function testGetString() {
+        $parser = new LanguageFileParserTestDummy();
+
+        $parser->setContent('"Hello" . \' whats up\'');
+        $this->assertEquals('Hello whats up', $parser->getString());
+        $this->assertEquals('', $parser->getContent());
+    }
+
+    /**
+     * @expectedException \org\dokuwiki\translatorBundle\Services\Language\LanguageParseException
+     */
+    function testGetStringUnknownEnd() {
+        $parser = new LanguageFileParserTestDummy();
+
+        $parser->setContent('"Hello . \' whats up\'');
+        $parser->getString();
+    }
+
+    function testProcessLang() {
+        $parser = new LanguageFileParserTestDummy();
+
+        $parser->setContent('"Key"] = "value";');
+        $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processLang());
+        $this->assertEquals('', $parser->getContent());
+        $this->assertEquals('value', $parser->getLang('Key'));
+
+        $parser->setContent("'another']\t =  \n 'value' ;");
+        $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processLang());
+        $this->assertEquals('', $parser->getContent());
+        $this->assertEquals('value', $parser->getLang('another'));
+
+        $parser->setContent('"Key"]="value";');
+        $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processLang());
+        $this->assertEquals('', $parser->getContent());
+        $this->assertEquals('value', $parser->getLang('Key'));
+    }
+
+    /**
+     * @expectedException \org\dokuwiki\translatorBundle\Services\Language\LanguageParseException
+     */
+    function testProcessLangException() {
+        $parser = new LanguageFileParserTestDummy();
+
+        $parser->setContent('"Key"] = "value"');
+        $parser->processLang();
+    }
+
+    /**
+     * @expectedException \org\dokuwiki\translatorBundle\Services\Language\LanguageParseException
+     */
+    function testProcessLangExceptionSyntax() {
+        $parser = new LanguageFileParserTestDummy();
+
+        $parser->setContent('"Key" = "value"');
+        $parser->processLang();
+    }
 }

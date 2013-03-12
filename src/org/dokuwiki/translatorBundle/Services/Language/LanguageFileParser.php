@@ -10,7 +10,6 @@ class LanguageFileParser {
     public static $MODE_PHP = 'php';
     public static $MODE_COMMENT_SINGLE_LINE = 'comment single line';
     public static $MODE_COMMENT_MULTI_LINE = 'comment multi line';
-    public static $MODE_STRING = 'string';
     public static $MODE_LANG = 'lang';
     public static $MODE_PHP_UNKNOWN = 'php unknown';
 
@@ -37,22 +36,78 @@ class LanguageFileParser {
         while (strlen($this->content) !== 0) {
             if ($mode === LanguageFileParser::$MODE_PHP) {
                 $mode = $this->determineNextMode();
-                continue;
-            } elseif (LanguageFileParser::$MODE_STRING) {
-
             } elseif ($mode === LanguageFileParser::$MODE_COMMENT_MULTI_LINE) {
                 $mode = $this->processMultiLineComment();
             } elseif ($mode === LanguageFileParser::$MODE_COMMENT_SINGLE_LINE) {
                 $mode = $this->processSingleLineComment();
-            } elseif ($mode === LanguageFileParser::$MODE_PHP_UNKNOWN) {
-
+            } elseif ($mode === LanguageFileParser::$MODE_LANG) {
+                $mode = $this->processLang();
             } else {
                 // trim first character -> unmatched
-                $this->content = substr($this->content, 0, 1);
+                $this->shortContentBy(1);
             }
         }
 
         return array();
+    }
+
+    public function processLang() {
+        $key = $this->getString();
+        $this->content = rtrim($this->content);
+
+        $this->content = preg_replace('/^\s*\]\s*=\s*/', '', $this->content, 1, $found);
+        if ($found === 0) {
+            throw new LanguageParseException('Wrong key/value syntax in: ' . $this->content);
+        }
+        $value = $this->getString();
+        $this->content = rtrim($this->content);
+        if (!isset($this->content[0]) || $this->content[0] !== ';') {
+            throw new LanguageParseException('Wrong key/value syntax, expected command end or eof');
+        }
+        $this->shortContentBy(1);
+        $this->lang[$key] = $value;
+        return LanguageFileParser::$MODE_PHP;
+    }
+
+    public function getString() {
+        $string = '';
+        while (true) {
+            $string .= $this->getFirstString();
+            $this->content = ltrim($this->content);
+            if (!isset($this->content[0]) || $this->content[0] !== '.') {
+                break;
+            }
+            $this->shortContentBy(1);
+            $this->content = ltrim($this->content);
+        }
+        return $string;
+    }
+
+    public function getFirstString() {
+        $stringDelimiter = $this->content[0];
+        if (!in_array($stringDelimiter, array('\'', '"'))) {
+            throw new LanguageParseException("Content won't start with a string. Found " . $stringDelimiter);
+        }
+        $this->shortContentBy(1);
+
+        $pos = null;
+        $offset = 0;
+        do {
+            $pos = strpos($this->content, $stringDelimiter, $offset);
+            if ($pos === false) {
+                throw new LanguageParseException('String has no ending.');
+            }
+
+            if ($this->content[$pos-1] === '\\') {
+                $offset = $pos+1;
+                continue;
+            }
+            break;
+        } while ($pos !== false);
+
+        $string = substr($this->content, 0, $pos);
+        $this->shortContentBy($pos+1);
+        return $string;
     }
 
     public function processSingleLineComment() {
