@@ -174,6 +174,20 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('value', $parser->getLang('Key'));
     }
 
+    function testProcessJsLang() {
+        $parser = new LanguageFileParserTestDummy();
+
+        $parser->setContent('\'js\']["Key"] = "value";');
+        $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processLang());
+        $this->assertEquals('', $parser->getContent());
+        $this->assertEquals(array('Key' => 'value'), $parser->getLang('js'));
+
+        $parser->setContent("'js'  ]\t [\n  \"Key\"] = \"value\";");
+        $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processLang());
+        $this->assertEquals('', $parser->getContent());
+        $this->assertEquals(array('Key' => 'value'), $parser->getLang('js'));
+    }
+
     /**
      * @expectedException \org\dokuwiki\translatorBundle\Services\Language\LanguageParseException
      */
@@ -192,5 +206,13 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
 
         $parser->setContent('"Key" = "value"');
         $parser->processLang();
+    }
+
+    function testCompleteFile() {
+
+
+        $parser = new LanguageFileParserTestDummy();
+        $parser->parseLangPHP(dirname(__FILE__) . '/testLang.php');
+
     }
 }

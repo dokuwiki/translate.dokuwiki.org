@@ -43,8 +43,7 @@ class LanguageFileParser {
             } elseif ($mode === LanguageFileParser::$MODE_LANG) {
                 $mode = $this->processLang();
             } else {
-                // trim first character -> unmatched
-                $this->shortContentBy(1);
+                throw new LanguageParseException("Invalid syntax - no code execution allowed");
             }
         }
 
@@ -55,9 +54,19 @@ class LanguageFileParser {
         $key = $this->getString();
         $this->content = rtrim($this->content);
 
+        $javaScriptLang = ($key === 'js');
+        if ($javaScriptLang) {
+            $this->content = preg_replace('/^\s*\]\s*\[\s*/', '', $this->content, 1, $found);
+            if ($found === 0) {
+                throw new LanguageParseException('Wrong key/value syntax in: ' . substr($this->content, 0, 50));
+            }
+            $key = $this->getString();
+            $this->content = rtrim($this->content);
+        }
+
         $this->content = preg_replace('/^\s*\]\s*=\s*/', '', $this->content, 1, $found);
         if ($found === 0) {
-            throw new LanguageParseException('Wrong key/value syntax in: ' . $this->content);
+            throw new LanguageParseException('Wrong key/value syntax in: ' . substr($this->content, 0, 50));
         }
         $value = $this->getString();
         $this->content = rtrim($this->content);
@@ -65,7 +74,12 @@ class LanguageFileParser {
             throw new LanguageParseException('Wrong key/value syntax, expected command end or eof');
         }
         $this->shortContentBy(1);
-        $this->lang[$key] = $value;
+
+        if ($javaScriptLang) {
+            $this->lang['js'][$key] = $value;
+        } else {
+            $this->lang[$key] = $value;
+        }
         return LanguageFileParser::$MODE_PHP;
     }
 
