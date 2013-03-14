@@ -133,11 +133,11 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('', $parser->getContent());
 
         $parser->setContent('"\""');
-        $this->assertEquals('\"', $parser->getFirstString());
+        $this->assertEquals('"', $parser->getFirstString());
         $this->assertEquals('', $parser->getContent());
 
         $parser->setContent("'\\''");
-        $this->assertEquals("\\'", $parser->getFirstString());
+        $this->assertEquals("'", $parser->getFirstString());
         $this->assertEquals('', $parser->getContent());
     }
 
@@ -213,8 +213,6 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
     }
 
     function testCompleteFile() {
-
-
         $parser = new LanguageFileParserTestDummy();
         $parser->loadFile(dirname(__FILE__) . '/testLang.php');
         $parser->parse();
@@ -223,5 +221,30 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(268, count($parser->getAllLang()));
         $this->assertEquals(41, count($parser->getLang('js')));
 
+    }
+
+    function testEscapeSingleQuoted() {
+        $parser = new LanguageFileParserTestDummy();
+
+        $this->assertEquals('\'', $parser->escapeString("\\'", '\''));
+        $this->assertEquals('\\', $parser->escapeString("\\\\", '\''));
+        $this->assertEquals('\\n', $parser->escapeString("\\n", '\''));
+    }
+
+    function testEscapeDoubleQuoted() {
+        $parser = new LanguageFileParserTestDummy();
+
+        $this->assertEquals("\n", $parser->escapeString('\\n', '"'));
+        $this->assertEquals("\r", $parser->escapeString('\\r', '"'));
+        $this->assertEquals("\t", $parser->escapeString('\\t', '"'));
+        $this->assertEquals("\v", $parser->escapeString('\\v', '"'));
+        $this->assertEquals("\e", $parser->escapeString('\\e', '"'));
+        $this->assertEquals("\f", $parser->escapeString('\\f', '"'));
+        $this->assertEquals("\\", $parser->escapeString('\\\\', '"'));
+        $this->assertEquals("$", $parser->escapeString('\\$', '"'));
+        $this->assertEquals('"', $parser->escapeString('\\"', '"'));
+
+        $this->assertEquals('A', $parser->escapeString('\\x41', '"'));
+        $this->assertEquals('A', $parser->escapeString('\\101', '"'));
     }
 }

@@ -120,6 +120,7 @@ class LanguageFileParser {
         } while ($pos !== false);
 
         $string = substr($this->content, 0, $pos);
+        $string = $this->escapeString($string, $stringDelimiter);
         $this->shortContentBy($pos+1);
         return $string;
     }
@@ -194,5 +195,51 @@ class LanguageFileParser {
         $this->content = substr($this->content, $length);
     }
 
+    /**
+     * Escapes a string according to http://php.net/manual/en/language.types.string.php
+     * @param string $string the string to escape
+     * @param string $delimiter ' or "
+     * @return string escaped string
+     */
+    public function escapeString($string, $delimiter) {
+        if ($delimiter === "'") {
+            return $this->escapeSingleQuoted($string);
+        }
+        return $this->escapeDoubleQuoted($string);
+    }
+
+    private function escapeSingleQuoted($string) {
+        $string = str_replace('\\\\', '\\', $string);
+        $string = str_replace('\\\'', '\'', $string);
+        return $string;
+    }
+
+    private function escapeDoubleQuoted($string) {
+        $string = str_replace('\\\\', '\\', $string);
+        $string = str_replace('\\n', "\n", $string);
+        $string = str_replace('\\r', "\r", $string);
+        $string = str_replace('\\t', "\t", $string);
+        $string = str_replace('\\v', "\v", $string);
+        $string = str_replace('\\e', "\e", $string);
+        $string = str_replace('\\f', "\f", $string);
+        $string = str_replace('\\$', "\$", $string);
+        $string = str_replace('\\"', "\"", $string);
+
+        $matchCount = preg_match_all('/\\\\x([0-9A-Fa-f]{1,2})/', $string, $matches);
+        if ($matchCount > 0) {
+            for ($i = 0; $i < $matchCount; $i++) {
+                $string = str_replace($matches[0][$i], chr(hexdec($matches[1][$i])), $string);
+            }
+        }
+
+        $matchCount = preg_match_all('/\\\\([0-7]{1,3})/', $string, $matches);
+        if ($matchCount > 0) {
+            for ($i = 0; $i < $matchCount; $i++) {
+                $string = str_replace($matches[0][$i], chr(octdec($matches[1][$i])), $string);
+            }
+        }
+
+        return $string;
+    }
 
 }
