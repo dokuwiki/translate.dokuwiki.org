@@ -11,6 +11,7 @@ abstract class Repository {
 
     private $git = null;
     private $dataFolder;
+    private $basePath = null;
 
     public function __construct($dataFolder) {
         $this->dataFolder = $dataFolder;
@@ -61,7 +62,6 @@ abstract class Repository {
         return $this->buildBasePath() . 'repository/';
     }
 
-    // TODO add caching
     private function buildBasePath() {
         $path = $this->buildDataPath();
         $type = $this->getType();
@@ -73,11 +73,14 @@ abstract class Repository {
     }
 
     private function buildDataPath() {
-        $base = $this->dataFolder;
-        $base = str_replace('\\', '/', $base);
-        $base = trim($base);
-        $base = rtrim($base, '/');
-        return $base . '/';
+        if ($this->basePath === null) {
+            $base = $this->dataFolder;
+            $base = str_replace('\\', '/', $base);
+            $base = trim($base);
+            $base = rtrim($base, '/');
+            $this->basePath = $base . '/';
+        }
+        return $this->basePath;
     }
 
     private function updateLanguage() {
