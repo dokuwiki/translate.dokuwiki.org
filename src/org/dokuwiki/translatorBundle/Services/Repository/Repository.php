@@ -21,7 +21,6 @@ abstract class Repository {
         $changed = $this->updateFromRemote();
         $changed = true;
         if ($changed) {
-            echo "updating language\n";
             $this->updateLanguage();
         }
         // TODO update "update date"
@@ -96,7 +95,6 @@ abstract class Repository {
         }
 
         file_put_contents($this->buildBasePath() . 'translation.ser', serialize($translations));
-        echo $this->dataFolder . 'translation.ser';
     }
 
     /**

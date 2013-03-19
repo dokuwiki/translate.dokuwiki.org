@@ -15,7 +15,6 @@ class LanguageManager {
      * @return array()
      */
     public function readLanguages($langFolder, $prefix = '') {
-        echo $langFolder;
         if (!is_dir($langFolder)) {
             throw new NoLanguageFolderException();
         }
@@ -53,7 +52,6 @@ class LanguageManager {
             $extension = substr($file, -4);
 
             if ($extension === '.php') {
-                echo "$languageFolder/$file\n";
                 $translation = LanguageFileParser::parseLangPHP("$languageFolder/$file");
                 $language[$prefix . $file] =
                         new LocalText($translation->getLang(), LocalText::$TYPE_ARRAY, $translation->getAuthor());
