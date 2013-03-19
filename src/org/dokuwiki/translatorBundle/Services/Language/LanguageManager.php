@@ -1,17 +1,21 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
+use Doctrine\Tests\ORM\Functional\Locking\LockTest;
+
 class LanguageManager {
 
     /**
      * read languages from lang folder.
      *
      * @param string $langFolder Lang folder
+     * @param string $prefix Prefix string for item keys in language array.
      * @throws NoLanguageFolderException
      * @throws NoDefaultLanguageException
      * @return array()
      */
-    public function readLanguages($langFolder) {
+    public function readLanguages($langFolder, $prefix = '') {
+        echo $langFolder;
         if (!is_dir($langFolder)) {
             throw new NoLanguageFolderException();
         }
@@ -29,16 +33,13 @@ class LanguageManager {
             if (!is_dir("$langFolder/$folder")) {
                 continue;
             }
-            $languages[$folder] = $this->readLanguage("$langFolder/$folder");
+            $languages[$folder] = $this->readLanguage("$langFolder/$folder", "$prefix$folder/");
         }
+        return $languages;
     }
 
-    private function readLanguage($languageFolder) {
+    private function readLanguage($languageFolder, $prefix) {
         $language = array();
-
-        if (is_file("$languageFolder/lang.php")) {
-            $language['lang'] = $this->parseLangFile("$languageFolder/lang.php");
-        }
 
         $folders = scandir($languageFolder);
         foreach ($folders as $file) {
@@ -48,16 +49,22 @@ class LanguageManager {
             if (!is_file("$languageFolder/$file")) {
                 continue;
             }
-            if (substr($file, -4) !== '.txt') {
+
+            $extension = substr($file, -4);
+
+            if ($extension === '.php') {
+                echo "$languageFolder/$file\n";
+                $translation = LanguageFileParser::parseLangPHP("$languageFolder/$file");
+                $language[$prefix . $file] =
+                        new LocalText($translation->getLang(), LocalText::$TYPE_ARRAY, $translation->getAuthor());
                 continue;
             }
-            $language[$file] = file_get_contents("$languageFolder/$file");
+
+            if ($extension === '.txt') {
+                $language[$prefix . $file] = new LocalText(file_get_contents("$languageFolder/$file"), LocalText::$TYPE_MARKUP);
+            }
+
         }
         return $language;
-    }
-
-    function parseLangFile() {
-        // FIXME
-        return array();
     }
 }

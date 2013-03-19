@@ -9,6 +9,9 @@ class RepositoryManager {
         $this->dataFolder = $dataFolder;
     }
 
+    /**
+     * @return CoreRepository The DokuWiki core repository.
+     */
     public function getCoreRepository() {
         return new CoreRepository($this->dataFolder);
     }

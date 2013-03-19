@@ -2,6 +2,7 @@
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Symfony\Component\DependencyInjection\Container;
+use org\dokuwiki\translatorBundle\Services\Language\LanguageManager;
 
 abstract class Repository {
 
@@ -17,8 +18,10 @@ abstract class Repository {
 
     public function update() {
         $changed = $this->updateFromRemote();
+        $changed = true;
         if ($changed) {
-            // TODO parse changes
+            echo "updating language\n";
+            $this->updateLanguage();
         }
         // TODO update "update date"
     }
@@ -58,6 +61,7 @@ abstract class Repository {
         return $this->buildBasePath() . 'repository/';
     }
 
+    // TODO add caching
     private function buildBasePath() {
         $path = $this->buildDataPath();
         $type = $this->getType();
@@ -76,8 +80,46 @@ abstract class Repository {
         return $base . '/';
     }
 
+    private function updateLanguage() {
+        $languageManager = new LanguageManager();
+        $languageFolders = $this->getLanguageFolder();
+
+        $translations = array();
+        foreach ($languageFolders as $languageFolder) {
+            $languageFolder = rtrim($languageFolder, '/');
+            $languageFolder .= '/';
+            $translated = $languageManager->readLanguages($this->buildBasePath() . "repository/$languageFolder", $languageFolder);
+            $translations = array_merge($translations, $translated);
+        }
+
+        file_put_contents($this->buildBasePath() . 'translation.ser', serialize($translations));
+        echo $this->dataFolder . 'translation.ser';
+    }
+
+    /**
+     * @return string The url to the remote Git repository
+     */
     protected abstract function getRepositoryUrl();
+
+    /**
+     * @return string The default branch to pull
+     */
     protected abstract function getBranch();
+
+    /**
+     * @return string The name of the extension
+     */
     protected abstract function getName();
+
+    /**
+     * @return string Type of repository.
+     */
     protected abstract function getType();
+
+    /**
+     * @return array|string Relative path to the language folder. i.e. lang/ for plugins
+     */
+    protected abstract function getLanguageFolder();
+
+
 }

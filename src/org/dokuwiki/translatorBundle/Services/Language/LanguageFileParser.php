@@ -43,11 +43,11 @@ class LanguageFileParser {
             } elseif ($mode === LanguageFileParser::$MODE_LANG) {
                 $mode = $this->processLang();
             } else {
-                throw new LanguageParseException("Invalid syntax - no code execution allowed");
+                throw new LanguageParseException("Invalid syntax - no code execution allowed. " . substr($this->content, 0, 100));
             }
         }
 
-        return array();
+        return $this;
     }
 
     public function processLang() {
@@ -110,6 +110,9 @@ class LanguageFileParser {
             $pos = strpos($this->content, $stringDelimiter, $offset);
             if ($pos === false) {
                 throw new LanguageParseException('String has no ending.');
+            }
+            if ($pos === 0) {
+                break;
             }
 
             if ($this->content[$pos-1] === '\\') {
@@ -242,4 +245,15 @@ class LanguageFileParser {
         return $string;
     }
 
+    public function getAuthor() {
+        return $this->author;
+    }
+
+    public function getContent() {
+        return $this->content;
+    }
+
+    public function getLang() {
+        return $this->lang;
+    }
 }

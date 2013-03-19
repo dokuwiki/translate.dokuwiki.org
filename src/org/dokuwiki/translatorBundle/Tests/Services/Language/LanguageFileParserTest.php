@@ -139,6 +139,10 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $parser->setContent("'\\''");
         $this->assertEquals("'", $parser->getFirstString());
         $this->assertEquals('', $parser->getContent());
+
+        $parser->setContent('""');
+        $this->assertEquals('', $parser->getFirstString());
+        $this->assertEquals('', $parser->getContent());
     }
 
     function testGetString() {
