@@ -1,29 +1,10 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
-/**
- * @author Dominik Eckelmann
- */
+use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use Doctrine\ORM\NoResultException;
+
 class CoreRepository extends Repository {
-
-    private static $URL = 'git://github.com/splitbrain/dokuwiki.git';
-    private static $BRANCH = 'master';
-
-    protected function getRepositoryUrl() {
-        return CoreRepository::$URL;
-    }
-
-    protected function getBranch() {
-        return CoreRepository::$BRANCH;
-    }
-
-    protected function getName() {
-        return 'dokuwiki';
-    }
-
-    protected function getType() {
-        return Repository::$TYPE_CORE;
-    }
 
     /**
      * @return string Relative path to the language folder. i.e. lang/ for plugins
@@ -43,5 +24,23 @@ class CoreRepository extends Repository {
             'lib/plugins/usermanager/lang',
             'lib/plugins/popularity/lang'
         );
+    }
+
+    /**
+     * @throws RepositoryManagerException
+     * @return RepositoryEntity Database entity of the current repository
+     */
+    protected function getEntity() {
+        try {
+            $query = $this->entityManager->createQuery(
+                    'SELECT repository
+                     FROM dokuwikiTranslatorBundle:RepositoryEntity repository
+                     WHERE repository.type = \'core\' AND repository.name = \'dokuwiki\''
+            );
+            return $query->getSingleResult();
+        } catch (NoResultException $e) {
+            throw new RepositoryManagerException('No entity for core repository found!', 0, $e);
+        }
+
     }
 }

@@ -3,6 +3,8 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Symfony\Component\DependencyInjection\Container;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageManager;
+use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use Doctrine\ORM\EntityManager;
 
 abstract class Repository {
 
@@ -13,8 +15,20 @@ abstract class Repository {
     private $dataFolder;
     private $basePath = null;
 
-    public function __construct($dataFolder) {
+    /**
+     * @var RepositoryEntity Database representation
+     */
+    protected $entity;
+
+    /**
+     * @var EntityManager
+     */
+    protected $entityManager;
+
+    public function __construct($dataFolder, $entityManager) {
         $this->dataFolder = $dataFolder;
+        $this->entityManager = $entityManager;
+        $this->entity = $this->getEntity();
     }
 
     public function update() {
@@ -22,7 +36,9 @@ abstract class Repository {
         if ($changed) {
             $this->updateLanguage();
         }
-        // TODO update "update date"
+
+        $this->entity->setLastUpdate(intval(time()));
+        $this->entityManager->flush($this->entity);
     }
 
     private function updateFromRemote() {
@@ -100,27 +116,39 @@ abstract class Repository {
     /**
      * @return string The url to the remote Git repository
      */
-    protected abstract function getRepositoryUrl();
+    protected function getRepositoryUrl() {
+        return $this->entity->getUrl();
+    }
 
     /**
      * @return string The default branch to pull
      */
-    protected abstract function getBranch();
+    protected function getBranch() {
+        return $this->entity->getBranch();
+    }
 
     /**
      * @return string The name of the extension
      */
-    protected abstract function getName();
+    protected function getName() {
+        return $this->entity->getName();
+    }
 
     /**
      * @return string Type of repository.
      */
-    protected abstract function getType();
+    protected function getType() {
+        return $this->entity->getType();
+    }
 
     /**
      * @return array|string Relative path to the language folder. i.e. lang/ for plugins
      */
     protected abstract function getLanguageFolder();
 
+    /**
+     * @return RepositoryEntity Database entity of the current repository
+     */
+    protected abstract function getEntity();
 
 }

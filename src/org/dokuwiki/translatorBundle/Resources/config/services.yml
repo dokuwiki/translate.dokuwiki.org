@@ -10,4 +10,4 @@ services:
         class: "%repository.class%"
     repository_manager:
         class: "%repository_manager.class%"
-        arguments: ["%data%"]
+        arguments: ["%data%", @doctrine.orm.entity_manager ]
