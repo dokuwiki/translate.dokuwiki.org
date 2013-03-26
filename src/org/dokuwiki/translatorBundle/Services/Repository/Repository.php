@@ -25,10 +25,10 @@ abstract class Repository {
      */
     protected $entityManager;
 
-    public function __construct($dataFolder, $entityManager) {
+    public function __construct($dataFolder, $entityManager, $entity) {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
-        $this->entity = $this->getEntity();
+        $this->entity = $entity;
     }
 
     public function update() {
@@ -145,10 +145,4 @@ abstract class Repository {
      * @return array|string Relative path to the language folder. i.e. lang/ for plugins
      */
     protected abstract function getLanguageFolder();
-
-    /**
-     * @return RepositoryEntity Database entity of the current repository
-     */
-    protected abstract function getEntity();
-
 }

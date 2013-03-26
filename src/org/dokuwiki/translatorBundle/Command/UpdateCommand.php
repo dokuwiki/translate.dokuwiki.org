@@ -25,9 +25,14 @@ class UpdateCommand extends ContainerAwareCommand {
     protected function execute(InputInterface $input, OutputInterface $output) {
         $this->setupGit();
         $this->repositoryManager = $this->getContainer()->get('repository_manager');
-
-        $coreRepository = $this->repositoryManager->getCoreRepository();
-        $coreRepository->update();
+        $repositories = $this->repositoryManager->getRepositoriesToUpdate();
+        echo 'found ' . count($repositories) .' repositories';
+        foreach ($repositories as $repository) {
+            /**
+             * @var \org\dokuwiki\translatorBundle\Services\Repository\Repository $repository
+             */
+            $repository->update();
+        }
     }
 
     private function setupGit() {
