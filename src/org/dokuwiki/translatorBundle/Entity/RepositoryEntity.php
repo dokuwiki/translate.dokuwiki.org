@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="repository")
  */
-class Repository {
+class RepositoryEntity {
 
     /**
      * @ORM\Id
@@ -79,7 +79,7 @@ class Repository {
      * Set url
      *
      * @param string $url
-     * @return Repository
+     * @return RepositoryEntity
      */
     public function setUrl($url)
     {
@@ -102,7 +102,7 @@ class Repository {
      * Set branch
      *
      * @param string $branch
-     * @return Repository
+     * @return RepositoryEntity
      */
     public function setBranch($branch)
     {
@@ -125,7 +125,7 @@ class Repository {
      * Set lastUpdate
      *
      * @param integer $lastUpdate
-     * @return Repository
+     * @return RepositoryEntity
      */
     public function setLastUpdate($lastUpdate)
     {
@@ -148,7 +148,7 @@ class Repository {
      * Set name
      *
      * @param string $name
-     * @return Repository
+     * @return RepositoryEntity
      */
     public function setName($name)
     {
@@ -171,7 +171,7 @@ class Repository {
      * Set author
      *
      * @param string $author
-     * @return Repository
+     * @return RepositoryEntity
      */
     public function setAuthor($author)
     {
@@ -194,7 +194,7 @@ class Repository {
      * Set description
      *
      * @param string $description
-     * @return Repository
+     * @return RepositoryEntity
      */
     public function setDescription($description)
     {
@@ -217,7 +217,7 @@ class Repository {
      * Set tags
      *
      * @param string $tags
-     * @return Repository
+     * @return RepositoryEntity
      */
     public function setTags($tags)
     {
@@ -240,7 +240,7 @@ class Repository {
      * Set type
      *
      * @param string $type
-     * @return Repository
+     * @return RepositoryEntity
      */
     public function setType($type)
     {

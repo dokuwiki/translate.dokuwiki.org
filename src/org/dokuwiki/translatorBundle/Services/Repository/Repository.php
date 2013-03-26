@@ -19,7 +19,6 @@ abstract class Repository {
 
     public function update() {
         $changed = $this->updateFromRemote();
-        $changed = true;
         if ($changed) {
             $this->updateLanguage();
         }
@@ -49,11 +48,12 @@ abstract class Repository {
             $this->git = \Git::create($this->getRepositoryPath());
             $this->git->run('remote add origin ' . $this->getRepositoryUrl());
         }
+        // empty result -> new, contains already up2date -> unchanged, else updated
         $result = $this->git->pull('origin', $branch);
-        if ($result === '') {
-            return true;
-        } else {
+        if (strstr($result, 'Already up-to-date') !== false) {
             return false;
+        } else {
+            return true;
         }
     }
 
