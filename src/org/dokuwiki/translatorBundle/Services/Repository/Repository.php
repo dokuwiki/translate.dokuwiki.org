@@ -107,10 +107,19 @@ abstract class Repository {
             $languageFolder = rtrim($languageFolder, '/');
             $languageFolder .= '/';
             $translated = $languageManager->readLanguages($this->buildBasePath() . "repository/$languageFolder", $languageFolder);
-            $translations = array_merge($translations, $translated);
+            $translations = array_merge_recursive($translations, $translated);
         }
 
-        file_put_contents($this->buildBasePath() . 'translation.ser', serialize($translations));
+        $this->saveLanguage($translations);
+    }
+
+    private function saveLanguage($translations) {
+        $langFolder = $this->buildBasePath() . 'lang/';
+        mkdir($langFolder);
+
+        foreach ($translations as $langCode => $files) {
+            file_put_contents("$langFolder$langCode.ser", serialize($files));
+        }
     }
 
     /**
