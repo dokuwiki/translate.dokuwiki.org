@@ -115,7 +115,7 @@ abstract class Repository {
 
     private function saveLanguage($translations) {
         $langFolder = $this->buildBasePath() . 'lang/';
-        mkdir($langFolder);
+        mkdir($langFolder, 0777, true);
 
         foreach ($translations as $langCode => $files) {
             file_put_contents("$langFolder$langCode.ser", serialize($files));

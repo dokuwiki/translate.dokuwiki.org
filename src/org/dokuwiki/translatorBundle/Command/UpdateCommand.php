@@ -23,16 +23,48 @@ class UpdateCommand extends ContainerAwareCommand {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
+        if ($this->isLock()) {
+            $output->writeln('Updater is already running');
+            return;
+        }
+        $this->lock();
+        try {
+            $this->runUpdate();
+        } catch (\PDOException $e) {
+            $output->writeln('Cannot connect to database');
+        }
+        $this->unlock();
+    }
+
+    private function runUpdate() {
         $this->setupGit();
         $this->repositoryManager = $this->getContainer()->get('repository_manager');
         $repositories = $this->repositoryManager->getRepositoriesToUpdate();
-        echo 'found ' . count($repositories) .' repositories';
-        foreach ($repositories as $repository) {
+        echo 'found ' . count($repositories) . ' repositories';
+        foreach($repositories as $repository) {
             /**
              * @var \org\dokuwiki\translatorBundle\Services\Repository\Repository $repository
              */
             $repository->update();
         }
+    }
+
+    private function lock() {
+        touch($this->getLockFilePath());
+    }
+
+    private function unlock() {
+        unlink($this->getLockFilePath());
+    }
+
+    private function isLock() {
+        return (file_exists($this->getLockFilePath()));
+    }
+
+    private function getLockFilePath() {
+        $path = $this->getContainer()->getParameter('data');
+        $path .= '/dokuwiki-importer.lock';
+        return $path;
     }
 
     private function setupGit() {
