@@ -32,6 +32,7 @@ abstract class Repository {
     }
 
     public function update() {
+        $this->lock();
         $changed = $this->updateFromRemote();
         if ($changed) {
             $this->updateLanguage();
@@ -39,6 +40,7 @@ abstract class Repository {
 
         $this->entity->setLastUpdate(intval(time()));
         $this->entityManager->flush($this->entity);
+        $this->unlock();
     }
 
     private function updateFromRemote() {
@@ -120,6 +122,24 @@ abstract class Repository {
         foreach ($translations as $langCode => $files) {
             file_put_contents("$langFolder$langCode.ser", serialize($files));
         }
+    }
+
+    public function isLocked() {
+        return file_exists($this->getLockPath());
+    }
+
+    private function lock() {
+        touch($this->getLockPath());
+    }
+
+    private function unlock() {
+        @unlink($this->getLockPath());
+    }
+
+    private function getLockPath() {
+        $path = $this->buildBasePath();
+        $path .= 'locked';
+        return $path;
     }
 
     /**
