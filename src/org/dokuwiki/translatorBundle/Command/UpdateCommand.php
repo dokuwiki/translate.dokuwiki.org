@@ -29,18 +29,18 @@ class UpdateCommand extends ContainerAwareCommand {
         }
         $this->lock();
         try {
-            $this->runUpdate();
+            $this->runUpdate($output);
         } catch (\PDOException $e) {
             $output->writeln('Cannot connect to database');
         }
         $this->unlock();
     }
 
-    private function runUpdate() {
+    private function runUpdate(OutputInterface $output) {
         $this->setupGit();
         $this->repositoryManager = $this->getContainer()->get('repository_manager');
         $repositories = $this->repositoryManager->getRepositoriesToUpdate();
-        echo 'found ' . count($repositories) . ' repositories';
+        $output->writeln('found ' . count($repositories) . ' repositories');
         foreach($repositories as $repository) {
             /**
              * @var \org\dokuwiki\translatorBundle\Services\Repository\Repository $repository
