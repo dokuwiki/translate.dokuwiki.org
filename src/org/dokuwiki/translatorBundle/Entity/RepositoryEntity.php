@@ -42,6 +42,26 @@ class RepositoryEntity {
     protected $name;
 
     /**
+     * @param string $email
+     */
+    public function setEmail($email) {
+        $this->email = $email;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail() {
+        return $this->email;
+    }
+
+    /**
+     * @ORM\Column(type="string", length=355)
+     * @var string
+     */
+    protected $email;
+
+    /**
      * @ORM\Column(type="string", length=100)
      * @var string
      */

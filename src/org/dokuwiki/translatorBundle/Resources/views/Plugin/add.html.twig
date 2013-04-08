@@ -36,36 +36,15 @@
         </div>
 
         <div class="span8 offset2">
-            <form action="{{ path('dokuwiki_translator_homepage') }}" class="form-horizontal" method="post">
-                <div class="control-group">
-                    <div class="control-label">
-                        <label for="formMail">E-Mail address</label>
-                    </div>
-                    <div class="controls">
-                        <input id="formMail" type="text" name="mail" class="input-xlarge"
-                                placeholder="user@example.com" />
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <div class="control-label">
-                        <label for="formGit">Git URL</label>
-                    </div>
-                    <div class="controls">
-                        <input id="formGit" type="text" name="git" class="input-xlarge"
-                                placeholder="git://github.com/splitbrain/dokuwiki.git" />
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <div class="control-label">
-                        <label for="branch">Branch</label>
-                    </div>
-                    <div class="controls">
-                        <input id="branch" type="text" name="branch" class="input-xlarge"
-                                value="master">
-                    </div>
-                </div>
+            {% if errors is defined %}
+                <ul>
+                {% for error in errors %}
+                    <li>{{ error.message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            <form action="{{ path('dokuwiki_translator_plugin_add') }}" class="form-horizontal" method="post">
+                {{ form_widget(form) }}
 
                 <div class="controls">
                     <input type="submit" class="btn btn-primary" value="Add my plug-in!" />
@@ -74,7 +53,6 @@
                         Abort
                     </a>
                 </div>
-
             </form>
         </div>
     </div>

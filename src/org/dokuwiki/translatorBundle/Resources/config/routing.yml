@@ -3,8 +3,8 @@ dokuwiki_translator_homepage:
     defaults: { _controller: dokuwikiTranslatorBundle:Default:index }
 
 dokuwiki_translator_plugin_add:
-    pattern:  /plugin/add
-    defaults: { _controller: dokuwikiTranslatorBundle:Plugin:add}
+    pattern:  /plugin
+    defaults: { _controller: dokuwikiTranslatorBundle:Plugin:index}
 
 dokuwiki_translate:
     pattern:  /translate
