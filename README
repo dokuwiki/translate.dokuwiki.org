@@ -3,6 +3,10 @@
 ===== Setup =====
 
 Set variables in src/org/dokuwiki/translatorBundle/Resources/config/services.yml
+Set db/mail config in app/config/parameters.yml
+
+see http://symfony.com/doc/current/cookbook/email/email.html#configuration
+
   composer install
   php app/console cache:clear
   php app/console cache:clear --env=prod

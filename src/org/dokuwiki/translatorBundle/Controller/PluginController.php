@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Form\RepositoryCreateType;
-use org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
 
 class PluginController extends Controller {
 
@@ -24,16 +23,7 @@ class PluginController extends Controller {
         if ($request->isMethod('POST')) {
             $form->bind($request);
             if ($form->isValid()) {
-                $api = $this->get('doku_wiki_repository_api');
-                $api->mergePluginInfo($repository);
-                $repository->setLastUpdate(0);
-                $repository->setState(RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);
-                // FIXME email sending
-
-                $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($repository);
-                $entityManager->flush();
-
+                $this->addPlugin($repository);
                 $data['repository'] = $repository;
                 return $this->render('dokuwikiTranslatorBundle:Plugin:added.html.twig', $data);
             }
@@ -44,7 +34,29 @@ class PluginController extends Controller {
         return $this->render('dokuwikiTranslatorBundle:Plugin:add.html.twig', $data);
     }
 
-    public function thanksAction() {
+    private function addPlugin(RepositoryEntity &$repository) {
+        $api = $this->get('doku_wiki_repository_api');
 
+        $api->mergePluginInfo($repository);
+        $repository->setLastUpdate(0);
+        $repository->setState(RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);
+        $repository->setActivationKey($this->generateActivationKey($repository));
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($repository);
+        $entityManager->flush();
+
+        $message = \Swift_Message::newInstance();
+        $message->setSubject('Registration');
+        $message->setTo($repository->getEmail());
+        $message->setFrom($this->container->getParameter('mailer_from'));
+        $data = array(
+            'repository' => $repository,
+        );
+        $message->setBody($this->renderView('dokuwikiTranslatorBundle:Mail:pluginAdded.txt.twig', $data));
+        $this->get('mailer')->send($message);
+    }
+
+    private function generateActivationKey(RepositoryEntity $repository) {
+        return md5($repository->getName() . time());
     }
 }

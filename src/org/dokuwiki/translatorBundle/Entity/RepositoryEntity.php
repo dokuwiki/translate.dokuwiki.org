@@ -106,6 +106,12 @@ class RepositoryEntity {
     protected $errorCount = 0;
 
     /**
+     * @ORM\Column(type="string", length=100)
+     * @var string
+     */
+    protected $activationKey = '';
+
+    /**
      * @param string $errorCount
      */
     public function setErrorCount($errorCount) {
@@ -381,4 +387,20 @@ class RepositoryEntity {
     {
         return $this->type;
     }
+
+    /**
+     * @param string $activationKey
+     */
+    public function setActivationKey($activationKey) {
+        $this->activationKey = $activationKey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getActivationKey() {
+        return $this->activationKey;
+    }
+
+
 }
