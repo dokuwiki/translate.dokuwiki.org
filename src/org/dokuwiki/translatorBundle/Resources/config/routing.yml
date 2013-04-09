@@ -8,7 +8,7 @@ dokuwiki_translator_plugin_add:
 
 dokuwiki_translator_plugin_activate:
         pattern:  /plugin/{name}/activate/{key}
-        defaults: { _controller: dokuwikiTranslatorBundle:Plugin:index}
+        defaults: { _controller: dokuwikiTranslatorBundle:Plugin:activate}
 
 dokuwiki_translate:
     pattern:  /translate

@@ -2,6 +2,8 @@
 
 namespace org\dokuwiki\translatorBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
@@ -58,5 +60,36 @@ class PluginController extends Controller {
 
     private function generateActivationKey(RepositoryEntity $repository) {
         return md5($repository->getName() . time());
+    }
+
+    public function activateAction($name, $key) {
+        /**
+         * @var $entityManager EntityManager
+         */
+        $entityManager = $this->getDoctrine()->getManager();
+        $query = $entityManager->createQuery(
+            'SELECT repository
+             FROM dokuwikiTranslatorBundle:RepositoryEntity repository
+             WHERE repository.name = :name
+             AND repository.activationKey = :key
+             AND repository.state = :state'
+        );
+        $query->setParameter('name', $name);
+        $query->setParameter('key', $key);
+        $query->setParameter('state', RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);
+        try {
+            $repository = $query->getSingleResult();
+            $this->activateRepository($repository);
+            $entityManager->merge($repository);
+            $entityManager->flush();
+            return $this->redirect($this->generateUrl('dokuwiki_translate_plugin', array('name' => $repository->getName())));
+        } catch (NoResultException $ignored) {
+            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+        }
+    }
+
+    private function activateRepository(RepositoryEntity $repository) {
+        $repository->setState(RepositoryEntity::$STATE_ACTIVE);
+        $repository->setActivationKey('');
     }
 }
