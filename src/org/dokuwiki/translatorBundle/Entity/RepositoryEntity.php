@@ -42,18 +42,16 @@ class RepositoryEntity {
     protected $name;
 
     /**
-     * @param string $email
+     * @ORM\Column(type="integer")
+     * @var int
      */
-    public function setEmail($email) {
-        $this->email = $email;
-    }
+    protected $popularity;
 
     /**
-     * @return string
+     * @ORM\Column(type="string", length=200)
+     * @var string
      */
-    public function getEmail() {
-        return $this->email;
-    }
+    protected $displayName;
 
     /**
      * @ORM\Column(type="string", length=355)
@@ -84,6 +82,48 @@ class RepositoryEntity {
      * @var string
      */
     protected $type;
+
+    /**
+     * @param string $displayName
+     */
+    public function setDisplayName($displayName) {
+        $this->displayName = $displayName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDisplayName() {
+        return $this->displayName;
+    }
+
+    /**
+     * @param int $popularity
+     */
+    public function setPopularity($popularity) {
+        $this->popularity = $popularity;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPopularity() {
+        return $this->popularity;
+    }
+
+    /**
+     * @param string $email
+     */
+    public function setEmail($email) {
+        $this->email = $email;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail() {
+        return $this->email;
+    }
 
     /**
      * Get id
