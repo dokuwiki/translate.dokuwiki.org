@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 class RepositoryCreateType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('name');
+        $builder->add('name', 'text', array('label' => 'Plugin name'));
         $builder->add('email');
         $builder->add('url');
         $builder->add('branch');
