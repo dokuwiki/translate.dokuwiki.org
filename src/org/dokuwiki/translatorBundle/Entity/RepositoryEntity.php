@@ -9,6 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class RepositoryEntity {
 
+    public static $STATE_WAITING_FOR_APPROVAL = 'waiting';
+    public static $STATE_ACTIVE = 'active';
+    public static $STATE_ERROR = 'error';
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -83,6 +87,65 @@ class RepositoryEntity {
      */
     protected $type;
 
+    /**
+     * @ORM\Column(type="string", length=100)
+     * @var string
+     */
+    protected $state;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @var string
+     */
+    protected $errorMsg = '';
+
+    /**
+     * @ORM\Column(type="integer")
+     * @var string
+     */
+    protected $errorCount = 0;
+
+    /**
+     * @param string $errorCount
+     */
+    public function setErrorCount($errorCount) {
+        $this->errorCount = $errorCount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getErrorCount() {
+        return $this->errorCount;
+    }
+
+    /**
+     * @param string $errorMsg
+     */
+    public function setErrorMsg($errorMsg) {
+        $this->errorMsg = $errorMsg;
+    }
+
+    /**
+     * @return string
+     */
+    public function getErrorMsg() {
+        return $this->errorMsg;
+    }
+
+    /**
+     * @param string $state
+     */
+    public function setState($state) {
+        $this->state = $state;
+    }
+
+    /**
+     * @return string
+     */
+    public function getState() {
+        return $this->state;
+    }
     /**
      * @param string $displayName
      */

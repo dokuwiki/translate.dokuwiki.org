@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Form\RepositoryCreateType;
+use org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
 
 class PluginController extends Controller {
 
@@ -23,16 +24,27 @@ class PluginController extends Controller {
         if ($request->isMethod('POST')) {
             $form->bind($request);
             if ($form->isValid()) {
-                // FIXME prepare repository with information from dokuwiki api
+                $api = $this->get('doku_wiki_repository_api');
+                $api->mergePluginInfo($repository);
+                $repository->setLastUpdate(0);
+                $repository->setState(RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);
+                // FIXME email sending
+
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($repository);
                 $entityManager->flush();
-                return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+
+                $data['repository'] = $repository;
+                return $this->render('dokuwikiTranslatorBundle:Plugin:added.html.twig', $data);
             }
         }
 
         $data['form'] = $form->createView();
 
         return $this->render('dokuwikiTranslatorBundle:Plugin:add.html.twig', $data);
+    }
+
+    public function thanksAction() {
+
     }
 }

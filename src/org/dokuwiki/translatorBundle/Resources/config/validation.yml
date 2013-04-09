@@ -10,4 +10,8 @@ org\dokuwiki\translatorBundle\Entity\RepositoryEntity:
         email:
             - NotBlank: ~
             - Email: ~
+        name:
+            - NotBlank: ~
+            - Regex: "/^\S+$/"
+            - org\dokuwiki\translatorBundle\Validator\PluginName: ~
 

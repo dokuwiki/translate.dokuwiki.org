@@ -48,6 +48,10 @@ class DokuWikiRepositoryAPI {
         return implode(', ', $result);
     }
 
+    /**
+     * @param $id
+     * @return bool|RepositoryEntity
+     */
     public function getPluginInfo($id) {
         $this->loadCache();
         $id = strtolower($id);
@@ -56,6 +60,17 @@ class DokuWikiRepositoryAPI {
         }
 
         return $this->cache[$id];
+    }
+
+    public function mergePluginInfo(RepositoryEntity &$entity) {
+        $info = $this->getPluginInfo($entity->getName());
+
+        $entity->setAuthor($info->getAuthor());
+        $entity->setDescription($info->getDescription());
+        $entity->setType($info->getType());
+        $entity->setTags($info->getTags());
+        $entity->setDisplayName($info->getDisplayName());
+        $entity->setPopularity($info->getPopularity());
     }
 
     private function loadCache() {

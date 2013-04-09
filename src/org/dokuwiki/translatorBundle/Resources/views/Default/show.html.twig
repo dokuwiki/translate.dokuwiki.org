@@ -83,31 +83,7 @@
             </div>
 
             <div class="span4">
-                <table class="table table-striped table-condensed">
-                    <caption>
-                        <b>Plug-In details</b>
-                    </caption>
-                    <tr>
-                        <th>Plug-in</th>
-                        <td><a href="https://www.dokuwiki.org/plugin:data">Data</a></td>
-                    </tr>
-                    <tr>
-                        <th>Author</th>
-                        <td>Andreas Gohr</td>
-                    </tr>
-                    <tr>
-                        <th>Description</th>
-                        <td>Manage your wiki's configuration settings (bundled with DokuWiki)</td>
-                    </tr>
-                    <tr>
-                        <th>Translations</th>
-                        <td>8</td>
-                    </tr>
-                    <tr>
-                        <th>Tags</th>
-                        <td>!bundled, acl, groups, users</td>
-                    </tr>
-                </table>
+                {% include 'dokuwikiTranslatorBundle:Template:box.html.twig' %}
             </div>
         </div>
     </div>
