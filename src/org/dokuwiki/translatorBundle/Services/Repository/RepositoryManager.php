@@ -17,9 +17,14 @@ class RepositoryManager {
      */
     private $entityManager;
 
-    function __construct($dataFolder, EntityManager $entityManager) {
+    private $repositoryAgeToUpdate;
+    private $maxRepositoriesToUpdatePerRun;
+
+    function __construct($dataFolder, EntityManager $entityManager, $repositoryAgeToUpdate, $maxRepositoriesToUpdatePerRun) {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
+        $this->repositoryAgeToUpdate = $repositoryAgeToUpdate;
+        $this->maxRepositoriesToUpdatePerRun = $maxRepositoriesToUpdatePerRun;
     }
 
     public function getRepositoriesToUpdate() {
@@ -44,8 +49,8 @@ class RepositoryManager {
              WHERE repository.lastUpdate < :timeToUpdate
              ORDER BY repository.lastUpdate ASC'
         );
-        $query->setParameter('timeToUpdate', time() - 60*60*24);
-        $query->setMaxResults(10);
+        $query->setParameter('timeToUpdate', time() - $this->repositoryAgeToUpdate);
+        $query->setMaxResults($this->maxRepositoriesToUpdatePerRun);
         try {
             return $query->getResult();
         } catch (NoResultException $ignored) {
