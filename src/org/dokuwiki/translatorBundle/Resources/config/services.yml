@@ -18,7 +18,7 @@ services:
         arguments: ["%data%", @doctrine.orm.entity_manager, "%reprositoryUpdateAge%", "%maxRepositoriesToUpdatePerRun%" ]
     doku_wiki_repository_api:
         class: "%doku_wiki_repository_api.class%"
-        arguments: ["%data%"]
+        arguments: ["%data%", @doctrine.orm.entity_manager]
 
     plugin_name_validator:
         class: "%plugin_name_validator.class%"

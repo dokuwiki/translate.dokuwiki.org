@@ -2,6 +2,8 @@
 
 namespace org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\Services\Repository\Repository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 
@@ -9,9 +11,11 @@ class DokuWikiRepositoryAPI {
 
     private $cachePath;
     private $cache = null;
+    private $entityManager;
 
-    function __construct($dataFolder) {
+    function __construct($dataFolder, EntityManager $entityManager) {
         $this->cachePath = "$dataFolder/dokuwikiRepositoryAPI.ser";
+        $this->entityManager = $entityManager;
     }
 
     public function updateCache() {
@@ -31,8 +35,10 @@ class DokuWikiRepositoryAPI {
             $repository->setDisplayName(strval($plugin->name));
             $repository->setPopularity(intval($plugin->popularity));
             $cache[$repository->getName()] = $repository;
-        }
 
+            $this->updateRepositoryInformation($repository);
+        }
+        $this->entityManager->flush();
         file_put_contents($this->cachePath, serialize($cache));
         $this->cache = $cache;
 
@@ -46,6 +52,22 @@ class DokuWikiRepositoryAPI {
         }
 
         return implode(', ', $result);
+    }
+
+    private function updateRepositoryInformation(RepositoryEntity $repository) {
+        $query = $this->entityManager->createQuery(
+            'SELECT repository
+             FROM dokuwikiTranslatorBundle:RepositoryEntity repository
+             WHERE repository.name = :name AND repository.type = \'plugin\'');
+        $query->setParameter('name', $repository->getName());
+        try {
+            $current = $query->getSingleResult();
+        } catch (NoResultException $ignored) {
+            return;
+        }
+
+        $this->mergeRepository($current, $repository);
+        $this->entityManager->merge($current);
     }
 
     /**
@@ -64,13 +86,16 @@ class DokuWikiRepositoryAPI {
 
     public function mergePluginInfo(RepositoryEntity &$entity) {
         $info = $this->getPluginInfo($entity->getName());
+        $this->mergeRepository($entity, $info);
+    }
 
-        $entity->setAuthor($info->getAuthor());
-        $entity->setDescription($info->getDescription());
-        $entity->setType($info->getType());
-        $entity->setTags($info->getTags());
-        $entity->setDisplayName($info->getDisplayName());
-        $entity->setPopularity($info->getPopularity());
+    private function mergeRepository(RepositoryEntity &$left, RepositoryEntity &$other) {
+        $left->setAuthor($other->getAuthor());
+        $left->setDescription($other->getDescription());
+        $left->setType($other->getType());
+        $left->setTags($other->getTags());
+        $left->setDisplayName($other->getDisplayName());
+        $left->setPopularity($other->getPopularity());
     }
 
     private function loadCache() {
