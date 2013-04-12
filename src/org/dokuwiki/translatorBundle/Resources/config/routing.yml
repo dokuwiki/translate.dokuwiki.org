@@ -2,6 +2,10 @@ dokuwiki_translator_homepage:
     pattern:  /
     defaults: { _controller: dokuwikiTranslatorBundle:Default:index }
 
+dokuwiki_translator_show_plugin:
+    pattern:  /plugin/{name}
+    defaults: { _controller: dokuwikiTranslatorBundle:Default:show}
+
 dokuwiki_translator_plugin_add:
     pattern:  /plugin
     defaults: { _controller: dokuwikiTranslatorBundle:Plugin:index}
@@ -19,5 +23,5 @@ dokuwiki_translate_plugin:
     defaults: { _controller: dokuwikiTranslatorBundle:Translation:translatePlugin}
 
 dokuwiki_translator_show:
-    pattern:  /show/{name}
+    pattern:  /dokuwiki
     defaults: { _controller: dokuwikiTranslatorBundle:Default:show}

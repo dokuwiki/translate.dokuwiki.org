@@ -58,14 +58,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for i in 0..200 %}
-                    {% if i == 0 %}
-                        <tr class="info">
-                    {% else %}
-                        <tr>
-                    {% endif %}
+                <tr class="info">
                     <td class="name">
-                        <a href="{{ path("dokuwiki_translator_show", {'name':'DokuWiki'}) }}">DokuWiki</a>
+                        <a href="{{ path("dokuwiki_translator_show") }}">{{ coreRepository.displayName }}</a>
                     </td>
                     <td class="translation-progress">
                         <div class="progress progress-striped progress-success">
@@ -76,11 +71,25 @@
                         40%
                     </td>
                     <td class="translation-update">
-                        {% if i == 0 %}
                             <a href="{{ path("dokuwiki_translate") }}">update</a>
-                        {% else %}
-                            <a href="{{ path("dokuwiki_translate_plugin", {"name":"data"}) }}">update</a>
-                        {% endif %}
+                    </td>
+                </tr>
+
+                {% for repository in repositories %}
+                        <tr>
+                    <td class="name">
+                        <a href="{{ path("dokuwiki_translator_show_plugin", {'name': repository.name}) }}">{{ repository.displayName|capitalize }}</a>
+                    </td>
+                    <td class="translation-progress">
+                        <div class="progress progress-striped progress-success">
+                            <div class="bar" style="width: 40%"></div>
+                        </div>
+                    </td>
+                    <td class="translation-progress-text">
+                        40%
+                    </td>
+                    <td class="translation-update">
+                            <a href="{{ path("dokuwiki_translate_plugin", {"name": repository.name}) }}">update</a>
                     </td>
                     </tr>
                 {% endfor %}
