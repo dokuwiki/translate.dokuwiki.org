@@ -64,11 +64,11 @@
                     </td>
                     <td class="translation-progress">
                         <div class="progress progress-striped progress-success">
-                            <div class="bar" style="width: 40%"></div>
+                            <div class="bar" style="width: {{ coreRepository.completionPercent }}%"></div>
                         </div>
                     </td>
                     <td class="translation-progress-text">
-                        40%
+                        {{ coreRepository.completionPercent }}%
                     </td>
                     <td class="translation-update">
                             <a href="{{ path("dokuwiki_translate") }}">update</a>
@@ -82,11 +82,15 @@
                     </td>
                     <td class="translation-progress">
                         <div class="progress progress-striped progress-success">
-                            <div class="bar" style="width: 40%"></div>
+                            <div class="bar" style="width: {{ repository.completionPercent }}%"></div>
                         </div>
                     </td>
                     <td class="translation-progress-text">
-                        40%
+                        {% if repository.completionPercent is null %}
+                            0%
+                        {% else %}
+                        {{ repository.completionPercent }}%
+                        {% endif %}
                     </td>
                     <td class="translation-update">
                             <a href="{{ path("dokuwiki_translate_plugin", {"name": repository.name}) }}">update</a>
@@ -101,7 +105,7 @@
             <div class="well well-small">
                 <label for="language">Showing translation status for</label>
                 <select id="language">
-                    <option>English</option>
+                    <option>{{ language }}</option>
                 </select>
 
                 <label for="new__translation">

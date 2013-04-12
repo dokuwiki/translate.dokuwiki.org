@@ -1,6 +1,7 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -112,6 +113,23 @@ class RepositoryEntity {
      * @var string
      */
     protected $activationKey = '';
+
+    /**
+     * @ORM\OneToMany(targetEntity="LanguageStatsEntity", mappedBy="repository")
+     */
+    protected $translations;
+
+    function __construct() {
+        $this->translations = new ArrayCollection();
+    }
+
+    public function setTranslations($translations) {
+        $this->translations = $translations;
+    }
+
+    public function getTranslations() {
+        return $this->translations;
+    }
 
     /**
      * @param string $errorCount
