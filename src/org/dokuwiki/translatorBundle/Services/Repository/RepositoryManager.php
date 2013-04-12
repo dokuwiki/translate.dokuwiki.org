@@ -17,14 +17,21 @@ class RepositoryManager {
      */
     private $entityManager;
 
+    /**
+     * @var RepositoryStats
+     */
+    private $repositoryStats;
+
     private $repositoryAgeToUpdate;
     private $maxRepositoriesToUpdatePerRun;
 
-    function __construct($dataFolder, EntityManager $entityManager, $repositoryAgeToUpdate, $maxRepositoriesToUpdatePerRun) {
+    function __construct($dataFolder, EntityManager $entityManager, $repositoryAgeToUpdate,
+                $maxRepositoriesToUpdatePerRun, RepositoryStats $repositoryStats) {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
         $this->repositoryAgeToUpdate = $repositoryAgeToUpdate;
         $this->maxRepositoriesToUpdatePerRun = $maxRepositoriesToUpdatePerRun;
+        $this->repositoryStats = $repositoryStats;
     }
 
     public function getRepositoriesToUpdate() {
@@ -35,7 +42,7 @@ class RepositoryManager {
              * @var RepositoryEntity $repository
              */
             if ($repository->getType() === Repository::$TYPE_CORE) {
-                $result[] = new CoreRepository($this->dataFolder, $this->entityManager, $repository);
+                $result[] = new CoreRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats);
             }
         }
 

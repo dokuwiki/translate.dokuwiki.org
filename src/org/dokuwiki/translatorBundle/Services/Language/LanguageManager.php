@@ -1,8 +1,6 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
-use Doctrine\Tests\ORM\Functional\Locking\LockTest;
-
 class LanguageManager {
 
     /**
@@ -14,7 +12,7 @@ class LanguageManager {
      * @throws NoDefaultLanguageException
      * @return array()
      */
-    public function readLanguages($langFolder, $prefix = '') {
+    public static  function readLanguages($langFolder, $prefix = '') {
         if (!is_dir($langFolder)) {
             throw new NoLanguageFolderException();
         }
@@ -25,19 +23,19 @@ class LanguageManager {
 
         $folders = scandir($langFolder);
         $languages = array();
-        foreach ($folders as $folder) {
-            if ($folder === '.' || $folder === '..') {
+        foreach ($folders as $language) {
+            if ($language === '.' || $language === '..') {
                 continue;
             }
-            if (!is_dir("$langFolder/$folder")) {
+            if (!is_dir("$langFolder/$language")) {
                 continue;
             }
-            $languages[$folder] = $this->readLanguage("$langFolder/$folder", "$prefix$folder/");
+            $languages[$language] = LanguageManager::readLanguage("$langFolder/$language", "$prefix$language/");
         }
         return $languages;
     }
 
-    private function readLanguage($languageFolder, $prefix) {
+    private static function readLanguage($languageFolder, $prefix) {
         $language = array();
 
         $folders = scandir($languageFolder);

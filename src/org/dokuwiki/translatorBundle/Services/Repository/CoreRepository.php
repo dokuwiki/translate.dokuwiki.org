@@ -17,9 +17,7 @@ class CoreRepository extends Repository {
             'lib/plugins/plugin/lang',
             'lib/plugins/popularity/lang',
             'lib/plugins/revert/lang',
-            'lib/plugins/popularity/lang',
-            'lib/plugins/usermanager/lang',
-            'lib/plugins/popularity/lang'
+            'lib/plugins/usermanager/lang'
         );
     }
 }

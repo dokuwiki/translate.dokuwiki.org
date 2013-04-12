@@ -1,21 +1,23 @@
 parameters:
     git_bin: C:\Program Files (x86)\Git\bin\git.exe # path to the git executable
     data: D:\Temp\test 1                            # path to the working directory
-    reprositoryUpdateAge: 86400                     # time since last update per repository (sec)
+    reprositoryUpdateAge: 1                         # time since last update per repository (sec) 86400 -> 1d
     maxRepositoriesToUpdatePerRun: 10               # max repositories to update per command run
 
 
     repository.class: org\dokuwiki\translatorBundle\Services\Repository\Repository
     repository_manager.class: org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager
+    repository_stats.class: org\dokuwiki\translatorBundle\Services\Repository\RepositoryStats
     doku_wiki_repository_api.class: org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI
     plugin_name_validator.class: org\dokuwiki\translatorBundle\Validator\PluginNameValidator
 
 services:
-    repository:
-        class: "%repository.class%"
     repository_manager:
         class: "%repository_manager.class%"
-        arguments: ["%data%", @doctrine.orm.entity_manager, "%reprositoryUpdateAge%", "%maxRepositoriesToUpdatePerRun%" ]
+        arguments: ["%data%", @doctrine.orm.entity_manager, "%reprositoryUpdateAge%", "%maxRepositoriesToUpdatePerRun%", @repository_stats ]
+    repository_stats:
+        class: "%repository_stats.class%"
+        arguments: [ @doctrine.orm.entity_manager]
     doku_wiki_repository_api:
         class: "%doku_wiki_repository_api.class%"
         arguments: ["%data%", @doctrine.orm.entity_manager]

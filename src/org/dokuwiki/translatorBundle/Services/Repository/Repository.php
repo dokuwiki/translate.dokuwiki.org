@@ -25,13 +25,23 @@ abstract class Repository {
      */
     protected $entityManager;
 
-    public function __construct($dataFolder, $entityManager, $entity) {
+    /**
+     * @var RepositoryStats
+     */
+    protected $repositoryStats;
+
+    public function __construct($dataFolder, EntityManager $entityManager, $entity, RepositoryStats $repositoryStats) {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
         $this->entity = $entity;
+        $this->repositoryStats = $repositoryStats;
     }
 
     public function update() {
+        $path = $this->buildBasePath();
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
         $this->lock();
         $changed = $this->updateFromRemote();
         if ($changed) {
@@ -58,11 +68,10 @@ abstract class Repository {
     private function doUpdateFromRemote() {
         $path = $this->buildBasePath();
         $branch = $this->getBranch();
-        if (file_exists($path)) {
+        if (file_exists("{$path}repository/.git")) {
             $this->git = \Git::open($this->getRepositoryPath());
             $this->git->checkout($branch);
         } else {
-            mkdir($path, 0777, true);
             $this->git = \Git::create($this->getRepositoryPath());
             $this->git->run('remote add origin ' . $this->getRepositoryUrl());
         }
@@ -101,19 +110,27 @@ abstract class Repository {
     }
 
     private function updateLanguage() {
-        $languageManager = new LanguageManager();
         $languageFolders = $this->getLanguageFolder();
 
         $translations = array();
         foreach ($languageFolders as $languageFolder) {
             $languageFolder = rtrim($languageFolder, '/');
             $languageFolder .= '/';
-            $translated = $languageManager->readLanguages($this->buildBasePath() . "repository/$languageFolder", $languageFolder);
+            $translated = LanguageManager::readLanguages($this->buildBasePath() . "repository/$languageFolder", $languageFolder);
+
             $translations = array_merge_recursive($translations, $translated);
         }
 
+        $this->updateTranslationStatistics($translations);
         $this->saveLanguage($translations);
     }
+
+    private function updateTranslationStatistics($translations) {
+        $this->repositoryStats->clearStats($this->entity);
+        $this->repositoryStats->createStats($translations, $this->entity);
+    }
+
+
 
     private function saveLanguage($translations) {
         $langFolder = $this->buildBasePath() . 'lang/';

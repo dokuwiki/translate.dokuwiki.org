@@ -5,7 +5,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="repository")
+ * @ORM\Table(name="repository",
+ *      indexes={@ORM\Index(name="name_idx", columns={"name"})}
+ * )
  */
 class RepositoryEntity {
 
