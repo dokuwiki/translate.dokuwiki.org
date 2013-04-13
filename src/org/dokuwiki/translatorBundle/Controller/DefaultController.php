@@ -75,17 +75,25 @@ class DefaultController extends Controller {
     private function getLanguage() {
         $language = $this->getRequest()->query->get('lang', null);
         if ($language !== null) {
+            $this->getRequest()->getSession()->set('language', $language);
             return $language;
+        }
+        $sessionLanguage = $this->getRequest()->getSession()->get('language');
+        if ($sessionLanguage !== null) {
+            return $sessionLanguage;
         }
         $languages = $this->getRequest()->getLanguages();
         if (empty($languages)) {
+            $this->getRequest()->getSession()->set('language', 'en');
             return 'en';
         }
         $pos = strpos($languages[0], '_');
         if ($pos !== false) {
             $languages[0] = substr($languages[0], 0, $pos);
         }
-        return strtolower($languages[0]);
+        $language = strtolower($languages[0]);
+        $this->getRequest()->getSession()->set('language', $language);
+        return $language;
     }
 
     private function getAvailableLanguages() {
