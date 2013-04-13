@@ -3,13 +3,13 @@
 {% block content %}
     <ul class="breadcrumb">
         <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a> <span class="divider">/</span></li>
-        <li class="active"><a href="#">{{ repository.displayName }}</a></li>
+        <li class="active"><a href="#">{{ repository.displayName|capitalize }}</a></li>
     </ul>
     <div class="container">
         <div class="row">
             <div class="span12">
                 <div class="page-header">
-                    <h1>{{ repository.displayName }}</h1>
+                    <h1>{{ repository.displayName|capitalize }}</h1>
                 </div>
             </div>
         </div>
@@ -18,7 +18,7 @@
 
             <div class="span12">
                 <p>
-                    On this page you see the Translation status of {{ repository.displayName }}.
+                    On this page you see the Translation status of {{ repository.displayName|capitalize }}.
                     English is the master language which has always 100% progress.
                     Please help to add translations.
                 </p>

@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Form\RepositoryCreateType;
+use org\dokuwiki\translatorBundle\Services\Repository\Repository;
 
 class PluginController extends Controller {
 
@@ -91,5 +92,27 @@ class PluginController extends Controller {
     private function activateRepository(RepositoryEntity $repository) {
         $repository->setState(RepositoryEntity::$STATE_ACTIVE);
         $repository->setActivationKey('');
+    }
+
+    public function showAction($name) {
+        $data = array();
+        $query = $this->getDoctrine()->getManager()->createQuery('
+            SELECT repository, translations, lang
+            FROM dokuwikiTranslatorBundle:RepositoryEntity repository
+            JOIN repository.translations translations
+            JOIN translations.language lang
+            WHERE repository.type = :type
+            AND repository.name = :name
+        ');
+
+        $query->setParameter('type', Repository::$TYPE_PLUGIN);
+        $query->setParameter('name', $name);
+        try {
+            $data['repository'] = $query->getSingleResult();
+        } catch (NoResultException $e) {
+            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+        }
+
+        return $this->render('dokuwikiTranslatorBundle:Default:show.html.twig', $data);
     }
 }
