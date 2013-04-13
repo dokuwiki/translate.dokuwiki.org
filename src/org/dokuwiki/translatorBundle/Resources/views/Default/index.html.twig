@@ -1,3 +1,4 @@
+{% import 'dokuwikiTranslatorBundle:Template:progressColor.html.twig' as progressbar %}
 <!Doctype html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
@@ -81,17 +82,7 @@
                         <a href="{{ path("dokuwiki_translator_show_plugin", {'name': repository.name}) }}">{{ repository.displayName|capitalize }}</a>
                     </td>
                     <td class="translation-progress">
-                        <div class="progress progress-striped {% spaceless %}
-                            {% if repository.completionPercent < 15 %}
-                                progress-danger
-                            {% else %}
-                                {% if repository.completionPercent < 80 %}
-                                    progress-warning
-                                {% else %}
-                                    progress-success
-                                {% endif %}
-                            {% endif %}
-                            {% endspaceless %}">
+                        <div class="progress progress-striped {{ progressbar.color(repository.completionPercent) }}">
                             <div class="bar" style="width: {{ repository.completionPercent }}%"></div>
                         </div>
                     </td>

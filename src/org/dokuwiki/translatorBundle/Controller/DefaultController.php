@@ -108,8 +108,19 @@ class DefaultController extends Controller {
         }
     }
 
-    public function showAction($name) {
-        return $this->render('dokuwikiTranslatorBundle:Default:show.html.twig',
-            array('name' => $name));
+    public function showAction() {
+        $data = array();
+        $query = $this->getDoctrine()->getManager()->createQuery('
+            SELECT repository, translations, lang
+            FROM dokuwikiTranslatorBundle:RepositoryEntity repository
+            JOIN repository.translations translations
+            JOIN translations.language lang
+            WHERE repository.type = :type
+        ');
+
+        $query->setParameter('type', Repository::$TYPE_CORE);
+        $data['repository'] = $query->getSingleResult();
+
+        return $this->render('dokuwikiTranslatorBundle:Default:show.html.twig', $data);
     }
 }
