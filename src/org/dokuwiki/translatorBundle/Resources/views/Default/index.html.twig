@@ -63,7 +63,7 @@
                         <a href="{{ path("dokuwiki_translator_show") }}">{{ coreRepository.displayName }}</a>
                     </td>
                     <td class="translation-progress">
-                        <div class="progress progress-striped progress-success">
+                        <div class="progress progress-striped progress-info">
                             <div class="bar" style="width: {{ coreRepository.completionPercent }}%"></div>
                         </div>
                     </td>
@@ -81,7 +81,17 @@
                         <a href="{{ path("dokuwiki_translator_show_plugin", {'name': repository.name}) }}">{{ repository.displayName|capitalize }}</a>
                     </td>
                     <td class="translation-progress">
-                        <div class="progress progress-striped progress-success">
+                        <div class="progress progress-striped {% spaceless %}
+                            {% if repository.completionPercent < 15 %}
+                                progress-danger
+                            {% else %}
+                                {% if repository.completionPercent < 80 %}
+                                    progress-warning
+                                {% else %}
+                                    progress-success
+                                {% endif %}
+                            {% endif %}
+                            {% endspaceless %}">
                             <div class="bar" style="width: {{ repository.completionPercent }}%"></div>
                         </div>
                     </td>
