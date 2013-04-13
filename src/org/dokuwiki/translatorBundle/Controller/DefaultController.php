@@ -13,9 +13,10 @@ use org\dokuwiki\translatorBundle\Services\Repository\Repository;
 
 class DefaultController extends Controller {
     public function indexAction() {
-        $data['language'] = $this->getLanguage();
-        $data['coreRepository'] = $this->getCoreRepositoryInformation($data['language']);
-        $data['repositories'] = $this->getRepositoryInformation($data['language']);
+        $data['currentLanguage'] = $this->getLanguage();
+        $data['coreRepository'] = $this->getCoreRepositoryInformation($data['currentLanguage']);
+        $data['repositories'] = $this->getRepositoryInformation($data['currentLanguage']);
+        $data['languages'] = $this->getAvailableLanguages();
 
         return $this->render('dokuwikiTranslatorBundle:Default:index.html.twig', $data);
     }
@@ -56,7 +57,6 @@ class DefaultController extends Controller {
             WITH (stats.language = :language OR stats.language IS NULL)
             WHERE repository.type != :type
             AND repository.state = :state
-
             ORDER BY repository.popularity DESC
             '
         );
@@ -70,7 +70,6 @@ class DefaultController extends Controller {
         } catch (NoResultException $e) {
             return array();
         }
-
     }
 
     private function getLanguage() {
@@ -87,6 +86,18 @@ class DefaultController extends Controller {
             $languages[0] = substr($languages[0], 0, $pos);
         }
         return strtolower($languages[0]);
+    }
+
+    private function getAvailableLanguages() {
+        try {
+            return $this->getDoctrine()->getManager()->createQuery('
+                SELECT languageName
+                FROM dokuwikiTranslatorBundle:LanguageNameEntity languageName
+                ORDER BY languageName.name ASC
+            ')->getResult();
+        } catch (NoResultException $e) {
+            return array();
+        }
     }
 
     public function showAction($name) {

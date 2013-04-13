@@ -21,8 +21,9 @@ class LanguageStatsEntity {
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=100)
-     * @var string
+     * @ORM\ManyToOne(targetEntity="LanguageNameEntity")
+     * @ORM\JoinColumn(name="language", referencedColumnName="code")
+     * @var LanguageNameEntity
      */
     private $language;
 
@@ -67,14 +68,14 @@ class LanguageStatsEntity {
     }
 
     /**
-     * @param string $language
+     * @param LanguageNameEntity $language
      */
     public function setLanguage($language) {
         $this->language = $language;
     }
 
     /**
-     * @return string
+     * @return LanguageNameEntity
      */
     public function getLanguage() {
         return $this->language;

@@ -3,6 +3,8 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NoResultException;
+use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\LanguageStatsEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
@@ -47,10 +49,28 @@ class RepositoryStats {
             $statsEntity = new LanguageStatsEntity();
             $statsEntity->setRepository($repository);
             $statsEntity->setCompletionPercent((100*$score) / $max);
-            $statsEntity->setLanguage($language);
+            $statsEntity->setLanguage($this->getLanguageEntityByCode($language));
             $this->entityManager->persist($statsEntity);
         }
         $this->entityManager->flush();
+    }
+
+    private function getLanguageEntityByCode($languageCode) {
+        $query = $this->entityManager->createQuery('
+            SELECT languageName
+            FROM dokuwikiTranslatorBundle:LanguageNameEntity languageName
+            WHERE languageName.code = :code
+        ');
+        $query->setParameter('code', $languageCode);
+        try {
+            return $query->getSingleResult();
+        } catch (NoResultException $e) {
+            $languageName = new LanguageNameEntity();
+            $languageName->setCode($languageCode);
+            $languageName->setName($languageCode);
+            $this->entityManager->persist($languageName);
+            return $languageName;
+        }
     }
 
     private function calcStatsForLanguage($translation) {

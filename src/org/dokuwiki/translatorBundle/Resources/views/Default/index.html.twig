@@ -103,18 +103,24 @@
         <div class="span4">
             {% include 'dokuwikiTranslatorBundle::developer_box.html.twig' %}
             <div class="well well-small">
-                <label for="language">Showing translation status for</label>
-                <select id="language">
-                    <option>{{ language }}</option>
-                </select>
+                <form action="{{ path('dokuwiki_translator_homepage') }}" method="get" class="form-inline">
+                    <label for="language">Showing translation status for</label>
+                    <select id="language" name="lang">
+                        {% for language in languages %}
+                            <option value="{{ language.code }}">{{ language.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" value="Go" class="btn btn-primary" />
+                </form>
 
-                <label for="new__translation">
-                    Is your language not listed, yet? Just enter the
-                    <a href="http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" target="_blank">
-                        two letter iso code</a>:
-                </label>
-                <form class="form-inline">
-                    <input id="new__translation" type="text" class="input-mini" placeholder="en" />
+                <form action="{{ path('dokuwiki_translator_homepage') }}" method="get" class="form-inline">
+                    <label for="new__translation">
+                        Is your language not listed, yet? Just enter the
+                        <a href="http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" target="_blank">
+                            two letter iso code</a>:
+                    </label>
+
+                    <input id="new__translation" type="text" class="input-mini" placeholder="en" name="lang" />
                     <input type="submit" value="Add language" class="btn btn-primary" />
                 </form>
             </div>
