@@ -8,7 +8,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Form\RepositoryCreateType;
-use org\dokuwiki\translatorBundle\Services\Repository\Repository;
 
 class PluginController extends Controller {
 
@@ -105,7 +104,7 @@ class PluginController extends Controller {
             AND repository.name = :name
         ');
 
-        $query->setParameter('type', Repository::$TYPE_PLUGIN);
+        $query->setParameter('type', RepositoryEntity::$TYPE_PLUGIN);
         $query->setParameter('name', $name);
         try {
             $data['repository'] = $query->getSingleResult();

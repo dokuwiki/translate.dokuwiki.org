@@ -8,7 +8,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Services\Repository\Repository;
 
 class SetupCommand extends ContainerAwareCommand {
 
@@ -45,7 +44,7 @@ class SetupCommand extends ContainerAwareCommand {
         $repository->setAuthor('');
         $repository->setDescription('');
         $repository->setTags('');
-        $repository->setType(Repository::$TYPE_CORE);
+        $repository->setType(RepositoryEntity::$TYPE_CORE);
         $repository->setEmail('');
         $repository->setPopularity(0);
         $repository->setDisplayName('DokuWiki');

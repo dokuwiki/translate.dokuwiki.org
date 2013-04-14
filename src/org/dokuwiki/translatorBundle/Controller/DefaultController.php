@@ -2,14 +2,10 @@
 
 namespace org\dokuwiki\translatorBundle\Controller;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\Query\ResultSetMapping;
-use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\ORM\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Services\Repository\Repository;
 
 class DefaultController extends Controller {
     public function indexAction() {
@@ -32,7 +28,7 @@ class DefaultController extends Controller {
              WHERE repository.type = :type
              AND stats.language = :language');
 
-        $query->setParameter('type', Repository::$TYPE_CORE);
+        $query->setParameter('type', RepositoryEntity::$TYPE_CORE);
         $query->setParameter('language', $language);
 
         try {
@@ -61,7 +57,7 @@ class DefaultController extends Controller {
             '
         );
 
-        $query->setParameter('type', Repository::$TYPE_CORE);
+        $query->setParameter('type', RepositoryEntity::$TYPE_CORE);
         $query->setParameter('state', RepositoryEntity::$STATE_ACTIVE);
         $query->setParameter('language', $language);
 
@@ -118,7 +114,7 @@ class DefaultController extends Controller {
             WHERE repository.type = :type
         ');
 
-        $query->setParameter('type', Repository::$TYPE_CORE);
+        $query->setParameter('type', RepositoryEntity::$TYPE_CORE);
         $data['repository'] = $query->getSingleResult();
 
         return $this->render('dokuwikiTranslatorBundle:Default:show.html.twig', $data);

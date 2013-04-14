@@ -16,6 +16,9 @@ class RepositoryEntity {
     public static $STATE_ACTIVE = 'active';
     public static $STATE_ERROR = 'error';
 
+    public static $TYPE_CORE   = 'core';
+    public static $TYPE_PLUGIN = 'plugin';
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")

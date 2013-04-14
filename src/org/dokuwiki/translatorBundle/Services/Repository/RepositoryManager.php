@@ -41,11 +41,11 @@ class RepositoryManager {
             /**
              * @var RepositoryEntity $repository
              */
-            if ($repository->getType() === Repository::$TYPE_CORE) {
+            if ($repository->getType() === RepositoryEntity::$TYPE_CORE) {
                 $result[] = new CoreRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats);
                 continue;
             }
-            if ($repository->getType() === Repository::$TYPE_PLUGIN) {
+            if ($repository->getType() === RepositoryEntity::$TYPE_PLUGIN) {
                 $result[] = new PluginRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats);
             }
         }

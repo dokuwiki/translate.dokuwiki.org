@@ -4,7 +4,6 @@ namespace org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
-use org\dokuwiki\translatorBundle\Services\Repository\Repository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 
 class DokuWikiRepositoryAPI {
@@ -30,7 +29,7 @@ class DokuWikiRepositoryAPI {
             $repository->setName(strtolower(strval($plugin->id)));
             $repository->setAuthor(strval($plugin->author));
             $repository->setDescription(strval($plugin->description));
-            $repository->setType(strval(Repository::$TYPE_PLUGIN));
+            $repository->setType(strval(RepositoryEntity::$TYPE_PLUGIN));
             $repository->setTags($this->mergePluginTags($plugin->tags));
             $repository->setDisplayName(strval($plugin->name));
             $repository->setPopularity(intval($plugin->popularity));

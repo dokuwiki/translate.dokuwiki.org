@@ -8,9 +8,6 @@ use Doctrine\ORM\EntityManager;
 
 abstract class Repository {
 
-    public static $TYPE_CORE   = 'core';
-    public static $TYPE_PLUGIN = 'plugin';
-
     private $git = null;
     private $dataFolder;
     private $basePath = null;
