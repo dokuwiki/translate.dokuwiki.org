@@ -38,16 +38,7 @@ class RepositoryManager {
         $repositories = $this->findRepositoriesToUpdate();
         $result = array();
         foreach ($repositories as $repository) {
-            /**
-             * @var RepositoryEntity $repository
-             */
-            if ($repository->getType() === RepositoryEntity::$TYPE_CORE) {
-                $result[] = new CoreRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats);
-                continue;
-            }
-            if ($repository->getType() === RepositoryEntity::$TYPE_PLUGIN) {
-                $result[] = new PluginRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats);
-            }
+            $result[] = $this->getRepository($repository);
         }
 
         return $result;
@@ -67,5 +58,16 @@ class RepositoryManager {
         } catch (NoResultException $ignored) {
             return array();
         }
+    }
+
+    /**
+     * @param RepositoryEntity $repository
+     * @return Repository
+     */
+    public function getRepository(RepositoryEntity $repository) {
+        if ($repository->getType() === RepositoryEntity::$TYPE_PLUGIN) {
+            return new PluginRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats);
+        }
+        return new CoreRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats);
     }
 }

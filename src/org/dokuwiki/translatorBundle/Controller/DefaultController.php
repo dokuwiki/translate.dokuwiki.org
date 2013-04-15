@@ -9,7 +9,7 @@ use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 
 class DefaultController extends Controller {
     public function indexAction() {
-        $data['currentLanguage'] = $this->getLanguage();
+        $data['currentLanguage'] = $this->get('language_manager')->getLanguage($this->getRequest());
         $data['coreRepository'] = $this->getCoreRepositoryInformation($data['currentLanguage']);
         $data['repositories'] = $this->getRepositoryInformation($data['currentLanguage']);
         $data['languages'] = $this->getAvailableLanguages();
@@ -66,30 +66,6 @@ class DefaultController extends Controller {
         } catch (NoResultException $e) {
             return array();
         }
-    }
-
-    private function getLanguage() {
-        $language = $this->getRequest()->query->get('lang', null);
-        if ($language !== null) {
-            $this->getRequest()->getSession()->set('language', $language);
-            return $language;
-        }
-        $sessionLanguage = $this->getRequest()->getSession()->get('language');
-        if ($sessionLanguage !== null) {
-            return $sessionLanguage;
-        }
-        $languages = $this->getRequest()->getLanguages();
-        if (empty($languages)) {
-            $this->getRequest()->getSession()->set('language', 'en');
-            return 'en';
-        }
-        $pos = strpos($languages[0], '_');
-        if ($pos !== false) {
-            $languages[0] = substr($languages[0], 0, $pos);
-        }
-        $language = strtolower($languages[0]);
-        $this->getRequest()->getSession()->set('language', $language);
-        return $language;
     }
 
     private function getAvailableLanguages() {

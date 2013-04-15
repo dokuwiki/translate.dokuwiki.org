@@ -5,7 +5,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository")
  * @ORM\Table(name="repository",
  *      indexes={@ORM\Index(name="name_idx", columns={"name"})}
  * )

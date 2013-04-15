@@ -3,7 +3,7 @@
 {% block content %}
     <ul class="breadcrumb">
         <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a> <span class="divider">/</span></li>
-        <li class="active"><a href="#">Add a Plug-In</a></li>
+        <li class="active"><a href="#">Translate</a></li>
     </ul>
 
     <div class="container">
@@ -51,24 +51,63 @@
                             </div>
                         </div>
 
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>Code</th>
-                                <th>English</th>
-                                <th>Pirate</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for i in 1..200 %}
-                            <tr>
-                                <td>target____wiki</td>
-                                <td>Target window for internal links</td>
-                                <td><textarea rows="2">Target window fer internal links</textarea></td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                        {% for path, language in defaultLanguage %}
+                            {% if language.type == 'markup'  %}
+                                <table class="table table-translate-markup">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="2">
+                                            {{ path }}
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>{{ language.content|nl2br }}</td>
+                                        <td>
+                                            <textarea rows="5" id="markup-{{ path|e }}">{{ targetLanguage[path].content|default('') }}</textarea>
+                                            <span class="help-block">
+                                                <small>
+                                                    <a href="https://www.dokuwiki.org/syntax" target="_blank" tabindex="-1">
+                                                        DokuWiki markup allowed</a>
+                                                </small>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <table class="table table-striped table-translate-array">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="3">{{ path }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for langKey, text in language.content %}
+                                        {% if langKey == 'js' %}
+                                            {% for jsKey, jsText in text %}
+                                                <tr>
+                                                    <td>js.{{ jsKey }}</td>
+                                                    <td>{{ jsText|nl2br }}</td>
+                                                    <td><input type="text"
+                                                               value="{{ targetLanguage[path].content[langKey][jsKey]|default('') }}" /></td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>{{ langKey }}</td>
+                                                <td>{{ text|nl2br }}</td>
+                                                <td><input type="text" class="input-xxlarge"
+                                                           value="{{ targetLanguage[path].content[langKey]|default('') }}" /></td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                        {% endfor %}
                         <div class="form-actions">
                             <input type="submit" value="Submit" class="btn btn-primary" />
                             <input type="reset" class="btn" value="Reset" />

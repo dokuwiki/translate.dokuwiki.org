@@ -4932,3 +4932,9 @@ img#logo {
 .table td.translation-update {
   width: 5em;
 }
+.table-translate-markup tr td {
+  width: 50%;
+}
+.table-translate-markup tr td textarea {
+  width: 95%;
+}

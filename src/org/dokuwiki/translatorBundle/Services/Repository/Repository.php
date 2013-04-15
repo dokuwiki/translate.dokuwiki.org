@@ -140,6 +140,19 @@ abstract class Repository {
         }
     }
 
+    public function getLanguage($code) {
+        $code = strtolower($code);
+        if (!preg_match('/^[a-z-]+$/i', $code)) {
+            return array();
+        }
+
+        $langFile = $this->buildBasePath() . "lang/$code.ser";
+        if (!file_exists($langFile)) {
+            return array('a'=>'a');
+        }
+        return unserialize(file_get_contents($langFile));
+    }
+
     public function isLocked() {
         return file_exists($this->getLockPath());
     }

@@ -1,6 +1,8 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class LanguageManager {
 
     /**
@@ -12,7 +14,7 @@ class LanguageManager {
      * @throws NoDefaultLanguageException
      * @return array()
      */
-    public static  function readLanguages($langFolder, $prefix = '') {
+    public static function readLanguages($langFolder, $prefix = '') {
         if (!is_dir($langFolder)) {
             throw new NoLanguageFolderException();
         }
@@ -30,7 +32,7 @@ class LanguageManager {
             if (!is_dir("$langFolder/$language")) {
                 continue;
             }
-            $languages[$language] = LanguageManager::readLanguage("$langFolder/$language", "$prefix$language/");
+            $languages[$language] = LanguageManager::readLanguage("$langFolder/$language", "$prefix");
         }
         return $languages;
     }
@@ -61,6 +63,30 @@ class LanguageManager {
             }
 
         }
+        return $language;
+    }
+
+    public function getLanguage(Request $request) {
+        $language = $request->query->get('lang', null);
+        if ($language !== null) {
+            $request->getSession()->set('language', $language);
+            return $language;
+        }
+        $sessionLanguage = $request->getSession()->get('language');
+        if ($sessionLanguage !== null) {
+            return $sessionLanguage;
+        }
+        $languages = $request->getLanguages();
+        if (empty($languages)) {
+            $request->getSession()->set('language', 'en');
+            return 'en';
+        }
+        $pos = strpos($languages[0], '_');
+        if ($pos !== false) {
+            $languages[0] = substr($languages[0], 0, $pos);
+        }
+        $language = strtolower($languages[0]);
+        $request->getSession()->set('language', $language);
         return $language;
     }
 }

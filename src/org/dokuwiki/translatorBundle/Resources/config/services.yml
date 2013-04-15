@@ -10,6 +10,7 @@ parameters:
     repository_stats.class: org\dokuwiki\translatorBundle\Services\Repository\RepositoryStats
     doku_wiki_repository_api.class: org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI
     plugin_name_validator.class: org\dokuwiki\translatorBundle\Validator\PluginNameValidator
+    language_manager.class: org\dokuwiki\translatorBundle\Services\Language\LanguageManager
 
 services:
     repository_manager:
@@ -28,3 +29,5 @@ services:
             - { name: validator.constraint_validator, alias: dwplugin }
         calls:
             - [setApi, [@doku_wiki_repository_api]]
+    language_manager:
+        class: "%language_manager.class%"
