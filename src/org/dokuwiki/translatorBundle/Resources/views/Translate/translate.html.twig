@@ -85,17 +85,10 @@
                                     </td>
 
                                 </tr>
-                                {% if loop.index % 10 == 0 %}
-                                    <tr>
-                                        <td colspan="2">
-                                            <input type="submit" value="Submit" class="btn btn-primary" tabindex="-1" />
-                                            <a href="#" class="btn" tabindex="-1">Jump to top</a>
-                                        </td>
-                                    </tr>
-                                {% endif %}
                             {% endfor %}
                             </tbody>
                         </table>
+
                         <div class="form-actions">
                             <input type="submit" value="Submit" class="btn btn-primary" />
                             <input type="reset" class="btn" value="Reset" />

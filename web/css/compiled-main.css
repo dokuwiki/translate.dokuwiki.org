@@ -4939,9 +4939,6 @@ img#logo {
 .table-translate-array tr td textarea,
 .table-translate-markup tr td textarea {
   width: 97%;
-  transition: height 0.2s;
-  -webkit-transition: height 0.2s;
-  -moz-transition: height 0.2s;
 }
 .table-translate-array tr td[colspan='2'],
 .table-translate-markup tr td[colspan='2'] {
