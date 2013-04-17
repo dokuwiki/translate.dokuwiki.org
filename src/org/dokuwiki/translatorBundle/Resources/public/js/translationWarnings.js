@@ -3,34 +3,25 @@ $(document).ready(function() {
 
     var TranslationTable = function() {
         this.elements = $('table tbody tr');
-        this.page = 0;
+
+        // all page related indexes are 1 based, only selectPage and draw are using 0 based index
+        this.page = 1;
         this.itemsPerPage = 10;
         this.itemCount = this.elements.size();
-        this.lastPage = Math.ceil(this.itemCount / this.itemsPerPage) -1;
+        this.lastPage = Math.ceil(this.itemCount / this.itemsPerPage)-1;
         this.nextButton = this.paginationElement('»', this.page+1);
         this.prevButton = this.paginationElement('«', this.page-1);
+        this.paginationSpace = 3;
+        this.pagination = $('.pagination');
 
         this.setupEvents();
-        this.setupPaginationBar();
+        this.drawPaginationBar();
         this.draw();
-        /*
-        setTimeout(function(){
-            //execute the next task
-
-            var task = jQuery(textAreas.get(0));
-            textAreas.splice(0, 1);
-            checkTextarea(task, false);
-            task.autosize();
-
-            if (textAreas.length > 0){
-                setTimeout(arguments.callee, 1);
-            }
-        }, 1);*/
     };
 
     TranslationTable.prototype.draw = function() {
         this.elements.hide();
-        var startIndex = this.page * this.itemsPerPage;
+        var startIndex = (this.page-1) * this.itemsPerPage;
         var endIndex = startIndex + this.itemsPerPage;
         if (endIndex >= this.itemCount) {
             endIndex = this.itemCount -1;
@@ -60,12 +51,13 @@ $(document).ready(function() {
         });
     };
 
-    TranslationTable.prototype.setupPaginationBar = function() {
-        this.pagination = $('<div class="pagination"></div>');
+    TranslationTable.prototype.drawPaginationBar = function() {
+        this.pagination.empty();
         var ul = $('<ul></ul>');
         this.pagination.append(ul);
-        ul.append(this.prevButton);
-        this.prevButton.addClass('disabled');
+        if (this.page > 1) {
+            ul.append(this.prevButton);
+        }
 
         var that = this;
         this.nextButton.click(function() {
@@ -75,50 +67,71 @@ $(document).ready(function() {
             that.prevPage();
         });
 
-        for (var i = 0; i < this.lastPage; i++) {
-            var element = this.paginationElement(i+1);
-            element.click(function() {
-                that.selectPage(jQuery(this).text()-1);
-            });
-            if (i == 0) {
-                element.addClass('active');
-            }
-            ul.append(element);
+        if (this.page <= this.paginationSpace + 3) {
+            this.paginationPageElements(1, this.page + this.paginationSpace, ul);
+        } else {
+            ul.append(this.paginationPageElement(1));
+            ul.append(this.paginationSpacer());
+            this.paginationPageElements(this.page - this.paginationSpace, this.page + this.paginationSpace, ul);
+        }
+        if (this.page + 5 < this.lastPage) {
+            ul.append(this.paginationSpacer());
+        }
+        if (this.page + 5 == this.lastPage) {
+            ul.append(this.paginationPageElement(this.lastPage-1));
+        }
+        if (this.page + 4 <= this.lastPage) {
+            ul.append(this.paginationPageElement(this.lastPage));
         }
 
-        ul.append(this.nextButton);
+        if (this.page != this.lastPage) {
+            ul.append(this.nextButton);
+        }
+    };
 
-        this.pagination.insertAfter($('table'));
+    TranslationTable.prototype.paginationPageElements = function(start, end, ul) {
+        if (end > this.lastPage) {
+            end = this.lastPage;
+        }
+        for (var i = start; i <= end; i++) {
+            ul.append(this.paginationPageElement(i));
+        }
+    };
+
+    TranslationTable.prototype.paginationPageElement = function(page) {
+        var element = this.paginationElement(page);
+        var that = this;
+        element.click(function() {
+            that.selectPage(jQuery(this).text());
+        });
+        if (this.page == page) {
+            element.addClass('active')
+        }
+        return element;
     };
 
     TranslationTable.prototype.paginationElement = function(text) {
         var page = $('<li></li>');
         var link = $('<a></a>');
-        var that = this;
         link.text(text);
         page.append(link);
         return page;
     };
 
+    TranslationTable.prototype.paginationSpacer = function() {
+        var page = $('<li class="disabled"></li>');
+        var link = $('<a>…</a>');
+        page.append(link);
+        return page;
+    };
+
     TranslationTable.prototype.selectPage = function(newPage) {
+        newPage--;
         if (newPage < 0) newPage = 0;
-        this.pagination.find('li').removeClass('active');
-        this.pagination.find('li:nth-child('+(newPage+2)+')').addClass('active');
 
-        if (newPage == 0) {
-            this.prevButton.addClass('disabled');
-        } else {
-            this.prevButton.removeClass('disabled');
-        }
-
-        if (newPage == this.lastPage) {
-            this.nextButton.addClass('disabled');
-        } else {
-            this.nextButton.removeClass('disabled');
-        }
-
-        this.page = newPage;
+        this.page = newPage+1;
         this.draw();
+        this.drawPaginationBar();
         this.focusFirstTextarea();
     };
 
