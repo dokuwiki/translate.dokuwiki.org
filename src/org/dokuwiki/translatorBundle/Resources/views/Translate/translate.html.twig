@@ -60,7 +60,10 @@
                             </thead>
                             <tbody>
                             {% for translation in translations %}
-                                <tr>
+                                <tr
+                                        {% if translation.target is empty %}
+                                            class="translation-missing"
+                                        {% endif %}>
                                     <td>{{ translation.default|nl2br }}</td>
                                     <td>
                                         <textarea
