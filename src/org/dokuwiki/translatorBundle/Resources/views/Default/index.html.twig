@@ -136,12 +136,13 @@
 </div>
 {% endblock %}
 
-{% javascripts '@dokuwikiTranslatorBundle/Resources/public/js/jquery-1.9.1.min.js'
-        '@dokuwikiTranslatorBundle/Resources/public/js/bootstrap.min.js'
-        '@dokuwikiTranslatorBundle/Resources/public/js/translationWarnings.js'
-        '@dokuwikiTranslatorBundle/Resources/public/js/jquery.autosize-min.js'
-        %}
-    <script src="{{ asset_url }}"></script>
-{% endjavascripts %}
+{% block javascript %}
+    {% javascripts '@dokuwikiTranslatorBundle/Resources/public/js/jquery-1.9.1.min.js'
+            '@dokuwikiTranslatorBundle/Resources/public/js/bootstrap.min.js'
+
+            %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
 </body>
 </html>

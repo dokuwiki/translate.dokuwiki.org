@@ -102,3 +102,13 @@
     </div>
 
 {% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    {% javascripts
+            '@dokuwikiTranslatorBundle/Resources/public/js/translationWarnings.js'
+            '@dokuwikiTranslatorBundle/Resources/public/js/jquery.autosize-min.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
