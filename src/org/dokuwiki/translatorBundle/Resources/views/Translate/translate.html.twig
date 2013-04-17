@@ -27,7 +27,7 @@
                     When your done click the submit button. Your changes will be automatically submitted to the developers.
                 </p>
 
-                <h2>Pirate translation</h2>
+                <h2>{{ targetLanguageName.name }} translation</h2>
 
 
                     <form>
@@ -51,63 +51,40 @@
                             </div>
                         </div>
 
-                        {% for path, language in defaultLanguage %}
-                            {% if language.type == 'markup'  %}
-                                <table class="table table-translate-markup">
-                                    <thead>
-                                    <tr>
-                                        <th colspan="2">
-                                            {{ path }}
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>{{ language.content|nl2br }}</td>
-                                        <td>
-                                            <textarea rows="5">{{ targetLanguage[path].content|default('') }}</textarea>
+                        <table class="table table-striped table-hover table-translate-markup">
+                            <thead>
+                            <tr>
+                                <th>English</th>
+                                <th>{{ targetLanguageName.name }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for translation in translations %}
+                                <tr>
+                                    <td>{{ translation.default|nl2br }}</td>
+                                    <td>
+                                        <textarea
+                                                name="{{ translation.key }}"
+                                                {% if translation.type == 'markup' %}
+                                                    rows="5"
+                                                {% else %}
+                                                    rows="3"
+                                                {% endif %}
+                                                >{{ translation.target }}</textarea>
+                                        {% if translation.type == 'markup' %}
                                             <span class="help-block">
                                                 <small>
                                                     <a href="https://www.dokuwiki.org/syntax" target="_blank" tabindex="-1">
                                                         DokuWiki markup allowed</a>
                                                 </small>
                                             </span>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            {% else %}
-                                <table class="table table-striped table-translate-array">
-                                    <thead>
-                                    <tr>
-                                        <th colspan="2">{{ path }}</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    {% for langKey, text in language.content %}
-                                        {% if langKey == 'js' %}
-                                            {% for jsKey, jsText in text %}
-                                                <tr>
-                                                    <td>{{ jsText|nl2br }}</td>
-                                                    <td>
-                                                        <textarea>{{ targetLanguage[path].content[langKey][jsKey]|default('') }}</textarea>
-                                                    </td>
-                                                </tr>
-                                            {% endfor %}
-                                        {% else %}
-                                            <tr>
-                                                <td>{{ text|nl2br }}</td>
-                                                <td>
-                                                    <textarea rows="2">{{ targetLanguage[path].content[langKey]|default('') }}"</textarea>
-                                                </td>
-                                            </tr>
                                         {% endif %}
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% endif %}
-                        {% endfor %}
+                                    </td>
+
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                         <div class="form-actions">
                             <input type="submit" value="Submit" class="btn btn-primary" />
                             <input type="reset" class="btn" value="Reset" />
