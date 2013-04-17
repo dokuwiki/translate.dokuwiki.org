@@ -4938,5 +4938,9 @@ img#logo {
 }
 .table-translate-array tr td textarea,
 .table-translate-markup tr td textarea {
-  width: 95%;
+  width: 97%;
+}
+.table-translate-array tr td[colspan='2'],
+.table-translate-markup tr td[colspan='2'] {
+  text-align: right;
 }
