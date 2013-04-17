@@ -136,6 +136,10 @@
 </div>
 {% endblock %}
 
-<script src="{{ asset('bundles/dokuwikitranslator/js/jquery-1.8.2.min.js') }}"></script>
+{% javascripts '@dokuwikiTranslatorBundle/Resources/public/js/jquery-1.9.1.min.js'
+        '@dokuwikiTranslatorBundle/Resources/public/js/bootstrap.min.js'
+        '@dokuwikiTranslatorBundle/Resources/public/js/translationWarnings.js'%}
+    <script src="{{ asset_url }}"></script>
+{% endjavascripts %}
 </body>
 </html>
