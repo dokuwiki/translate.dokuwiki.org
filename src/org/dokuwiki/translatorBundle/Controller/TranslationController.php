@@ -24,7 +24,7 @@ class TranslationController extends Controller {
         $data['translations'] = $translations;
 
         $data['targetLanguageName'] = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity')
-            ->findOneByCode($language);
+            ->getLanguageNameByCode($language);
 
 
         return $this->render('dokuwikiTranslatorBundle:Translate:translate.html.twig',
