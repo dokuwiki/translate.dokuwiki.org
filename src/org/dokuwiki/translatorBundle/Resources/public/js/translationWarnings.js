@@ -68,11 +68,12 @@ $(document).ready(function() {
         var task = jQuery(textAreas.get(0));
         textAreas.splice(0, 1);
         checkTextarea(task, false);
+        task.autosize();
 
         if (textAreas.length > 0){
-            setTimeout(arguments.callee, 25);
+            setTimeout(arguments.callee, 1);
         }
-    }, 25);
+    }, 1);
 
 
 });
