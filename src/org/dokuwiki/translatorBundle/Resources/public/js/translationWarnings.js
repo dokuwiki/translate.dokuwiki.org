@@ -9,14 +9,15 @@ $(document).ready(function() {
         this.itemsPerPage = 10;
         this.itemCount = this.elements.size();
         this.lastPage = Math.ceil(this.itemCount / this.itemsPerPage)-1;
-        this.nextButton = this.paginationElement('»', this.page+1);
-        this.prevButton = this.paginationElement('«', this.page-1);
         this.paginationSpace = 3;
         this.pagination = $('.pagination');
 
-        this.setupEvents();
-        this.drawPaginationBar();
-        this.draw();
+        // hide pagination on less items
+        if (this.itemCount > this.itemsPerPage * 2) {
+            this.setupEvents();
+            this.drawPaginationBar();
+            this.draw();
+        }
     };
 
     TranslationTable.prototype.draw = function() {
@@ -55,9 +56,14 @@ $(document).ready(function() {
         this.pagination.empty();
         var ul = $('<ul></ul>');
         this.pagination.append(ul);
+
+
         if (this.page > 1) {
             ul.append(this.prevButton);
         }
+
+        this.nextButton = this.paginationElement('»', this.page+1);
+        this.prevButton = this.paginationElement('«', this.page-1);
 
         var that = this;
         this.nextButton.click(function() {
