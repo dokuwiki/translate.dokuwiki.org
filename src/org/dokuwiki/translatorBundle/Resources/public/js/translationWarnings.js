@@ -2,15 +2,29 @@
 $(document).ready(function() {
 
     var TranslationTable = function() {
-        this.elements = $('table tbody tr');
+        this.table = $('table tbody');
+        this.allElements = $('table tbody tr');
+        this.allElements.detach();
+        this.filterText = '';
+        this.elements = $();
+        this.drawFilterControls();
+        this.startOver();
+    };
+
+
+    TranslationTable.prototype.startOver = function() {
+
+        this.elements.detach();
+        this.filter();
 
         // all page related indexes are 1 based, only selectPage and draw are using 0 based index
         this.page = 1;
-        this.itemsPerPage = 10;
         this.itemCount = this.elements.size();
+        this.itemsPerPage = 10;
         this.lastPage = Math.ceil(this.itemCount / this.itemsPerPage)-1;
         this.paginationSpace = 3;
         this.pagination = $('.pagination');
+        this.pagination.empty();
 
         // hide pagination on less items
         if (this.itemCount > this.itemsPerPage * 2) {
@@ -18,6 +32,33 @@ $(document).ready(function() {
             this.drawPaginationBar();
             this.draw();
         }
+    };
+
+    TranslationTable.prototype.filter = function() {
+        if (this.filterText == '') {
+            this.elements = this.allElements.clone();
+            this.elements.appendTo(this.table);
+            return;
+        }
+
+        var newElements = [];
+        var regex = new RegExp(this.filterText);
+
+        this.allElements.each(function(index, val) {
+            if ($(this).attr('data-translation-key').match(regex)) {
+                newElements.push(this);
+                return;
+            }
+            if ($(this).find('td:first').text().match(regex)) {
+                newElements.push(this);
+                return;
+            }
+            if ($(this).find('td textarea').val().match(regex)) {
+                newElements.push(this);
+            }
+        });
+        this.elements = $(newElements);
+        this.elements.appendTo(this.table);
     };
 
     TranslationTable.prototype.draw = function() {
@@ -50,6 +91,33 @@ $(document).ready(function() {
         this.elements.find('textarea').focusout(function() {
             $(this).popover('destroy');
         });
+    };
+
+
+    TranslationTable.prototype.drawFilterControls = function() {
+        var parent = $('.translation-filter');
+        parent.append($('<div class="span12"><h4>Filter</h4></div>'));
+
+        var form = $('<div class="span4"></div>');
+        form.append($('<label for="table-filter">Filter translations for:</label>'));
+        var filter = $('<input id="table-filter" type="text" class="input-xlarge" />');
+        form.append(filter);
+        parent.append(form);
+
+        var that = this;
+        var changed = function() {
+            var newVal = $(this).val();
+            if (that.filterText == newVal) {
+                return;
+            }
+            that.filterText = newVal;
+            that.startOver();
+        };
+        filter.keyup(changed);
+
+        parent.append($('<div class="span6">This filter will search in both, translated and original text.'
+                + 'Additionally it will search in the path of the translated file and the translation keys.'
+                + '</div>'));
     };
 
     TranslationTable.prototype.drawPaginationBar = function() {

@@ -51,6 +51,11 @@
                             </div>
                         </div>
 
+
+                        <div class="row translation-filter">
+
+                        </div>
+
                         <table class="table table-striped table-hover table-translate-markup">
                             <thead>
                             <tr>
@@ -61,6 +66,7 @@
                             <tbody>
                             {% for translation in translations %}
                                 <tr
+                                        data-translation-key="{{ translation.key }}"
                                         {% if translation.target is empty %}
                                             class="translation-missing"
                                         {% endif %}>
