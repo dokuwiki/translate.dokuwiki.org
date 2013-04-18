@@ -4944,3 +4944,6 @@ img#logo {
 .table-translate-markup tr td[colspan='2'] {
   text-align: right;
 }
+.pagination li a {
+  cursor: pointer;
+}
