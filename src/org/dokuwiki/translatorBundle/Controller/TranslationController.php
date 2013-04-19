@@ -2,10 +2,8 @@
 
 namespace org\dokuwiki\translatorBundle\Controller;
 
-use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
-use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 
 class TranslationController extends Controller {
 
