@@ -19,9 +19,7 @@ class TranslationController extends Controller {
 
         $data['name'] = $repositoryEntity->getDisplayName();
 
-        $translations = $this->prepareLanguages($language, $repositoryEntity);
-        $translations = array_merge($translations['missing'], $translations['available']);
-        $data['translations'] = $translations;
+        $data['translations'] = $this->prepareLanguages($language, $repositoryEntity);
 
         $data['targetLanguageName'] = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity')
             ->getLanguageNameByCode($language);
@@ -78,10 +76,7 @@ class TranslationController extends Controller {
             }
         }
 
-        return array(
-            'missing' => $missingTranslations,
-            'available' => $availableTranslations
-        );
+        return array_merge($missingTranslations, $availableTranslations);
     }
 
     private function createEntry($defaultTranslation, $targetTranslation, $path, $key = null, $jsKey = null) {
