@@ -27,11 +27,15 @@ $(document).ready(function() {
         this.pagination.empty();
 
         // hide pagination on less items
-        if (this.itemCount > this.itemsPerPage * 2) {
-            this.setupEvents();
+        this.setupEvents();
+        if (this.usePagination()) {
             this.drawPaginationBar();
-            this.draw();
         }
+        this.draw();
+    };
+
+    TranslationTable.prototype.usePagination = function() {
+        return this.itemCount > this.itemsPerPage * 2;
     };
 
     TranslationTable.prototype.filter = function() {
@@ -64,8 +68,13 @@ $(document).ready(function() {
     TranslationTable.prototype.draw = function() {
         this.elements.hide();
         var startIndex = (this.page-1) * this.itemsPerPage;
-        var endIndex = startIndex + this.itemsPerPage;
-        if (endIndex >= this.itemCount) {
+        var endIndex;
+        if (this.usePagination()) {
+            endIndex = startIndex + this.itemsPerPage;
+            if (endIndex >= this.itemCount) {
+                endIndex = this.itemCount -1;
+            }
+        } else {
             endIndex = this.itemCount -1;
         }
 

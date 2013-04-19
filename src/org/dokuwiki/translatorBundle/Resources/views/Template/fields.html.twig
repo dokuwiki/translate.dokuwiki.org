@@ -2,12 +2,7 @@
 
 {% block form_row %}
     {% spaceless %}
-        {% if errors|length == 0 %}
-            <div class="control-group">
-        {% else %}
-            <div class="control-group error">
-        {% endif %}
-
+        <div class="control-group {% if errors %}error{% endif %}">
             {{ form_label(form) }}
             <div class="controls">
                 {{ form_widget(form) }}
