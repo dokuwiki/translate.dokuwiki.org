@@ -1,0 +1,12 @@
+  * Readme updaten
+  * Sprache hinzufügen auf detail seite
+  * Sprache exportieren / importieren
+  * custom queries in repository klassen überführen
+  * translation page:
+    * dw cheatsheet
+    * seite verlassen (abfrage wie beim dokuwiki editieren)
+    * nach speichern der übersetzung auf update status weiterleiten
+
+
+  * logging?
+  * erster import mit via ajax anstoßen?

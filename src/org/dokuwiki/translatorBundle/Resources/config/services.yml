@@ -31,3 +31,8 @@ services:
             - [setApi, [@doku_wiki_repository_api]]
     language_manager:
         class: "%language_manager.class%"
+    listener.before_controller:
+        class: org\dokuwiki\translatorBundle\EventListener\BeforeControllerListener
+        scope: "request"
+        tags:
+            - { name: kernel.event_listener, event: "kernel.controller", method: "onKernelController" }

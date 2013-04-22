@@ -10,11 +10,11 @@
         <div class="row">
             <div class="span12">
                 <div class="page-header">
-                    <h1>Translate {{ name }}</h1>
+                    <h1>Translate {{ repository.displayName }}</h1>
                 </div>
 
                 <p>
-                    Thank you for translating {{ name }}! This tool helps you sending translations to the developers.
+                    Thank you for translating {{ repository.displayName }}! This tool helps you sending translations to the developers.
                     Just
                 </p>
                 <p>
@@ -30,7 +30,9 @@
                 <h2>{{ targetLanguageName }} translation</h2>
 
 
-                    <form>
+                    <form action="{{ path('dokuwiki_translate') }}" method="post">
+                        <input type="hidden" name="repositoryType" value="{{ repository.type }}" />
+                        <input type="hidden" name="repositoryName" value="{{ repository.name }}" />
                         <div class="form-horizontal well">
                             <p>
                                 <strong>Important</strong>: To be proper credited in the language files, give your name and email address here.
@@ -39,14 +41,14 @@
                             <div class="control-group">
                                 <label class="control-label" for="author">Name</label>
                                 <div class="controls">
-                                    <input type="text" id="author" placeholder="Your name" />
+                                    <input name="name" type="text" id="author" placeholder="Your name" />
                                 </div>
                             </div>
 
                             <div class="control-group">
                                 <label class="control-label" for="email">E-mail</label>
                                 <div class="controls">
-                                    <input type="email" id="email" placeholder="you@example.com" />
+                                    <input name="email" type="email" id="email" placeholder="you@example.com" />
                                 </div>
                             </div>
                         </div>

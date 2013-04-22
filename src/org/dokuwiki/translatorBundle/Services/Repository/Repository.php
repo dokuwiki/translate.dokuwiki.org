@@ -2,6 +2,7 @@
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Symfony\Component\DependencyInjection\Container;
+use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageManager;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use Doctrine\ORM\EntityManager;
@@ -169,6 +170,34 @@ abstract class Repository {
         $path = $this->buildBasePath();
         $path .= 'locked';
         return $path;
+    }
+
+    /**
+     * @param array $translation
+     * @param string $author
+     * @param string $email
+     * @return int id of queue element in database
+     */
+    public function addTranslationUpdate($translation, $author, $email) {
+        $translationUpdate = new TranslationUpdateEntity();
+        $translationUpdate->setAuthor($author);
+        $translationUpdate->setEmail($email);
+        $translationUpdate->setRepository($this->entity);
+        $translationUpdate->setUpdated(time());
+        $translationUpdate->setState(TranslationUpdateEntity::$STATE_UNDONE);
+
+        $path = $this->getRepositoryPath() . 'updates/';
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
+        }
+
+        $this->entityManager->persist($translationUpdate);
+        $this->entityManager->flush();
+
+        $path .= $translationUpdate->getId() . '.update';
+        file_put_contents($path, serialize($translation));
+
+        return $translationUpdate->getId();
     }
 
     /**

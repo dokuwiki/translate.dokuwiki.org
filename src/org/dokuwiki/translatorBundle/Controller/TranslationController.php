@@ -2,33 +2,129 @@
 
 namespace org\dokuwiki\translatorBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
+use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
+use org\dokuwiki\translatorBundle\Services\Repository\Repository;
+use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 
-class TranslationController extends Controller {
+class TranslationController extends Controller implements InitializableController {
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    public function initialize(Request $request) {
+        $this->entityManager = $this->getDoctrine()->getManager();
+    }
+
+    public function saveAction(Request $request) {
+        if ($request->getMethod() !== 'POST') {
+            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+        }
+        $data = array();
+        $data['translation'] = $request->query->get('translation', null);
+        $data['repositoryName'] = $request->query->get('repositoryName', '');
+        $data['repositoryType'] = $request->query->get('repositoryType', '');
+        if (
+                $data['translation'] === null ||
+                $data['repositoryName'] === '' ||
+                $data['repositoryType'] === ''
+            ) {
+            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+        }
+
+        $data['name'] = $request->query->get('name', '');
+        $data['email'] = $request->query->get('email', '');
+        $language = $this->getLanguage();
+
+
+        $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($data['repositoryType'], $data['repositoryName']);
+        $repository = $this->getRepositoryManager()->getRepository($repositoryEntity);
+        $newTranslation = $this->validateTranslation($repository, $data['translation'], $language, $data['name'], $data['email']);
+
+        $jobId = $repository->addTranslationUpdate($newTranslation, $data['name'], $data['email']);
+
+        // forward to queue status
+        return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+    }
+
+    private function validateTranslation(Repository $repository, array $userTranslation, $language, $author, $authorEmail) {
+
+        $newTranslation = array();
+        $defaultTranslation = $repository->getLanguage('en');
+        $previusTranslation = $repository->getLanguage($language);
+
+        foreach ($defaultTranslation as $path => $translation) {
+            if (!isset($userTranslation[$path])) {
+                continue;
+            }
+
+            if ($translation->getType() !== LocalText::$TYPE_ARRAY) {
+                $newTranslation[$path] = new LocalText($userTranslation[$path], LocalText::$TYPE_MARKUP);
+                continue;
+            }
+
+            $newTranslationArray = array();
+            $translationArray = $translation->getContent();
+            foreach ($translationArray as $key => $text) {
+                if (!isset($userTranslation[$path][$key])) {
+                    continue;
+                }
+
+                if ($key !== 'js') {
+                    $newTranslation[$key] = $userTranslation[$path][$key];
+                    continue;
+                }
+
+                $newTranslationArray[$key] = array();
+                foreach ($text as $jsKey => $jsVal) {
+                    if (!isset($userTranslation[$path][$key][$jsKey])) {
+                        continue;
+                    }
+                    $newTranslationArray[$key] = $userTranslation[$path][$key][$jsKey];
+                    continue;
+                }
+            }
+            $authors = array();
+            if (!empty($author)) {
+                if (isset($previusTranslation[$path])) {
+                    $authors = $previusTranslation[$path]->getAuthors();
+                }
+                $authors[$author] = $authorEmail;
+            }
+            $newTranslation[$path] = new LocalText($newTranslationArray, LocalText::$TYPE_ARRAY, $authors);
+        }
+
+        return $newTranslation;
+
+    }
 
     public function translateCoreAction() {
-        $entityManager = $this->getDoctrine()->getManager();
+        $language = $this->getLanguage();
+        $repositoryEntity = $this->getRepositoryEntityRepository()->getCoreRepository();
 
-        $language = $this->get('language_manager')->getLanguage($this->getRequest());
-        $repositoryEntity = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity')
-            ->getCoreRepository();
-
-
-        $data['name'] = $repositoryEntity->getDisplayName();
-
+        $data['repository'] = $repositoryEntity;
         $data['translations'] = $this->prepareLanguages($language, $repositoryEntity);
-
-        $data['targetLanguageName'] = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity')
-            ->getLanguageNameByCode($language);
-
+        $data['targetLanguageName'] = $this->getLanguageNameEntityRepository()->getLanguageNameByCode($language);
 
         return $this->render('dokuwikiTranslatorBundle:Translate:translate.html.twig',
                 $data);
     }
 
+    /**
+     * @return RepositoryManager
+     */
+    private function getRepositoryManager() {
+        return $this->get('repository_manager');
+    }
+
     private function prepareLanguages($language, $repositoryEntity) {
-        $repositoryManager = $this->get('repository_manager');
+        $repositoryManager = $this->getRepositoryManager();
         $repository = $repositoryManager->getRepository($repositoryEntity);
 
         $defaultTranslation = $repository->getLanguage('en');
@@ -116,4 +212,21 @@ class TranslationController extends Controller {
                 array('name' => $name));
     }
 
+    private function getLanguage() {
+        return $this->get('language_manager')->getLanguage($this->getRequest());
+    }
+
+    /**
+     * @return RepositoryEntityRepository
+     */
+    private function getRepositoryEntityRepository() {
+        return $this->entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
+    }
+
+    /**
+     * @return LanguageNameEntityRepository
+     */
+    private function getLanguageNameEntityRepository() {
+        return $this->entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
+    }
 }
