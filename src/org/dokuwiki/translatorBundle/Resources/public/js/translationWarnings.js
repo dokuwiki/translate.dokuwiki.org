@@ -40,7 +40,7 @@ $(document).ready(function() {
 
     TranslationTable.prototype.filter = function() {
         if (this.filterText == '') {
-            this.elements = this.allElements.clone();
+            this.elements = this.allElements;
             this.elements.appendTo(this.table);
             return;
         }
@@ -99,6 +99,18 @@ $(document).ready(function() {
 
         this.elements.find('textarea').focusout(function() {
             $(this).popover('destroy');
+        });
+
+        $(window).bind('beforeunload', function() {
+            return "Do you really want to leave the page? All changes will be lost.";
+        });
+
+        $('input[type=submit]').click(function() {
+            $(window).unbind('beforeunload');
+            if ($(this).attr('id') == 'save__button') {
+                that.filterText = '';
+                that.filter();
+            }
         });
     };
 
