@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
+use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
 use org\dokuwiki\translatorBundle\Services\Repository\Repository;
@@ -111,16 +112,25 @@ class TranslationController extends Controller implements InitializableControlle
     }
 
     public function translateCoreAction() {
+        return $this->translate(RepositoryEntity::$TYPE_CORE, 'dokuwiki');
+    }
+
+    public function translatePluginAction($name) {
+        return $this->translate(RepositoryEntity::$TYPE_PLUGIN, $name);
+    }
+
+    private function translate($type, $name) {
         $language = $this->getLanguage();
-        $repositoryEntity = $this->getRepositoryEntityRepository()->getCoreRepository();
+        $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($type, $name);
 
         $data['repository'] = $repositoryEntity;
         $data['translations'] = $this->prepareLanguages($language, $repositoryEntity);
         $data['targetLanguageName'] = $this->getLanguageNameEntityRepository()->getLanguageNameByCode($language);
 
         return $this->render('dokuwikiTranslatorBundle:Translate:translate.html.twig',
-                $data);
+                             $data);
     }
+
 
     /**
      * @return RepositoryManager
@@ -213,9 +223,15 @@ class TranslationController extends Controller implements InitializableControlle
         return $entryKey;
     }
 
-    public function translatePluginAction($name) {
-        return $this->render('dokuwikiTranslatorBundle:Translate:translate.html.twig',
-                array('name' => $name));
+    /**
+     * @return LanguageNameEntityRepository
+     */
+    private function getLanguageNameEntityRepository() {
+        return $this->entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
+    }
+
+    public function thanksAction() {
+        return $this->render('dokuwikiTranslatorBundle:Translate:thanks.html.twig');
     }
 
     private function getLanguage() {
@@ -227,16 +243,5 @@ class TranslationController extends Controller implements InitializableControlle
      */
     private function getRepositoryEntityRepository() {
         return $this->entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
-    }
-
-    /**
-     * @return LanguageNameEntityRepository
-     */
-    private function getLanguageNameEntityRepository() {
-        return $this->entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
-    }
-
-    public function thanksAction() {
-        return $this->render('dokuwikiTranslatorBundle:Translate:thanks.html.twig');
     }
 }
