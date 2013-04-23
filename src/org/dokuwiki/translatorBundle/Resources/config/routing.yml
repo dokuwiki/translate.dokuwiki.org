@@ -15,8 +15,8 @@ dokuwiki_translator_plugin_activate:
         defaults: { _controller: dokuwikiTranslatorBundle:Plugin:activate}
 
 dokuwiki_translate:
-    pattern:  /translate
-    defaults: { _controller: dokuwikiTranslatorBundle:Translation:translateCore}
+    pattern:  /translate/dokuwiki
+    defaults: { _controller: dokuwikiTranslatorBundle:Translation:translateCore }
 
 dokuwiki_translate_plugin:
     pattern:  /translate/plugin/{name}
