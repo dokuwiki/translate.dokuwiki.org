@@ -30,7 +30,7 @@
                 <h2>{{ targetLanguageName }} translation</h2>
 
 
-                    <form action="{{ path('dokuwiki_translate') }}" method="post">
+                    <form action="{{ path('dokuwiki_translate_save') }}" method="post">
                         <input type="hidden" name="repositoryType" value="{{ repository.type }}" />
                         <input type="hidden" name="repositoryName" value="{{ repository.name }}" />
                         <div class="form-horizontal well">
@@ -100,9 +100,9 @@
                         <div class="pagination pagination-centered"></div>
 
                         <div class="form-actions">
-                            <input id="save__button" type="submit" value="Submit" class="btn btn-primary" />
+                            <input name="action[save]" id="save__button" type="submit" value="Submit" class="btn btn-primary" />
                             <input type="reset" class="btn" value="Reset" />
-                            <input type="submit" class="btn" value="Cancel" />
+                            <input name="action[cancel]" type="submit" class="btn" value="Cancel" />
                         </div>
 
                     </form>
