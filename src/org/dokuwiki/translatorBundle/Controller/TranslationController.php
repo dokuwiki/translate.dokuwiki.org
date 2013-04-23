@@ -27,25 +27,26 @@ class TranslationController extends Controller implements InitializableControlle
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
 
-        $action = $request->query->get('action', array());
+        $action = $request->request->get('action', array());
         if (!isset($action['save'])) {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
 
         $data = array();
-        $data['translation'] = $request->query->get('translation', null);
-        $data['repositoryName'] = $request->query->get('repositoryName', '');
-        $data['repositoryType'] = $request->query->get('repositoryType', '');
+        $data['translation'] = $request->request->get('translation', null);
+        $data['repositoryName'] = $request->request->get('repositoryName', '');
+        $data['repositoryType'] = $request->request->get('repositoryType', '');
         if (
                 $data['translation'] === null ||
                 $data['repositoryName'] === '' ||
                 $data['repositoryType'] === ''
             ) {
+            die('data');
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
 
-        $data['name'] = $request->query->get('name', '');
-        $data['email'] = $request->query->get('email', '');
+        $data['name'] = $request->request->get('name', '');
+        $data['email'] = $request->request->get('email', '');
         $language = $this->getLanguage();
 
 

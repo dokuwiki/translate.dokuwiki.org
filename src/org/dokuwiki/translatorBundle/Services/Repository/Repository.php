@@ -186,7 +186,7 @@ abstract class Repository {
         $translationUpdate->setUpdated(time());
         $translationUpdate->setState(TranslationUpdateEntity::$STATE_UNDONE);
 
-        $path = $this->getRepositoryPath() . 'updates/';
+        $path = $this->buildBasePath() . 'updates/';
         if (!file_exists($path)) {
             mkdir($path, 0777, true);
         }
