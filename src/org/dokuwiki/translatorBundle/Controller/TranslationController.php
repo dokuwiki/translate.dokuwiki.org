@@ -41,7 +41,6 @@ class TranslationController extends Controller implements InitializableControlle
                 $data['repositoryName'] === '' ||
                 $data['repositoryType'] === ''
             ) {
-            die('data');
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
 
@@ -57,7 +56,7 @@ class TranslationController extends Controller implements InitializableControlle
         $jobId = $repository->addTranslationUpdate($newTranslation, $data['name'], $data['email']);
 
         // forward to queue status
-        return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+        return $this->redirect($this->generateUrl('dokuwiki_translate_thanks'));
     }
 
     private function validateTranslation(Repository $repository, array $userTranslation, $language, $author, $authorEmail) {
@@ -235,5 +234,9 @@ class TranslationController extends Controller implements InitializableControlle
      */
     private function getLanguageNameEntityRepository() {
         return $this->entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
+    }
+
+    public function thanksAction() {
+        return $this->render('dokuwikiTranslatorBundle:Translate:thanks.html.twig');
     }
 }

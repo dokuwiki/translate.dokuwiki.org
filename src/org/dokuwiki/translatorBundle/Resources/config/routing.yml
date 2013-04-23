@@ -22,6 +22,10 @@ dokuwiki_translate_plugin:
     pattern:  /translate/plugin/{name}
     defaults: { _controller: dokuwikiTranslatorBundle:Translation:translatePlugin}
 
+dokuwiki_translate_thanks:
+    pattern:  /translate/thanks
+    defaults: { _controller: dokuwikiTranslatorBundle:Translation:thanks }
+
 dokuwiki_translate_save:
     pattern:  /translate/save
     defaults: { _controller: dokuwikiTranslatorBundle:Translation:save}
