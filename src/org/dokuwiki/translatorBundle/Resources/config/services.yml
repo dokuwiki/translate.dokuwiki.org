@@ -1,5 +1,5 @@
 parameters:
-    git_bin: C:\Program Files (x86)\Git\bin\git.exe # path to the git executable
+    git_bin: D:\apps\Git\bin\git.exe # path to the git executable
     data: D:\Temp\test 1                            # path to the working directory
     reprositoryUpdateAge: 1                         # time since last update per repository (sec) 86400 -> 1d
     maxRepositoriesToUpdatePerRun: 10               # max repositories to update per command run
@@ -15,10 +15,12 @@ parameters:
 services:
     repository_manager:
         class: "%repository_manager.class%"
-        arguments: ["%data%", @doctrine.orm.entity_manager, "%reprositoryUpdateAge%", "%maxRepositoriesToUpdatePerRun%", @repository_stats ]
+        arguments: ["%data%", @doctrine.orm.entity_manager, "%reprositoryUpdateAge%", "%maxRepositoriesToUpdatePerRun%", @repository_stats , @git_service]
+
     repository_stats:
         class: "%repository_stats.class%"
         arguments: [ @doctrine.orm.entity_manager]
+
     doku_wiki_repository_api:
         class: "%doku_wiki_repository_api.class%"
         arguments: ["%data%", @doctrine.orm.entity_manager]
@@ -29,10 +31,16 @@ services:
             - { name: validator.constraint_validator, alias: dwplugin }
         calls:
             - [setApi, [@doku_wiki_repository_api]]
+
     language_manager:
         class: "%language_manager.class%"
+
     listener.before_controller:
         class: org\dokuwiki\translatorBundle\EventListener\BeforeControllerListener
         scope: "request"
         tags:
             - { name: kernel.event_listener, event: "kernel.controller", method: "onKernelController" }
+
+    git_service:
+        class: org\dokuwiki\translatorBundle\Services\Git\GitService
+        arguments: ["%git_bin%"]

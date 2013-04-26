@@ -3,15 +3,22 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Symfony\Component\DependencyInjection\Container;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
+use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
+use org\dokuwiki\translatorBundle\Services\Git\GitService;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageManager;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use Doctrine\ORM\EntityManager;
+use org\dokuwiki\translatorBundle\Services\Language\LocalText;
 
 abstract class Repository {
 
-    private $git = null;
     private $dataFolder;
     private $basePath = null;
+
+    /**
+     * @var GitRepository
+     */
+    private $git = null;
 
     /**
      * @var RepositoryEntity Database representation
@@ -28,11 +35,18 @@ abstract class Repository {
      */
     protected $repositoryStats;
 
-    public function __construct($dataFolder, EntityManager $entityManager, $entity, RepositoryStats $repositoryStats) {
+    /**
+     * @var GitService
+     */
+    private $gitService;
+
+    public function __construct($dataFolder, EntityManager $entityManager, $entity, RepositoryStats $repositoryStats,
+                GitService $gitService) {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
         $this->entity = $entity;
         $this->repositoryStats = $repositoryStats;
+        $this->gitService = $gitService;
     }
 
     public function update() {
@@ -51,35 +65,18 @@ abstract class Repository {
         $this->unlock();
     }
 
-    private function updateFromRemote() {
-        try {
-            return $this->doUpdateFromRemote();
-        } catch (\Exception $e) {
-            throw new GitException('Failed to create/update local repository', 0, $e);
-        }
-    }
-
     /**
      * Update local repository
      * @return boolean true if the repository is changed.
      */
-    private function doUpdateFromRemote() {
-        $path = $this->buildBasePath();
-        $branch = $this->getBranch();
-        if (file_exists("{$path}repository/.git")) {
-            $this->git = \Git::open($this->getRepositoryPath());
-            $this->git->checkout($branch);
-        } else {
-            $this->git = \Git::create($this->getRepositoryPath());
-            $this->git->run('remote add origin ' . $this->getRepositoryUrl());
+    private function updateFromRemote() {
+        if ($this->gitService->isRepository($this->getRepositoryPath())) {
+            $this->git = $this->gitService->openRepository($this->getRepositoryPath());
+            return $this->git->pull('origin', $this->getBranch()) === GitRepository::$PULL_CHANGED;
         }
-        // empty result -> new, contains already up2date -> unchanged, else updated
-        $result = $this->git->pull('origin', $branch);
-        if (strstr($result, 'Already up-to-date') !== false) {
-            return false;
-        } else {
-            return true;
-        }
+
+        $this->git = $this->gitService->createRepositoryFromRemote($this->getRepositoryUrl(), $this->getRepositoryPath());
+        return true;
     }
 
     private function getRepositoryPath() {
@@ -176,28 +173,85 @@ abstract class Repository {
      * @param array $translation
      * @param string $author
      * @param string $email
+     * @param string $language
      * @return int id of queue element in database
      */
-    public function addTranslationUpdate($translation, $author, $email) {
+    public function addTranslationUpdate($translation, $author, $email, $language) {
         $translationUpdate = new TranslationUpdateEntity();
         $translationUpdate->setAuthor($author);
         $translationUpdate->setEmail($email);
         $translationUpdate->setRepository($this->entity);
         $translationUpdate->setUpdated(time());
         $translationUpdate->setState(TranslationUpdateEntity::$STATE_UNDONE);
-
-        $path = $this->buildBasePath() . 'updates/';
-        if (!file_exists($path)) {
-            mkdir($path, 0777, true);
-        }
+        $translationUpdate->setLanguage($language);
 
         $this->entityManager->persist($translationUpdate);
         $this->entityManager->flush();
 
-        $path .= $translationUpdate->getId() . '.update';
+        $path = $this->getUpdatePath($translationUpdate->getId());
         file_put_contents($path, serialize($translation));
 
         return $translationUpdate->getId();
+    }
+
+    private function getUpdatePath($id) {
+        $path = $this->buildBasePath() . 'updates/';
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
+        }
+        $path .= $id . '.update';
+        return $path;
+    }
+
+    public function createAndSendPatch(TranslationUpdateEntity $update) {
+        $tmpDir = $this->buildTempPath($update->getId());
+        $tmpGit = $this->gitService->createRepositoryFromRemote($this->getRepositoryPath(), $tmpDir);
+        $author = $this->prepareAuthor($update);
+        $this->applyChanges($tmpGit, $tmpDir, $update);
+
+        $tmpGit->commit('translation update', $author);
+        $patch = $tmpGit->createPatch();
+        // send email
+        // cleanup (repro db)
+        print $patch;
+        // TODO
+    }
+
+    private function buildTempPath($id) {
+        $path = $this->buildBasePath();
+        $path .= "tmp";
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
+        }
+        return "$path/$id/";
+    }
+
+    private function prepareAuthor(TranslationUpdateEntity $update) {
+        $author = $update->getAuthor();
+        $email = $update->getEmail();
+        if (empty($author)) {
+            return "DokuWiki Translation <>";
+        }
+        if (!empty($email)) {
+            $author .= " <$email>";
+        }
+
+        return escapeshellarg($author);
+    }
+
+    private function applyChanges(GitRepository $git, $folder, TranslationUpdateEntity $update) {
+        $translations = unserialize(file_get_contents($this->getUpdatePath($update->getId())));
+
+        foreach ($translations as $path => $translation) {
+            /**
+             * @var LocalText $translation
+             */
+            $path = $folder . $path;
+            $langFolder = dirname($path);
+            $file = $langFolder . '/' . $update->getLanguage() . '/' . basename($path);
+            file_put_contents($file, $translation->render());
+            $git->add($file);
+        }
     }
 
     /**

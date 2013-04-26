@@ -2,14 +2,16 @@
 
 namespace org\dokuwiki\translatorBundle\Command;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
+use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Repository;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 
-require_once dirname(__FILE__) . '/../../../../../lib/Git.php';
 class UpdateCommand extends ContainerAwareCommand {
 
     /**
@@ -28,8 +30,12 @@ class UpdateCommand extends ContainerAwareCommand {
             return;
         }
         $this->lock();
+
+        $this->repositoryManager = $this->getContainer()->get('repository_manager');
+
         try {
             $this->runUpdate($output);
+            $this->processPendingTranslations($output);
         } catch (\PDOException $e) {
             $output->writeln('Cannot connect to database');
         }
@@ -37,8 +43,6 @@ class UpdateCommand extends ContainerAwareCommand {
     }
 
     private function runUpdate(OutputInterface $output) {
-        $this->setupGit();
-        $this->repositoryManager = $this->getContainer()->get('repository_manager');
         $repositories = $this->repositoryManager->getRepositoriesToUpdate();
         $output->writeln('found ' . count($repositories) . ' repositories');
         foreach($repositories as $repository) {
@@ -46,6 +50,18 @@ class UpdateCommand extends ContainerAwareCommand {
              * @var \org\dokuwiki\translatorBundle\Services\Repository\Repository $repository
              */
             $repository->update();
+        }
+    }
+
+    private function processPendingTranslations(OutputInterface $output) {
+        $updates = $this->getTranslationUpdateRepository()->getPendingTranslationUpdates();
+
+        foreach ($updates as $update) {
+            /**
+             * @var TranslationUpdateEntity $update
+             */
+            $repository = $this->repositoryManager->getRepository($update->getRepository());
+            $repository->createAndSendPatch($update);
         }
     }
 
@@ -67,7 +83,17 @@ class UpdateCommand extends ContainerAwareCommand {
         return $path;
     }
 
-    private function setupGit() {
-        \Git::set_bin('"' . $this->getContainer()->getParameter('git_bin') . '"');
+    /**
+     * @return EntityManager
+     */
+    private function getEntityManager() {
+        return $this->getContainer()->get('doctrine')->getManager();
+    }
+
+    /**
+     * @return TranslationUpdateEntityRepository
+     */
+    private function getTranslationUpdateRepository() {
+        return $this->getEntityManager()->getRepository('dokuwikiTranslatorBundle:TranslationUpdateEntity');
     }
 }

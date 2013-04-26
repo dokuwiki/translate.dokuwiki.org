@@ -4,7 +4,7 @@ namespace org\dokuwiki\translatorBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntityRepository")
  * @ORM\Table(name="translationUpdate")
  */
 class TranslationUpdateEntity {
@@ -49,6 +49,12 @@ class TranslationUpdateEntity {
      * @var string
      */
     protected $state;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     * @var string
+     */
+    protected $language;
 
     /**
      * @param string $author
@@ -126,6 +132,20 @@ class TranslationUpdateEntity {
      */
     public function getUpdated() {
         return $this->updated;
+    }
+
+    /**
+     * @param string $language
+     */
+    public function setLanguage($language) {
+        $this->language = $language;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLanguage() {
+        return $this->language;
     }
 
 

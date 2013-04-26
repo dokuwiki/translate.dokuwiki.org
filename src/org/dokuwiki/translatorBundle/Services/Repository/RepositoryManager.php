@@ -4,6 +4,7 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use org\dokuwiki\translatorBundle\Services\Git\GitService;
 
 class RepositoryManager {
 
@@ -22,16 +23,23 @@ class RepositoryManager {
      */
     private $repositoryStats;
 
+    /**
+     * @var GitService
+     */
+    private $gitService;
+
     private $repositoryAgeToUpdate;
     private $maxRepositoriesToUpdatePerRun;
 
     function __construct($dataFolder, EntityManager $entityManager, $repositoryAgeToUpdate,
-                $maxRepositoriesToUpdatePerRun, RepositoryStats $repositoryStats) {
+                $maxRepositoriesToUpdatePerRun, RepositoryStats $repositoryStats,
+                GitService $gitService) {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
         $this->repositoryAgeToUpdate = $repositoryAgeToUpdate;
         $this->maxRepositoriesToUpdatePerRun = $maxRepositoriesToUpdatePerRun;
         $this->repositoryStats = $repositoryStats;
+        $this->gitService = $gitService;
     }
 
     public function getRepositoriesToUpdate() {
@@ -66,8 +74,8 @@ class RepositoryManager {
      */
     public function getRepository(RepositoryEntity $repository) {
         if ($repository->getType() === RepositoryEntity::$TYPE_PLUGIN) {
-            return new PluginRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats);
+            return new PluginRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats, $this->gitService);
         }
-        return new CoreRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats);
+        return new CoreRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats, $this->gitService);
     }
 }

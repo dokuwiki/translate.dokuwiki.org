@@ -34,4 +34,67 @@ class LocalText {
     public function getAuthors() {
         return $this->authors;
     }
+
+    public function render() {
+        if ($this->type === LocalText::$TYPE_MARKUP) {
+            return $this->getContent();
+        }
+
+        $php = "<?php\n\n";
+        $php .= $this->renderAuthors();
+        $php .= $this->renderArray($this->content);
+
+        return $php;
+    }
+
+    private function renderAuthors() {
+        if (empty($this->authors)) {
+            return '';
+        }
+        $php = "/**\n";
+        foreach ($this->authors as $author => $email) {
+            if (empty($author)) continue;
+            $author = $this->escapeComment($author);
+            $php.= " * @author $author";
+            if (!empty($email)) {
+                $email = $this->escapeComment($email);
+                $php.=" <$email>";
+            }
+            $php.="\n";
+        }
+        $php.= "*/\n";
+
+        return $php;
+    }
+
+    private function escapeComment($str) {
+        $str = str_replace('*/', '', $str);
+        return $str;
+    }
+
+    private function renderArray($array, $prefix = '') {
+        $php = '';
+
+        if (!empty($prefix)) {
+            $prefix = "['$prefix']";
+        }
+
+        foreach ($array as $key => $text) {
+            $key = $this->escapeText($key);
+
+            if (is_array($text)) {
+                $php .= $this->renderArray($text, "{$prefix}['$key']");
+                continue;
+            }
+
+            $text = $this->escapeText($text);
+            $php .= '$lang' . $prefix . "['$key'] = '$text'";
+        }
+
+        return $php;
+    }
+
+    private function escapeText($text) {
+        return str_replace("'", '\\\'', $text);
+    }
 }
