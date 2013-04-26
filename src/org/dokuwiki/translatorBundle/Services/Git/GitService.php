@@ -2,8 +2,6 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Git;
 
-use org\dokuwiki\translatorBundle\Services\Repository\GitException;
-
 class GitService {
 
     private $gitBinary;
