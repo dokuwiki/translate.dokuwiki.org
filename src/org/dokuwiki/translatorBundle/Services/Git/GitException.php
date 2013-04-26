@@ -7,11 +7,14 @@ class GitException extends \Exception {
 
     private $result;
 
-    function __construct(ProgrammCallResult $result) {
+    function __construct($result) {
         $this->result = $result;
     }
 
     public function __toString() {
+        if (is_string($this->result)) {
+            return $this->result;
+        }
         $string = 'Return Code: ' . $this->result->getExitCode();
         $string.= "\n";
         $string.= 'Output: ' . $this->result->getOutput();
