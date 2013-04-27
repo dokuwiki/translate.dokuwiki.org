@@ -72,7 +72,7 @@ class TranslationController extends Controller implements InitializableControlle
             }
 
             if ($translation->getType() !== LocalText::$TYPE_ARRAY) {
-                $newTranslation[$path] = new LocalText($userTranslation[$path], LocalText::$TYPE_MARKUP);
+                $newTranslation[$path] = new LocalText($this->fixLineEndings($userTranslation[$path]), LocalText::$TYPE_MARKUP);
                 continue;
             }
 
@@ -84,7 +84,7 @@ class TranslationController extends Controller implements InitializableControlle
                 }
 
                 if ($key !== 'js') {
-                    $newTranslationArray[$key] = $userTranslation[$path][$key];
+                    $newTranslationArray[$key] = $this->fixLineEndings($userTranslation[$path][$key]);
                     continue;
                 }
 
@@ -93,7 +93,7 @@ class TranslationController extends Controller implements InitializableControlle
                     if (!isset($userTranslation[$path][$key][$jsKey])) {
                         continue;
                     }
-                    $newTranslationArray[$key] = $userTranslation[$path][$key][$jsKey];
+                    $newTranslationArray[$key][$jsKey] = $this->fixLineEndings($userTranslation[$path][$key][$jsKey]);
                     continue;
                 }
             }
@@ -108,7 +108,11 @@ class TranslationController extends Controller implements InitializableControlle
         }
 
         return $newTranslation;
+    }
 
+    private function fixLineEndings($string) {
+        $string = str_replace("\r\n", "\n", $string);
+        return $string;
     }
 
     public function translateCoreAction() {

@@ -75,10 +75,6 @@ class LocalText {
     private function renderArray($array, $prefix = '') {
         $php = '';
 
-        if (!empty($prefix)) {
-            $prefix = "['$prefix']";
-        }
-
         foreach ($array as $key => $text) {
             $key = $this->escapeText($key);
 
@@ -88,7 +84,7 @@ class LocalText {
             }
 
             $text = $this->escapeText($text);
-            $php .= '$lang' . $prefix . "['$key'] = '$text'";
+            $php .= '$lang' . $prefix . "['$key'] = '$text';\n";
         }
 
         return $php;
