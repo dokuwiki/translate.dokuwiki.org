@@ -48,10 +48,10 @@ class LocalText {
     }
 
     private function renderAuthors() {
-        if (empty($this->authors)) {
-            return '';
-        }
         $php = "/**\n";
+        $php.= " * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)\n";
+        $php.= " * \n";
+
         foreach ($this->authors as $author => $email) {
             if (empty($author)) continue;
             $author = $this->escapeComment($author);
