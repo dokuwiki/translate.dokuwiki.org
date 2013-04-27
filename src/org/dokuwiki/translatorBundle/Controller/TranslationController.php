@@ -98,10 +98,11 @@ class TranslationController extends Controller implements InitializableControlle
                 }
             }
             $authors = array();
+            if (isset($previusTranslation[$path])) {
+                $authors = $previusTranslation[$path]->getAuthors();
+            }
+
             if (!empty($author)) {
-                if (isset($previusTranslation[$path])) {
-                    $authors = $previusTranslation[$path]->getAuthors();
-                }
                 $authors[$author] = $authorEmail;
             }
             $newTranslation[$path] = new LocalText($newTranslationArray, LocalText::$TYPE_ARRAY, $authors);
