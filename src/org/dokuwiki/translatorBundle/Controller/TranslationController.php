@@ -84,7 +84,7 @@ class TranslationController extends Controller implements InitializableControlle
                 }
 
                 if ($key !== 'js') {
-                    $newTranslation[$key] = $userTranslation[$path][$key];
+                    $newTranslationArray[$key] = $userTranslation[$path][$key];
                     continue;
                 }
 
@@ -213,13 +213,13 @@ class TranslationController extends Controller implements InitializableControlle
     }
 
     function createEntryKey($path, $key = null, $jsKey = null) {
-        $entryKey = sprintf('translation[%s]', urlencode($path));
+        $entryKey = sprintf('translation[%s]', $path);
         if ($key === null) return $entryKey;
 
-        $entryKey .= sprintf('[%s]', urlencode($key));
+        $entryKey .= sprintf('[%s]', $key);
         if ($jsKey === null) return $entryKey;
 
-        $entryKey .= sprintf('[%s]', urlencode($jsKey));
+        $entryKey .= sprintf('[%s]', $jsKey);
         return $entryKey;
     }
 
