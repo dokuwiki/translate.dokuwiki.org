@@ -15,7 +15,7 @@ parameters:
 services:
     repository_manager:
         class: "%repository_manager.class%"
-        arguments: ["%data%", @doctrine.orm.entity_manager, "%reprositoryUpdateAge%", "%maxRepositoriesToUpdatePerRun%", @repository_stats , @git_service]
+        arguments: ["%data%", @doctrine.orm.entity_manager, "%reprositoryUpdateAge%", "%maxRepositoriesToUpdatePerRun%", @repository_stats , @git_service, @mail_service]
 
     repository_stats:
         class: "%repository_stats.class%"
@@ -44,3 +44,7 @@ services:
     git_service:
         class: org\dokuwiki\translatorBundle\Services\Git\GitService
         arguments: ["%git_bin%"]
+
+    mail_service:
+        class: org\dokuwiki\translatorBundle\Services\Mail\MailService
+        arguments: [@mailer, @twig, "%mailer_from%"]

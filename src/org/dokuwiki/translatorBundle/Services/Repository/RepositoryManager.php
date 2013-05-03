@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitService;
+use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 
 class RepositoryManager {
 
@@ -28,18 +29,24 @@ class RepositoryManager {
      */
     private $gitService;
 
+    /**
+     * @var MailService
+     */
+    private $mailService;
+
     private $repositoryAgeToUpdate;
     private $maxRepositoriesToUpdatePerRun;
 
     function __construct($dataFolder, EntityManager $entityManager, $repositoryAgeToUpdate,
                 $maxRepositoriesToUpdatePerRun, RepositoryStats $repositoryStats,
-                GitService $gitService) {
+                GitService $gitService, MailService $mailService) {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
         $this->repositoryAgeToUpdate = $repositoryAgeToUpdate;
         $this->maxRepositoriesToUpdatePerRun = $maxRepositoriesToUpdatePerRun;
         $this->repositoryStats = $repositoryStats;
         $this->gitService = $gitService;
+        $this->mailService = $mailService;
     }
 
     public function getRepositoriesToUpdate() {
@@ -74,8 +81,10 @@ class RepositoryManager {
      */
     public function getRepository(RepositoryEntity $repository) {
         if ($repository->getType() === RepositoryEntity::$TYPE_PLUGIN) {
-            return new PluginRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats, $this->gitService);
+            return new PluginRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats,
+                    $this->gitService, $this->mailService);
         }
-        return new CoreRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats, $this->gitService);
+        return new CoreRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats,
+                $this->gitService, $this->mailService);
     }
 }

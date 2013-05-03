@@ -1,6 +1,7 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
+use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 use Symfony\Component\DependencyInjection\Container;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
@@ -40,13 +41,19 @@ abstract class Repository {
      */
     private $gitService;
 
+    /**
+     * @var MailService
+     */
+    private $mailService;
+
     public function __construct($dataFolder, EntityManager $entityManager, $entity, RepositoryStats $repositoryStats,
-                GitService $gitService) {
+                GitService $gitService, MailService $mailService) {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
         $this->entity = $entity;
         $this->repositoryStats = $repositoryStats;
         $this->gitService = $gitService;
+        $this->mailService = $mailService;
     }
 
     public function update() {
@@ -211,10 +218,15 @@ abstract class Repository {
 
         $tmpGit->commit('translation update', $author);
         $patch = $tmpGit->createPatch();
-        // send email
-        // cleanup (repro db)
-        print strlen($patch);
-        // TODO
+
+        $this->mailService->sendPatchEmail(
+                $update->getRepository()->getEmail(),
+                'Language Update',
+                $patch,
+                'dokuwikiTranslatorBundle:Mail:languageUpdate.txt.twig',
+                array('update' => $update)
+        );
+        // TODO cleanup - repro and db
     }
 
     private function buildTempPath($id) {
