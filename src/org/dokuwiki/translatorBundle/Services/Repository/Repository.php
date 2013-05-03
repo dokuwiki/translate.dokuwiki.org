@@ -213,7 +213,7 @@ abstract class Repository {
         $patch = $tmpGit->createPatch();
         // send email
         // cleanup (repro db)
-        print $patch;
+        print strlen($patch);
         // TODO
     }
 

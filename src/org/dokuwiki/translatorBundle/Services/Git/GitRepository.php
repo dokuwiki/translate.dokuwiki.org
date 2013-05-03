@@ -2,6 +2,8 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Git;
 
+use Symfony\Component\Process\Process;
+
 class GitRepository {
 
     public static $PULL_CHANGED = 'changed';
@@ -17,7 +19,9 @@ class GitRepository {
     }
 
     public function cloneFrom($source, $destination) {
-        return $this->run('clone', $source, $destination);
+        $result = $this->run('clone', $source, $destination);
+        $this->run('config', '--local', 'core.pager', 'S'); // Don't use less on long outputs
+        return $result;
     }
 
     public function pull($remote = 'origin', $branch = 'master') {
@@ -59,33 +63,21 @@ class GitRepository {
         $result = $this->runCommand($command);
 
         if ($result->getExitCode()) {
-            throw new GitException($result->getExitCode() . $result->getError() . $result->getExitCode());
+            throw new GitException($result->getExitCode() . $result->getExitCode());
         }
 
         return $result;
     }
 
     private function runCommand($command) {
-        $descriptorspec = array(
-            1 => array("pipe", "w"), // stdout
-            2 => array("pipe", "w") // stderr
-        );
-
         if (file_exists($this->path)) {
-            $process = proc_open($command, $descriptorspec, $pipes, $this->path);
+            $process = new Process($command, $this->path);
         } else {
-            $process = proc_open($command, $descriptorspec, $pipes);
+            $process = new Process($command);
         }
+        $process->setTimeout(null);
+        $process->run();
 
-        $stdout = stream_get_contents($pipes[1]);
-        $stderr = stream_get_contents($pipes[2]);
-
-        foreach ($pipes as $pipe) {
-            fclose($pipe);
-        }
-
-        $exitCode = trim(proc_close($process));
-
-        return new ProgrammCallResult($stderr, $exitCode, $stdout);
+        return new ProgrammCallResult($process->getExitCode(), $process->getOutput());
     }
 }
