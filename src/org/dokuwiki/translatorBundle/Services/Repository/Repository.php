@@ -10,6 +10,7 @@ use org\dokuwiki\translatorBundle\Services\Language\LanguageManager;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use Doctrine\ORM\EntityManager;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
+use Symfony\Component\Filesystem\Filesystem;
 
 abstract class Repository {
 
@@ -227,6 +228,18 @@ abstract class Repository {
                 array('update' => $update)
         );
         // TODO cleanup - repro and db
+
+        $this->rrmdir($tmpDir);
+        $this->entityManager->remove($update);
+        $this->entityManager->flush();
+    }
+
+    private function rrmdir($folder) {
+        $fs = new Filesystem();
+        // some files are write-protected by git - this removes write protection
+        $fs->chmod($folder, 0666, 0000, true);
+        // https://bugs.php.net/bug.php?id=52176
+        $fs->remove($folder);
     }
 
     private function buildTempPath($id) {
