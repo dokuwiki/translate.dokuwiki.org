@@ -1,8 +1,5 @@
 parameters:
-    git_bin: D:\apps\Git\bin\git.exe # path to the git executable
-    data: D:\Temp\test 1                            # path to the working directory
-    reprositoryUpdateAge: 1                         # time since last update per repository (sec) 86400 -> 1d
-    maxRepositoriesToUpdatePerRun: 10               # max repositories to update per command run
+
 
 
     repository.class: org\dokuwiki\translatorBundle\Services\Repository\Repository

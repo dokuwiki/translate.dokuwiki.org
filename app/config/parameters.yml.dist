@@ -1,0 +1,35 @@
+parameters:
+
+    # Database configuration - see
+    database_driver: pdo_mysql
+    database_host: localhost
+    database_port: null
+    database_name: dokutranslate
+    database_user: database user
+    database_password: some very secret password
+    database_path: null
+
+    # E-Mail configuration - see http://symfony.com/doc/current/cookbook/email/email.html#configuration
+    mailer_transport: smtp
+    mailer_host: localhost
+    mailer_user: null
+    mailer_from: dokuwiki@example.com
+    mailer_password: null
+
+    # Hash salt
+    secret: top secret string
+
+    # path to the git executable
+    git_bin: /usr/bin/git
+
+    # path to the data folder (must be writeable)
+    data: /var/dokuwikitranslate/data
+
+    # time since last update per repository (sec) 86400 -> 1day
+    reprositoryUpdateAge: 86400
+
+    # max repositories to update per command run
+    maxRepositoriesToUpdatePerRun: 10
+
+    # Default locale. (there is just english)
+    locale: en
