@@ -9,6 +9,7 @@
     * Übersetzung speichern validationen:
       * keine änderungen
       * leere übersetzung
+  * Cron: was passiert bei anfragen via stdin?
 
 
   * logging?
