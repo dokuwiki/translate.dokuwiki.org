@@ -20,7 +20,7 @@ Production setup
 
 Point the document root to the web/ folder. The document index is app.php.
 
-Development Tests
+Development setup
 -----------------
 
     composer install --dev
