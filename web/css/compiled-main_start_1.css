@@ -4940,10 +4940,6 @@ img#logo {
 .table-translate-markup tr td textarea {
   width: 97%;
 }
-.table-translate-array tr td[colspan='2'],
-.table-translate-markup tr td[colspan='2'] {
-  text-align: right;
-}
 .pagination li a {
   cursor: pointer;
 }

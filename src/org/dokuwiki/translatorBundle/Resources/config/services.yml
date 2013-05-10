@@ -1,7 +1,4 @@
 parameters:
-
-
-
     repository.class: org\dokuwiki\translatorBundle\Services\Repository\Repository
     repository_manager.class: org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager
     repository_stats.class: org\dokuwiki\translatorBundle\Services\Repository\RepositoryStats
