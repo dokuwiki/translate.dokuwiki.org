@@ -5,9 +5,11 @@ namespace org\dokuwiki\translatorBundle\Services\Git;
 class GitService {
 
     private $gitBinary;
+    private $commandTimeout;
 
-    public function __construct($gitBinary) {
+    public function __construct($gitBinary, $commandTimeout) {
         $this->gitBinary = $gitBinary;
+        $this->commandTimeout = $commandTimeout;
     }
 
     /**
@@ -28,11 +30,11 @@ class GitService {
         if (!$this->isRepository($path)) {
             throw new GitException("$path is no git repository");
         }
-        return new GitRepository($this, $path);
+        return new GitRepository($this, $path, $this->commandTimeout);
     }
 
     public function createRepositoryFromRemote($source, $destination) {
-        $repository = new GitRepository($this, $destination);
+        $repository = new GitRepository($this, $destination, $this->commandTimeout);
         $repository->cloneFrom($source, $destination);
 
         return $repository;

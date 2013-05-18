@@ -10,12 +10,13 @@ class GitRepository {
     public static $PULL_UNCHANGED = 'unchanged';
 
     private $gitService;
-
     private $path;
+    private $commandTimeout;
 
-    public function __construct(GitService $gitService, $path) {
+    public function __construct(GitService $gitService, $path, $commandTimeout) {
         $this->gitService = $gitService;
         $this->path = $path;
+        $this->commandTimeout = $commandTimeout;
     }
 
     public function cloneFrom($source, $destination) {
@@ -75,8 +76,13 @@ class GitRepository {
         } else {
             $process = new Process($command);
         }
-        $process->setTimeout(null);
-        $process->run();
+        $process->setTimeout($this->commandTimeout);
+        $process->start();
+        while($process->isRunning()) {
+            $process->checkTimeout();
+            usleep(1000000);
+        }
+        $process->start();
 
         return new ProgrammCallResult($process->getExitCode(), $process->getOutput());
     }

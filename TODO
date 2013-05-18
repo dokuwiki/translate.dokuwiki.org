@@ -4,8 +4,6 @@
   * custom queries in repository klassen überführen
   * translation page:
     * dw cheatsheet
-    * seite verlassen (abfrage wie beim dokuwiki editieren)
-    * nach speichern der übersetzung auf update status weiterleiten
     * Übersetzung speichern validationen:
       * keine änderungen
       * leere übersetzung

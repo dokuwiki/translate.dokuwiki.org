@@ -37,7 +37,7 @@ services:
 
     git_service:
         class: org\dokuwiki\translatorBundle\Services\Git\GitService
-        arguments: ["%git_bin%"]
+        arguments: ["%git_bin%", "%command_timeout%"]
 
     mail_service:
         class: org\dokuwiki\translatorBundle\Services\Mail\MailService

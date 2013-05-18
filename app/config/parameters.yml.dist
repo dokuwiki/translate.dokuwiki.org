@@ -31,5 +31,8 @@ parameters:
     # max repositories to update per command run
     maxRepositoriesToUpdatePerRun: 10
 
+    # max time a git command can run in sec
+    command_timeout: 60
+
     # Default locale. (there is just english)
     locale: en
