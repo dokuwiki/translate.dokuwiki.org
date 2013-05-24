@@ -1,13 +1,11 @@
   * Readme updaten
   * Sprache hinzufügen auf detail seite
   * Sprache exportieren / importieren
-  * custom queries in repository klassen überführen
   * translation page:
     * dw cheatsheet
     * Übersetzung speichern validationen:
       * keine änderungen
       * leere übersetzung
-  * Cron: was passiert bei anfragen via stdin?
 
 
   * logging?
