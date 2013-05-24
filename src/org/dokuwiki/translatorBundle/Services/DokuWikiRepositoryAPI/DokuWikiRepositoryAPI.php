@@ -5,6 +5,7 @@ namespace org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 
 class DokuWikiRepositoryAPI {
 
@@ -12,9 +13,15 @@ class DokuWikiRepositoryAPI {
     private $cache = null;
     private $entityManager;
 
+    /**
+     * @var RepositoryEntityRepository
+     */
+    private $repositoryRepository;
+
     function __construct($dataFolder, EntityManager $entityManager) {
         $this->cachePath = "$dataFolder/dokuwikiRepositoryAPI.ser";
         $this->entityManager = $entityManager;
+        $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
     }
 
     public function updateCache() {
@@ -54,13 +61,8 @@ class DokuWikiRepositoryAPI {
     }
 
     private function updateRepositoryInformation(RepositoryEntity $repository) {
-        $query = $this->entityManager->createQuery(
-            'SELECT repository
-             FROM dokuwikiTranslatorBundle:RepositoryEntity repository
-             WHERE repository.name = :name AND repository.type = \'plugin\'');
-        $query->setParameter('name', $repository->getName());
         try {
-            $current = $query->getSingleResult();
+            $current = $this->repositoryRepository->getRepository(RepositoryEntity::$TYPE_PLUGIN, $repository->getName());
         } catch (NoResultException $ignored) {
             return;
         }

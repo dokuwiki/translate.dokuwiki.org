@@ -5,7 +5,9 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
+use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\LanguageStatsEntity;
+use org\dokuwiki\translatorBundle\Entity\LanguageStatsEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
 
@@ -16,17 +18,24 @@ class RepositoryStats {
      */
     private $entityManager;
 
+    /**
+     * @var LanguageStatsEntityRepository
+     */
+    private $languageStatsRepository;
+
+    /**
+     * @var LanguageNameEntityRepository
+     */
+    private $languageNameRepository;
+
     function __construct(EntityManager $entityManager) {
         $this->entityManager = $entityManager;
+        $this->languageStatsRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageStatsEntity');
+        $this->languageNameRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
     }
 
     public function clearStats(RepositoryEntity $entity) {
-        $query = $this->entityManager->createQuery('
-            DELETE FROM dokuwikiTranslatorBundle:LanguageStatsEntity langStats
-            WHERE langStats.repository = :repository
-        ');
-        $query->setParameter('repository', $entity);
-        $query->execute();
+        $this->languageStatsRepository->clearStats($entity);
     }
 
     /**
@@ -56,14 +65,8 @@ class RepositoryStats {
     }
 
     private function getLanguageEntityByCode($languageCode) {
-        $query = $this->entityManager->createQuery('
-            SELECT languageName
-            FROM dokuwikiTranslatorBundle:LanguageNameEntity languageName
-            WHERE languageName.code = :code
-        ');
-        $query->setParameter('code', $languageCode);
         try {
-            return $query->getSingleResult();
+            return $this->languageNameRepository->getLanguageByCode($languageCode);
         } catch (NoResultException $e) {
             $languageName = new LanguageNameEntity();
             $languageName->setCode($languageCode);

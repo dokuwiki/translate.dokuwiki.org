@@ -4,6 +4,7 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Git\GitService;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 
@@ -34,6 +35,11 @@ class RepositoryManager {
      */
     private $mailService;
 
+    /**
+     * @var RepositoryEntityRepository
+     */
+    private $repositoryRepository;
+
     private $repositoryAgeToUpdate;
     private $maxRepositoriesToUpdatePerRun;
 
@@ -47,6 +53,7 @@ class RepositoryManager {
         $this->repositoryStats = $repositoryStats;
         $this->gitService = $gitService;
         $this->mailService = $mailService;
+        $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
     }
 
     public function getRepositoriesToUpdate() {
@@ -60,16 +67,9 @@ class RepositoryManager {
     }
 
     private function findRepositoriesToUpdate() {
-        $query = $this->entityManager->createQuery(
-            'SELECT repository
-             FROM dokuwikiTranslatorBundle:RepositoryEntity repository
-             WHERE repository.lastUpdate < :timeToUpdate
-             ORDER BY repository.lastUpdate ASC'
-        );
-        $query->setParameter('timeToUpdate', time() - $this->repositoryAgeToUpdate);
-        $query->setMaxResults($this->maxRepositoriesToUpdatePerRun);
+
         try {
-            return $query->getResult();
+            return $this->repositoryRepository->getRepositoriesToUpdate($this->repositoryAgeToUpdate, $this->maxRepositoriesToUpdatePerRun);
         } catch (NoResultException $ignored) {
             return array();
         }
