@@ -19,8 +19,8 @@ class PlainBehavior implements RepositoryBehavior {
     }
 
 
-    function sendChange(GitRepository $git, TranslationUpdateEntity $update) {
-        $patch = $git->createPatch();
+    function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) {
+        $patch = $tempGit->createPatch();
 
         $this->mailService->sendPatchEmail(
             $update->getRepository()->getEmail(),

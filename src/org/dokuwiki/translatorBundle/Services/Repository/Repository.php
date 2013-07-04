@@ -78,14 +78,20 @@ abstract class Repository {
      * @return boolean true if the repository is changed.
      */
     private function updateFromRemote() {
-        if ($this->gitService->isRepository($this->getRepositoryPath())) {
-            $this->git = $this->gitService->openRepository($this->getRepositoryPath());
+        $this->openRepository();
+        if ($this->git) {
             return $this->behavior->pull($this->git, $this->entity);
         }
 
         $remote = $this->behavior->createOriginURL($this->entity);
         $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getRepositoryPath());
         return true;
+    }
+
+    private function openRepository() {
+        if ($this->gitService->isRepository($this->getRepositoryPath())) {
+            $this->git = $this->gitService->openRepository($this->getRepositoryPath());
+        }
     }
 
     private function getRepositoryPath() {
@@ -223,6 +229,7 @@ abstract class Repository {
     }
 
     public function createAndSendPatch(TranslationUpdateEntity $update) {
+        $this->openRepository();
         $tmpDir = $this->buildTempPath($update->getId());
         $tmpGit = $this->gitService->createRepositoryFromRemote($this->getRepositoryPath(), $tmpDir);
         $author = $this->prepareAuthor($update);
@@ -230,7 +237,7 @@ abstract class Repository {
 
         $tmpGit->commit('translation update', $author);
 
-        $this->behavior->sendChange($tmpGit, $update);
+        $this->behavior->sendChange($tmpGit, $update, $this->git);
 
         $this->rrmdir($tmpDir);
         $this->entityManager->remove($update);
@@ -240,7 +247,7 @@ abstract class Repository {
     private function rrmdir($folder) {
         $fs = new Filesystem();
         // some files are write-protected by git - this removes write protection
-        $fs->chmod($folder, 0666, 0000, true);
+        $fs->chmod($folder, 0777, 0000, true);
         // https://bugs.php.net/bug.php?id=52176
         $fs->remove($folder);
     }

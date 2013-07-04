@@ -19,18 +19,18 @@ class GitHubBehavior implements RepositoryBehavior {
     }
 
 
-    function sendChange(GitRepository $git, TranslationUpdateEntity $update) {
-/* TODO
-        $remoteUrl = $update->getRepository()->getUrl();
-        $remoteUrl = str_replace('github.com', 'dokuwiki-translation.github.com', $remoteUrl);
-        $git->remoteAdd('github', $remoteUrl);
+    function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) {
 
-        $branchName = md5(time());
+        $remoteUrl = $originalGit->getRemoteUrl('origin');
+        $tempGit->remoteAdd('github', $remoteUrl);
+        $branchName = 'lang_update_' . $update->getId();
+        $tempGit->branch($branchName);
+        $tempGit->checkout($branchName);
 
-        $git->push('github', $branchName);
+        $tempGit->push('github', $branchName);
 
-        // create pull request
-  */
+        $this->api->createPullRequest($branchName, $update->getRepository()->getBranch(),
+                $update->getLanguage(), $update->getRepository()->getUrl(), $remoteUrl);
     }
 
     function createOriginURL(RepositoryEntity $repository) {

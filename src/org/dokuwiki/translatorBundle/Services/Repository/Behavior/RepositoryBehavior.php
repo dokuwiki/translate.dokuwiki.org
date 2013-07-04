@@ -8,7 +8,7 @@ use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
 
 interface RepositoryBehavior {
 
-    function sendChange(GitRepository $git, TranslationUpdateEntity $update);
+    function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit);
 
     function createOriginURL(RepositoryEntity $repository);
 

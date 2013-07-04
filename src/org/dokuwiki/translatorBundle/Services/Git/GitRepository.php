@@ -68,6 +68,26 @@ class GitRepository {
         return $this->run('push', $origin, $branch);
     }
 
+    public function getRemoteUrl() {
+        $config = $this->path . '/.git/config';
+        if (!file_exists($config)) throw new GitException('No remote url found');
+
+        $content = file_get_contents($config);
+        if (!preg_match('/url = (git@\S*.?github.com\S*)/i', $content, $matches)) {
+            throw new GitException('No remote url found');
+        }
+
+        return $matches[1];
+    }
+
+    public function branch($name) {
+        return $this->run('branch', $name);
+    }
+
+    public function checkout($name) {
+        return $this->run('checkout', $name);
+    }
+
     private function run() {
         $arguments = func_get_args();
         $command = array($this->gitService->getGitBinary());

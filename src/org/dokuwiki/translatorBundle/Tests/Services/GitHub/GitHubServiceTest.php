@@ -22,6 +22,12 @@ class GitHubServiceTest extends \PHPUnit_Framework_TestCase {
         $result = $api->getUsernameAndRepositoryFromURL('git@github.com:dom-mel/dokuwiki.git');
         $this->assertEquals(array('dom-mel', 'dokuwiki'), $result);
 
+        $result = $api->getUsernameAndRepositoryFromURL('git@sub.github.com:splitbrain/dokuwiki.git');
+        $this->assertEquals(array('splitbrain', 'dokuwiki'), $result);
+
+        $result = $api->getUsernameAndRepositoryFromURL('git@sub.github.com:dom-mel/dokuwiki.git');
+        $this->assertEquals(array('dom-mel', 'dokuwiki'), $result);
+
         $result = $api->getUsernameAndRepositoryFromURL('git://github.com/splitbrain/dokuwiki.git');
         $this->assertEquals(array('splitbrain', 'dokuwiki'), $result);
 

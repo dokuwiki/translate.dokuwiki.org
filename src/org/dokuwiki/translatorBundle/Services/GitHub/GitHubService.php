@@ -34,7 +34,7 @@ class GitHubService {
     }
 
     public function getUsernameAndRepositoryFromURL($url) {
-        $result = preg_replace('#^(https://github.com/|git@github.com:|git://github.com/)(.*)\.git$#', '$2', $url, 1, $counter);
+        $result = preg_replace('#^(https://github.com/|git@.*?github.com:|git://github.com/)(.*)\.git$#', '$2', $url, 1, $counter);
         if ($counter === 0) {
             throw new GitHubServiceException('Invalid GitHub URL: ' . $url);
         }
@@ -46,6 +46,18 @@ class GitHubService {
     public function gitHubUrlHack($url) {
         if ($this->gitHubUrl === 'github.com') return $url;
         return str_replace('github.com', $this->gitHubUrl, $url);
+    }
+
+    public function createPullRequest($patchBranch, $branch, $languageCode, $url, $patchUrl) {
+        list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
+        list($repoName, $ignored) = $this->getUsernameAndRepositoryFromURL($patchUrl);
+
+        $this->client->api('pull_request')->create($user, $repository, array(
+            'base'  => $branch,
+            'head'  => $repoName.':'.$patchBranch,
+            'title' => 'Translation update ('.$languageCode.')',
+            'body'  => 'This pull request contains some translation updates.'
+        ));
     }
 
 }
