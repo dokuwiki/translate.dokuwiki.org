@@ -80,6 +80,7 @@ class GitRepository {
         $result = $this->runCommand($command);
 
         if ($result->getExitCode()) {
+            print_r($command);
             throw new GitException($result->getExitCode() . $result->getExitCode());
         }
 

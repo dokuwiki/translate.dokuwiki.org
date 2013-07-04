@@ -80,7 +80,7 @@ abstract class Repository {
     private function updateFromRemote() {
         if ($this->gitService->isRepository($this->getRepositoryPath())) {
             $this->git = $this->gitService->openRepository($this->getRepositoryPath());
-            return $this->git->pull('origin', $this->getBranch()) === GitRepository::$PULL_CHANGED;
+            return $this->behavior->pull($this->git, $this->entity);
         }
 
         $remote = $this->behavior->createOriginURL($this->entity);

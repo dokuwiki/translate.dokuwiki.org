@@ -9,8 +9,10 @@ class GitHubService {
 
     private $token;
     private $client;
+    private $gitHubUrl;
 
-    function __construct($gitHubApiToken, $dataFolder, $autoStartup = true) {
+    function __construct($gitHubApiToken, $dataFolder, $gitHubUrl, $autoStartup = true) {
+        $this->gitHubUrl = $gitHubUrl;
         if (!$autoStartup) {
             return;
         }
@@ -28,7 +30,7 @@ class GitHubService {
     public function createFork($url) {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
         $result = $this->client->api('repo')->forks()->create($user, $repository);
-        return $result['git_url'];
+        return $this->gitHubUrlHack($result['ssh_url']);
     }
 
     public function getUsernameAndRepositoryFromURL($url) {
@@ -39,6 +41,11 @@ class GitHubService {
         $result = explode('/', $result);
 
         return $result;
+    }
+
+    public function gitHubUrlHack($url) {
+        if ($this->gitHubUrl === 'github.com') return $url;
+        return str_replace('github.com', $this->gitHubUrl, $url);
     }
 
 }

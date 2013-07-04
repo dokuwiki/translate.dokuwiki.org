@@ -36,4 +36,17 @@ class GitHubBehavior implements RepositoryBehavior {
     function createOriginURL(RepositoryEntity $repository) {
         return $this->api->createFork($repository->getUrl());
     }
+
+    /**
+     * Update from original and push to fork
+     *
+     * @param GitRepository $git
+     * @param RepositoryEntity $repository
+     * @return bool true if the repository is changed
+     */
+    function pull(GitRepository $git, RepositoryEntity $repository) {
+        $changed = $git->pull($repository->getUrl(), $repository->getBranch()) === GitRepository::$PULL_CHANGED;
+        $git->push('origin', $repository->getBranch());
+        return $changed;
+    }
 }

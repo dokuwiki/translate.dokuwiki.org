@@ -12,4 +12,12 @@ interface RepositoryBehavior {
 
     function createOriginURL(RepositoryEntity $repository);
 
+    /**
+     * Called before a pull
+     * @param GitRepository $git
+     * @param RepositoryEntity $repository
+     * @return bool true if the repository is changed
+     */
+    function pull(GitRepository $git, RepositoryEntity $repository);
+
 }
