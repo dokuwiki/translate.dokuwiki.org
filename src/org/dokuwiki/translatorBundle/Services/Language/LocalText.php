@@ -62,7 +62,7 @@ class LocalText {
             }
             $php.="\n";
         }
-        $php.= "*/\n";
+        $php.= " */\n";
 
         return $php;
     }
@@ -84,7 +84,8 @@ class LocalText {
             }
 
             $text = $this->escapeText($text);
-            $php .= '$lang' . $prefix . "['$key'] = '$text';\n";
+            $left = '$lang' . $prefix . "['$key']";
+            $php .= sprintf('%-30s', $left). " = '$text';\n";
         }
 
         return $php;
