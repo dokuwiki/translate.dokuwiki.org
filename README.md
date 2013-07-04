@@ -6,7 +6,10 @@ This tool provides a web based tool to create and update translations for DokuWi
 Configuration
 -----
 
-copy app/config/parameters.yml.dist to app/config/parameters.yml and setup the configuration
+Copy app/config/parameters.yml.dist to app/config/parameters.yml and setup the configuration.
+Ensure you have a proper ssh key to your github account configured (no passphrase).
+
+http://sampreshan.svashishtha.com/2012/05/20/quicktip-github-multiple-accounts-access-with-ssh/
 
 Production setup
 ----------------

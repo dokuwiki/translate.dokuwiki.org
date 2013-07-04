@@ -34,5 +34,13 @@ parameters:
     # max time a git command can run in sec
     command_timeout: 60
 
+    # GitHub api token, see https://github.com/settings/applications
+    git_hub_token: null
+
+    # GitHub url
+    # you can change this on a development environment to setup a second ssh key for a second git account without
+    # messing up your environment - http://sampreshan.svashishtha.com/2012/05/20/quicktip-github-multiple-accounts-access-with-ssh/
+    git_hub_url: github.com
+
     # Default locale. (there is just english)
     locale: en

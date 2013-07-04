@@ -19,9 +19,21 @@ class GitRepository {
         $this->commandTimeout = $commandTimeout;
     }
 
-    public function cloneFrom($source, $destination) {
+    public function cloneFrom($source, $destination, $retries = 3) {
         $result = $this->run('clone', $source, $destination);
-        $this->run('config', '--local', 'core.pager', 'S'); // Don't use less on long outputs
+
+        while (true) {
+            try {
+                $this->run('config', '--local', 'core.pager', 'S'); // Don't use less on long outputs
+                break;
+            } catch (GitException $e) {
+                if ($retries == 0) {
+                    throw $e;
+                }
+                $retries--;
+                sleep(10);
+            }
+        }
         return $result;
     }
 
@@ -50,6 +62,10 @@ class GitRepository {
 
     public function add($file) {
         return $this->run('add', $file);
+    }
+
+    public function push($origin, $branch) {
+        return $this->run('push', $origin, $branch);
     }
 
     private function run() {

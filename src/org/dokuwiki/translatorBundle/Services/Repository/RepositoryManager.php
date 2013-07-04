@@ -6,7 +6,10 @@ use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Git\GitService;
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubService;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
+use org\dokuwiki\translatorBundle\Services\Repository\Behavior\GitHubBehavior;
+use org\dokuwiki\translatorBundle\Services\Repository\Behavior\PlainBehavior;
 
 class RepositoryManager {
 
@@ -40,12 +43,18 @@ class RepositoryManager {
      */
     private $repositoryRepository;
 
+    /**
+     * @var GitHubService
+     */
+    private $gitHubService;
+
     private $repositoryAgeToUpdate;
     private $maxRepositoriesToUpdatePerRun;
 
     function __construct($dataFolder, EntityManager $entityManager, $repositoryAgeToUpdate,
                 $maxRepositoriesToUpdatePerRun, RepositoryStats $repositoryStats,
-                GitService $gitService, MailService $mailService) {
+                GitService $gitService, MailService $mailService, GitHubService $gitHubService) {
+
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
         $this->repositoryAgeToUpdate = $repositoryAgeToUpdate;
@@ -54,6 +63,7 @@ class RepositoryManager {
         $this->gitService = $gitService;
         $this->mailService = $mailService;
         $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
+        $this->gitHubService = $gitHubService;
     }
 
     public function getRepositoriesToUpdate() {
@@ -80,11 +90,21 @@ class RepositoryManager {
      * @return Repository
      */
     public function getRepository(RepositoryEntity $repository) {
+        $behavior = $this->getRepositoryBehavior($repository);
+
         if ($repository->getType() === RepositoryEntity::$TYPE_PLUGIN) {
             return new PluginRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats,
-                    $this->gitService, $this->mailService);
+                    $this->gitService, $behavior);
         }
         return new CoreRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats,
-                $this->gitService, $this->mailService);
+                $this->gitService, $behavior);
+    }
+
+    private function getRepositoryBehavior(RepositoryEntity $repository) {
+        $url = $repository->getUrl();
+        if (preg_match('/^(git:\/\/|https:\/\/|git@)github\.com/i', $url)) {
+            return new GitHubBehavior($this->gitHubService);
+        }
+        return new PlainBehavior($this->mailService);
     }
 }

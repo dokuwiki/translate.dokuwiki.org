@@ -1,7 +1,7 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
-use org\dokuwiki\translatorBundle\Services\Mail\MailService;
+use org\dokuwiki\translatorBundle\Services\Repository\Behavior\RepositoryBehavior;
 use Symfony\Component\DependencyInjection\Container;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
@@ -43,18 +43,18 @@ abstract class Repository {
     private $gitService;
 
     /**
-     * @var MailService
+     * @var RepositoryBehavior
      */
-    private $mailService;
+    private $behavior;
 
     public function __construct($dataFolder, EntityManager $entityManager, $entity, RepositoryStats $repositoryStats,
-                GitService $gitService, MailService $mailService) {
+                GitService $gitService, RepositoryBehavior $behavior) {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
         $this->entity = $entity;
         $this->repositoryStats = $repositoryStats;
         $this->gitService = $gitService;
-        $this->mailService = $mailService;
+        $this->behavior = $behavior;
     }
 
     public function update() {
@@ -83,7 +83,8 @@ abstract class Repository {
             return $this->git->pull('origin', $this->getBranch()) === GitRepository::$PULL_CHANGED;
         }
 
-        $this->git = $this->gitService->createRepositoryFromRemote($this->getRepositoryUrl(), $this->getRepositoryPath());
+        $remote = $this->behavior->createOriginURL($this->entity);
+        $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getRepositoryPath());
         return true;
     }
 
@@ -146,6 +147,11 @@ abstract class Repository {
         }
     }
 
+    /**
+     * Get language Data for a language code
+     * @param string $code language code
+     * @return array language data. array will be empty, if no language data is available
+     */
     public function getLanguage($code) {
         $code = strtolower($code);
         if (!preg_match('/^[a-z-]+$/i', $code)) {
@@ -154,11 +160,14 @@ abstract class Repository {
 
         $langFile = $this->buildBasePath() . "lang/$code.ser";
         if (!file_exists($langFile)) {
-            return array('a'=>'a');
+            return array();
         }
         return unserialize(file_get_contents($langFile));
     }
 
+    /**
+     * @return bool True when repository is locked
+     */
     public function isLocked() {
         return file_exists($this->getLockPath());
     }
@@ -178,10 +187,12 @@ abstract class Repository {
     }
 
     /**
-     * @param array $translation
-     * @param string $author
-     * @param string $email
-     * @param string $language
+     * Scedule a new Translation update
+     *
+     * @param array $translation Translated text
+     * @param string $author Author of the translation
+     * @param string $email Authors email address of the translation
+     * @param string $language language code for translation
      * @return int id of queue element in database
      */
     public function addTranslationUpdate($translation, $author, $email, $language) {
@@ -218,16 +229,8 @@ abstract class Repository {
         $this->applyChanges($tmpGit, $tmpDir, $update);
 
         $tmpGit->commit('translation update', $author);
-        $patch = $tmpGit->createPatch();
 
-        $this->mailService->sendPatchEmail(
-                $update->getRepository()->getEmail(),
-                'Language Update',
-                $patch,
-                'dokuwikiTranslatorBundle:Mail:languageUpdate.txt.twig',
-                array('update' => $update)
-        );
-        // TODO cleanup - repro and db
+        $this->behavior->sendChange($tmpGit, $update);
 
         $this->rrmdir($tmpDir);
         $this->entityManager->remove($update);
