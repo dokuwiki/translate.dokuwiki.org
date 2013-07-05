@@ -6,7 +6,7 @@
     * Übersetzung speichern validationen:
       * keine änderungen
       * leere übersetzung
+  * Email bei repository update fehlern an author verschicken
 
 
-  * logging?
   * erster import mit via ajax anstoßen?

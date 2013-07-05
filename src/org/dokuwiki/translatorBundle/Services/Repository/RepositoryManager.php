@@ -10,6 +10,7 @@ use org\dokuwiki\translatorBundle\Services\GitHub\GitHubService;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\GitHubBehavior;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\PlainBehavior;
+use Symfony\Bridge\Monolog\Logger;
 
 class RepositoryManager {
 
@@ -48,12 +49,18 @@ class RepositoryManager {
      */
     private $gitHubService;
 
+    /**
+     * @var Logger
+     */
+    private $logger;
+
     private $repositoryAgeToUpdate;
     private $maxRepositoriesToUpdatePerRun;
 
     function __construct($dataFolder, EntityManager $entityManager, $repositoryAgeToUpdate,
                 $maxRepositoriesToUpdatePerRun, RepositoryStats $repositoryStats,
-                GitService $gitService, MailService $mailService, GitHubService $gitHubService) {
+                GitService $gitService, MailService $mailService, GitHubService $gitHubService,
+                Logger $logger) {
 
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
@@ -64,6 +71,7 @@ class RepositoryManager {
         $this->mailService = $mailService;
         $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
         $this->gitHubService = $gitHubService;
+        $this->logger = $logger;
     }
 
     public function getRepositoriesToUpdate() {
@@ -94,10 +102,10 @@ class RepositoryManager {
 
         if ($repository->getType() === RepositoryEntity::$TYPE_PLUGIN) {
             return new PluginRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats,
-                    $this->gitService, $behavior);
+                    $this->gitService, $behavior, $this->logger);
         }
         return new CoreRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats,
-                $this->gitService, $behavior);
+                $this->gitService, $behavior, $this->logger);
     }
 
     private function getRepositoryBehavior(RepositoryEntity $repository) {

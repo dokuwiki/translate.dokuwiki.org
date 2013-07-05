@@ -107,7 +107,7 @@ class RepositoryEntity {
 
     /**
      * @ORM\Column(type="integer")
-     * @var string
+     * @var int
      */
     protected $errorCount = 0;
 
@@ -135,14 +135,14 @@ class RepositoryEntity {
     }
 
     /**
-     * @param string $errorCount
+     * @param int $errorCount
      */
     public function setErrorCount($errorCount) {
         $this->errorCount = $errorCount;
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getErrorCount() {
         return $this->errorCount;

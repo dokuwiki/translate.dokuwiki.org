@@ -9,7 +9,7 @@ parameters:
 services:
     repository_manager:
         class: "%repository_manager.class%"
-        arguments: ["%data%", @doctrine.orm.entity_manager, "%reprositoryUpdateAge%", "%maxRepositoriesToUpdatePerRun%", @repository_stats , @git_service, @mail_service, @git_hub_service]
+        arguments: ["%data%", @doctrine.orm.entity_manager, "%reprositoryUpdateAge%", "%maxRepositoriesToUpdatePerRun%", @repository_stats , @git_service, @mail_service, @git_hub_service, @logger]
 
     repository_stats:
         class: "%repository_stats.class%"

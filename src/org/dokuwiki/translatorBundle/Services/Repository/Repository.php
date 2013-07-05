@@ -1,6 +1,10 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
+use Monolog\Logger;
+use org\dokuwiki\translatorBundle\Services\Git\GitException;
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
+use org\dokuwiki\translatorBundle\Services\Language\LanguageParseException;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\RepositoryBehavior;
 use Symfony\Component\DependencyInjection\Container;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
@@ -47,14 +51,21 @@ abstract class Repository {
      */
     private $behavior;
 
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+
     public function __construct($dataFolder, EntityManager $entityManager, $entity, RepositoryStats $repositoryStats,
-                GitService $gitService, RepositoryBehavior $behavior) {
+                GitService $gitService, RepositoryBehavior $behavior, Logger $logger) {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
         $this->entity = $entity;
         $this->repositoryStats = $repositoryStats;
         $this->gitService = $gitService;
         $this->behavior = $behavior;
+        $this->logger = $logger;
     }
 
     public function update() {
@@ -62,29 +73,49 @@ abstract class Repository {
         if (!is_dir($path)) {
             mkdir($path, 0777, true);
         }
-        $this->lock();
-        $changed = $this->updateFromRemote();
-        if ($changed) {
-            $this->updateLanguage();
+        try {
+            if ($this->isLocked()) return;
+            $this->lock();
+            $changed = $this->updateFromRemote();
+            if ($changed) {
+                $this->updateLanguage();
+            }
+            $this->entity->setLastUpdate(intval(time()));
+            $this->entity->setErrorCount(0);
+        } catch (RepositoryNotUpdatedException $e) {
+            $this->entity->setErrorCount($this->entity->getErrorCount() + 1);
+            $this->logger->warn(sprintf('Repository %d not updated. Error count is %d. Error: %s',
+                    $this->entity->getId(), $this->entity->getErrorCount(), $e->getPrevious()->getMessage()));
         }
-
-        $this->entity->setLastUpdate(intval(time()));
         $this->entityManager->flush($this->entity);
         $this->unlock();
     }
 
     /**
      * Update local repository
+     * @throws RepositoryNotUpdatedException
      * @return boolean true if the repository is changed.
      */
     private function updateFromRemote() {
         $this->openRepository();
         if ($this->git) {
-            return $this->behavior->pull($this->git, $this->entity);
+            try {
+                return $this->behavior->pull($this->git, $this->entity);
+            } catch (GitException $e) {
+                throw new RepositoryNotUpdatedException($e->getMessage(), 0, $e);
+            }
         }
 
-        $remote = $this->behavior->createOriginURL($this->entity);
-        $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getRepositoryPath());
+        try {
+            $remote = $this->behavior->createOriginURL($this->entity);
+            $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getRepositoryPath());
+        } catch (GitHubServiceException $e) {
+            $this->delete();
+            throw new RepositoryNotUpdatedException('', 0, $e);
+        } catch (GitException $e) {
+            $this->delete();
+            throw new RepositoryNotUpdatedException('', 0, $e);
+        }
         return true;
     }
 
@@ -120,14 +151,19 @@ abstract class Repository {
     }
 
     private function updateLanguage() {
+
         $languageFolders = $this->getLanguageFolder();
 
         $translations = array();
         foreach ($languageFolders as $languageFolder) {
             $languageFolder = rtrim($languageFolder, '/');
             $languageFolder .= '/';
-            $translated = LanguageManager::readLanguages($this->buildBasePath() . "repository/$languageFolder", $languageFolder);
 
+            try {
+                $translated = LanguageManager::readLanguages($this->buildBasePath() . "repository/$languageFolder", $languageFolder);
+            } catch (LanguageParseException $e) {
+                throw new RepositoryNotUpdatedException('', 0, $e);
+            }
             $translations = array_merge_recursive($translations, $translated);
         }
 
@@ -287,6 +323,12 @@ abstract class Repository {
             file_put_contents($file, $translation->render());
             $git->add($file);
         }
+    }
+
+    private function delete() {
+        $path = $this->buildBasePath();
+        if (!file_exists($path)) return;
+        $this->rrmdir($path);
     }
 
     /**
