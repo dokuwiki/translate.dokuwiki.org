@@ -46,8 +46,7 @@ $(document).ready(function() {
         }
 
         var newElements = [];
-        var regex = new RegExp(this.filterText);
-
+        var regex = new RegExp(this.escapeRegExp(this.filterText), 'i');
         this.allElements.each(function(index, val) {
             if ($(this).attr('data-translation-key').match(regex)) {
                 newElements.push(this);
@@ -65,6 +64,13 @@ $(document).ready(function() {
         this.elements.appendTo(this.table);
     };
 
+    /**
+     * @see http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+     */
+    TranslationTable.prototype.escapeRegExp = function(str) {
+        return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    };
+
     TranslationTable.prototype.draw = function() {
         this.elements.hide();
         var startIndex = (this.page-1) * this.itemsPerPage;
@@ -72,10 +78,10 @@ $(document).ready(function() {
         if (this.usePagination()) {
             endIndex = startIndex + this.itemsPerPage;
             if (endIndex >= this.itemCount) {
-                endIndex = this.itemCount -1;
+                endIndex = this.itemCount;
             }
         } else {
-            endIndex = this.itemCount -1;
+            endIndex = this.itemCount;
         }
 
         for (var i = startIndex; i < endIndex; i++) {
