@@ -1,6 +1,7 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
+use Github\Exception\RuntimeException;
 use Monolog\Logger;
 use org\dokuwiki\translatorBundle\Services\Git\GitException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
@@ -83,12 +84,18 @@ abstract class Repository {
             $this->entity->setLastUpdate(intval(time()));
             $this->entity->setErrorCount(0);
         } catch (RepositoryNotUpdatedException $e) {
-            $this->entity->setErrorCount($this->entity->getErrorCount() + 1);
-            $this->logger->warn(sprintf('Repository %d not updated. Error count is %d. Error: %s',
-                    $this->entity->getId(), $this->entity->getErrorCount(), $e->getPrevious()->getMessage()));
+            $this->increaseErrorCount($e);
+        } catch (RuntimeException $e) {
+            $this->increaseErrorCount($e);
         }
         $this->entityManager->flush($this->entity);
         $this->unlock();
+    }
+
+    private function increaseErrorCount(\Exception $e) {
+        $this->entity->setErrorCount($this->entity->getErrorCount() + 1);
+        $this->logger->warn(sprintf('Repository %d not updated. Error count is %d. Error: %s',
+            $this->entity->getId(), $this->entity->getErrorCount(), $e->getPrevious()->getMessage()));
     }
 
     /**
