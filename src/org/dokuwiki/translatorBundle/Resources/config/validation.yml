@@ -12,7 +12,7 @@ org\dokuwiki\translatorBundle\Entity\RepositoryEntity:
             - Email: ~
         name:
             - NotBlank: ~
-            - Regex: "/^\S+$/"
+            - Regex: "/^[a-z0-9]+$/"
             - org\dokuwiki\translatorBundle\Validator\PluginName: ~
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: { fields: name, message: "There is already a registered plug-in with this name."}
