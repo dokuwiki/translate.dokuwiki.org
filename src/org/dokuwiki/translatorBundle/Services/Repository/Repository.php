@@ -85,8 +85,6 @@ abstract class Repository {
             $this->entity->setErrorCount(0);
         } catch (RepositoryNotUpdatedException $e) {
             $this->increaseErrorCount($e);
-        } catch (RuntimeException $e) {
-            $this->increaseErrorCount($e);
         }
         $this->entityManager->flush($this->entity);
         $this->unlock();
@@ -109,6 +107,8 @@ abstract class Repository {
             try {
                 return $this->behavior->pull($this->git, $this->entity);
             } catch (GitException $e) {
+                throw new RepositoryNotUpdatedException($e->getMessage(), 0, $e);
+            } catch (RuntimeException $e) {
                 throw new RepositoryNotUpdatedException($e->getMessage(), 0, $e);
             }
         }
