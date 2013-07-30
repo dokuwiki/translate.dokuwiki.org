@@ -87,7 +87,7 @@ class PluginController extends Controller implements InitializableController {
             $entityManager->merge($repository);
             $entityManager->flush();
 
-            return $this->redirect($this->generateUrl('dokuwiki_translate_plugin', array('name' => $repository->getName())));
+            return $this->redirect($this->generateUrl('dokuwiki_translator_show_plugin', array('name' => $repository->getName())));
         } catch (NoResultException $ignored) {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
