@@ -11,8 +11,8 @@ dokuwiki_translator_plugin_add:
     defaults: { _controller: dokuwikiTranslatorBundle:Plugin:index}
 
 dokuwiki_translator_plugin_activate:
-        pattern:  /plugin/{name}/activate/{key}
-        defaults: { _controller: dokuwikiTranslatorBundle:Plugin:activate}
+    pattern:  /plugin/{name}/activate/{key}
+    defaults: { _controller: dokuwikiTranslatorBundle:Plugin:activate}
 
 dokuwiki_translate:
     pattern:  /translate/dokuwiki
@@ -29,7 +29,6 @@ dokuwiki_translate_thanks:
 dokuwiki_translate_save:
     pattern:  /translate/save
     defaults: { _controller: dokuwikiTranslatorBundle:Translation:save}
-
 
 dokuwiki_translator_show:
     pattern:  /dokuwiki

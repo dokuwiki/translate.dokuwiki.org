@@ -18,7 +18,9 @@ class LanguageNameEntityRepository extends EntityRepository {
             array('code' => $code)
         );
 
-        if (!$result) throw new NoResultException();
+        if (!$result) {
+            throw new NoResultException();
+        }
         return $result;
     }
 
