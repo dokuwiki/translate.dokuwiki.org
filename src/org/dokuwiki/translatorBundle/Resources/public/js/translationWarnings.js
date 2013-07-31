@@ -281,8 +281,8 @@ $(document).ready(function() {
                 element.popover({
                     placement: 'top',
                     trigger: 'manual',
-                    content: 'Different count of % placeholders',
-                    title: 'Warning'
+                    content: 'The translated text has a missing placeholder. You need to add it to the translated text. A placeholder is indicated by %s or %d.',
+                    title: 'Missing placeholder'
                 });
                 if (popover) element.popover('show');
                 return;
