@@ -22,6 +22,12 @@ class LanguageNameEntity {
      */
     protected $name;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @var boolean
+     */
+    protected $rtl = false;
+
     public function setCode($code) {
         $this->code = $code;
     }
@@ -38,5 +44,12 @@ class LanguageNameEntity {
         return $this->name;
     }
 
+    public function setRtl($rtl) {
+        $this->rtl = $rtl;
+    }
+
+    public function getRtl() {
+        return $this->rtl;
+    }
 
 }

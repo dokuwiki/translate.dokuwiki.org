@@ -154,10 +154,15 @@ class SetupCommand extends ContainerAwareCommand {
             'zh-tw' => 'Chinese Traditional'
         );
 
+        $rtl = array(
+            'ar', 'fa', 'he',
+        );
+
         foreach ($names as $code => $name) {
             $langNames = new LanguageNameEntity();
             $langNames->setCode($code);
             $langNames->setName($name);
+            $langNames->setRtl(in_array($code, $rtl));
             $this->entityManager->persist($langNames);
         }
 
