@@ -20,7 +20,7 @@ $(document).ready(function() {
         // all page related indexes are 1 based, only selectPage and draw are using 0 based index
         this.page = 1;
         this.itemCount = this.elements.size();
-        this.itemsPerPage = 10;
+        this.itemsPerPage = 30;
         this.lastPage = Math.ceil(this.itemCount / this.itemsPerPage)-1;
         this.paginationSpace = 3;
         this.pagination = $('.pagination');
