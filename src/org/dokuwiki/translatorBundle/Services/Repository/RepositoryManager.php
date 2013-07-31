@@ -102,10 +102,10 @@ class RepositoryManager {
 
         if ($repository->getType() === RepositoryEntity::$TYPE_PLUGIN) {
             return new PluginRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats,
-                    $this->gitService, $behavior, $this->logger);
+                    $this->gitService, $behavior, $this->logger, $this->mailService);
         }
         return new CoreRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats,
-                $this->gitService, $behavior, $this->logger);
+                $this->gitService, $behavior, $this->logger, $this->mailService);
     }
 
     private function getRepositoryBehavior(RepositoryEntity $repository) {

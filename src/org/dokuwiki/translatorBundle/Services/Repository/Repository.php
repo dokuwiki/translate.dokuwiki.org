@@ -6,6 +6,7 @@ use Monolog\Logger;
 use org\dokuwiki\translatorBundle\Services\Git\GitException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageParseException;
+use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\RepositoryBehavior;
 use Symfony\Component\DependencyInjection\Container;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
@@ -57,9 +58,14 @@ abstract class Repository {
      */
     private $logger;
 
+    /**
+     * @var MailService
+     */
+    private $mailService;
+
 
     public function __construct($dataFolder, EntityManager $entityManager, $entity, RepositoryStats $repositoryStats,
-                GitService $gitService, RepositoryBehavior $behavior, Logger $logger) {
+                GitService $gitService, RepositoryBehavior $behavior, Logger $logger, MailService $mailService) {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
         $this->entity = $entity;
@@ -67,6 +73,7 @@ abstract class Repository {
         $this->gitService = $gitService;
         $this->behavior = $behavior;
         $this->logger = $logger;
+        $this->mailService = $mailService;
     }
 
     public function update() {
@@ -84,16 +91,22 @@ abstract class Repository {
             $this->entity->setLastUpdate(intval(time()));
             $this->entity->setErrorCount(0);
         } catch (RepositoryNotUpdatedException $e) {
-            $this->increaseErrorCount($e);
+            $this->handleUpdateError($e);
         }
         $this->entityManager->flush($this->entity);
         $this->unlock();
     }
 
-    private function increaseErrorCount(\Exception $e) {
+    private function handleUpdateError(\Exception $e) {
         $this->entity->setErrorCount($this->entity->getErrorCount() + 1);
         $this->logger->warn(sprintf('Repository %d not updated. Error count is %d. Error: %s',
             $this->entity->getId(), $this->entity->getErrorCount(), $e->getPrevious()->getMessage()));
+
+        $mailData = array();
+        $mailData['repro'] = $this->entity;
+        $mailData['e'] = $e;
+        $this->mailService->sendEmail($this->entity->getEmail(), 'There was an error on updating your plugin.',
+                'dokuwikiTranslatorBundle:Mail:pluginUpdateError.txt.twig', $mailData);
     }
 
     /**
@@ -118,10 +131,12 @@ abstract class Repository {
             $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getRepositoryPath());
         } catch (GitHubServiceException $e) {
             $this->delete();
-            throw new RepositoryNotUpdatedException('', 0, $e);
+            throw new RepositoryNotUpdatedException($e->getMessage(), 0, $e);
         } catch (GitException $e) {
             $this->delete();
-            throw new RepositoryNotUpdatedException('', 0, $e);
+            throw new RepositoryNotUpdatedException($e->getMessage(), 0, $e);
+        } catch (RuntimeException $e) {
+            throw new RepositoryNotUpdatedException($e->getMessage(), 0, $e);
         }
         return true;
     }
