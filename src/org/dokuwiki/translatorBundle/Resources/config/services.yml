@@ -41,7 +41,7 @@ services:
 
     mail_service:
         class: org\dokuwiki\translatorBundle\Services\Mail\MailService
-        arguments: [@mailer, @twig, "%mailer_from%"]
+        arguments: [@mailer, @twig, "%mailer_from%", @logger]
 
     git_hub_service:
         class: org\dokuwiki\translatorBundle\Services\GitHub\GitHubService
