@@ -15,9 +15,14 @@ monolog:
             type:  stream
             path:  %kernel.logs_dir%/%kernel.environment%.log
             level: debug
+            channels: !doctrine
         firephp:
             type:  firephp
             level: info
+        doctrine:
+            type: stream
+            path: %kernel.logs_dir%/%kernel.environment%-doctrine.log
+            channels: doctrine
 
 assetic:
     use_controller: true
