@@ -3,6 +3,7 @@
 namespace org\dokuwiki\translatorBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
@@ -130,7 +131,11 @@ class TranslationController extends Controller implements InitializableControlle
 
         $data['repository'] = $repositoryEntity;
         $data['translations'] = $this->prepareLanguages($language, $repositoryEntity);
-        $data['targetLanguageName'] = $this->getLanguageNameEntityRepository()->getLanguageNameByCode($language);
+        try {
+            $data['targetLanguage'] = $this->getLanguageNameEntityRepository()->getLanguageByCode($language);
+        } catch (NoResultException $e) {
+            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+        }
 
         return $this->render('dokuwikiTranslatorBundle:Translate:translate.html.twig',
                              $data);

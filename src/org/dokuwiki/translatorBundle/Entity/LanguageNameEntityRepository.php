@@ -8,6 +8,11 @@ use Symfony\Component\Validator\Tests\Constraints\CountryValidatorTest;
 
 class LanguageNameEntityRepository extends EntityRepository {
 
+    /**
+     * @param string $code language code
+     * @return LanguageNameEntity
+     * @throws \Doctrine\ORM\NoResultException
+     */
     public function getLanguageByCode($code) {
         $result = $this->findOneBy(
             array('code' => $code)
@@ -15,15 +20,6 @@ class LanguageNameEntityRepository extends EntityRepository {
 
         if (!$result) throw new NoResultException();
         return $result;
-    }
-
-    public function getLanguageNameByCode($code) {
-        try {
-            $language = $this->getLanguageByCode($code);
-            return $language->getName();
-        } catch (NoResultException $e) {
-            return $code;
-        }
     }
 
     public function getAvailableLanguages() {

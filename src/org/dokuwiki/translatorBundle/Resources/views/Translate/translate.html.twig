@@ -27,7 +27,7 @@
                     When your done click the submit button. Your changes will be automatically submitted to the developers.
                 </p>
 
-                <h2>{{ targetLanguageName }} translation</h2>
+                <h2>{{ targetLanguage.name }} translation</h2>
 
 
                     <form action="{{ path('dokuwiki_translate_save') }}" method="post">
@@ -58,11 +58,12 @@
 
                         </div>
 
-                        <table class="table table-striped table-hover table-translate-markup">
+                        <table class="table table-striped table-hover table-translate-markup"
+                               {% if targetLanguage.rtl %}dir="rtl"{% endif %}>
                             <thead>
                             <tr>
                                 <th>English</th>
-                                <th>{{ targetLanguageName }}</th>
+                                <th>{{ targetLanguage.name }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -72,7 +73,7 @@
                                         {% if translation.target is empty %}
                                             class="translation-missing"
                                         {% endif %}>
-                                    <td>{{ translation.default|nl2br }}</td>
+                                    <td dir="ltr">{{ translation.default|nl2br }}</td>
                                     <td>
                                         <textarea
                                                 name="{{ translation.key }}"
@@ -110,7 +111,6 @@
                                    title="This will save your translation and send a patch to the plugin author" />
                             <input name="action[cancel]" type="submit" class="btn btn-link" value="Abort translation - this will discard all changes" />
                         </div>
-
                     </form>
             </div>
 
