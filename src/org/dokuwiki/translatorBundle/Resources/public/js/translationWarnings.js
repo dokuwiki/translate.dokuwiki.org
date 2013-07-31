@@ -4,6 +4,7 @@ $(document).ready(function() {
     var TranslationTable = function() {
         this.table = $('table tbody');
         this.allElements = $('table tbody tr');
+        this.paginationNote = $('#pagination__note');
         this.allElements.detach();
         this.filterText = '';
         this.elements = $();
@@ -31,6 +32,7 @@ $(document).ready(function() {
         if (this.usePagination()) {
             this.drawPaginationBar();
         }
+        this.drawPaginationBarHint();
         this.draw();
     };
 
@@ -145,6 +147,14 @@ $(document).ready(function() {
         parent.append($('<div class="span6">This filter will search in both, translated and original text.'
                 + 'Additionally it will search in the path of the translated file and the translation keys.'
                 + '</div>'));
+    };
+
+    TranslationTable.prototype.drawPaginationBarHint = function() {
+        if (this.usePagination()) {
+            this.paginationNote.show();
+        } else {
+            this.paginationNote.hide();
+        }
     };
 
     TranslationTable.prototype.drawPaginationBar = function() {
