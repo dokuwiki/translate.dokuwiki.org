@@ -12,7 +12,7 @@
                 <h1>Plug-in Translation</h1>
             </div>
         </div>
-        <div class="span6">
+        <div class="span4">
             <p>
                 Welcome to the plug-in translation page.
                 The translation tool provides a simple translation interface.
@@ -22,7 +22,7 @@
                 <a href="https://help.github.com/articles/using-pull-requests" target="_blank">GitHub pull request</a>.
             </p>
         </div>
-        <div class="span6">
+        <div class="span4">
             <p>
                 To use this tool your plug-in must
             </p>
@@ -33,6 +33,12 @@
                     use the <a href="https://www.dokuwiki.org/devel:localization">DokuWiki localization functions</a>
                 </li>
             </ul>
+        </div>
+        <div class="span4">
+            <p>
+                There are some limitations to the language files. It isn't allowed to use nested arrays in $lang array.
+                The only allowed nested array is the js array.
+            </p>
         </div>
 
         <div class="span8 offset2">
@@ -48,7 +54,6 @@
 
                 <div class="controls">
                     <input type="submit" class="btn btn-primary" value="Add my plug-in!" />
-                    <input type="reset" class="btn" value="Reset" />
                     <a href="{{ path('dokuwiki_translator_homepage') }}" class="btn">
                         Abort
                     </a>
