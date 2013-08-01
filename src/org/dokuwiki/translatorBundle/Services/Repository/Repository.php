@@ -343,8 +343,12 @@ abstract class Repository {
              * @var LocalText $translation
              */
             $path = $folder . $path;
-            $langFolder = dirname($path);
-            $file = $langFolder . '/' . $update->getLanguage() . '/' . basename($path);
+            $langFolder = dirname($path) . '/' . $update->getLanguage() . '/';
+            if (!is_dir($langFolder)) {
+                mkdir($langFolder, 0777, true);
+            }
+            $file = $langFolder . basename($path);
+
             file_put_contents($file, $translation->render());
             $git->add($file);
         }
