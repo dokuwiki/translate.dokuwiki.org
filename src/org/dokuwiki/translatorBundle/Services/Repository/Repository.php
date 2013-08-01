@@ -103,11 +103,13 @@ abstract class Repository {
         $this->logger->warn(sprintf('Repository %d not updated. Error count is %d. Error: %s',
             $this->entity->getId(), $this->entity->getErrorCount(), $e->getPrevious()->getMessage()));
 
-        $mailData = array();
-        $mailData['repro'] = $this->entity;
-        $mailData['e'] = $e;
-        $this->mailService->sendEmail($this->entity->getEmail(), 'There was an error on updating your plugin.',
+        if ($this->entity->getType() !== RepositoryEntity::$TYPE_CORE) {
+            $mailData = array();
+            $mailData['repro'] = $this->entity;
+            $mailData['e'] = $e;
+            $this->mailService->sendEmail($this->entity->getEmail(), 'There was an error on updating your plugin.',
                 'dokuwikiTranslatorBundle:Mail:pluginUpdateError.txt.twig', $mailData);
+        }
     }
 
     /**
