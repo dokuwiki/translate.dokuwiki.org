@@ -54,13 +54,14 @@ class RepositoryManager {
      */
     private $logger;
 
+    private $maxErrors;
     private $repositoryAgeToUpdate;
     private $maxRepositoriesToUpdatePerRun;
 
     function __construct($dataFolder, EntityManager $entityManager, $repositoryAgeToUpdate,
                 $maxRepositoriesToUpdatePerRun, RepositoryStats $repositoryStats,
                 GitService $gitService, MailService $mailService, GitHubService $gitHubService,
-                Logger $logger) {
+                Logger $logger, $maxErrors) {
 
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
@@ -72,6 +73,7 @@ class RepositoryManager {
         $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
         $this->gitHubService = $gitHubService;
         $this->logger = $logger;
+        $this->maxErrors = $maxErrors;
     }
 
     public function getRepositoriesToUpdate() {
@@ -87,7 +89,7 @@ class RepositoryManager {
     private function findRepositoriesToUpdate() {
 
         try {
-            return $this->repositoryRepository->getRepositoriesToUpdate($this->repositoryAgeToUpdate, $this->maxRepositoriesToUpdatePerRun);
+            return $this->repositoryRepository->getRepositoriesToUpdate($this->repositoryAgeToUpdate, $this->maxRepositoriesToUpdatePerRun, $this->maxErrors);
         } catch (NoResultException $ignored) {
             return array();
         }

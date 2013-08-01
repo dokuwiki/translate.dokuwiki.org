@@ -35,8 +35,7 @@ class MailService {
     public function sendEmail($to, $subject, $template, $data = array()) {
         $message = $this->createMessage($to, $subject, $template, $data);
 
-        $this->logMail($message);
-        $this->mailer->send($message);
+        $this->send($message);
     }
 
     public function sendPatchEmail($to, $subject, $patch, $template, $data = array()) {
@@ -45,6 +44,11 @@ class MailService {
         $attachment = \Swift_Attachment::newInstance($patch, 'language.patch', 'text/plain');
         $message->attach($attachment);
 
+        $this->send($message);
+    }
+
+    private function send(\Swift_Message $message) {
+        $this->logMail($message);
         $this->mailer->send($message);
     }
 

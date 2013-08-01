@@ -119,14 +119,16 @@ class RepositoryEntityRepository extends  EntityRepository {
         return $query->getSingleResult();
     }
 
-    public function getRepositoriesToUpdate($maxAge, $maxResults) {
+    public function getRepositoriesToUpdate($maxAge, $maxResults, $maxErrors) {
         $query = $this->getEntityManager()->createQuery(
             'SELECT repository
              FROM dokuwikiTranslatorBundle:RepositoryEntity repository
              WHERE repository.lastUpdate < :timeToUpdate
+             AND repository.errorCount < :maxErrors
              ORDER BY repository.lastUpdate ASC'
         );
         $query->setParameter('timeToUpdate', time() - $maxAge);
+        $query->setParameter('maxErrors', $maxErrors);
         $query->setMaxResults($maxResults);
         return $query->getResult();
     }
