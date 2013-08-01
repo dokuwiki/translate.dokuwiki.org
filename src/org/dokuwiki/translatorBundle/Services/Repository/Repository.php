@@ -99,6 +99,7 @@ abstract class Repository {
 
     private function handleUpdateError(\Exception $e) {
         $this->entity->setErrorCount($this->entity->getErrorCount() + 1);
+        $this->entity->setErrorMsg($e->getMessage());
         $this->logger->warn(sprintf('Repository %d not updated. Error count is %d. Error: %s',
             $this->entity->getId(), $this->entity->getErrorCount(), $e->getPrevious()->getMessage()));
 
@@ -122,7 +123,7 @@ abstract class Repository {
             } catch (GitException $e) {
                 throw new RepositoryNotUpdatedException($e->getMessage(), 0, $e);
             } catch (RuntimeException $e) {
-                throw new RepositoryNotUpdatedException($e->getMessage(), 0, $e);
+                throw new RepositoryNotUpdatedException('unable to find repository on GitHub: ' . $e->getMessage(), 0, $e);
             }
         }
 
@@ -136,7 +137,7 @@ abstract class Repository {
             $this->delete();
             throw new RepositoryNotUpdatedException($e->getMessage(), 0, $e);
         } catch (RuntimeException $e) {
-            throw new RepositoryNotUpdatedException($e->getMessage(), 0, $e);
+            throw new RepositoryNotUpdatedException('unable to find repository on GitHub: ' . $e->getMessage(), 0, $e);
         }
         return true;
     }
