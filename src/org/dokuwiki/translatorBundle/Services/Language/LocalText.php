@@ -84,6 +84,7 @@ class LocalText {
             }
 
             $text = $this->escapeText($text);
+            if ($text === '') continue;
             $left = '$lang' . $prefix . "['$key']";
             $php .= sprintf('%-30s', $left). " = '$text';\n";
         }
