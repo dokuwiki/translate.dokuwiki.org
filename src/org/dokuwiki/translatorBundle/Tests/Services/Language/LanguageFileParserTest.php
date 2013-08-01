@@ -224,8 +224,20 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(18, count($parser->getAuthor()));
         $this->assertEquals(268, count($parser->getAllLang()));
         $this->assertEquals(41, count($parser->getLang('js')));
-
     }
+
+    function testCompleteFileWithClosing() {
+        $parser = new LanguageFileParserTestDummy();
+        $content = trim(file_get_contents(dirname(__FILE__) . '/testLang.php'));
+        $content .= "\n\n?>";
+        $parser->setContent($content);
+        $parser->parse();
+
+        $this->assertEquals(18, count($parser->getAuthor()));
+        $this->assertEquals(268, count($parser->getAllLang()));
+        $this->assertEquals(41, count($parser->getLang('js')));
+    }
+
 
     function testEscapeSingleQuoted() {
         $parser = new LanguageFileParserTestDummy();

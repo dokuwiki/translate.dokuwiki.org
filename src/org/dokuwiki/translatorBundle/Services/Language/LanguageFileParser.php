@@ -11,6 +11,7 @@ class LanguageFileParser {
     public static $MODE_COMMENT_SINGLE_LINE = 'comment single line';
     public static $MODE_COMMENT_MULTI_LINE = 'comment multi line';
     public static $MODE_LANG = 'lang';
+    public static $MODE_PHP_END = 'php end';
     public static $MODE_PHP_UNKNOWN = 'php unknown';
 
     public function loadFile($file) {
@@ -42,6 +43,11 @@ class LanguageFileParser {
                 $mode = $this->processSingleLineComment();
             } elseif ($mode === LanguageFileParser::$MODE_LANG) {
                 $mode = $this->processLang();
+            } elseif ($mode === LanguageFileParser::$MODE_PHP_END) {
+                $this->content = trim($this->content);
+                if (!empty($this->content)) {
+                    throw new LanguageParseException("Invalid syntax - Nothing allowed behind ?> found: " . substr($this->content, 0, 100));
+                }
             } else {
                 throw new LanguageParseException("Invalid syntax - no code execution allowed. " . substr($this->content, 0, 100));
             }
@@ -174,6 +180,10 @@ class LanguageFileParser {
         if ($this->contentStartsWith('$lang[')) {
             $this->shortContentBy(6);
             return LanguageFileParser::$MODE_LANG;
+        }
+        if ($this->contentStartsWith('?>')) {
+            $this->shortContentBy(2);
+            return LanguageFileParser::$MODE_PHP_END;
         }
         return LanguageFileParser::$MODE_PHP_UNKNOWN;
     }
