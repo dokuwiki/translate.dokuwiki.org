@@ -56,6 +56,8 @@ class DefaultController extends Controller implements InitializableController {
     public function showAction() {
         $data = array();
         $data['repository'] = $this->repositoryRepository->getCoreTranslation();
+        $data['featureImport'] = $this->container->getParameter('featureImport');
+        $data['featureAddTranslationFromDetail'] = $this->container->getParameter('featureAddTranslationFromDetail');
 
         return $this->render('dokuwikiTranslatorBundle:Default:show.html.twig', $data);
     }

@@ -103,6 +103,8 @@ class PluginController extends Controller implements InitializableController {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
 
+        $data['featureImport'] = $this->container->getParameter('featureImport');
+        $data['featureAddTranslationFromDetail'] = $this->container->getParameter('featureAddTranslationFromDetail');
         return $this->render('dokuwikiTranslatorBundle:Default:show.html.twig', $data);
     }
 }

@@ -47,3 +47,8 @@ parameters:
 
     # Default locale. (there is just english)
     locale: en
+
+    ## Feature flags
+
+    featureImport: false
+    featureAddTranslationFromDetail: false
