@@ -26,7 +26,7 @@ class UpdateCommand extends ContainerAwareCommand {
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         if ($this->isLock()) {
-            $output->writeln('Updater is already running');
+            $this->getContainer()->get('logger')->err('Updater is already running');
             return;
         }
         $this->lock();
@@ -34,17 +34,16 @@ class UpdateCommand extends ContainerAwareCommand {
         $this->repositoryManager = $this->getContainer()->get('repository_manager');
 
         try {
-            $this->runUpdate($output);
-            $this->processPendingTranslations($output);
+            $this->runUpdate();
+            $this->processPendingTranslations();
         } catch (\PDOException $e) {
-            $output->writeln('Cannot connect to database');
+            $this->getContainer()->get('logger')->err('Updater is already running');
         }
         $this->unlock();
     }
 
-    private function runUpdate(OutputInterface $output) {
+    private function runUpdate() {
         $repositories = $this->repositoryManager->getRepositoriesToUpdate();
-        $output->writeln('found ' . count($repositories) . ' repositories');
         foreach($repositories as $repository) {
             /**
              * @var \org\dokuwiki\translatorBundle\Services\Repository\Repository $repository
@@ -53,7 +52,7 @@ class UpdateCommand extends ContainerAwareCommand {
         }
     }
 
-    private function processPendingTranslations(OutputInterface $output) {
+    private function processPendingTranslations() {
         $updates = $this->getTranslationUpdateRepository()->getPendingTranslationUpdates();
 
         foreach ($updates as $update) {
