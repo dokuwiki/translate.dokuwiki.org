@@ -360,7 +360,11 @@ abstract class Repository {
             }
             $file = $langFolder . basename($path);
 
-            file_put_contents($file, $translation->render());
+            $content = $translation->render();
+            if ($content === '') {
+                continue;
+            }
+            file_put_contents($file, $content);
             $git->add($file);
         }
     }
