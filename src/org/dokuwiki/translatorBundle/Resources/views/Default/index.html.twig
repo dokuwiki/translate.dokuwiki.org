@@ -72,7 +72,11 @@
                         {{ coreRepository.completionPercent }}%
                     </td>
                     <td class="translation-update">
+                        {% if coreRepository.state == 'active' %}
                             <a href="{{ path("dokuwiki_translate") }}">update</a>
+                        {% else %}
+                            processing
+                        {% endif %}
                     </td>
                 </tr>
 
@@ -94,7 +98,11 @@
                         {% endif %}
                     </td>
                     <td class="translation-update">
+                        {% if repository.state == 'active' %}
                             <a href="{{ path("dokuwiki_translate_plugin", {"name": repository.name}) }}">update</a>
+                        {% else %}
+                            processing
+                        {% endif %}
                     </td>
                     </tr>
                 {% endfor %}

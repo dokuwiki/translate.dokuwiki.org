@@ -129,6 +129,10 @@ class TranslationController extends Controller implements InitializableControlle
         $language = $this->getLanguage();
         $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($type, $name);
 
+        if ($repositoryEntity->getState() !== RepositoryEntity::$STATE_ACTIVE) {
+            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+        }
+
         $data['repository'] = $repositoryEntity;
         $data['translations'] = $this->prepareLanguages($language, $repositoryEntity);
         try {
@@ -136,6 +140,7 @@ class TranslationController extends Controller implements InitializableControlle
         } catch (NoResultException $e) {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
+
 
         return $this->render('dokuwikiTranslatorBundle:Translate:translate.html.twig',
                              $data);

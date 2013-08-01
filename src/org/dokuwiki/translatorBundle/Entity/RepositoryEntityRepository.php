@@ -37,7 +37,7 @@ class RepositoryEntityRepository extends  EntityRepository {
 
     public function getCoreRepositoryInformation($language) {
         $query = $this->getEntityManager()->createQuery(
-            'SELECT stats.completionPercent, repository.displayName
+            'SELECT stats.completionPercent, repository.displayName, repository.state
              FROM dokuwikiTranslatorBundle:LanguageStatsEntity stats
              JOIN stats.repository repository
              WHERE repository.type = :type
@@ -59,18 +59,19 @@ class RepositoryEntityRepository extends  EntityRepository {
 
     public function getPluginRepositoryInformation($language) {
         $query = $this->getEntityManager()->createQuery('
-            SELECT stats.completionPercent, repository.name, repository.displayName
+            SELECT stats.completionPercent, repository.name, repository.displayName, repository.state
             FROM dokuwikiTranslatorBundle:RepositoryEntity repository
             LEFT OUTER JOIN repository.translations stats
             WITH (stats.language = :language OR stats.language IS NULL)
             WHERE repository.type != :type
-            AND repository.state = :state
+            AND repository.state in (:stateActive, :stateInit)
             ORDER BY repository.popularity DESC
             '
         );
 
         $query->setParameter('type', RepositoryEntity::$TYPE_CORE);
-        $query->setParameter('state', RepositoryEntity::$STATE_ACTIVE);
+        $query->setParameter('stateActive', RepositoryEntity::$STATE_ACTIVE);
+        $query->setParameter('stateInit', RepositoryEntity::$STATE_INITIALIZING);
         $query->setParameter('language', $language);
 
         try {
