@@ -81,7 +81,7 @@ class PluginController extends Controller implements InitializableController {
         try {
             $repository = $this->repositoryRepository->getRepositoryByNameAndActivationKey($name, $key);
 
-            $repository->setState(RepositoryEntity::$STATE_ACTIVE);
+            $repository->setState(RepositoryEntity::$STATE_INITIALIZING);
             $repository->setActivationKey('');
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->merge($repository);

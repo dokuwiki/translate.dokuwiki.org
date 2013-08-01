@@ -125,10 +125,15 @@ class RepositoryEntityRepository extends  EntityRepository {
              FROM dokuwikiTranslatorBundle:RepositoryEntity repository
              WHERE repository.lastUpdate < :timeToUpdate
              AND repository.errorCount < :maxErrors
+             AND repository.state IN (:active, :initializing)
              ORDER BY repository.lastUpdate ASC'
         );
+
         $query->setParameter('timeToUpdate', time() - $maxAge);
         $query->setParameter('maxErrors', $maxErrors);
+        $query->setParameter('active', RepositoryEntity::$STATE_ACTIVE);
+        $query->setParameter('initializing', RepositoryEntity::$STATE_INITIALIZING);
+
         $query->setMaxResults($maxResults);
         return $query->getResult();
     }

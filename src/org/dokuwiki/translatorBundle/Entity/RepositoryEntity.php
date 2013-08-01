@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class RepositoryEntity {
 
     public static $STATE_WAITING_FOR_APPROVAL = 'waiting';
+    public static $STATE_INITIALIZING = 'initialProcessing';
     public static $STATE_ACTIVE = 'active';
     public static $STATE_ERROR = 'error';
 

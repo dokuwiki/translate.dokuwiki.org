@@ -77,6 +77,7 @@ abstract class Repository {
     }
 
     public function update() {
+        $this->logger->debug('updating plugin ' . $this->entity->getName());
         $path = $this->buildBasePath();
         if (!is_dir($path)) {
             mkdir($path, 0777, true);
@@ -90,11 +91,21 @@ abstract class Repository {
             }
             $this->entity->setLastUpdate(intval(time()));
             $this->entity->setErrorCount(0);
+            if ($this->entity->getState() === RepositoryEntity::$STATE_INITIALIZING) {
+                $this->initialized();
+            }
         } catch (RepositoryNotUpdatedException $e) {
             $this->handleUpdateError($e);
         }
         $this->entityManager->flush($this->entity);
         $this->unlock();
+    }
+
+    private function initialized() {
+        $this->logger->debug('Initializing plugin ' . $this->entity->getName());
+        $this->entity->setState(RepositoryEntity::$STATE_ACTIVE);
+        $this->mailService->sendEmail($this->entity->getEmail(), 'Your plugin is now active',
+                'dokuwikiTranslatorBundle:Mail:pluginReady.txt.twig', array('repo' => $this->entity));
     }
 
     private function handleUpdateError(\Exception $e) {
