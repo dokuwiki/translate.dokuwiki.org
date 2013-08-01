@@ -72,14 +72,14 @@ class LocalText {
         return $str;
     }
 
-    private function renderArray($array, $prefix = '') {
+    private function renderArray($array, $prefix = '', $elementsWritten = false) {
         $php = '';
 
         foreach ($array as $key => $text) {
             $key = $this->escapeText($key);
 
             if (is_array($text)) {
-                $php .= $this->renderArray($text, "{$prefix}['$key']");
+                $php .= $this->renderArray($text, "{$prefix}['$key']", $elementsWritten);
                 continue;
             }
 
@@ -87,8 +87,13 @@ class LocalText {
             if ($text === '') continue;
             $left = '$lang' . $prefix . "['$key']";
             $php .= sprintf('%-30s', $left). " = '$text';\n";
+            $elementsWritten = true;
         }
-
+        if ($prefix === '') { // outer loop
+            if (!$elementsWritten) {
+                throw new LanguageFileIsEmptyException();
+            }
+        }
         return $php;
     }
 

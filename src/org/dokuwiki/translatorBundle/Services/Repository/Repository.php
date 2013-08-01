@@ -5,6 +5,7 @@ use Github\Exception\RuntimeException;
 use Monolog\Logger;
 use org\dokuwiki\translatorBundle\Services\Git\GitException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
+use org\dokuwiki\translatorBundle\Services\Language\LanguageFileIsEmptyException;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageParseException;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\RepositoryBehavior;
@@ -360,7 +361,11 @@ abstract class Repository {
             }
             $file = $langFolder . basename($path);
 
-            $content = $translation->render();
+            try {
+                $content = $translation->render();
+            } catch (LanguageFileIsEmptyException $e) {
+                continue;
+            }
             if ($content === '') {
                 continue;
             }
