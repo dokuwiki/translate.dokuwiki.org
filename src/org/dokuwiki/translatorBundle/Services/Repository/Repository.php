@@ -306,12 +306,14 @@ abstract class Repository {
         $tmpDir = $this->buildTempPath($update->getId());
         $tmpGit = $this->gitService->createRepositoryFromRemote($this->getRepositoryPath(), $tmpDir);
         $author = $this->prepareAuthor($update);
-        $this->applyChanges($tmpGit, $tmpDir, $update);
+        try {
+            $this->applyChanges($tmpGit, $tmpDir, $update);
 
-        $tmpGit->commit('translation update', $author);
-
-        $this->behavior->sendChange($tmpGit, $update, $this->git);
-
+            $tmpGit->commit('translation update', $author);
+            $this->behavior->sendChange($tmpGit, $update, $this->git);
+        } catch (NoLanguageFileWritten $e) {
+            $this->logger->debug('No language files written - skipping commit and patch sending');
+        }
         $this->rrmdir($tmpDir);
         $this->entityManager->remove($update);
         $this->entityManager->flush();
@@ -350,6 +352,7 @@ abstract class Repository {
     private function applyChanges(GitRepository $git, $folder, TranslationUpdateEntity $update) {
         $translations = unserialize(file_get_contents($this->getUpdatePath($update->getId())));
 
+        $changes = false;
         foreach ($translations as $path => $translation) {
             /**
              * @var LocalText $translation
@@ -371,7 +374,9 @@ abstract class Repository {
             }
             file_put_contents($file, $content);
             $git->add($file);
+            $changes = true;
         }
+        if (!$changes) throw new NoLanguageFileWritten();
     }
 
     private function delete() {
