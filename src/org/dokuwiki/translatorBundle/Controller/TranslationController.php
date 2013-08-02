@@ -55,7 +55,7 @@ class TranslationController extends Controller implements InitializableControlle
         $repository = $this->getRepositoryManager()->getRepository($repositoryEntity);
         $newTranslation = $this->validateTranslation($repository, $data['translation'], $language, $data['name'], $data['email']);
 
-        $jobId = $repository->addTranslationUpdate($newTranslation, $data['name'], $data['email'], $language);
+        $repository->addTranslationUpdate($newTranslation, $data['name'], $data['email'], $language);
 
         // forward to queue status
         return $this->redirect($this->generateUrl('dokuwiki_translate_thanks'));
@@ -65,7 +65,7 @@ class TranslationController extends Controller implements InitializableControlle
 
         $newTranslation = array();
         $defaultTranslation = $repository->getLanguage('en');
-        $previusTranslation = $repository->getLanguage($language);
+        $previousTranslation = $repository->getLanguage($language);
 
         foreach ($defaultTranslation as $path => $translation) {
             if (!isset($userTranslation[$path])) {
@@ -99,8 +99,8 @@ class TranslationController extends Controller implements InitializableControlle
                 }
             }
             $authors = array();
-            if (isset($previusTranslation[$path])) {
-                $authors = $previusTranslation[$path]->getAuthors();
+            if (isset($previousTranslation[$path])) {
+                $authors = $previousTranslation[$path]->getAuthors();
             }
 
             if (!empty($author)) {
