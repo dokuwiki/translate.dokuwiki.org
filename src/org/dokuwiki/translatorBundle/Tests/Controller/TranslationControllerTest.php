@@ -3,7 +3,7 @@ namespace org\dokuwiki\translatorBundle\Controller;
 
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
 
-class TranslationControllerTest extends \PHPUnit_Framework_TestCase{
+class TranslationControllerTest extends \PHPUnit_Framework_TestCase {
 
     function testCreateEntryKey() {
         $translationController = new TranslationController();

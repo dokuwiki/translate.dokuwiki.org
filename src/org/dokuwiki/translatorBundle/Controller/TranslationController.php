@@ -4,6 +4,7 @@ namespace org\dokuwiki\translatorBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
+use org\dokuwiki\translatorBundle\Services\Language\ValidateUserTranslation;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
@@ -53,7 +54,10 @@ class TranslationController extends Controller implements InitializableControlle
 
         $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($data['repositoryType'], $data['repositoryName']);
         $repository = $this->getRepositoryManager()->getRepository($repositoryEntity);
-        $newTranslation = $this->validateTranslation($repository, $data['translation'], $language, $data['name'], $data['email']);
+        $defaultTranslation = $repository->getLanguage('en');
+        $previousTranslation = $repository->getLanguage($language);
+
+        $newTranslation = $this->validateTranslation($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
 
         $repository->addTranslationUpdate($newTranslation, $data['name'], $data['email'], $language);
 
@@ -61,60 +65,10 @@ class TranslationController extends Controller implements InitializableControlle
         return $this->redirect($this->generateUrl('dokuwiki_translate_thanks'));
     }
 
-    private function validateTranslation(Repository $repository, array $userTranslation, $language, $author, $authorEmail) {
-
-        $newTranslation = array();
-        $defaultTranslation = $repository->getLanguage('en');
-        $previousTranslation = $repository->getLanguage($language);
-
-        foreach ($defaultTranslation as $path => $translation) {
-            if (!isset($userTranslation[$path])) {
-                continue;
-            }
-
-            if ($translation->getType() !== LocalText::$TYPE_ARRAY) {
-                $newTranslation[$path] = new LocalText($this->fixLineEndings($userTranslation[$path]), LocalText::$TYPE_MARKUP);
-                continue;
-            }
-
-            $newTranslationArray = array();
-            $translationArray = $translation->getContent();
-            foreach ($translationArray as $key => $text) {
-                if (!isset($userTranslation[$path][$key])) {
-                    continue;
-                }
-
-                if ($key !== 'js') {
-                    $newTranslationArray[$key] = $this->fixLineEndings($userTranslation[$path][$key]);
-                    continue;
-                }
-
-                $newTranslationArray[$key] = array();
-                foreach ($text as $jsKey => $jsVal) {
-                    if (!isset($userTranslation[$path][$key][$jsKey])) {
-                        continue;
-                    }
-                    $newTranslationArray[$key][$jsKey] = $this->fixLineEndings($userTranslation[$path][$key][$jsKey]);
-                    continue;
-                }
-            }
-            $authors = array();
-            if (isset($previousTranslation[$path])) {
-                $authors = $previousTranslation[$path]->getAuthors();
-            }
-
-            if (!empty($author)) {
-                $authors[$author] = $authorEmail;
-            }
-            $newTranslation[$path] = new LocalText($newTranslationArray, LocalText::$TYPE_ARRAY, $authors);
-        }
-
-        return $newTranslation;
-    }
-
-    private function fixLineEndings($string) {
-        $string = str_replace("\r\n", "\n", $string);
-        return $string;
+    protected function validateTranslation($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail) {
+        $validator = new ValidateUserTranslation($defaultTranslation, $previousTranslation,
+                $userTranslation, $author, $authorEmail);
+        return $validator->validate();
     }
 
     public function translateCoreAction() {
