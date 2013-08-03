@@ -16,6 +16,10 @@ parameters:
     mailer_from: dokuwiki@example.com
     mailer_password: null
 
+    # Uncomment for production - set real hostname and scheme
+    #router.request_context.host: translate.dokuwiki.org
+    #router.request_context.scheme: http
+
     # Hash salt
     secret: top secret string
 
