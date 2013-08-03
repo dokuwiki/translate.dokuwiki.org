@@ -38,17 +38,28 @@
                                 <strong>Important</strong>: To be proper credited in the language files, give your name and email address here.
                             </p>
 
-                            <div class="control-group">
+                            <div class="control-group{% if "author" in errors|keys %} error{% endif %}">
                                 <label class="control-label" for="author">Name</label>
                                 <div class="controls">
                                     <input name="name" type="text" id="author" placeholder="Your name" />
+
+                                    {% if "author" in errors|keys %}
+                                        <span class="help-inline">
+                                            {{ errors.author }}
+                                        </span>
+                                    {% endif %}
                                 </div>
                             </div>
 
-                            <div class="control-group">
+                            <div class="control-group{% if "email" in errors|keys %} error{% endif %}">
                                 <label class="control-label" for="email">E-mail</label>
                                 <div class="controls">
                                     <input name="email" type="email" id="email" placeholder="you@example.com" />
+                                    {% if "email" in errors|keys %}
+                                        <span class="help-inline">
+                                            {{ errors.email }}
+                                        </span>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

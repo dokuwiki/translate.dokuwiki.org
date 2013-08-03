@@ -13,6 +13,7 @@ class UserTranslationValidator {
     private $author;
     private $authorEmail;
     private $validator;
+    private $errors = array();
 
     function __construct($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail, Validator $validator) {
         $this->defaultTranslation = $defaultTranslation;
@@ -27,19 +28,19 @@ class UserTranslationValidator {
 
     private function validateAuthorEmail() {
         if ($this->authorEmail === '') {
-            throw new UserTranslationValidatorException('No valid e-mail address given.');
+            $this->errors['email'] = 'No email address given.';
+            return;
         }
         $email = new Email();
-        $email->message = 'No email given';
         $errorList = $this->validator->validateValue($this->authorEmail, $email);
         if (count($errorList) !== 0) {
-            throw new UserTranslationValidatorException('No valid e-mail address given.');
+            $this->errors['email'] = 'No valid email address given.';
         }
     }
 
     private function validateAuthorName() {
         if ($this->author === '') {
-            throw new UserTranslationValidatorException('No author name given.');
+            $this->errors['author'] = 'No author name given.';
         }
     }
 
@@ -56,8 +57,6 @@ class UserTranslationValidator {
                 $newTranslation[$path] = $this->validateMarkup($path);
                 continue;
             }
-
-
             $newTranslation[$path] = $this->validateArray($path, $translation);
         }
 
@@ -156,6 +155,14 @@ class UserTranslationValidator {
         $string = str_replace("\r\n", "\n", $string);
         return $string;
     }
+
+    /**
+     * @return array
+     */
+    public function getErrors() {
+        return $this->errors;
+    }
+
 
 
 }

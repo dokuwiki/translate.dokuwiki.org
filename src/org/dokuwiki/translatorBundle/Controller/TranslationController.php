@@ -60,10 +60,12 @@ class TranslationController extends Controller implements InitializableControlle
         $defaultTranslation = $repository->getLanguage('en');
         $previousTranslation = $repository->getLanguage($language);
 
-        try {
-            $newTranslation = $this->validateTranslation($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
-        } catch (UserTranslationValidatorException $e) {
-            return $this->translate($data['repositoryType'], $data['repositoryName'], $data['translation'], $e);
+
+        $validator = $this->validateTranslation($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
+        $newTranslation = $validator->validate();
+        $errors = $validator->getErrors();
+        if (!empty($errors)) {
+            return $this->translate($data['repositoryType'], $data['repositoryName'], $data['translation'], $errors);
         }
 
         $repository->addTranslationUpdate($newTranslation, $data['name'], $data['email'], $language);
@@ -77,7 +79,7 @@ class TranslationController extends Controller implements InitializableControlle
         $validatorFactory = $this->get('user_translation_validator_factory');
         $validator = $validatorFactory->getInstance($defaultTranslation, $previousTranslation,
                 $userTranslation, $author, $authorEmail);
-        return $validator->validate();
+        return $validator;
     }
 
     public function translateCoreAction() {
@@ -88,7 +90,7 @@ class TranslationController extends Controller implements InitializableControlle
         return $this->translate(RepositoryEntity::$TYPE_PLUGIN, $name);
     }
 
-    private function translate($type, $name, array $userTranslation = array(), UserTranslationValidatorException $e = null) {
+    private function translate($type, $name, array $userTranslation = array(), array $errors = array()) {
         $language = $this->getLanguage();
         $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($type, $name);
 
@@ -98,6 +100,7 @@ class TranslationController extends Controller implements InitializableControlle
 
         $data['repository'] = $repositoryEntity;
         $data['translations'] = $this->prepareLanguages($language, $repositoryEntity, $userTranslation);
+        $data['errors'] = $errors;
 
         try {
             $data['targetLanguage'] = $this->getLanguageNameEntityRepository()->getLanguageByCode($language);

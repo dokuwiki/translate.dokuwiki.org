@@ -296,20 +296,17 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @expectedException org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorException
-     */
     function testEmptyAuthorName() {
         $validator = new UserTranslationValidator(array(), array(),
             array(), '', 'author@example.com', $this->validator);
+
+        $this->assertArrayHasKey('author', $validator->getErrors());
     }
 
-    /**
-     * @expectedException org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorException
-     */
     function testEmptyAuthorEmail() {
         $validator = new UserTranslationValidator(array(), array(),
             array(), 'author', '', $this->validator);
+        $this->assertArrayHasKey('email', $validator->getErrors());
     }
 }
 
