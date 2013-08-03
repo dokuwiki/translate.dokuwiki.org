@@ -4,6 +4,10 @@ namespace org\dokuwiki\translatorBundle\Services\Language;
 class LanguageFileParser {
 
     protected $content;
+
+    /**
+     * @var AuthorList
+     */
     protected $author;
     protected $lang;
 
@@ -28,7 +32,7 @@ class LanguageFileParser {
     }
 
     public function parse() {
-        $this->author = array();
+        $this->author = new AuthorList();
         $this->lang = array();
 
         $this->goToStart();
@@ -158,7 +162,7 @@ class LanguageFileParser {
             if(!preg_match('/\* @author (.+?)(?: <(.*?)>)?\n/i', $line, $matches)) {
                 continue;
             }
-            $this->author[$matches[1]] = isset($matches[2])?$matches[2]:'';
+            $this->author->add(new Author($matches[1], isset($matches[2])?$matches[2]:''));
         }
 
         $this->content = substr($this->content, $end + 2);

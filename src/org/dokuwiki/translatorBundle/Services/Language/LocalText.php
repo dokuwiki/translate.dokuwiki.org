@@ -14,12 +14,13 @@ class LocalText {
     /**
      * @param array|string $content translated text, on markup its string everything else array
      * @param string $type see {@see LocalText::TYPE_ARRAY} and {@see LocalText::$TYPE_MARKUP}
-     * @param array $authors List of authors. Keyset are the author names, values may the email addresses.
+     * @param AuthorList $authors List of authors. Keyset are the author names, values may the email addresses.
      *                       Always empty on markup mode.
      */
-    function __construct($content, $type, $authors = array()) {
+    function __construct($content, $type, AuthorList $authors = null) {
         $this->content = $content;
         $this->type = $type;
+        if ($authors === null) $authors = new AuthorList();
         $this->authors = $authors;
     }
 
@@ -52,12 +53,15 @@ class LocalText {
         $php.= " * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)\n";
         $php.= " * \n";
 
-        foreach ($this->authors as $author => $email) {
-            if (empty($author)) continue;
-            $author = $this->escapeComment($author);
-            $php.= " * @author $author";
-            if (!empty($email)) {
-                $email = $this->escapeComment($email);
+        $authors = $this->authors->getAll();
+
+        /** @var Author $author */
+        foreach ($authors as $author) {
+            if ($author->getName() === '') continue;
+            $authorName = $this->escapeComment($author->getName());
+            $php.= " * @author $authorName";
+            if ($author->getEmail() !== '') {
+                $email = $this->escapeComment($author->getEmail());
                 $php.=" <$email>";
             }
             $php.="\n";

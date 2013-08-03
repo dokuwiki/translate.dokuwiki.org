@@ -187,8 +187,7 @@ abstract class Repository {
         return $this->basePath;
     }
 
-    private function updateLanguage() {
-
+    public function updateLanguage() {
         $languageFolders = $this->getLanguageFolder();
 
         $translations = array();
@@ -383,6 +382,10 @@ abstract class Repository {
         $path = $this->buildBasePath();
         if (!file_exists($path)) return;
         $this->rrmdir($path);
+    }
+
+    public function hasGit() {
+        return is_dir($this->getRepositoryPath());
     }
 
     /**

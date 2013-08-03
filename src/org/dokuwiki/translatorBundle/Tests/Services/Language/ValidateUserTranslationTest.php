@@ -100,10 +100,12 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
         $author = 'author';
         $authorEmail = 'author@example.com';
 
+        $expectedAuthor = new AuthorList();
+        $expectedAuthor->add(new Author('author', 'author@example.com'));
         $expected = array(
             'path' => new LocalText(
                 array('key' => 'new translated value', 'js' => array('key' => 'value')), LocalText::$TYPE_ARRAY,
-                array('author' => 'author@example.com'))
+                $expectedAuthor)
         );
 
         $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
@@ -174,9 +176,10 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
         $author = 'author';
         $authorEmail = 'e@ma.il';
 
+        $expectedAuthor = new AuthorList();
+        $expectedAuthor->add(new Author('author', 'e@ma.il'));
         $expected = array(
-            'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY,
-                array('author' => 'e@ma.il'))
+            'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $expectedAuthor)
         );
 
         $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
@@ -190,9 +193,11 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
         $defaultTranslation = array(
             'path' => new LocalText(array('key' => 'value'), LocalText::$TYPE_ARRAY)
         );
+        $prevAuthors = new AuthorList();
+        $prevAuthors->add(new Author('other', 'some'));
         $previousTranslation = array(
             'path' => new LocalText(
-                array('key' => 'translated value'), LocalText::$TYPE_ARRAY, array('other' => 'some'))
+                array('key' => 'translated value'), LocalText::$TYPE_ARRAY, $prevAuthors)
         );
 
         $userTranslation = array(
@@ -202,9 +207,11 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
         $author = 'author';
         $authorEmail = 'e@ma.il';
 
+        $expectedAuthors = new AuthorList();
+        $expectedAuthors->add(new Author('other', 'some'));
+        $expectedAuthors->add(new Author('author', 'e@ma.il'));
         $expected = array(
-            'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY,
-                array('author' => 'e@ma.il', 'other' => 'some'))
+            'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $expectedAuthors)
         );
 
         $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
@@ -215,8 +222,10 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
     }
 
     function testValidateTranslationArrayAuthorsDoNotMix() {
+        $authors = new AuthorList();
+        $authors->add(new Author('other', 'some'));
         $defaultTranslation = array(
-            'path' => new LocalText(array('key' => 'value'), LocalText::$TYPE_ARRAY, array('other' => 'some'))
+            'path' => new LocalText(array('key' => 'value'), LocalText::$TYPE_ARRAY, $authors)
         );
         $previousTranslation = array(
             'path' => new LocalText(
@@ -230,9 +239,10 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
         $author = 'author';
         $authorEmail = 'e@ma.il';
 
+        $expectedAuthors = new AuthorList();
+        $expectedAuthors->add(new Author('author', 'e@ma.il'));
         $expected = array(
-            'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY,
-                array('author' => 'e@ma.il'))
+            'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $expectedAuthors)
         );
 
         $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,

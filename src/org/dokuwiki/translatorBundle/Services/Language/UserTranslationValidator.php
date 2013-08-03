@@ -98,7 +98,7 @@ class UserTranslationValidator {
                 continue;
             }
         }
-        $authors = array();
+        $authors = new AuthorList();
         if (isset($this->previousTranslation[$path])) {
             /** @var LocalText $prevTranslation */
             $prevTranslation = $this->previousTranslation[$path];
@@ -106,7 +106,7 @@ class UserTranslationValidator {
         }
 
         if ($translationChanged && !empty($this->author)) {
-            $authors[$this->author] = $this->authorEmail;
+            $authors->add(new Author($this->author, $this->authorEmail));
         }
         return new LocalText($newContent, LocalText::$TYPE_ARRAY, $authors);
     }
