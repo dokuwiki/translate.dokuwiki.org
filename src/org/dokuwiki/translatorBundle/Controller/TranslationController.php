@@ -9,6 +9,7 @@ use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidator;
 use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorException;
 use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
@@ -71,7 +72,10 @@ class TranslationController extends Controller implements InitializableControlle
         $repository->addTranslationUpdate($newTranslation, $data['name'], $data['email'], $language);
 
         // forward to queue status
-        return $this->redirect($this->generateUrl('dokuwiki_translate_thanks'));
+        $response = $this->redirect($this->generateUrl('dokuwiki_translate_thanks'));
+        $response->headers->setCookie(new Cookie('author', $data['name']));
+        $response->headers->setCookie(new Cookie('authorMail', $data['email']));
+        return $response;
     }
 
     protected function validateTranslation($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail) {
@@ -100,6 +104,9 @@ class TranslationController extends Controller implements InitializableControlle
 
         $data['repository'] = $repositoryEntity;
         $data['translations'] = $this->prepareLanguages($language, $repositoryEntity, $userTranslation);
+        $cookies = $this->getRequest()->cookies;
+        $data['author'] = $cookies->has('author') ? $cookies->get('author') : '';
+        $data['authorMail'] = $cookies->has('authorMail') ? $cookies->get('authorMail') : '';
         $data['errors'] = $errors;
 
         try {

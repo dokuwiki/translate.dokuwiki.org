@@ -41,7 +41,7 @@
                             <div class="control-group{% if "author" in errors|keys %} error{% endif %}">
                                 <label class="control-label" for="author">Name</label>
                                 <div class="controls">
-                                    <input name="name" type="text" id="author" placeholder="Your name" />
+                                    <input name="name" type="text" id="author" placeholder="Your name" value="{{ author }}" />
 
                                     {% if "author" in errors|keys %}
                                         <span class="help-inline">
@@ -54,7 +54,8 @@
                             <div class="control-group{% if "email" in errors|keys %} error{% endif %}">
                                 <label class="control-label" for="email">E-mail</label>
                                 <div class="controls">
-                                    <input name="email" type="email" id="email" placeholder="you@example.com" />
+                                    <input name="email" type="email" id="email" placeholder="you@example.com"
+                                           value="{{ authorMail }}"/>
                                     {% if "email" in errors|keys %}
                                         <span class="help-inline">
                                             {{ errors.email }}
