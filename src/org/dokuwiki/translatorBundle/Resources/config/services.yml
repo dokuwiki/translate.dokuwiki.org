@@ -46,3 +46,11 @@ services:
     git_hub_service:
         class: org\dokuwiki\translatorBundle\Services\GitHub\GitHubService
         arguments: ["%git_hub_token%", "%data%", "%git_hub_url%"]
+
+    user_translation_validator_factory:
+        class: org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorFactory
+        arguments: [@validator]
+
+    translation_preparer:
+        class: org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer
+        arguments: [@validator]

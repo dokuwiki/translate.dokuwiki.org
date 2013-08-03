@@ -2,8 +2,16 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Validator;
+
 class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
 
+    private $validator;
+
+    function setUp() {
+        $this->validator = new ValidatorDummy();
+    }
 
     function testValidateTranslationMarkup() {
         $defaultTranslation = array(
@@ -17,15 +25,15 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
             'path' => 'new translated text'
         );
 
-        $author = '';
-        $authorEmail = '';
+        $author = 'author';
+        $authorEmail = 'author@example.com';
 
         $expected = array(
             'path' => new LocalText('new translated text', LocalText::$TYPE_MARKUP)
         );
 
-        $validator = new ValidateUserTranslation($defaultTranslation, $previousTranslation,
-            $userTranslation, $author, $authorEmail);
+        $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
+            $userTranslation, $author, $authorEmail, $this->validator);
         $result = $validator->validate();
 
         $this->assertEquals($expected, $result);
@@ -41,13 +49,13 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
             'path' => 'new translated text'
         );
 
-        $author = '';
-        $authorEmail = '';
+        $author = 'author';
+        $authorEmail = 'author@example.com';
 
         $expected = array();
 
-        $validator = new ValidateUserTranslation($defaultTranslation, $previousTranslation,
-            $userTranslation, $author, $authorEmail);
+        $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
+            $userTranslation, $author, $authorEmail, $this->validator);
         $result = $validator->validate();
 
         $this->assertEquals($expected, $result);
@@ -63,13 +71,13 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
 
         $userTranslation = array();
 
-        $author = '';
-        $authorEmail = '';
+        $author = 'author';
+        $authorEmail = 'author@example.com';
 
         $expected = array();
 
-        $validator = new ValidateUserTranslation($defaultTranslation, $previousTranslation,
-                $userTranslation, $author, $authorEmail);
+        $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
+                $userTranslation, $author, $authorEmail, $this->validator);
         $result = $validator->validate();
 
         $this->assertEquals($expected, $result);
@@ -89,16 +97,17 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
             'path' => array('key' => 'new translated value', 'js' => array('key' => 'value'))
         );
 
-        $author = '';
-        $authorEmail = '';
+        $author = 'author';
+        $authorEmail = 'author@example.com';
 
         $expected = array(
             'path' => new LocalText(
-                array('key' => 'new translated value', 'js' => array('key' => 'value')), LocalText::$TYPE_ARRAY)
+                array('key' => 'new translated value', 'js' => array('key' => 'value')), LocalText::$TYPE_ARRAY,
+                array('author' => 'author@example.com'))
         );
 
-        $validator = new ValidateUserTranslation($defaultTranslation, $previousTranslation,
-            $userTranslation, $author, $authorEmail);
+        $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
+            $userTranslation, $author, $authorEmail, $this->validator);
         $result = $validator->validate();
 
         $this->assertEquals($expected, $result);
@@ -115,13 +124,13 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
             'path' => array('key' => 'new translated value', 'js' => array('key' => 'value'))
         );
 
-        $author = '';
-        $authorEmail = '';
+        $author = 'author';
+        $authorEmail = 'author@example.com';
 
         $expected = array();
 
-        $validator = new ValidateUserTranslation($defaultTranslation, $previousTranslation,
-            $userTranslation, $author, $authorEmail);
+        $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
+            $userTranslation, $author, $authorEmail, $this->validator);
         $result = $validator->validate();
 
         $this->assertEquals($expected, $result);
@@ -137,13 +146,13 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
 
         $userTranslation = array();
 
-        $author = '';
-        $authorEmail = '';
+        $author = 'author';
+        $authorEmail = 'author@example.com';
 
         $expected = array();
 
-        $validator = new ValidateUserTranslation($defaultTranslation, $previousTranslation,
-            $userTranslation, $author, $authorEmail);
+        $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
+            $userTranslation, $author, $authorEmail, $this->validator);
         $result = $validator->validate();
 
         $this->assertEquals($expected, $result);
@@ -170,8 +179,8 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
                 array('author' => 'e@ma.il'))
         );
 
-        $validator = new ValidateUserTranslation($defaultTranslation, $previousTranslation,
-            $userTranslation, $author, $authorEmail);
+        $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
+            $userTranslation, $author, $authorEmail, $this->validator);
         $result = $validator->validate();
 
         $this->assertEquals($expected, $result);
@@ -198,8 +207,8 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
                 array('author' => 'e@ma.il', 'other' => 'some'))
         );
 
-        $validator = new ValidateUserTranslation($defaultTranslation, $previousTranslation,
-            $userTranslation, $author, $authorEmail);
+        $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
+            $userTranslation, $author, $authorEmail, $this->validator);
         $result = $validator->validate();
 
         $this->assertEquals($expected, $result);
@@ -226,8 +235,8 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
                 array('author' => 'e@ma.il'))
         );
 
-        $validator = new ValidateUserTranslation($defaultTranslation, $previousTranslation,
-            $userTranslation, $author, $authorEmail);
+        $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
+            $userTranslation, $author, $authorEmail, $this->validator);
         $result = $validator->validate();
 
         $this->assertEquals($expected, $result);
@@ -253,8 +262,8 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
             'path' => new LocalText(array('key' => 'translated value'), LocalText::$TYPE_ARRAY)
         );
 
-        $validator = new ValidateUserTranslation($defaultTranslation, $previousTranslation,
-            $userTranslation, $author, $authorEmail);
+        $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
+            $userTranslation, $author, $authorEmail, $this->validator);
         $result = $validator->validate();
 
         $this->assertEquals($expected, $result);
@@ -280,11 +289,37 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
             'path' => new LocalText(array('key' => 'translated value', 'js' => array('some', 'translated other')), LocalText::$TYPE_ARRAY)
         );
 
-        $validator = new ValidateUserTranslation($defaultTranslation, $previousTranslation,
-            $userTranslation, $author, $authorEmail);
+        $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
+            $userTranslation, $author, $authorEmail, $this->validator);
         $result = $validator->validate();
 
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * @expectedException org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorException
+     */
+    function testEmptyAuthorName() {
+        $validator = new UserTranslationValidator(array(), array(),
+            array(), '', 'author@example.com', $this->validator);
+    }
+
+    /**
+     * @expectedException org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorException
+     */
+    function testEmptyAuthorEmail() {
+        $validator = new UserTranslationValidator(array(), array(),
+            array(), 'author', '', $this->validator);
+    }
+}
+
+class ValidatorDummy extends Validator {
+
+    function __construct() {}
+
+    public function validateValue($value, Constraint $constraint, $groups = null) {
+        return array();
+    }
+
 
 }

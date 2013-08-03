@@ -4,7 +4,10 @@ namespace org\dokuwiki\translatorBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
-use org\dokuwiki\translatorBundle\Services\Language\ValidateUserTranslation;
+use org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer;
+use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidator;
+use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorException;
+use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
@@ -57,7 +60,11 @@ class TranslationController extends Controller implements InitializableControlle
         $defaultTranslation = $repository->getLanguage('en');
         $previousTranslation = $repository->getLanguage($language);
 
-        $newTranslation = $this->validateTranslation($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
+        try {
+            $newTranslation = $this->validateTranslation($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
+        } catch (UserTranslationValidatorException $e) {
+            return $this->translate($data['repositoryType'], $data['repositoryName'], $data['translation'], $e);
+        }
 
         $repository->addTranslationUpdate($newTranslation, $data['name'], $data['email'], $language);
 
@@ -66,7 +73,9 @@ class TranslationController extends Controller implements InitializableControlle
     }
 
     protected function validateTranslation($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail) {
-        $validator = new ValidateUserTranslation($defaultTranslation, $previousTranslation,
+        /** @var UserTranslationValidatorFactory $validatorFactory */
+        $validatorFactory = $this->get('user_translation_validator_factory');
+        $validator = $validatorFactory->getInstance($defaultTranslation, $previousTranslation,
                 $userTranslation, $author, $authorEmail);
         return $validator->validate();
     }
@@ -79,7 +88,7 @@ class TranslationController extends Controller implements InitializableControlle
         return $this->translate(RepositoryEntity::$TYPE_PLUGIN, $name);
     }
 
-    private function translate($type, $name) {
+    private function translate($type, $name, array $userTranslation = array(), UserTranslationValidatorException $e = null) {
         $language = $this->getLanguage();
         $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($type, $name);
 
@@ -88,7 +97,8 @@ class TranslationController extends Controller implements InitializableControlle
         }
 
         $data['repository'] = $repositoryEntity;
-        $data['translations'] = $this->prepareLanguages($language, $repositoryEntity);
+        $data['translations'] = $this->prepareLanguages($language, $repositoryEntity, $userTranslation);
+
         try {
             $data['targetLanguage'] = $this->getLanguageNameEntityRepository()->getLanguageByCode($language);
         } catch (NoResultException $e) {
@@ -96,8 +106,7 @@ class TranslationController extends Controller implements InitializableControlle
         }
 
 
-        return $this->render('dokuwikiTranslatorBundle:Translate:translate.html.twig',
-                             $data);
+        return $this->render('dokuwikiTranslatorBundle:Translate:translate.html.twig', $data);
     }
 
 
@@ -108,88 +117,21 @@ class TranslationController extends Controller implements InitializableControlle
         return $this->get('repository_manager');
     }
 
-    private function prepareLanguages($language, $repositoryEntity) {
+    private function prepareLanguages($language, $repositoryEntity, array $userTranslation) {
         $repositoryManager = $this->getRepositoryManager();
         $repository = $repositoryManager->getRepository($repositoryEntity);
 
         $defaultTranslation = $repository->getLanguage('en');
-        $targetTranslation = $repository->getLanguage($language);
 
-        $missingTranslations = array();
-        $availableTranslations = array();
-
-
-        foreach ($defaultTranslation as $path => $translation) {
-            if ($translation->getType() !== LocalText::$TYPE_ARRAY) {
-                $entry = $this->createEntry($defaultTranslation, $targetTranslation, $path);
-
-                if (empty($entry['target'])) {
-                    $missingTranslations[] = $entry;
-                    continue;
-                }
-                $availableTranslations[] = $entry;
-                continue;
-            }
-            $translationArray = $translation->getContent();
-            foreach ($translationArray as $key => $text) {
-                if ($key !== 'js') {
-                    $entry = $this->createEntry($defaultTranslation, $targetTranslation, $path, $key);
-
-                    if (empty($entry['target'])) {
-                        $missingTranslations[] = $entry;
-                        continue;
-                    }
-                    $availableTranslations[] = $entry;
-                    continue;
-                }
-                foreach ($text as $jsKey => $jsVal) {
-                    $entry = $this->createEntry($defaultTranslation, $targetTranslation, $path, $key, $jsKey);
-
-                    if (empty($entry['target'])) {
-                        $missingTranslations[] = $entry;
-                        continue;
-                    }
-                    $availableTranslations[] = $entry;
-                    continue;
-                }
-            }
+        $targetTranslation = $userTranslation;
+        if (empty($userTranslation)) {
+            $targetTranslation = $repository->getLanguage($language);
         }
 
-        return array_merge($missingTranslations, $availableTranslations);
-    }
+        /** @var TranslationPreparer $translationPreparer */
+        $translationPreparer = $this->get('translation_preparer');
 
-    private function createEntry($defaultTranslation, $targetTranslation, $path, $key = null, $jsKey = null) {
-        $entry = array();
-        $entry['key'] = $this->createEntryKey($path, $key, $jsKey);
-        $entry['default'] = $this->createEntryGetTranslation($defaultTranslation, $path, $key, $jsKey);
-        $entry['target'] = $this->createEntryGetTranslation($targetTranslation, $path, $key, $jsKey);
-        $entry['type'] = ($key === null) ? LocalText::$TYPE_MARKUP : LocalText::$TYPE_ARRAY;
-        return $entry;
-    }
-
-    function createEntryGetTranslation($translation, $path, $key = null, $jsKey = null) {
-        if (!isset($translation[$path])) {
-            return '';
-        }
-        if ($key === null) return $translation[$path]->getContent();
-
-        $translation = $translation[$path]->getContent();
-        if (!isset($translation[$key])) return '';
-        if ($jsKey === null) return $translation[$key];
-
-        if (!isset($translation[$key][$jsKey])) return '';
-        return $translation[$key][$jsKey];
-    }
-
-    function createEntryKey($path, $key = null, $jsKey = null) {
-        $entryKey = sprintf('translation[%s]', $path);
-        if ($key === null) return $entryKey;
-
-        $entryKey .= sprintf('[%s]', $key);
-        if ($jsKey === null) return $entryKey;
-
-        $entryKey .= sprintf('[%s]', $jsKey);
-        return $entryKey;
+        return $translationPreparer->prepare($defaultTranslation, $targetTranslation);
     }
 
     /**

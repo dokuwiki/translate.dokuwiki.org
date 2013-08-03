@@ -2,23 +2,47 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
-class ValidateUserTranslation {
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Validator;
+
+class UserTranslationValidator {
 
     private $defaultTranslation;
     private $previousTranslation;
     private $userTranslation;
     private $author;
     private $authorEmail;
+    private $validator;
 
-    function __construct($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail) {
+    function __construct($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail, Validator $validator) {
         $this->defaultTranslation = $defaultTranslation;
         $this->userTranslation = $userTranslation;
         $this->previousTranslation = $previousTranslation;
-        $this->author = $author;
-        $this->authorEmail = $authorEmail;
+        $this->author = trim($author);
+        $this->authorEmail = trim($authorEmail);
+        $this->validator = $validator;
+        $this->validateAuthorEmail();
+        $this->validateAuthorName();
     }
 
-    
+    private function validateAuthorEmail() {
+        if ($this->authorEmail === '') {
+            throw new UserTranslationValidatorException('No valid e-mail address given.');
+        }
+        $email = new Email();
+        $email->message = 'No email given';
+        $errorList = $this->validator->validateValue($this->authorEmail, $email);
+        if (count($errorList) !== 0) {
+            throw new UserTranslationValidatorException('No valid e-mail address given.');
+        }
+    }
+
+    private function validateAuthorName() {
+        if ($this->author === '') {
+            throw new UserTranslationValidatorException('No author name given.');
+        }
+    }
+
     function validate() {
         $newTranslation = array();
 
