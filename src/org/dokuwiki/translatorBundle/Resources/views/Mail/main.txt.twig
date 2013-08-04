@@ -1,0 +1,12 @@
+{% if toName defined %}
+Hello {{ toName }},
+{% else %}
+Hello,
+{% endif %}
+
+{% block content %}
+{% endblock %}
+
+regards,
+your DokuWiki translation tool
+{{ path('dokuwiki_translator_homepage') }}

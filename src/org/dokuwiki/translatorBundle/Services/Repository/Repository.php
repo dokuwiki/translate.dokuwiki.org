@@ -3,10 +3,24 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Github\Exception\RuntimeException;
 use Monolog\Logger;
+use org\dokuwiki\translatorBundle\Services\Git\GitAddException;
+use org\dokuwiki\translatorBundle\Services\Git\GitBranchException;
+use org\dokuwiki\translatorBundle\Services\Git\GitCheckoutException;
+use org\dokuwiki\translatorBundle\Services\Git\GitCloneException;
+use org\dokuwiki\translatorBundle\Services\Git\GitCommitException;
+use org\dokuwiki\translatorBundle\Services\Git\GitCreatePatchException;
 use org\dokuwiki\translatorBundle\Services\Git\GitException;
+use org\dokuwiki\translatorBundle\Services\Git\GitNoRemoteException;
+use org\dokuwiki\translatorBundle\Services\Git\GitPullException;
+use org\dokuwiki\translatorBundle\Services\Git\GitPushException;
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubCreatePullRequestException;
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubForkException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
+use org\dokuwiki\translatorBundle\Services\Language\LanguageFileDoseNotExistException;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageFileIsEmptyException;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageParseException;
+use org\dokuwiki\translatorBundle\Services\Language\NoDefaultLanguageException;
+use org\dokuwiki\translatorBundle\Services\Language\NoLanguageFolderException;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\RepositoryBehavior;
 use Symfony\Component\DependencyInjection\Container;
@@ -78,28 +92,41 @@ abstract class Repository {
     }
 
     public function update() {
-        $this->logger->debug('updating plugin ' . $this->entity->getName());
-        $path = $this->buildBasePath();
-        if (!is_dir($path)) {
-            mkdir($path, 0777, true);
-        }
         try {
-            if ($this->isLocked()) return;
-            $this->lock();
-            $changed = $this->updateFromRemote();
-            if ($changed) {
-                $this->updateLanguage();
-            }
+            $this->updateWithException();
             $this->entity->setLastUpdate(intval(time()));
             $this->entity->setErrorCount(0);
             if ($this->entity->getState() === RepositoryEntity::$STATE_INITIALIZING) {
                 $this->initialized();
             }
-        } catch (RepositoryNotUpdatedException $e) {
-            $this->handleUpdateError($e);
+        } catch (\Exception $e) {
+            $reporter = new RepositoryErrorReporter($this->mailService, $this->logger);
+            $msg = $reporter->handleUpdateError($e, $this->entity);
+            $this->entity->setErrorCount($this->entity->getErrorCount() + 1);
+            $this->entity->setErrorMsg($msg);
         }
         $this->entityManager->flush($this->entity);
         $this->unlock();
+    }
+
+    private function updateWithException() {
+        $this->logger->debug('updating plugin ' . $this->entity->getName());
+        $path = $this->buildBasePath();
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
+
+        if ($this->isLocked()) {
+            $this->logger->debug(sprintf(
+                    'Repository %s (%d) is locked - skipping', $this->entity->getName(), $this->entity->getId()));
+            return;
+        }
+        $this->lock();
+
+        $changed = $this->updateFromRemote();
+        if ($changed) {
+            $this->updateLanguage();
+        }
     }
 
     private function initialized() {
@@ -109,49 +136,28 @@ abstract class Repository {
                 'dokuwikiTranslatorBundle:Mail:pluginReady.txt.twig', array('repo' => $this->entity));
     }
 
-    private function handleUpdateError(\Exception $e) {
-        $this->entity->setErrorCount($this->entity->getErrorCount() + 1);
-        $this->entity->setErrorMsg($e->getMessage());
-        $this->logger->warn(sprintf('Repository %d not updated. Error count is %d. Error: %s',
-            $this->entity->getId(), $this->entity->getErrorCount(), $e->getPrevious()->getMessage()));
-
-        if ($this->entity->getType() !== RepositoryEntity::$TYPE_CORE) {
-            $mailData = array();
-            $mailData['repro'] = $this->entity;
-            $mailData['e'] = $e;
-            $this->mailService->sendEmail($this->entity->getEmail(), 'There was an error on updating your plugin.',
-                'dokuwikiTranslatorBundle:Mail:pluginUpdateError.txt.twig', $mailData);
-        }
-    }
-
     /**
      * Update local repository
-     * @throws RepositoryNotUpdatedException
+     *
+     * @throws GitCloneException
+     * @throws GitHubForkException
      * @return boolean true if the repository is changed.
      */
     private function updateFromRemote() {
         $this->openRepository();
         if ($this->git) {
-            try {
-                return $this->behavior->pull($this->git, $this->entity);
-            } catch (GitException $e) {
-                throw new RepositoryNotUpdatedException($e->getMessage(), 0, $e);
-            } catch (RuntimeException $e) {
-                throw new RepositoryNotUpdatedException('unable to find repository on GitHub: ' . $e->getMessage(), 0, $e);
-            }
+            return $this->behavior->pull($this->git, $this->entity);
         }
 
         try {
             $remote = $this->behavior->createOriginURL($this->entity);
             $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getRepositoryPath());
-        } catch (GitHubServiceException $e) {
+        } catch (GitCloneException $e) {
             $this->delete();
-            throw new RepositoryNotUpdatedException($e->getMessage(), 0, $e);
-        } catch (GitException $e) {
+            throw $e;
+        } catch (GitHubForkException $e) {
             $this->delete();
-            throw new RepositoryNotUpdatedException($e->getMessage(), 0, $e);
-        } catch (RuntimeException $e) {
-            throw new RepositoryNotUpdatedException('unable to find repository on GitHub: ' . $e->getMessage(), 0, $e);
+            throw $e;
         }
         return true;
     }
@@ -195,11 +201,7 @@ abstract class Repository {
             $languageFolder = rtrim($languageFolder, '/');
             $languageFolder .= '/';
 
-            try {
-                $translated = LanguageManager::readLanguages($this->buildBasePath() . "repository/$languageFolder", $languageFolder);
-            } catch (LanguageParseException $e) {
-                throw new RepositoryNotUpdatedException('', 0, $e);
-            }
+            $translated = LanguageManager::readLanguages($this->buildBasePath() . "repository/$languageFolder", $languageFolder);
             $translations = array_merge_recursive($translations, $translated);
         }
 
@@ -301,23 +303,30 @@ abstract class Repository {
     }
 
     public function createAndSendPatch(TranslationUpdateEntity $update) {
-        $this->openRepository();
         $tmpDir = $this->buildTempPath($update->getId());
-        $tmpGit = $this->gitService->createRepositoryFromRemote($this->getRepositoryPath(), $tmpDir);
-        $author = $this->prepareAuthor($update);
         try {
-            $this->applyChanges($tmpGit, $tmpDir, $update);
-
-            $tmpGit->commit('translation update', $author);
-            $this->behavior->sendChange($tmpGit, $update, $this->git);
-        } catch (NoLanguageFileWritten $e) {
-            $this->logger->debug('No language files written - skipping commit and patch sending');
-        } catch (RuntimeException $e) {
-            $this->logger->err('Failed to connect GitHub -- skipping', $e);
+            $this->createAndSendPatchWithException($update, $tmpDir);
+        } catch (\Exception $e) {
+            $reporter = new RepositoryErrorReporter($this->mailService, $this->logger);
+            $msg = $reporter->handleTranslationError($e, $this->entity);
+            $this->entity->setErrorCount($this->entity->getErrorCount() + 1);
+            $this->entity->setErrorMsg($msg);
         }
         $this->rrmdir($tmpDir);
         $this->entityManager->remove($update);
         $this->entityManager->flush();
+    }
+
+    private function createAndSendPatchWithException(TranslationUpdateEntity $update, $tmpDir) {
+        $this->openRepository();
+
+        $tmpGit = $this->gitService->createRepositoryFromRemote($this->getRepositoryPath(), $tmpDir);
+        $author = $this->prepareAuthor($update);
+
+        $this->applyChanges($tmpGit, $tmpDir, $update);
+
+        $tmpGit->commit('translation update', $author);
+        $this->behavior->sendChange($tmpGit, $update, $this->git);
     }
 
     private function rrmdir($folder) {
@@ -377,7 +386,7 @@ abstract class Repository {
             $git->add($file);
             $changes = true;
         }
-        if (!$changes) throw new NoLanguageFileWritten();
+        if (!$changes) throw new NoLanguageFileWrittenException();
     }
 
     private function delete() {

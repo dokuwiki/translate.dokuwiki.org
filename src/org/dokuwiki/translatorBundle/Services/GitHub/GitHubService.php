@@ -3,6 +3,7 @@
 namespace org\dokuwiki\translatorBundle\Services\GitHub;
 
 use Github\Client;
+use Github\Exception\RuntimeException;
 use Github\HttpClient\CachedHttpClient;
 
 class GitHubService {
@@ -25,11 +26,16 @@ class GitHubService {
 
     /**
      * @param string $url GitHub URL to create the fork from
+     * @throws GitHubForkException
      * @return string Git URL of the fork
      */
     public function createFork($url) {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
-        $result = $this->client->api('repo')->forks()->create($user, $repository);
+        try {
+            $result = $this->client->api('repo')->forks()->create($user, $repository);
+        } catch (RuntimeException $e) {
+            throw new GitHubForkException('', 0, $e);
+        }
         return $this->gitHubUrlHack($result['ssh_url']);
     }
 
@@ -52,12 +58,16 @@ class GitHubService {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
         list($repoName, $ignored) = $this->getUsernameAndRepositoryFromURL($patchUrl);
 
-        $this->client->api('pull_request')->create($user, $repository, array(
-            'base'  => $branch,
-            'head'  => $repoName.':'.$patchBranch,
-            'title' => 'Translation update ('.$languageCode.')',
-            'body'  => 'This pull request contains some translation updates.'
-        ));
+        try {
+            $this->client->api('pull_request')->create($user, $repository, array(
+                'base'  => $branch,
+                'head'  => $repoName.':'.$patchBranch,
+                'title' => 'Translation update ('.$languageCode.')',
+                'body'  => 'This pull request contains some translation updates.'
+            ));
+        } catch (RuntimeException $e) {
+            throw new GitHubCreatePullRequestException('', 0, $e);
+        }
     }
 
 }

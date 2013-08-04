@@ -25,6 +25,8 @@ class MailService {
      */
     private $logger;
 
+    private $lastMessage;
+
     function __construct(\Swift_Mailer $mailer, \Twig_Environment $twig, $from, Logger $logger) {
         $this->mailer = $mailer;
         $this->template = $twig;
@@ -58,6 +60,7 @@ class MailService {
         $message->setSubject($subject);
         $message->setFrom($this->from);
         $message->setBody($this->template->render($template, $data));
+        $this->lastMessage = $message;
         return $message;
     }
 
@@ -71,5 +74,14 @@ class MailService {
         $this->logger->debug(sprintf('Sending mail'), $context);
 
     }
+
+    /**
+     * @return string
+     */
+    public function getLastMessage() {
+        return $this->lastMessage;
+    }
+
+
 
 }
