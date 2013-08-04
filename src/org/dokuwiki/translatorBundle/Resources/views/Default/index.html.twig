@@ -91,7 +91,7 @@
                 {% for repository in repositories %}
                         <tr>
                     <td class="name">
-                        <a href="{{ path("dokuwiki_translator_show_plugin", {'name': repository.name}) }}">{{ repository.displayName|capitalize }}</a>
+                        <a href="{{ path("dokuwiki_translator_show_plugin", {'name': repository.name}) }}">{{ repository.displayName }}</a>
                     </td>
                     <td class="translation-progress">
                         <div class="progress progress-striped {{ progressbar.color(repository.completionPercent) }}">
