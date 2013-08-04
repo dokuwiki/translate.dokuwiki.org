@@ -312,6 +312,8 @@ abstract class Repository {
             $this->behavior->sendChange($tmpGit, $update, $this->git);
         } catch (NoLanguageFileWritten $e) {
             $this->logger->debug('No language files written - skipping commit and patch sending');
+        } catch (RuntimeException $e) {
+            $this->logger->err('Failed to connect GitHub -- skipping', $e);
         }
         $this->rrmdir($tmpDir);
         $this->entityManager->remove($update);
