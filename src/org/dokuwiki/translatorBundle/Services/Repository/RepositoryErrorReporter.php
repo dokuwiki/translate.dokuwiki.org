@@ -26,13 +26,17 @@ class RepositoryErrorReporter {
      */
     private $logger;
 
+    private $data;
+
     function __construct(MailService $emailService, Logger $logger) {
         $this->emailService;
         $this->logger = $logger;
     }
 
     private function handleError(\Exception $e, RepositoryEntity $repo, $update) {
-        $data['repo'] =  $repo;
+        $this->data = array();
+        $this->data['repo'] =  $repo;
+        $this->data['exception'] = $e;
         if ($update) {
             $template = $this->determineEmailTemplateUpdate($e);
         } else {
@@ -45,7 +49,7 @@ class RepositoryErrorReporter {
                 $repo->getEmail(),
                 'Error during import of ' . $repo->getDisplayName(),
                 $template,
-                $data
+                $this->data
             );
             return $this->emailService->getLastMessage();
         } else {
@@ -98,6 +102,9 @@ class RepositoryErrorReporter {
         }
 
         if ($e instanceof LanguageParseException) {
+            $this->data['fileName'] = basename($e->getFileName());
+            $this->data['lineNumber'] = $e->getLineNumber();
+
             return 'dokuwikiTranslatorBundle:Mail:updater:importErrorLanguageParse.txt.twig';
         }
         return '';

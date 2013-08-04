@@ -16,4 +16,20 @@ class LanguageParseException extends \Exception {
         $this->lineNumber = $lineNumber;
         $this->fileName = $fileName;
     }
+
+    /**
+     * @return string
+     */
+    public function getFileName() {
+        return $this->fileName;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLineNumber() {
+        return $this->lineNumber;
+    }
+
+
 }
