@@ -10,6 +10,9 @@ class LanguageFileParser {
      */
     protected $author;
     protected $lang;
+    protected $totalLineNumbers;
+    protected $file = '';
+    protected $trimmedEnding;
 
     public static $MODE_PHP = 'php';
     public static $MODE_COMMENT_SINGLE_LINE = 'comment single line';
@@ -22,7 +25,15 @@ class LanguageFileParser {
         if (!is_file($file)) {
             throw new LanguageFileDoseNotExistException();
         }
-        $this->content = trim(file_get_contents($file));
+        $this->file = $file;
+        $content = file_get_contents($file);
+        $lines = explode("\n", $content);
+        $this->totalLineNumbers = count($lines) - 1;
+
+        $content = rtrim($content);
+        $position = strlen($content);
+        $this->trimmedEnding = substr($this->content, $position);
+        $this->content = ltrim($content);
     }
 
     public static function parseLangPHP($file) {
@@ -34,6 +45,7 @@ class LanguageFileParser {
     public function parse() {
         $this->author = new AuthorList();
         $this->lang = array();
+        $this->lineNumber = 0;
 
         $this->goToStart();
 
@@ -50,10 +62,10 @@ class LanguageFileParser {
             } elseif ($mode === LanguageFileParser::$MODE_PHP_END) {
                 $this->content = trim($this->content);
                 if (!empty($this->content)) {
-                    throw new LanguageParseException("Invalid syntax - Nothing allowed behind ?> found: " . substr($this->content, 0, 100));
+                    throw $this->createException("Nothing allowed behind ?>");
                 }
             } else {
-                throw new LanguageParseException("Invalid syntax - no code execution allowed. " . substr($this->content, 0, 100));
+                throw $this->createException("No code execution allowed. ");
             }
         }
 
@@ -68,7 +80,7 @@ class LanguageFileParser {
         if ($javaScriptLang) {
             $this->content = preg_replace('/^\s*\]\s*\[\s*/', '', $this->content, 1, $found);
             if ($found === 0) {
-                throw new LanguageParseException('Wrong key/value syntax in: ' . substr($this->content, 0, 50));
+                throw $this->createException('Wrong key/value syntax');
             }
             $key = $this->getString();
             $this->content = rtrim($this->content);
@@ -76,12 +88,12 @@ class LanguageFileParser {
 
         $this->content = preg_replace('/^\s*\]\s*=\s*/', '', $this->content, 1, $found);
         if ($found === 0) {
-            throw new LanguageParseException('Wrong key/value syntax in: ' . substr($this->content, 0, 50));
+            throw $this->createException('Wrong key/value syntax');
         }
         $value = $this->getString();
         $this->content = rtrim($this->content);
         if (!isset($this->content[0]) || $this->content[0] !== ';') {
-            throw new LanguageParseException('Wrong key/value syntax, expected command end or eof');
+            throw $this->createException('Wrong key/value syntax, expected command end or eof');
         }
         $this->shortContentBy(1);
 
@@ -110,7 +122,7 @@ class LanguageFileParser {
     public function getFirstString() {
         $stringDelimiter = $this->content[0];
         if (!in_array($stringDelimiter, array('\'', '"'))) {
-            throw new LanguageParseException("Content won't start with a string. Found " . $stringDelimiter);
+            throw $this->createException("Content won't start with a string.");
         }
         $this->shortContentBy(1);
 
@@ -119,7 +131,7 @@ class LanguageFileParser {
         do {
             $pos = strpos($this->content, $stringDelimiter, $offset);
             if ($pos === false) {
-                throw new LanguageParseException('String has no ending.');
+                throw $this->createException('String has no ending delimiter.');
             }
             if ($pos === 0) {
                 break;
@@ -152,7 +164,7 @@ class LanguageFileParser {
     public function processMultiLineComment() {
         $end = strpos($this->content, '*/');
         if ($end === false) {
-            throw new LanguageParseException('multi line comment not closed');
+            throw $this->createException('multi line comment not closed');
         }
         $comment = substr($this->content, 0, $end);
         $commentLines = explode("\n", $comment);
@@ -195,7 +207,7 @@ class LanguageFileParser {
     function goToStart() {
         $phpStart = strpos($this->content, '<?php');
         if ($phpStart === -1) {
-            throw new LanguageParseException('No PHP start found');
+            throw $this->createException('No PHP start found');
         }
         $this->content = substr($this->content, $phpStart + 5);
     }
@@ -269,5 +281,14 @@ class LanguageFileParser {
 
     public function getLang() {
         return $this->lang;
+    }
+
+    private function createException($message) {
+        $remaining = $this->content . $this->trimmedEnding;
+        $remaining = explode("\n", $remaining);
+        $remainingLines = count($remaining) - 1;
+        $line = $this->totalLineNumbers - $remainingLines;
+
+        return new LanguageParseException($message, $line, $this->file);
     }
 }
