@@ -35,6 +35,7 @@ class MailService {
     }
 
     public function sendEmail($to, $subject, $template, $data = array()) {
+        if ($to === '') return;
         $message = $this->createMessage($to, $subject, $template, $data);
 
         $this->send($message);

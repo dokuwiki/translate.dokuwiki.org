@@ -29,7 +29,7 @@ class RepositoryErrorReporter {
     private $data;
 
     function __construct(MailService $emailService, Logger $logger) {
-        $this->emailService;
+        $this->emailService = $emailService;
         $this->logger = $logger;
     }
 
@@ -43,7 +43,7 @@ class RepositoryErrorReporter {
             $template = $this->determineEmailTemplateTranslation($e);
         }
 
-        $this->logger->warn('error during repository update', $e);
+        $this->logger->warn('error during repository update', array('exception', $e));
         if ($template !== '') {
             $this->emailService->sendEmail(
                 $repo->getEmail(),
@@ -63,7 +63,7 @@ class RepositoryErrorReporter {
 
     private function determineEmailTemplateTranslation(\Exception $e) {
         if ($e instanceof GitHubCreatePullRequestException) {
-            return 'dokuwikiTranslatorBundle:Mail:updater:translationErrorPullRequest.txt.twig';
+            return 'dokuwikiTranslatorBundle:Mail:translationErrorPullRequest.txt.twig';
         }
         return '';
     }
@@ -78,34 +78,34 @@ class RepositoryErrorReporter {
      */
     private function determineEmailTemplateUpdate(\Exception $e) {
         if ($e instanceof GitPullException) {
-            return 'dokuwikiTranslatorBundle:Mail:updater:importErrorUpdate.txt.twig';
+            return 'dokuwikiTranslatorBundle:Mail:importErrorUpdate.txt.twig';
         }
 
         if ($e instanceof GitPushException) {
-            return 'dokuwikiTranslatorBundle:Mail:updater:importErrorUpdate.txt.twig';
+            return 'dokuwikiTranslatorBundle:Mail:importErrorUpdate.txt.twig';
         }
 
         if ($e instanceof GitCloneException) {
-            return 'dokuwikiTranslatorBundle:Mail:updater:importErrorClone.txt.twig';
+            return 'dokuwikiTranslatorBundle:Mail:importErrorClone.txt.twig';
         }
 
         if ($e instanceof GitHubForkException) {
-            return 'dokuwikiTranslatorBundle:Mail:updater:importErrorClone.txt.twig';
+            return 'dokuwikiTranslatorBundle:Mail:importErrorClone.txt.twig';
         }
 
         if ($e instanceof NoLanguageFolderException) {
-            return 'dokuwikiTranslatorBundle:Mail:updater:importErrorNoLangFolder.txt.twig';
+            return 'dokuwikiTranslatorBundle:Mail:importErrorNoLangFolder.txt.twig';
         }
 
         if ($e instanceof NoDefaultLanguageException) {
-            return 'dokuwikiTranslatorBundle:Mail:updater:importErrorNoDefaultTranslation.txt.twig';
+            return 'dokuwikiTranslatorBundle:Mail:importErrorNoDefaultTranslation.txt.twig';
         }
 
         if ($e instanceof LanguageParseException) {
             $this->data['fileName'] = basename($e->getFileName());
             $this->data['lineNumber'] = $e->getLineNumber();
 
-            return 'dokuwikiTranslatorBundle:Mail:updater:importErrorLanguageParse.txt.twig';
+            return 'dokuwikiTranslatorBundle:Mail:importErrorLanguageParse.txt.twig';
         }
         return '';
     }
