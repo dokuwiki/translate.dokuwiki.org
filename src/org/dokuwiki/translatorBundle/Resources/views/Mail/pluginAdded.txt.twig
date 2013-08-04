@@ -1,5 +1,6 @@
-Hi,
+{% extends 'dokuwikiTranslatorBundle:Mail:main.txt.twig' %}
 
+{% block content %}
 Your {{ repository.displayName }} has been added to the DokuWiki translation tool.
 To activate your entry just click on the following link:
 
@@ -8,6 +9,4 @@ To activate your entry just click on the following link:
 After the activation it may take a few minutes until the laguage files are read from your repository.
 
 If you didn't expect this message please contact admin@dokuwiki.org.
-
-Regards,
-your DokuWiki translation tool
+{% endblock %}

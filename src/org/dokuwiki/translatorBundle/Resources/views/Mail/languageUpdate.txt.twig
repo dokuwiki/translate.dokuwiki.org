@@ -1,5 +1,6 @@
-Hi,
+{% extends 'dokuwikiTranslatorBundle:Mail:main.txt.twig' %}
 
+{% block content %}
 here is a new language update for your {{ update.repository.displayName }}.
 
 The update is from:
@@ -7,6 +8,4 @@ Author: {{ update.author }}
 E-Mail: {{ update.email }}
 
 Use git am language.patch to add it into your repository.
-
-regards,
-your Translation Tool
+{% endblock %}
