@@ -132,6 +132,8 @@
 </div>
 {% endblock %}
 
+{% include '/var/www/wiki/htdocs/lib/tpl/dokuwiki/dwtb.html' ignore missing only %}
+
 {% block javascript %}
     {% javascripts '@dokuwikiTranslatorBundle/Resources/public/js/jquery-1.9.1.min.js'
             '@dokuwikiTranslatorBundle/Resources/public/js/bootstrap.min.js'
