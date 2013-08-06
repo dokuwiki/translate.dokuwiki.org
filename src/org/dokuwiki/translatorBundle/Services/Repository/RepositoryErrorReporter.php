@@ -102,8 +102,9 @@ class RepositoryErrorReporter {
         }
 
         if ($e instanceof LanguageParseException) {
-            $this->data['fileName'] = basename($e->getFileName());
+            $this->data['fileName'] = basename(dirname($e->getFileName())) . '/' . basename($e->getFileName());
             $this->data['lineNumber'] = $e->getLineNumber();
+            $this->data['message'] = $e->getMessage();
 
             return 'dokuwikiTranslatorBundle:Mail:importErrorLanguageParse.txt.twig';
         }

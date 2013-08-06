@@ -287,7 +287,7 @@ class LanguageFileParser {
         $remaining = $this->content . $this->trimmedEnding;
         $remaining = explode("\n", $remaining);
         $remainingLines = count($remaining) - 1;
-        $line = $this->totalLineNumbers - $remainingLines;
+        $line = $this->totalLineNumbers - $remainingLines +1;
 
         return new LanguageParseException($message, $line, $this->file);
     }
