@@ -43,7 +43,9 @@ class RepositoryErrorReporter {
             $template = $this->determineEmailTemplateTranslation($e);
         }
 
-        $this->logger->warn('error during repository update', array('exception', $e));
+        $this->logger->warn(sprintf('error during repository update (%s: %s)',
+                get_class($e), $e->getMessage()));
+        $this->logger->debug($e->getTraceAsString());
         if ($template !== '') {
             $this->emailService->sendEmail(
                 $repo->getEmail(),
