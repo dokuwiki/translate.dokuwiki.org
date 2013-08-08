@@ -4,6 +4,7 @@ namespace org\dokuwiki\translatorBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
+use Gregwar\CaptchaBundle\Type\CaptchaType;
 use org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer;
 use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -29,6 +30,8 @@ class TranslationController extends Controller implements InitializableControlle
         if ($request->getMethod() !== 'POST') {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
+
+
 
         $action = $request->request->get('action', array());
         if (!isset($action['save'])) {
@@ -62,6 +65,12 @@ class TranslationController extends Controller implements InitializableControlle
         $newTranslation = $validator->validate();
         $errors = $validator->getErrors();
         if (!empty($errors)) {
+            return $this->translate($data['repositoryType'], $data['repositoryName'], $data['translation'], $errors);
+        }
+
+        $form = $this->getCaptchaForm();
+        $form->bind($this->getRequest());
+        if (!$form->isValid()) {
             return $this->translate($data['repositoryType'], $data['repositoryName'], $data['translation'], $errors);
         }
 
@@ -111,10 +120,16 @@ class TranslationController extends Controller implements InitializableControlle
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
 
+        $data['captcha'] = $this->getCaptchaForm()->createView();
 
         return $this->render('dokuwikiTranslatorBundle:Translate:translate.html.twig', $data);
     }
 
+    private function getCaptchaForm() {
+        return $this->createFormBuilder()
+            ->add('captcha', 'captcha')
+            ->getForm();
+    }
 
     /**
      * @return RepositoryManager

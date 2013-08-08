@@ -19,7 +19,8 @@
         "jms/security-extra-bundle": "1.2.*",
         "jms/di-extra-bundle": "1.1.*",
         "leafo/lessphp": "dev-master",
-        "knplabs/github-api": "*"
+        "knplabs/github-api": "*",
+        "gregwar/captcha-bundle": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "3.8.*"

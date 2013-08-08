@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new org\dokuwiki\translatorBundle\dokuwikiTranslatorBundle(),
+            new Gregwar\CaptchaBundle\GregwarCaptchaBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
