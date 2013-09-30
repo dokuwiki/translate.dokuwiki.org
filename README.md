@@ -39,6 +39,7 @@ Development setup
 The the website is availible at web/app_dev.php
 
 To run the Unittests you need to have PHPUnit installed and the application configured. Run the tests with:
+
     vendor/bin/phpunit -c app
 
 CronJobs
@@ -46,9 +47,11 @@ CronJobs
 You need to setup two cronjobs, the commands are:
 
 To update plugin information from the DokuWiki plugin repository. This command should run at least once per day.
+
     php app/console dokuwiki:updateDwApi
 
 Keep track of plugin updates and process new translations. This command should run about every 5min.
+
     php app/console dokuwiki:updateGit
 
 Administrative commands
@@ -56,10 +59,13 @@ Administrative commands
 The following Symfony commands are additionally availiable via commandline.
 
 Add a repository:
+
     php app/console dokuwiki:add
 
 Delete a repository:
+
     php app/console dokuwiki:deleteRepo
 
 Reset the local information and git repository of a plugin:
+
     php app/console dokuwiki:softReset
