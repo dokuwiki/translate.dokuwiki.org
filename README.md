@@ -54,7 +54,7 @@ Keep track of plugin updates and process new translations. This command should r
 
     php app/console dokuwiki:updateGit
 
-Administrative commands
+Admin commands
 -----------------------
 The following Symfony commands are additionally availiable via commandline.
 
