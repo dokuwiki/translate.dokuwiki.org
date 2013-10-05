@@ -54,24 +54,32 @@ class TranslationController extends Controller implements InitializableControlle
         $data['email'] = $request->request->get('email', '');
         $language = $this->getLanguage();
 
-
         $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($data['repositoryType'], $data['repositoryName']);
         $repository = $this->getRepositoryManager()->getRepository($repositoryEntity);
         $defaultTranslation = $repository->getLanguage('en');
         $previousTranslation = $repository->getLanguage($language);
 
-
         $validator = $this->validateTranslation($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
         $newTranslation = $validator->validate();
         $errors = $validator->getErrors();
         if (!empty($errors)) {
-            return $this->translate($data['repositoryType'], $data['repositoryName'], $data['translation'], $errors);
+            $userInput = array();
+            $userInput['translation'] = $data['translation'];
+            $userInput['errors'] = $errors;
+            $userInput['author'] = $data['name'];
+            $userInput['authorMail'] = $data['email'];
+            return $this->translate($data['repositoryType'], $data['repositoryName'], $userInput);
         }
 
         $form = $this->getCaptchaForm();
         $form->bind($this->getRequest());
         if (!$form->isValid()) {
-            return $this->translate($data['repositoryType'], $data['repositoryName'], $data['translation'], $errors);
+            $userInput = array();
+            $userInput['translation'] = $data['translation'];
+            $userInput['errors'] = $errors;
+            $userInput['author'] = $data['name'];
+            $userInput['authorMail'] = $data['email'];
+            return $this->translate($data['repositoryType'], $data['repositoryName'], $userInput);
         }
 
         $repository->addTranslationUpdate($newTranslation, $data['name'], $data['email'], $language);
@@ -99,7 +107,18 @@ class TranslationController extends Controller implements InitializableControlle
         return $this->translate(RepositoryEntity::$TYPE_PLUGIN, $name);
     }
 
-    private function translate($type, $name, array $userTranslation = array(), array $errors = array()) {
+    /**
+     * @param string $type type of the translatable unit
+     * @param string $name name of the plugin
+     * @param array $userInput input the user has already insert.
+     *              This can contain the following keys:
+     *                  - (array)  translation
+     *                  - (array)  errors
+     *                  - (string) author
+     *                  - (string) authorMail
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    private function translate($type, $name, array $userInput = array()) {
         $language = $this->getLanguage();
         $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($type, $name);
 
@@ -108,11 +127,19 @@ class TranslationController extends Controller implements InitializableControlle
         }
 
         $data['repository'] = $repositoryEntity;
-        $data['translations'] = $this->prepareLanguages($language, $repositoryEntity, $userTranslation);
+        $data['translations'] = $this->prepareLanguages($language, $repositoryEntity, $userInput['translation']);
+        $data['errors'] = $userInput['errors'];
+
+
         $cookies = $this->getRequest()->cookies;
-        $data['author'] = $cookies->has('author') ? $cookies->get('author') : '';
-        $data['authorMail'] = $cookies->has('authorMail') ? $cookies->get('authorMail') : '';
-        $data['errors'] = $errors;
+        if ($userInput['author']) $data['author'] = $userInput['author'];
+        elseif ($cookies->has('author')) $data['author'] = $cookies->get('author');
+        else $data['author'] =  '';
+
+        if ($userInput['authorMail']) $data['authorMail'] = $userInput['authorMail'];
+        elseif ($cookies->has('authorMail')) $cookies->get('authorMail');
+        else $data['authorMail'] = '';
+
 
         try {
             $data['targetLanguage'] = $this->getLanguageNameEntityRepository()->getLanguageByCode($language);
