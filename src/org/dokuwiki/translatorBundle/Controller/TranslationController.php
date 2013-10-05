@@ -127,16 +127,17 @@ class TranslationController extends Controller implements InitializableControlle
         }
 
         $data['repository'] = $repositoryEntity;
-        $data['translations'] = $this->prepareLanguages($language, $repositoryEntity, $userInput['translation']);
-        $data['errors'] = $userInput['errors'];
+        $userTranslation = isset($userInput['translation'])?$userInput['translation']:array();
+        $data['translations'] = $this->prepareLanguages($language, $repositoryEntity, $userTranslation);
+        $data['errors'] = isset($userInput['errors'])?$userInput['errors']:array();
 
 
         $cookies = $this->getRequest()->cookies;
-        if ($userInput['author']) $data['author'] = $userInput['author'];
+        if (isset($userInput['author'])) $data['author'] = $userInput['author'];
         elseif ($cookies->has('author')) $data['author'] = $cookies->get('author');
         else $data['author'] =  '';
 
-        if ($userInput['authorMail']) $data['authorMail'] = $userInput['authorMail'];
+        if (isset($userInput['authorMail'])) $data['authorMail'] = $userInput['authorMail'];
         elseif ($cookies->has('authorMail')) $cookies->get('authorMail');
         else $data['authorMail'] = '';
 
