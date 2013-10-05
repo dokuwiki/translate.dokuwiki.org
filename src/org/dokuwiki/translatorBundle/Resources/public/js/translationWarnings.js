@@ -22,7 +22,7 @@ $(document).ready(function() {
         this.page = 1;
         this.itemCount = this.elements.size();
         this.itemsPerPage = 30;
-        this.lastPage = Math.ceil(this.itemCount / this.itemsPerPage)-1;
+        this.lastPage = Math.ceil(this.itemCount / this.itemsPerPage);
         this.paginationSpace = 3;
         this.pagination = $('.pagination');
         this.pagination.empty();
