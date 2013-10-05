@@ -174,7 +174,7 @@ class LanguageFileParser {
             if(!preg_match('/\* @author (.+?)(?: <(.*?)>)?\n/i', $line, $matches)) {
                 continue;
             }
-            $this->author->add(new Author($matches[1], isset($matches[2])?$matches[2]:''));
+            $this->author->add(new Author(trim($matches[1]), isset($matches[2])?trim($matches[2]):''));
         }
 
         $this->content = substr($this->content, $end + 2);
