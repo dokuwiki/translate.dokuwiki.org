@@ -79,6 +79,14 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('echo "bla";', $parser->getContent());
     }
 
+    function testIssue52() {
+        $parser = new LanguageFileParserTestDummy();
+        $parser->setContent('# Bla');
+        $this->assertEquals(LanguageFileParser::$MODE_COMMENT_SINGLE_LINE, $parser->determineNextMode());
+        $this->assertEquals(' Bla', $parser->getContent());
+
+    }
+
     function testProcessMultiLineComment() {
         $parser = new LanguageFileParserTestDummy();
 

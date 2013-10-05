@@ -183,24 +183,22 @@ class LanguageFileParser {
 
     public function determineNextMode() {
         $this->content = ltrim($this->content);
-        if ($this->contentStartsWith('/*')) {
-            $this->shortContentBy(2);
-            return LanguageFileParser::$MODE_COMMENT_MULTI_LINE;
+
+        $modes = array(
+            '/*' => LanguageFileParser::$MODE_COMMENT_MULTI_LINE,
+            '//' => LanguageFileParser::$MODE_COMMENT_SINGLE_LINE,
+            '#' => LanguageFileParser::$MODE_COMMENT_SINGLE_LINE,
+            '$lang[' => LanguageFileParser::$MODE_LANG,
+            '?>' => LanguageFileParser::$MODE_PHP_END
+        );
+
+        foreach ($modes as $startsWith => $result) {
+            if ($this->contentStartsWith($startsWith)) {
+                $this->shortContentBy(strlen($startsWith));
+                return $result;
+            }
         }
 
-        if ($this->contentStartsWith('//')) {
-            $this->shortContentBy(2);
-            return LanguageFileParser::$MODE_COMMENT_SINGLE_LINE;
-        }
-
-        if ($this->contentStartsWith('$lang[')) {
-            $this->shortContentBy(6);
-            return LanguageFileParser::$MODE_LANG;
-        }
-        if ($this->contentStartsWith('?>')) {
-            $this->shortContentBy(2);
-            return LanguageFileParser::$MODE_PHP_END;
-        }
         return LanguageFileParser::$MODE_PHP_UNKNOWN;
     }
 
