@@ -145,6 +145,19 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
 
     }
 
+    function testIssue38() {
+        $parser = new LanguageFileParserTestDummy();
+        $parser->setAuthor(new AuthorList());
+        $parser->setContent("some text\n * @var string some text\n   * @author: one <one@example.com>\n*/ text");
+        $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processMultiLineComment());
+
+        $expected = new AuthorList();
+        $expected->add(new Author('one', 'one@example.com'));
+        $this->assertEquals($expected, $parser->getAuthor());
+        $this->assertEquals(' text', $parser->getContent());
+
+    }
+
     /**
      * @expectedException \org\dokuwiki\translatorBundle\Services\Language\LanguageParseException
      */

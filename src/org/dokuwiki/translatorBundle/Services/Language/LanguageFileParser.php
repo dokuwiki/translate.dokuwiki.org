@@ -171,7 +171,7 @@ class LanguageFileParser {
         foreach($commentLines as $line) {
             $line = ltrim($line);
             $line .= "\n";
-            if(!preg_match('/\* @author (.+?)(?: <(.*?)>)?\n/i', $line, $matches)) {
+            if(!preg_match('/\* @author:? (.+?)(?: <(.*?)>)?\n/i', $line, $matches)) {
                 continue;
             }
             $this->author->add(new Author(trim($matches[1]), isset($matches[2])?trim($matches[2]):''));
