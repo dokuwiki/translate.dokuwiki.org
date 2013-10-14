@@ -18,9 +18,7 @@ class UpdateDokuWikiAPICommand extends ContainerAwareCommand {
          * @var $api DokuWikiRepositoryAPI
          */
         $api = $this->getContainer()->get('doku_wiki_repository_api');
-        if ($api->updateCache()) {
-            $output->writeln('Update success');
-        } else {
+        if (!$api->updateCache()) {
             $output->writeln('Update failed');
         }
     }
