@@ -33,3 +33,10 @@ dokuwiki_translate_save:
 dokuwiki_translator_show:
     pattern:  /dokuwiki
     defaults: { _controller: dokuwikiTranslatorBundle:Default:show}
+
+dokuwiki_translator_redirect_old:
+    pattern: /translate.php
+    defaults:
+        _controller: FrameworkBundle:Redirect:urlRedirect
+        path: /
+        permanent: true
