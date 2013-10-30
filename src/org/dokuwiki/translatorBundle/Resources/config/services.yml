@@ -5,6 +5,7 @@ parameters:
     doku_wiki_repository_api.class: org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI
     plugin_name_validator.class: org\dokuwiki\translatorBundle\Validator\PluginNameValidator
     language_manager.class: org\dokuwiki\translatorBundle\Services\Language\LanguageManager
+#    twig.exception_listener.class: org\dokuwiki\translatorBundle\EventListener\RouteNotFoundExceptionListener
 
 services:
     repository_manager:
@@ -34,6 +35,13 @@ services:
         scope: "request"
         tags:
             - { name: kernel.event_listener, event: "kernel.controller", method: "onKernelController" }
+
+    listener.kernel_exception:
+        class: org\dokuwiki\translatorBundle\EventListener\RouteNotFoundExceptionListener
+        arguments: [@logger, @twig]
+        scope: "request"
+        tags:
+            - { name: kernel.event_listener, event: "kernel.exception", method: "onKernelException" }
 
     git_service:
         class: org\dokuwiki\translatorBundle\Services\Git\GitService
