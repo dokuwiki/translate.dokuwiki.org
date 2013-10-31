@@ -63,7 +63,3 @@ services:
         class: org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer
         arguments: [@validator]
 
-    doku_wiki_toolbar_extension:
-            class: org\dokuwiki\translatorBundle\Twig\DokuWikiToolbarExtension
-            tags:
-                - { name: twig.extension }

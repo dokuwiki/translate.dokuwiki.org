@@ -1,7 +1,7 @@
 {% extends 'dokuwikiTranslatorBundle:Mail:main.txt.twig' %}
 
 {% block content %}
-Your {{ repository.displayName }} has been added to the DokuWiki translation tool.
+{{ repository.displayName }} has been added to the DokuWiki translation tool.
 To activate your entry just click on the following link:
 
 {{ url('dokuwiki_translator_plugin_activate', {'name': repository.name, 'key': repository.activationKey}) }}
