@@ -25,7 +25,7 @@ class HighlightWhitespaceExtension extends \Twig_Extension {
         $tagStart = '<span class="highlight-whitespace" title="Here are whitespaces - don\'t forget them in your translation">';
 
         $text = preg_replace('/([ \t]+)\n/', $tagStart . '$1</span>' . "\n", $text);
-        $text = preg_replace('/\n([ \t]+)/', "\n$tagStart" . '$1</span>', $text);
+        //$text = preg_replace('/\n([ \t]+)/', "\n$tagStart" . '$1</span>', $text); TODO #54
 
         return $text;
     }
