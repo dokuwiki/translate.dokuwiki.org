@@ -86,7 +86,7 @@
                                         {% if translation.target is empty %}
                                             class="translation-missing"
                                         {% endif %}>
-                                    <td dir="ltr" class="translation-original">{{ translation.default }}</td>
+                                    <td dir="ltr" class="translation-original">{{ translation.default|highlight_whitespace }}</td>
                                     <td>
                                         <textarea
                                                 name="{{ translation.key }}"

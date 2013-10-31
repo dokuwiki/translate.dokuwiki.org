@@ -66,3 +66,8 @@ services:
         class: org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer
         arguments: [@validator]
 
+
+    highlight_whitespace:
+            class: org\dokuwiki\translatorBundle\Twig\HighlightWhitespaceExtension
+            tags:
+                - { name: twig.extension }
