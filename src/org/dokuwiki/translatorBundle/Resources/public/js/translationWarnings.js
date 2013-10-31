@@ -266,12 +266,6 @@ $(document).ready(function() {
 
         if (element.val() == '') {
             warnElement.addClass('warning');
-            element.popover({
-                placement: 'top',
-                trigger: 'manual',
-                content: 'Element not translated',
-                title: 'Warning'
-            });
             if (popover) element.popover('show');
             return;
         }
