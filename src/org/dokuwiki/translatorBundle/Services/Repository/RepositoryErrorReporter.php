@@ -9,6 +9,7 @@ use org\dokuwiki\translatorBundle\Services\Git\GitPullException;
 use org\dokuwiki\translatorBundle\Services\Git\GitPushException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubCreatePullRequestException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubForkException;
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageParseException;
 use org\dokuwiki\translatorBundle\Services\Language\NoDefaultLanguageException;
 use org\dokuwiki\translatorBundle\Services\Language\NoLanguageFolderException;
@@ -33,7 +34,7 @@ class RepositoryErrorReporter {
         $this->logger = $logger;
     }
 
-    private function handleError(\Exception $e, RepositoryEntity $repo, $update) {
+    private function handleError(\Exception $e, Repository $repo, $update) {
         $this->data = array();
         $this->data['repo'] =  $repo;
         $this->data['exception'] = $e;
@@ -43,13 +44,15 @@ class RepositoryErrorReporter {
             $template = $this->determineEmailTemplateTranslation($e);
         }
 
-        $this->logger->warn(sprintf('error during repository update (%s: %s)',
+        $this->logger->err(sprintf('error during repository update (%s: %s)',
                 get_class($e), $e->getMessage()));
         $this->logger->debug($e->getTraceAsString());
-        if ($template !== '') {
+        if ($template !== '' && $repo->isFunctional()) {
+            $repo->getEntity()->setErrorCount($repo->getEntity()->getErrorCount() + 1);
+
             $this->emailService->sendEmail(
-                $repo->getEmail(),
-                'Error during import of ' . $repo->getDisplayName(),
+                $repo->getEntity()->getEmail(),
+                'Error during import of ' . $repo->getEntity()->getDisplayName(),
                 $template,
                 $this->data
             );
@@ -59,7 +62,7 @@ class RepositoryErrorReporter {
         }
     }
 
-    public function handleTranslationError(\Exception $e, RepositoryEntity $repo) {
+    public function handleTranslationError(\Exception $e, Repository $repo) {
         return $this->handleError($e, $repo, false);
     }
 
@@ -70,7 +73,7 @@ class RepositoryErrorReporter {
         return '';
     }
 
-    public function handleUpdateError(\Exception $e, RepositoryEntity $repo) {
+    public function handleUpdateError(\Exception $e, Repository $repo) {
         return $this->handleError($e, $repo, true);
     }
 

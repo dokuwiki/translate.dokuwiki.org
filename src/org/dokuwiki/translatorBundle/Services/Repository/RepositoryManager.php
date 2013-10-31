@@ -7,6 +7,7 @@ use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Git\GitService;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubService;
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\GitHubBehavior;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\PlainBehavior;
@@ -50,6 +51,11 @@ class RepositoryManager {
     private $gitHubService;
 
     /**
+     * @var GitHubStatusService
+     */
+    private $gitHubStatus;
+
+    /**
      * @var Logger
      */
     private $logger;
@@ -61,7 +67,7 @@ class RepositoryManager {
     function __construct($dataFolder, EntityManager $entityManager, $repositoryAgeToUpdate,
                 $maxRepositoriesToUpdatePerRun, RepositoryStats $repositoryStats,
                 GitService $gitService, MailService $mailService, GitHubService $gitHubService,
-                Logger $logger, $maxErrors) {
+                Logger $logger, $maxErrors, GitHubStatusService $gitHubStatus) {
 
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
@@ -74,6 +80,7 @@ class RepositoryManager {
         $this->gitHubService = $gitHubService;
         $this->logger = $logger;
         $this->maxErrors = $maxErrors;
+        $this->gitHubStatus = $gitHubStatus;
     }
 
     public function getRepositoriesToUpdate() {
@@ -113,7 +120,7 @@ class RepositoryManager {
     private function getRepositoryBehavior(RepositoryEntity $repository) {
         $url = $repository->getUrl();
         if (preg_match('/^(git:\/\/|https:\/\/|git@)github\.com/i', $url)) {
-            return new GitHubBehavior($this->gitHubService);
+            return new GitHubBehavior($this->gitHubService, $this->gitHubStatus);
         }
         return new PlainBehavior($this->mailService);
     }

@@ -6,6 +6,7 @@ use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubService;
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
 
 class GitHubBehavior implements RepositoryBehavior {
 
@@ -14,8 +15,14 @@ class GitHubBehavior implements RepositoryBehavior {
      */
     private $api;
 
-    function __construct(GitHubService $api) {
+    /**
+     * @var GitHubStatusService
+     */
+    private $gitHubService;
+
+    function __construct(GitHubService $api, GitHubStatusService $gitHubStatus) {
         $this->api = $api;
+        $this->gitHubService = $gitHubStatus;
     }
 
 
@@ -48,5 +55,9 @@ class GitHubBehavior implements RepositoryBehavior {
         $changed = $git->pull($repository->getUrl(), $repository->getBranch()) === GitRepository::$PULL_CHANGED;
         $git->push('origin', $repository->getBranch());
         return $changed;
+    }
+
+    function isFunctional() {
+        return $this->gitHubService->isFunctional();
     }
 }

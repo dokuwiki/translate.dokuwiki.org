@@ -20,4 +20,6 @@ interface RepositoryBehavior {
      */
     function pull(GitRepository $git, RepositoryEntity $repository);
 
+    function isFunctional();
+
 }

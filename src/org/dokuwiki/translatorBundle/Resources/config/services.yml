@@ -5,12 +5,11 @@ parameters:
     doku_wiki_repository_api.class: org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI
     plugin_name_validator.class: org\dokuwiki\translatorBundle\Validator\PluginNameValidator
     language_manager.class: org\dokuwiki\translatorBundle\Services\Language\LanguageManager
-#    twig.exception_listener.class: org\dokuwiki\translatorBundle\EventListener\RouteNotFoundExceptionListener
 
 services:
     repository_manager:
         class: "%repository_manager.class%"
-        arguments: ["%data%", @doctrine.orm.entity_manager, "%reprositoryUpdateAge%", "%maxRepositoriesToUpdatePerRun%", @repository_stats , @git_service, @mail_service, @git_hub_service, @logger, "%maxErrorCount%"]
+        arguments: ["%data%", @doctrine.orm.entity_manager, "%reprositoryUpdateAge%", "%maxRepositoriesToUpdatePerRun%", @repository_stats , @git_service, @mail_service, @git_hub_service, @logger, "%maxErrorCount%", @git_hub_status_service]
 
     repository_stats:
         class: "%repository_stats.class%"
@@ -54,6 +53,10 @@ services:
     git_hub_service:
         class: org\dokuwiki\translatorBundle\Services\GitHub\GitHubService
         arguments: ["%git_hub_token%", "%data%", "%git_hub_url%"]
+
+    git_hub_status_service:
+        class: org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService
+        arguments: []
 
     user_translation_validator_factory:
         class: org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorFactory

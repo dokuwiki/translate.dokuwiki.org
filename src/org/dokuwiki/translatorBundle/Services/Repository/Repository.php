@@ -101,8 +101,7 @@ abstract class Repository {
             }
         } catch (\Exception $e) {
             $reporter = new RepositoryErrorReporter($this->mailService, $this->logger);
-            $msg = $reporter->handleUpdateError($e, $this->entity);
-            $this->entity->setErrorCount($this->entity->getErrorCount() + 1);
+            $msg = $reporter->handleUpdateError($e, $this);
             $this->entity->setErrorMsg($msg);
         }
         $this->entityManager->flush($this->entity);
@@ -308,8 +307,7 @@ abstract class Repository {
             $this->createAndSendPatchWithException($update, $tmpDir);
         } catch (\Exception $e) {
             $reporter = new RepositoryErrorReporter($this->mailService, $this->logger);
-            $msg = $reporter->handleTranslationError($e, $this->entity);
-            $this->entity->setErrorCount($this->entity->getErrorCount() + 1);
+            $msg = $reporter->handleTranslationError($e, $this);
             $this->entity->setErrorMsg($msg);
         }
         $this->rrmdir($tmpDir);
@@ -431,4 +429,15 @@ abstract class Repository {
      * @return array|string Relative path to the language folder. i.e. lang/ for plugins
      */
     protected abstract function getLanguageFolder();
+
+    public function isFunctional() {
+        return $this->behavior->isFunctional();
+    }
+
+    /**
+     * @return \org\dokuwiki\translatorBundle\Entity\RepositoryEntity
+     */
+    public function getEntity() {
+        return $this->entity;
+    }
 }
