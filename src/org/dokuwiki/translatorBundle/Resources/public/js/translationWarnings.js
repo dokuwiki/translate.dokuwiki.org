@@ -266,12 +266,6 @@ $(document).ready(function() {
 
         if (element.val() == '') {
             warnElement.addClass('warning');
-            element.popover({
-                placement: 'top',
-                trigger: 'manual',
-                content: 'Element not translated',
-                title: 'Warning'
-            });
             if (popover) element.popover('show');
             return;
         }
@@ -299,9 +293,32 @@ $(document).ready(function() {
             }
         }
 
+        var leftSpaces = originalTranslation.find('span').length;
+        regex = new RegExp(
+            "([ \t]+)\n",
+            "g"
+        );
+        var rightSpaces = element.val().match(regex);
+        if (rightSpaces == null) rightSpaces = 0;
+        else rightSpaces = rightSpaces.length;
+
+        if (leftSpaces != rightSpaces) {
+            warnElement.addClass('warning');
+            element.popover({
+                placement: 'top',
+                trigger: 'manual',
+                content: 'The translated text has missing whitespaces. Please check the highlighted parts in the original version.',
+                title: 'Missing whitespaces'
+            });
+            if (popover) element.popover('show');
+            return;
+        }
+
         warnElement.removeClass('warning');
         element.popover('destroy');
     };
+
+
 
     var table = new TranslationTable();
 });

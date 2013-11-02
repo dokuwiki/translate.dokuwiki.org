@@ -71,3 +71,7 @@ services:
         tags:
             - { name: twig.extension }
 
+    highlight_whitespace:
+            class: org\dokuwiki\translatorBundle\Twig\HighlightWhitespaceExtension
+            tags:
+                - { name: twig.extension }
