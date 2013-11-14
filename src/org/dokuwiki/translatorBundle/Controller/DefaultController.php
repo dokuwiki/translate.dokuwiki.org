@@ -32,7 +32,7 @@ class DefaultController extends Controller implements InitializableController {
     public function indexAction() {
         $lang = $this->getRequest()->query->get('lang', null);
 
-        if ($lang !== null) {
+        if (!empty($lang)) {
             try {
                 $this->languageRepository->getLanguageByCode($lang);
             } catch (NoResultException $e) {
