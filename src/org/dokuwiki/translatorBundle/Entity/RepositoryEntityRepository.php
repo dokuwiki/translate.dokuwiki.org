@@ -51,8 +51,8 @@ class RepositoryEntityRepository extends  EntityRepository {
         } catch (NoResultException $e) {
             return array(
                 'completionPercent' => 0,
-                'name' => 'DokuWiki',
-                'displayName' => 'DokuWiki'
+                'displayName' => 'DokuWiki',
+                'state' => RepositoryEntity::$STATE_ACTIVE
             );
         }
     }
