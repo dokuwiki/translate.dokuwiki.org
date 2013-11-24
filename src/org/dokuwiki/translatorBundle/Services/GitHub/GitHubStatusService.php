@@ -15,6 +15,10 @@ class GitHubStatusService {
 
     private function checkFunctional() {
         $content = file_get_contents('https://status.github.com/api/status.json');
+        return $this->checkResponse($content);
+    }
+
+    protected function checkResponse($content) {
         if (!$content) {
             return false;
         }
@@ -22,7 +26,7 @@ class GitHubStatusService {
         if ($status === null) {
             return false;
         }
-        return ($status['status'] === 'good');
+        return ($status->status === 'good');
     }
 
 }
