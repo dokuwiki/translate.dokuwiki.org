@@ -107,12 +107,6 @@ class RepositoryEntity {
     protected $errorMsg = '';
 
     /**
-     * @ORM\Column(type="integer")
-     * @var int
-     */
-    protected $errorCount = 0;
-
-    /**
      * @ORM\Column(type="string", length=100)
      * @var string
      */
@@ -133,20 +127,6 @@ class RepositoryEntity {
 
     public function getTranslations() {
         return $this->translations;
-    }
-
-    /**
-     * @param int $errorCount
-     */
-    public function setErrorCount($errorCount) {
-        $this->errorCount = $errorCount;
-    }
-
-    /**
-     * @return int
-     */
-    public function getErrorCount() {
-        return $this->errorCount;
     }
 
     /**

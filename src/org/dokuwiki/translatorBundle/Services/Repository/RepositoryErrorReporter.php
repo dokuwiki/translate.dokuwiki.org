@@ -48,7 +48,6 @@ class RepositoryErrorReporter {
                 get_class($e), $e->getMessage()));
         $this->logger->debug($e->getTraceAsString());
         if ($template !== '' && $repo->isFunctional()) {
-            $repo->getEntity()->setErrorCount($repo->getEntity()->getErrorCount() + 1);
 
             $this->emailService->sendEmail(
                 $repo->getEntity()->getEmail(),

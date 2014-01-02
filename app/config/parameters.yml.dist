@@ -35,9 +35,6 @@ parameters:
     # max repositories to update per command run
     maxRepositoriesToUpdatePerRun: 10
 
-    # max number of import errors before ignoring a repository
-    maxErrorCount: 3
-
     # max time a git command can run in sec
     command_timeout: 60
 

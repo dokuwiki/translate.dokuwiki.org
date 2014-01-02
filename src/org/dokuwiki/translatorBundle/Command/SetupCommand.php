@@ -50,7 +50,6 @@ class SetupCommand extends ContainerAwareCommand {
         $repository->setDisplayName('DokuWiki');
         $repository->setState(RepositoryEntity::$STATE_ACTIVE);
         $repository->setErrorMsg('');
-        $repository->setErrorCount(0);
         $repository->setActivationKey('');
         $this->entityManager->persist($repository);
         $this->entityManager->flush();

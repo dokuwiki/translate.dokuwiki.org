@@ -74,7 +74,6 @@ class SoftResetCommand extends ContainerAwareCommand {
      */
     protected function resetRepo(RepositoryEntity $repo) {
         $repo->setState(RepositoryEntity::$STATE_ACTIVE);
-        $repo->setErrorCount(0);
         $repo->setLastUpdate(0);
         $this->getEntityManager()->flush($repo);
     }

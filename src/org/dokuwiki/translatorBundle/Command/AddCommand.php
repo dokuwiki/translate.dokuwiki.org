@@ -41,7 +41,6 @@ class AddCommand extends ContainerAwareCommand {
         $repo->setAuthor($input->getArgument('author'));
         $repo->setType($type);
         $repo->setState(RepositoryEntity::$STATE_INITIALIZING);
-        $repo->setErrorCount(0);
         $repo->setDescription('');
         $repo->setTags('');
 

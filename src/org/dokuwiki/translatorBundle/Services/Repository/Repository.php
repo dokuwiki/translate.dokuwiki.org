@@ -95,7 +95,6 @@ abstract class Repository {
         try {
             $this->updateWithException();
             $this->entity->setLastUpdate(intval(time()));
-            $this->entity->setErrorCount(0);
             if ($this->entity->getState() === RepositoryEntity::$STATE_INITIALIZING) {
                 $this->initialized();
             }
