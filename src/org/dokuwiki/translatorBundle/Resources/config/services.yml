@@ -47,7 +47,7 @@ services:
         arguments: ["%git_bin%", "%command_timeout%"]
 
     mail_service:
-        class: org\dokuwiki\translatorBundle\Services\Mail\MailService
+        class: org\dokuwiki\translatorBundle\Services\Mail\MailServiceImpl
         arguments: [@mailer, @twig, "%mailer_from%", @logger]
 
     git_hub_service:
