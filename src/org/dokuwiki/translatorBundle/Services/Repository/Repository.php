@@ -1,29 +1,12 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
-use Github\Exception\RuntimeException;
 use Monolog\Logger;
-use org\dokuwiki\translatorBundle\Services\Git\GitAddException;
-use org\dokuwiki\translatorBundle\Services\Git\GitBranchException;
-use org\dokuwiki\translatorBundle\Services\Git\GitCheckoutException;
 use org\dokuwiki\translatorBundle\Services\Git\GitCloneException;
-use org\dokuwiki\translatorBundle\Services\Git\GitCommitException;
-use org\dokuwiki\translatorBundle\Services\Git\GitCreatePatchException;
-use org\dokuwiki\translatorBundle\Services\Git\GitException;
-use org\dokuwiki\translatorBundle\Services\Git\GitNoRemoteException;
-use org\dokuwiki\translatorBundle\Services\Git\GitPullException;
-use org\dokuwiki\translatorBundle\Services\Git\GitPushException;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubCreatePullRequestException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubForkException;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
-use org\dokuwiki\translatorBundle\Services\Language\LanguageFileDoseNotExistException;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageFileIsEmptyException;
-use org\dokuwiki\translatorBundle\Services\Language\LanguageParseException;
-use org\dokuwiki\translatorBundle\Services\Language\NoDefaultLanguageException;
-use org\dokuwiki\translatorBundle\Services\Language\NoLanguageFolderException;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\RepositoryBehavior;
-use Symfony\Component\DependencyInjection\Container;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
 use org\dokuwiki\translatorBundle\Services\Git\GitService;

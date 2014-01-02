@@ -5,7 +5,7 @@ namespace org\dokuwiki\translatorBundle\Services\GitHub;
 class GitHubServiceTest extends \PHPUnit_Framework_TestCase {
 
     function testGetUsernameAndRepositoryFromURLWithHTTP() {
-        $api = new GitHubService('', '', '', false);
+        $api = new GitHubServiceImpl('', '', '', false);
 
         $result = $api->getUsernameAndRepositoryFromURL('https://github.com/splitbrain/dokuwiki.git');
         $this->assertEquals(array('splitbrain', 'dokuwiki'), $result);
@@ -14,7 +14,7 @@ class GitHubServiceTest extends \PHPUnit_Framework_TestCase {
     }
 
     function testGetUsernameAndRepositoryFromURLWithGit() {
-        $api = new GitHubService('', '', '', false);
+        $api = new GitHubServiceImpl('', '', '', false);
 
         $result = $api->getUsernameAndRepositoryFromURL('git@github.com:splitbrain/dokuwiki.git');
         $this->assertEquals(array('splitbrain', 'dokuwiki'), $result);
@@ -36,17 +36,17 @@ class GitHubServiceTest extends \PHPUnit_Framework_TestCase {
     }
 
     function testGetUsernameAndRepositoryFromURLWithError() {
-        $api = new GitHubService('', '', '', false);
+        $api = new GitHubServiceImpl('', '', '', false);
 
         $this->setExpectedException('org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException');
         $api->getUsernameAndRepositoryFromURL('Wrong:splitbrain/dokuwiki.git');
     }
 
     function testGitHubUrlHack() {
-        $api = new GitHubService('', '', 'github.com', false);
+        $api = new GitHubServiceImpl('', '', 'github.com', false);
         $this->assertEquals('github.com something', $api->gitHubUrlHack('github.com something'));
 
-        $api = new GitHubService('', '', 'some.github.com', false);
+        $api = new GitHubServiceImpl('', '', 'some.github.com', false);
         $this->assertEquals('git@some.github.com', $api->gitHubUrlHack('git@github.com'));
     }
 

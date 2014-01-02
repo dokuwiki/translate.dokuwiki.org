@@ -51,7 +51,7 @@ services:
         arguments: [@mailer, @twig, "%mailer_from%", @logger]
 
     git_hub_service:
-        class: org\dokuwiki\translatorBundle\Services\GitHub\GitHubService
+        class: org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceImpl
         arguments: ["%git_hub_token%", "%data%", "%git_hub_url%"]
 
     git_hub_status_service:
