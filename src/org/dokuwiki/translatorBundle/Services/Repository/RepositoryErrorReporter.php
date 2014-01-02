@@ -3,13 +3,11 @@
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Monolog\Logger;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitCloneException;
 use org\dokuwiki\translatorBundle\Services\Git\GitPullException;
 use org\dokuwiki\translatorBundle\Services\Git\GitPushException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubCreatePullRequestException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubForkException;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageParseException;
 use org\dokuwiki\translatorBundle\Services\Language\NoDefaultLanguageException;
 use org\dokuwiki\translatorBundle\Services\Language\NoLanguageFolderException;

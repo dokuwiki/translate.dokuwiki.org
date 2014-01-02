@@ -55,7 +55,7 @@ services:
         arguments: ["%git_hub_token%", "%data%", "%git_hub_url%"]
 
     git_hub_status_service:
-        class: org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService
+        class: org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusServiceImpl
         arguments: []
 
     user_translation_validator_factory:

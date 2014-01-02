@@ -2,7 +2,7 @@
 
 namespace org\dokuwiki\translatorBundle\Services\GitHub;
 
-class GitHubStatusServiceExtend extends GitHubStatusService {
+class GitHubStatusServiceExtend extends GitHubStatusServiceImpl {
     public function testCheckResponse($content) {
         return $this->checkResponse($content);
     }
