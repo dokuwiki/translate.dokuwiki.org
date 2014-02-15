@@ -14,7 +14,7 @@ class CoreRepository extends Repository {
             'lib/plugins/authldap/lang',
             'lib/plugins/authmysql/lang',
             'lib/plugins/authpgsql/lang',
-            'lib/plugins/plugin/lang',
+            'lib/plugins/extension/lang',
             'lib/plugins/popularity/lang',
             'lib/plugins/revert/lang',
             'lib/plugins/usermanager/lang'
