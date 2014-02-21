@@ -34,7 +34,7 @@ class GitHubService {
         try {
             $result = $this->client->api('repo')->forks()->create($user, $repository);
         } catch (RuntimeException $e) {
-            throw new GitHubForkException('', 0, $e);
+            throw new GitHubForkException($e->getMessage()." $user/$repository", 0, $e);
         }
         return $this->gitHubUrlHack($result['ssh_url']);
     }
