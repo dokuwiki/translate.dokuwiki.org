@@ -144,7 +144,7 @@ $(document).ready(function() {
         };
         filter.keyup(changed);
 
-        parent.append($('<div class="span6">This filter will search in both, translated and original text.'
+        parent.append($('<div class="span6">This filter will search in both, translated and original text. '
                 + 'Additionally it will search in the path of the translated file and the translation keys.'
                 + '</div>'));
     };
@@ -285,7 +285,7 @@ $(document).ready(function() {
                 element.popover({
                     placement: 'top',
                     trigger: 'manual',
-                    content: 'The translated text has a missing placeholder. You need to add it to the translated text. A placeholder is indicated by %s or %d.',
+                    content: 'The translated text is missing a placeholder like %s or %d. It needs to be kept as is when translating.',
                     title: 'Missing placeholder'
                 });
                 if (popover) element.popover('show');
@@ -307,7 +307,7 @@ $(document).ready(function() {
             element.popover({
                 placement: 'top',
                 trigger: 'manual',
-                content: 'The translated text has missing whitespaces. Please check the highlighted parts in the original version.',
+                content: 'The translated text has missing trailing whitespaces. Please check the highlighted parts in the original version.',
                 title: 'Missing whitespaces'
             });
             if (popover) element.popover('show');
