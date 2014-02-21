@@ -2,6 +2,6 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Git;
 
-class GitAddException extends \Exception {
+class GitAddException extends GitException {
 
 }

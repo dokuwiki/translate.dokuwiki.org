@@ -28,7 +28,7 @@ class GitService {
 
     public function openRepository($path) {
         if (!$this->isRepository($path)) {
-            throw new GitException("$path is no git repository");
+            throw new GitException("no git repository", $path);
         }
         return new GitRepository($this, $path, $this->commandTimeout);
     }
