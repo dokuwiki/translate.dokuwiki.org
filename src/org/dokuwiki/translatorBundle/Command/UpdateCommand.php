@@ -85,7 +85,15 @@ class UpdateCommand extends ContainerAwareCommand {
     }
 
     private function isLock() {
-        return (file_exists($this->getLockFilePath()));
+        $mtime = @filemtime($this->getLockFilePath());
+        if(!$mtime) return false;
+
+        if(time()-$mtime > 60*60*30) {
+            $this->getContainer()->get('logger')->err('The updater is logged for more than 30min, ignoring the lock');
+            return false;
+        }
+
+        return true;
     }
 
     private function getLockFilePath() {
