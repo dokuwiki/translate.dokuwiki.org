@@ -22,17 +22,17 @@ class GitRepository {
     public function cloneFrom($source, $destination, $retries = 3) {
         try {
             $result = $this->run('clone', $source, $destination);
-        } catch (GitException $e) {
-            throw new GitCloneException('', 0, $e);
+        } catch (GitCommandException $e) {
+            throw new GitCloneException("Failed to clone $source to $destination in ", $this->path, $e);
         }
 
         while (true) {
             try {
                 $this->run('config', '--local', 'core.pager', 'S'); // Don't use less on long outputs
                 break;
-            } catch (GitException $e) {
+            } catch (GitCommandException $e) {
                 if ($retries == 0) {
-                    throw new GitCloneException('Failed to configure local repository', 0, $e);
+                    throw new GitCloneException('Failed to configure local repository', $this->path, $e);
                 }
                 $retries--;
                 sleep(10);
@@ -51,8 +51,8 @@ class GitRepository {
     public function pull($remote = 'origin', $branch = 'master') {
         try {
             $result = $this->run('pull', $remote, $branch);
-        } catch (GitException $e) {
-            throw new GitPullException('', 0, $e);
+        } catch (GitCommandException $e) {
+            throw new GitPullException("Failed to pull $remote/$branch", $this->path, $e);
         }
 
         // empty result -> new, contains already up2date -> unchanged, else updated
@@ -65,16 +65,16 @@ class GitRepository {
     public function remoteAdd($name, $path) {
         try {
             return $this->run('remote', 'add', $name, $path);
-        } catch (GitException $e) {
-            throw new GitAddException('', 0, $e);
+        } catch (GitCommandException $e) {
+            throw new GitAddException("Could not add remote $name $path", $this->path, $e);
         }
     }
 
     public function commit($message, $author) {
         try {
             return $this->run('commit', '-m', $message, '--author', $author);
-        } catch (GitException $e) {
-            throw new GitCommitException('', 0, $e);
+        } catch (GitCommandException $e) {
+            throw new GitCommitException('Failed to commit', $this->path, $e);
         }
     }
 
@@ -82,8 +82,8 @@ class GitRepository {
         try {
             $result = $this->run('format-patch', '--stdout', $revision);
             return $result->getOutput();
-        } catch (GitException $e) {
-            throw new GitCreatePatchException('', 0, $e);
+        } catch (GitCommandException $e) {
+            throw new GitCreatePatchException('Failed to create patch', $this->path, $e);
         }
     }
 
@@ -94,18 +94,18 @@ class GitRepository {
     public function push($origin, $branch) {
         try {
             return $this->run('push', $origin, $branch);
-        } catch (GitException $e) {
-            throw new GitPushException('', 0, $e);
+        } catch (GitCommandException $e) {
+            throw new GitPushException("Failed to push to $origin/$branch", $this->path, $e);
         }
     }
 
     public function getRemoteUrl() {
         $config = $this->path . '/.git/config';
-        if (!file_exists($config)) throw new GitNoRemoteException();
+        if (!file_exists($config)) throw new GitNoRemoteException('Repo has no config', $this->path);
 
         $content = file_get_contents($config);
         if (!preg_match('/url = (git@\S*.?github.com\S*)/i', $content, $matches)) {
-            throw new GitNoRemoteException();
+            throw new GitNoRemoteException('Repo has no remote configured', $this->path);
         }
 
         return $matches[1];
@@ -114,16 +114,16 @@ class GitRepository {
     public function branch($name) {
         try {
             return $this->run('branch', $name);
-        } catch (GitException $e) {
-            throw new GitBranchException('', 0, $e);
+        } catch (GitCommandException $e) {
+            throw new GitBranchException("Failed to create branch $name", $this->path, $e);
         }
     }
 
     public function checkout($name) {
         try {
             return $this->run('checkout', $name);
-        } catch (GitException $e) {
-            throw new GitCheckoutException('', 0, $e);
+        } catch (GitCommandException $e) {
+            throw new GitCheckoutException("Failed to checkout $name", $this->path, $e);
         }
     }
 
@@ -139,7 +139,7 @@ class GitRepository {
         $result = $this->runCommand($command);
 
         if ($result->getExitCode()) {
-            throw new GitException($command);
+            throw new GitCommandException($result);
         }
 
         return $result;
@@ -157,8 +157,12 @@ class GitRepository {
             $process->checkTimeout();
             usleep(1000000);
         }
-        $process->start();
 
-        return new ProgrammCallResult($process->getExitCode(), $process->getOutput());
+        return new ProgrammCallResult(
+            $process->getExitCode(),
+            $process->getOutput(),
+            $process->getErrorOutput(),
+            $command
+        );
     }
 }
