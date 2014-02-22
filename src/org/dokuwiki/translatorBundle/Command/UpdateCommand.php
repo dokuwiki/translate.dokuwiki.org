@@ -25,11 +25,10 @@ class UpdateCommand extends ContainerAwareCommand {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        if ($this->isLock()) {
+        if (!$this->lock()) {
             $this->getContainer()->get('logger')->err('Updater is already running');
             return;
         }
-        $this->lock();
 
         $this->repositoryManager = $this->getContainer()->get('repository_manager');
 
@@ -76,24 +75,34 @@ class UpdateCommand extends ContainerAwareCommand {
         }
     }
 
+    /**
+     * Try to lock the current process
+     *
+     * Uses a symlink to the current process in /proc (atomic operation)
+     *
+     * @author Radu Cristescu
+     * @link http://de1.php.net/manual/en/function.getmypid.php#112782
+     * @return bool false if still locked
+     */
     private function lock() {
-        touch($this->getLockFilePath());
+        $lockfile = $this->getLockFilePath();
+
+        // If lock file exists, check if stale.  If exists and is not stale, return TRUE
+        // else, create lock file and return FALSE.
+        if(@symlink("/proc/".getmypid(), $lockfile) !== false)
+            return true;
+
+        // link already exists, check if it's stale
+        if(is_link($lockfile) && !is_dir($lockfile)) {
+            $this->getContainer()->get('logger')->err('The updater is locked, but its PID is gone, ignoring the lock');
+            $this->unlock();
+            return $this->lock();
+        }
+        return false;
     }
 
     private function unlock() {
         unlink($this->getLockFilePath());
-    }
-
-    private function isLock() {
-        $mtime = @filemtime($this->getLockFilePath());
-        if(!$mtime) return false;
-
-        if(time()-$mtime > 60*60*30) {
-            $this->getContainer()->get('logger')->err('The updater is logged for more than 30min, ignoring the lock');
-            return false;
-        }
-
-        return true;
     }
 
     private function getLockFilePath() {
