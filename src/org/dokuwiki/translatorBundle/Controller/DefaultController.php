@@ -36,12 +36,8 @@ class DefaultController extends Controller implements InitializableController {
             try {
                 $this->languageRepository->getLanguageByCode($lang);
             } catch (NoResultException $e) {
-                $result = new LanguageNameEntity();
-                $result->setRtl(false);
-                $result->setCode($lang);
-                $result->setName($lang);
-                $this->getDoctrine()->getManager()->persist($result);
-                $this->getDoctrine()->getManager()->flush();
+                // just ignore unknown language codes because of spam.
+                return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
             }
         }
 
