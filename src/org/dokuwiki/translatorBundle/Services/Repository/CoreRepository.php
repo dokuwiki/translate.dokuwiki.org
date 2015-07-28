@@ -14,10 +14,14 @@ class CoreRepository extends Repository {
             'lib/plugins/authldap/lang',
             'lib/plugins/authmysql/lang',
             'lib/plugins/authpgsql/lang',
+            'lib/plugins/authplain/lang',
+            'lib/plugins/config/lang',
             'lib/plugins/extension/lang',
             'lib/plugins/popularity/lang',
             'lib/plugins/revert/lang',
-            'lib/plugins/usermanager/lang'
+            'lib/plugins/styling/lang',
+            'lib/plugins/usermanager/lang',
+            'lib/tpl/dokuwiki/lang'
         );
     }
 }
