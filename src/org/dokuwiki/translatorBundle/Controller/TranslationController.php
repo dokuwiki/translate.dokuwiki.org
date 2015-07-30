@@ -138,7 +138,7 @@ class TranslationController extends Controller implements InitializableControlle
         else $data['author'] =  '';
 
         if (isset($userInput['authorMail'])) $data['authorMail'] = $userInput['authorMail'];
-        elseif ($cookies->has('authorMail')) $cookies->get('authorMail');
+        elseif ($cookies->has('authorMail')) $data['authorMail'] = $cookies->get('authorMail');
         else $data['authorMail'] = '';
 
 
