@@ -57,7 +57,7 @@ class RepositoryStats {
         foreach ($scores as $language => $score) {
             $statsEntity = new LanguageStatsEntity();
             $statsEntity->setRepository($repository);
-            $statsEntity->setCompletionPercent((100*$score) / $max);
+            $statsEntity->setCompletionPercent(floor((100*$score) / $max));
             $statsEntity->setLanguage($this->getLanguageEntityByCode($language));
             $this->entityManager->persist($statsEntity);
         }
