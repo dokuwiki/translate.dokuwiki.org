@@ -6,6 +6,8 @@ This tool provides a web based tool to create and update translations for DokuWi
 Source is availiable at https://github.com/dokufreaks/dokuwiki-translation
 The DokuWiki installation availiable at http://translate.dokuwiki.org/
 
+Development documentation available at https://github.com/dokufreaks/dokuwiki-translation/wiki
+
 Configuration
 -----
 
