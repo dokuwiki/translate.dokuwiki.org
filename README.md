@@ -3,9 +3,9 @@ DokuWiki Translation Tool
 
 This tool provides a web based tool to create and update translations for DokuWiki and it's Plug-Ins.
 
-Source is availiable at https://github.com/dokufreaks/dokuwiki-translation
 The DokuWiki installation availiable at http://translate.dokuwiki.org/
 
+Source is availiable at https://github.com/dokufreaks/dokuwiki-translation  
 Development documentation available at https://github.com/dokufreaks/dokuwiki-translation/wiki
 
 Deployment: https://www.dokuwiki.org/teams:translate-tool
