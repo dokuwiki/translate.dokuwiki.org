@@ -71,3 +71,15 @@ Delete a repository:
 Reset the local information and git repository of a plugin:
 
     php app/console dokuwiki:softReset
+    
+General Symfony commands
+-----------------------
+Some useful command for listing and help
+
+List possible commands:
+
+    php app/console list
+
+Help for a command:
+
+     php app/console help dokuwiki:add
