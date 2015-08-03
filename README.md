@@ -82,4 +82,4 @@ List possible commands:
 
 Help for a command:
 
-     php app/console help dokuwiki:add
+    php app/console help dokuwiki:add
