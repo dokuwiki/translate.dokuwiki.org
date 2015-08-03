@@ -266,7 +266,7 @@ abstract class Repository {
     }
 
     /**
-     * Scedule a new Translation update
+     * Schedule a new Translation update
      *
      * @param array $translation Translated text
      * @param string $author Author of the translation
