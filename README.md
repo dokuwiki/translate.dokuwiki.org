@@ -8,6 +8,8 @@ The DokuWiki installation availiable at http://translate.dokuwiki.org/
 
 Development documentation available at https://github.com/dokufreaks/dokuwiki-translation/wiki
 
+Deployment: https://www.dokuwiki.org/teams:translate-tool
+
 Configuration
 -----
 
