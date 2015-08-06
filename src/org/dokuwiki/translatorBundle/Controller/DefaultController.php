@@ -4,7 +4,6 @@ namespace org\dokuwiki\translatorBundle\Controller;
 
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query;
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
