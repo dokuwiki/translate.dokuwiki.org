@@ -40,7 +40,7 @@ Development setup
     php app/console doctrine:schema:update --force
     php app/console dokuwiki:setup
 
-The the website is availible at web/app_dev.php
+The website is available at web/app_dev.php
 
 To run the Unittests you need to have PHPUnit installed and the application configured. Run the tests with:
 
