@@ -29,6 +29,14 @@
                 </div>
         </div>
         {% endif %}
+        {% if notactive %}
+            <div class="span12">
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    Requested plugin is not active.
+                </div>
+            </div>
+        {% endif %}
         <div class="span8">
             <img src="{{ asset('bundles/dokuwikitranslator/images/dwloc.png') }}" alt="" id="logo" />
             <p>

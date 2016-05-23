@@ -143,7 +143,8 @@ class TranslationController extends Controller implements InitializableControlle
         $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($type, $name);
 
         if ($repositoryEntity->getState() !== RepositoryEntity::$STATE_ACTIVE) {
-            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+            $data['notactive'] = true;
+            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage', $data));
         }
 
         $data['repository'] = $repositoryEntity;

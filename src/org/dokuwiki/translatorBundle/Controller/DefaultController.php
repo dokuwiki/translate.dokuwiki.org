@@ -51,6 +51,7 @@ class DefaultController extends Controller implements InitializableController {
         $data['repositories'] = $this->repositoryRepository->getPluginRepositoryInformation($data['currentLanguage']);
         $data['languages'] = $this->languageRepository->getAvailableLanguages();
         $data['activated'] = $this->getRequest()->query->has('activated');
+        $data['notactive'] = $this->getRequest()->query->has('notactive');
 
         return $this->render('dokuwikiTranslatorBundle:Default:index.html.twig', $data);
     }
