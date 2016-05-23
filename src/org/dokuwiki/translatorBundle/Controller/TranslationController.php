@@ -26,6 +26,14 @@ class TranslationController extends Controller implements InitializableControlle
         $this->entityManager = $this->getDoctrine()->getManager();
     }
 
+    /**
+     * Try to save translated strings and redirect to thank page, home page or back to form
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws NoResultException
+     * @throws \Symfony\Component\Form\Exception\AlreadyBoundException
+     */
     public function saveAction(Request $request) {
         if ($request->getMethod() !== 'POST') {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
@@ -99,11 +107,23 @@ class TranslationController extends Controller implements InitializableControlle
         return $validator;
     }
 
+    /**
+     * Show form with translatable language strings for DokuWiki
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function translateCoreAction() {
         return $this->translate(RepositoryEntity::$TYPE_CORE, 'dokuwiki');
     }
 
+    /**
+     * Show form with translatable language strings for plugins
+     *
+     * @param $name
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function translatePluginAction($name) {
+
         return $this->translate(RepositoryEntity::$TYPE_PLUGIN, $name);
     }
 
@@ -190,6 +210,11 @@ class TranslationController extends Controller implements InitializableControlle
         return $this->entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
     }
 
+    /**
+     * Show page to thank for the submitted translation
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function thanksAction() {
         return $this->render('dokuwikiTranslatorBundle:Translate:thanks.html.twig');
     }

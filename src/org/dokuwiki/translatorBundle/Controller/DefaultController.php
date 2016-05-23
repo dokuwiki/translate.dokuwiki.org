@@ -28,6 +28,12 @@ class DefaultController extends Controller implements InitializableController {
         $this->languageRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
     }
 
+    /**
+     * Show front page
+     * Language determined from url parameter, session or client info
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function indexAction() {
         $lang = $this->getRequest()->query->get('lang', null);
 
@@ -49,6 +55,11 @@ class DefaultController extends Controller implements InitializableController {
         return $this->render('dokuwikiTranslatorBundle:Default:index.html.twig', $data);
     }
 
+    /**
+     * Show translation progress of DokuWiki
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function showAction() {
         $data = array();
         $data['repository'] = $this->repositoryRepository->getCoreTranslation();

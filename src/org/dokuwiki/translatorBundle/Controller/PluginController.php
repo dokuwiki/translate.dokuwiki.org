@@ -23,7 +23,13 @@ class PluginController extends Controller implements InitializableController {
         $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
     }
 
-
+    /**
+     * Show form to add plugin to translation tool, show on successful submit confirmation
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\Form\Exception\AlreadyBoundException
+     */
     public function indexAction(Request $request) {
 
         $data = array();
@@ -76,6 +82,13 @@ class PluginController extends Controller implements InitializableController {
         return md5($repository->getName() . time());
     }
 
+    /**
+     * Handle activation link, redirects to homepage
+     *
+     * @param $name
+     * @param $key
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function activateAction($name, $key) {
 
         try {
@@ -95,7 +108,12 @@ class PluginController extends Controller implements InitializableController {
         }
     }
 
-
+    /**
+     * Show translation progress of requested plugin
+     *
+     * @param $name
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function showAction($name) {
         $data = array();
 
