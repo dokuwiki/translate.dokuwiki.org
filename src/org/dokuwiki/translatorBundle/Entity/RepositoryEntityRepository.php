@@ -102,11 +102,8 @@ class RepositoryEntityRepository extends  EntityRepository {
 
         $query->setParameter('type', $type);
         $query->setParameter('name', $name);
-        try {
-            return $query->getSingleResult();
-        } catch (NoResultException $e) {
-            return array();
-        }
+
+        return $query->getSingleResult();
     }
 
 
