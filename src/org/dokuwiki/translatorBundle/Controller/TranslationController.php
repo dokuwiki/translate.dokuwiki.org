@@ -146,7 +146,11 @@ class TranslationController extends Controller implements InitializableControlle
      */
     private function translate($type, $name, array $userInput = array()) {
         $language = $this->getLanguage();
-        $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($type, $name);
+        try {
+            $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($type, $name);
+        } catch (NoResultException $e) {
+            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+        }
 
         if ($repositoryEntity->getState() !== RepositoryEntity::$STATE_ACTIVE) {
             $data['notactive'] = true;
