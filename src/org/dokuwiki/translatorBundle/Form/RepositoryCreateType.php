@@ -12,6 +12,7 @@ class RepositoryCreateType extends AbstractType {
         $builder->add('email', 'text', array('label' => 'E-mail'));
         $builder->add('url', 'text', array('label' => 'Git clone url'));
         $builder->add('branch', 'text', array('label' => 'Main branch'));
+        $builder->add('englishReadonly', 'checkbox', array('label' => 'English Readonly'));
         $builder->add('captcha', 'captcha');
     }
 

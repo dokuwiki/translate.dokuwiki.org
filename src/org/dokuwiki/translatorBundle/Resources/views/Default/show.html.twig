@@ -14,8 +14,17 @@
             </div>
         </div>
 
-        <div class="row">
 
+        <div class="row">
+            {% if englishreadonly %}
+                <div class="span12">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        The English translation is marked as read-only. Improvements cannot be submitted via this tool.
+                        Please use the issue tracker or an pull request for proposing your changes.
+                    </div>
+                </div>
+            {% endif %}
             <div class="span12">
                 <p>
                     This page shows the translation progress of {{ repository.displayName|capitalize }}.
@@ -95,10 +104,16 @@
                         </td>
                         <td class="translation-update">
                             {% if repository.state == 'active' %}
-                                {% if repository.type == 'core' %}
-                                    <a href="{{ path("dokuwiki_translate", {"lang":translation.language.code }) }}">update</a>
+                                {% if repository.englishReadonly and translation.language.code == 'en' %}
+                                    <span title="Improvements cannot be submitted via this tool. Please use the issue tracker or an pull request for proposing your changes.">
+                                        read-only
+                                    </span>
                                 {% else %}
-                                    <a href="{{ path("dokuwiki_translate_plugin", {"lang":translation.language.code, "name":repository.name }) }}">update</a>
+                                    {% if repository.type == 'core' %}
+                                        <a href="{{ path("dokuwiki_translate", {"lang":translation.language.code }) }}">update</a>
+                                    {% else %}
+                                        <a href="{{ path("dokuwiki_translate_plugin", {"lang":translation.language.code, "name":repository.name }) }}">update</a>
+                                    {% endif %}
                                 {% endif %}
                             {% else %}
                                 processing

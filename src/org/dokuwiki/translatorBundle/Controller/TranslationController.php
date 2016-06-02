@@ -67,6 +67,12 @@ class TranslationController extends Controller implements InitializableControlle
         $defaultTranslation = $repository->getLanguage('en');
         $previousTranslation = $repository->getLanguage($language);
 
+        if($repositoryEntity->getEnglishReadonly() && $language == 'en') {
+            $param['name'] = $data['repositoryName'];
+            $param['englishreadonly'] = true;
+            return $this->redirect($this->generateUrl('dokuwiki_translator_show_plugin', $param));
+        }
+
         $validator = $this->validateTranslation($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
         $newTranslation = $validator->validate();
         $errors = $validator->getErrors();
@@ -167,6 +173,12 @@ class TranslationController extends Controller implements InitializableControlle
             $data['targetLanguage'] = $this->getLanguageNameEntityRepository()->getLanguageByCode($language);
         } catch (NoResultException $e) {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+        }
+
+        if($repositoryEntity->getEnglishReadonly() && $data['targetLanguage']->getCode() == 'en') {
+            $param['name'] = $name;
+            $param['englishreadonly'] = true;
+            return $this->redirect($this->generateUrl('dokuwiki_translator_show_plugin', $param));
         }
 
         $data['captcha'] = $this->getCaptchaForm()->createView();

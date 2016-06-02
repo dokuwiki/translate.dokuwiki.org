@@ -123,6 +123,12 @@ class RepositoryEntity {
      */
     protected $translations;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @var boolean
+     */
+    protected $englishReadonly = false;
+
     function __construct() {
         $this->translations = new ArrayCollection();
     }
@@ -426,5 +432,18 @@ class RepositoryEntity {
         return $this->activationKey;
     }
 
+    /**
+     * @param bool $englishReadonly
+     */
+    public function setEnglishReadonly($englishReadonly) {
+        $this->englishReadonly = $englishReadonly;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEnglishReadonly() {
+        return $this->englishReadonly;
+    }
 
 }

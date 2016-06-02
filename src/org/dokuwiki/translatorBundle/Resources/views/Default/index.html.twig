@@ -85,7 +85,13 @@
                     </td>
                     <td class="translation-update">
                         {% if coreRepository.state == 'active' %}
-                            <a href="{{ path("dokuwiki_translate") }}">update</a>
+                            {% if coreRepository.englishReadonly and currentLanguage == 'en' %}
+                                <span title="Improvements cannot be submitted via this tool. Please use the issue tracker or an pull request for proposing your changes.">
+                                    read-only
+                                </span>
+                            {% else %}
+                                <a href="{{ path("dokuwiki_translate") }}">update</a>
+                            {% endif %}
                         {% else %}
                             processing
                         {% endif %}
@@ -106,12 +112,18 @@
                         {% if repository.completionPercent is null %}
                             0%
                         {% else %}
-                        {{ repository.completionPercent }}%
+                            {{ repository.completionPercent }}%
                         {% endif %}
                     </td>
                     <td class="translation-update">
                         {% if repository.state == 'active' %}
-                            <a href="{{ path("dokuwiki_translate_plugin", {"name": repository.name}) }}">update</a>
+                            {% if repository.englishReadonly and currentLanguage == 'en' %}
+                                <span title="Improvements cannot be submitted via this tool. Please use the issue tracker or an pull request for proposing your changes.">
+                                    read-only
+                                </span>
+                            {% else %}
+                                <a href="{{ path("dokuwiki_translate_plugin", {"name": repository.name}) }}">update</a>
+                            {% endif %}
                         {% else %}
                             processing
                         {% endif %}
