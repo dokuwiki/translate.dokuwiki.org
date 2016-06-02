@@ -51,7 +51,7 @@ class LocalText {
     private function renderAuthors() {
         $php = "/**\n";
         $php.= " * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)\n";
-        $php.= " * \n";
+        $php.= " *\n";
 
         $authors = $this->authors->getAll();
 

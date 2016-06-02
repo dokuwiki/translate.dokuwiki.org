@@ -72,7 +72,7 @@ class DokuWikiRepositoryAPI {
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @return bool|RepositoryEntity
      */
     public function getPluginInfo($id) {

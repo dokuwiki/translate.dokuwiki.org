@@ -36,7 +36,7 @@ class RepositoryErrorReporter {
 
     private function handleError(\Exception $e, Repository $repo, $update) {
         $this->data = array();
-        $this->data['repo'] =  $repo;
+        $this->data['repo'] =  $repo->getEntity();
         $this->data['exception'] = $e;
         if ($update) {
             $template = $this->determineEmailTemplateUpdate($e);

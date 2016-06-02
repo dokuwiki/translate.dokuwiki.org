@@ -25,9 +25,17 @@
         <div class="span12">
                 <div class="alert alert-success">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    Yor plugin has been activated. It'll take some time until it's imported and ready to translate.
+                    Your plugin has been activated. It'll take some time until it's imported and ready to translate.
                 </div>
         </div>
+        {% endif %}
+        {% if notactive %}
+            <div class="span12">
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    Requested plugin is not active.
+                </div>
+            </div>
         {% endif %}
         <div class="span8">
             <img src="{{ asset('bundles/dokuwikitranslator/images/dwloc.png') }}" alt="" id="logo" />
@@ -77,7 +85,13 @@
                     </td>
                     <td class="translation-update">
                         {% if coreRepository.state == 'active' %}
-                            <a href="{{ path("dokuwiki_translate") }}">update</a>
+                            {% if coreRepository.englishReadonly and currentLanguage == 'en' %}
+                                <span title="Improvements cannot be submitted via this tool. Please use the issue tracker or an pull request for proposing your changes.">
+                                    read-only
+                                </span>
+                            {% else %}
+                                <a href="{{ path("dokuwiki_translate") }}">update</a>
+                            {% endif %}
                         {% else %}
                             processing
                         {% endif %}
@@ -98,12 +112,18 @@
                         {% if repository.completionPercent is null %}
                             0%
                         {% else %}
-                        {{ repository.completionPercent }}%
+                            {{ repository.completionPercent }}%
                         {% endif %}
                     </td>
                     <td class="translation-update">
                         {% if repository.state == 'active' %}
-                            <a href="{{ path("dokuwiki_translate_plugin", {"name": repository.name}) }}">update</a>
+                            {% if repository.englishReadonly and currentLanguage == 'en' %}
+                                <span title="Improvements cannot be submitted via this tool. Please use the issue tracker or an pull request for proposing your changes.">
+                                    read-only
+                                </span>
+                            {% else %}
+                                <a href="{{ path("dokuwiki_translate_plugin", {"name": repository.name}) }}">update</a>
+                            {% endif %}
                         {% else %}
                             processing
                         {% endif %}

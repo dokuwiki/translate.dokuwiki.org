@@ -2,7 +2,10 @@
 
 namespace org\dokuwiki\translatorBundle\Command;
 
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\EntityManager;
+use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
+use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,18 +20,31 @@ class SetupCommand extends ContainerAwareCommand {
     private $entityManager;
 
     /**
+     * @var RepositoryEntityRepository
+     */
+    private $repositoryRepository;
+
+    /**
+     * @var LanguageNameEntityRepository
+     */
+    private $languageRepository;
+
+    /**
      * @var OutputInterface
      */
     private $output;
 
     protected function configure() {
         $this->setName('dokuwiki:setup')
-            ->setDescription('Prepare software for first run');
+             ->setDescription('Prepare software for first run');
 
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
+        $this->repositoryRepository = $this->entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
+        $this->languageRepository = $this->entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
+
         $this->output = $output;
 
         $this->addLanguageNames();
@@ -36,25 +52,32 @@ class SetupCommand extends ContainerAwareCommand {
     }
 
     private function addDokuWikiRepo() {
-        $repository = new RepositoryEntity();
-        $repository->setUrl('git://github.com/splitbrain/dokuwiki.git');
-        $repository->setBranch('master');
-        $repository->setLastUpdate(0);
-        $repository->setName('dokuwiki');
-        $repository->setAuthor('');
-        $repository->setDescription('');
-        $repository->setTags('');
-        $repository->setType(RepositoryEntity::$TYPE_CORE);
-        $repository->setEmail('');
-        $repository->setPopularity(0);
-        $repository->setDisplayName('DokuWiki');
-        $repository->setState(RepositoryEntity::$STATE_ACTIVE);
-        $repository->setErrorMsg('');
-        $repository->setErrorCount(0);
-        $repository->setActivationKey('');
-        $this->entityManager->persist($repository);
-        $this->entityManager->flush();
-        $this->output->writeln('Added DokuWiki repository');
+        try {
+            $this->repositoryRepository->getCoreRepository();
+            $this->output->writeln('DokuWiki repository already exists');
+
+        } catch(NoResultException $e) {
+            $repository = new RepositoryEntity();
+            $repository->setUrl('git://github.com/splitbrain/dokuwiki.git');
+            $repository->setBranch('master');
+            $repository->setLastUpdate(0);
+            $repository->setName('dokuwiki');
+            $repository->setAuthor('');
+            $repository->setDescription('');
+            $repository->setTags('');
+            $repository->setType(RepositoryEntity::$TYPE_CORE);
+            $repository->setEmail('');
+            $repository->setPopularity(0);
+            $repository->setDisplayName('DokuWiki');
+            $repository->setState(RepositoryEntity::$STATE_ACTIVE);
+            $repository->setErrorMsg('');
+            $repository->setErrorCount(0);
+            $repository->setActivationKey('');
+            $this->entityManager->persist($repository);
+            $this->entityManager->flush();
+            $this->output->writeln('Added DokuWiki repository');
+        }
+
     }
 
     private function addLanguageNames() {
@@ -93,6 +116,7 @@ class SetupCommand extends ContainerAwareCommand {
             'hi' => 'Hindi',
             'hr' => 'Croatian',
             'hu' => 'Hungarian',
+            'hu-formal' => 'Hungarian (formal)',
             'hy' => 'Armenian',
             'ia' => 'Interlingua',
             'id' => 'Indonesian',
@@ -114,6 +138,7 @@ class SetupCommand extends ContainerAwareCommand {
             'mg' => 'Malagasy',
             'mi' => 'Maori',
             'mk' => 'Macedonian',
+            'ml' => 'Malayalam',
             'mr' => 'Marathi',
             'ms' => 'Malay',
             'mt' => 'Maltese',
@@ -158,16 +183,34 @@ class SetupCommand extends ContainerAwareCommand {
             'ar', 'fa', 'he',
         );
 
-        foreach ($names as $code => $name) {
-            $langNames = new LanguageNameEntity();
-            $langNames->setCode($code);
-            $langNames->setName($name);
-            $langNames->setRtl(in_array($code, $rtl));
-            $this->entityManager->persist($langNames);
+        $count['existing'] = 0;
+        $count['new'] = 0;
+        foreach($names as $code => $name) {
+            try {
+                $this->languageRepository->getLanguageByCode($code);
+
+                $count['existing']++;
+            } catch(NoResultException $e) {
+                //only add unknown languages
+                $langNames = new LanguageNameEntity();
+                $langNames->setCode($code);
+                $langNames->setName($name);
+                $langNames->setRtl(in_array($code, $rtl));
+                $this->entityManager->persist($langNames);
+
+                $count['new']++;
+            }
+
         }
 
         $this->entityManager->flush();
-        $this->output->writeln('languages added');
+
+        $msg = $count['new'] . ' languages added';
+        if($count['existing']) {
+            $msg .= ' (' . $count['existing'] . ' existing languages )';
+        }
+        $this->output->writeln($msg);
+
     }
 
 }

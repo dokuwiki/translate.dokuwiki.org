@@ -19,14 +19,15 @@ class AddCommand extends ContainerAwareCommand {
             ->addArgument('popularity', null, 'popularity value (used to sort)')
             ->addArgument('displayName', null, 'name to display')
             ->addArgument('email', null, 'author email address')
-            ->addArgument('author', null, 'author name');
+            ->addArgument('author', null, 'author name')
+            ->addArgument('englishReadonly', null, 'If readonly, English translations can not be submitted in the tool');
 
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         $type = $input->getArgument('type');
         if (!in_array($type, array(RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN))) {
-            $output->writeln('Unknowen type');
+            $output->writeln('Unknown type');
             return;
         }
 
@@ -44,6 +45,7 @@ class AddCommand extends ContainerAwareCommand {
         $repo->setErrorCount(0);
         $repo->setDescription('');
         $repo->setTags('');
+        $repo->setEnglishReadonly($input->getArgument('englishReadonly') == 'true');
 
         $this->getContainer()->get('doctrine')->getManager()->persist($repo);
         $this->getContainer()->get('doctrine')->getManager()->flush();

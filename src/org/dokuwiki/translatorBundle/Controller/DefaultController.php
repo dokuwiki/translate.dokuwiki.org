@@ -4,7 +4,6 @@ namespace org\dokuwiki\translatorBundle\Controller;
 
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query;
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -29,6 +28,12 @@ class DefaultController extends Controller implements InitializableController {
         $this->languageRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
     }
 
+    /**
+     * Show front page
+     * Language determined from url parameter, session or client info
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function indexAction() {
         $lang = $this->getRequest()->query->get('lang', null);
 
@@ -46,15 +51,22 @@ class DefaultController extends Controller implements InitializableController {
         $data['repositories'] = $this->repositoryRepository->getPluginRepositoryInformation($data['currentLanguage']);
         $data['languages'] = $this->languageRepository->getAvailableLanguages();
         $data['activated'] = $this->getRequest()->query->has('activated');
+        $data['notactive'] = $this->getRequest()->query->has('notactive');
 
         return $this->render('dokuwikiTranslatorBundle:Default:index.html.twig', $data);
     }
 
+    /**
+     * Show translation progress of DokuWiki
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function showAction() {
         $data = array();
         $data['repository'] = $this->repositoryRepository->getCoreTranslation();
         $data['featureImport'] = $this->container->getParameter('featureImport');
         $data['featureAddTranslationFromDetail'] = $this->container->getParameter('featureAddTranslationFromDetail');
+        $data['englishreadonly'] = $this->getRequest()->query->has('englishreadonly');
 
         return $this->render('dokuwikiTranslatorBundle:Default:show.html.twig', $data);
     }

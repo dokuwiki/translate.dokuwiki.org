@@ -26,6 +26,14 @@ class TranslationController extends Controller implements InitializableControlle
         $this->entityManager = $this->getDoctrine()->getManager();
     }
 
+    /**
+     * Try to save translated strings and redirect to thank page, home page or back to form
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws NoResultException
+     * @throws \Symfony\Component\Form\Exception\AlreadyBoundException
+     */
     public function saveAction(Request $request) {
         if ($request->getMethod() !== 'POST') {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
@@ -58,6 +66,12 @@ class TranslationController extends Controller implements InitializableControlle
         $repository = $this->getRepositoryManager()->getRepository($repositoryEntity);
         $defaultTranslation = $repository->getLanguage('en');
         $previousTranslation = $repository->getLanguage($language);
+
+        if($repositoryEntity->getEnglishReadonly() && $language == 'en') {
+            $param['name'] = $data['repositoryName'];
+            $param['englishreadonly'] = true;
+            return $this->redirect($this->generateUrl('dokuwiki_translator_show_plugin', $param));
+        }
 
         $validator = $this->validateTranslation($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
         $newTranslation = $validator->validate();
@@ -99,11 +113,23 @@ class TranslationController extends Controller implements InitializableControlle
         return $validator;
     }
 
+    /**
+     * Show form with translatable language strings for DokuWiki
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function translateCoreAction() {
         return $this->translate(RepositoryEntity::$TYPE_CORE, 'dokuwiki');
     }
 
+    /**
+     * Show form with translatable language strings for plugins
+     *
+     * @param $name
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function translatePluginAction($name) {
+
         return $this->translate(RepositoryEntity::$TYPE_PLUGIN, $name);
     }
 
@@ -123,7 +149,8 @@ class TranslationController extends Controller implements InitializableControlle
         $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($type, $name);
 
         if ($repositoryEntity->getState() !== RepositoryEntity::$STATE_ACTIVE) {
-            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+            $data['notactive'] = true;
+            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage', $data));
         }
 
         $data['repository'] = $repositoryEntity;
@@ -138,7 +165,7 @@ class TranslationController extends Controller implements InitializableControlle
         else $data['author'] =  '';
 
         if (isset($userInput['authorMail'])) $data['authorMail'] = $userInput['authorMail'];
-        elseif ($cookies->has('authorMail')) $cookies->get('authorMail');
+        elseif ($cookies->has('authorMail')) $data['authorMail'] = $cookies->get('authorMail');
         else $data['authorMail'] = '';
 
 
@@ -146,6 +173,12 @@ class TranslationController extends Controller implements InitializableControlle
             $data['targetLanguage'] = $this->getLanguageNameEntityRepository()->getLanguageByCode($language);
         } catch (NoResultException $e) {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+        }
+
+        if($repositoryEntity->getEnglishReadonly() && $data['targetLanguage']->getCode() == 'en') {
+            $param['name'] = $name;
+            $param['englishreadonly'] = true;
+            return $this->redirect($this->generateUrl('dokuwiki_translator_show_plugin', $param));
         }
 
         $data['captcha'] = $this->getCaptchaForm()->createView();
@@ -190,6 +223,11 @@ class TranslationController extends Controller implements InitializableControlle
         return $this->entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
     }
 
+    /**
+     * Show page to thank for the submitted translation
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function thanksAction() {
         return $this->render('dokuwikiTranslatorBundle:Translate:thanks.html.twig');
     }

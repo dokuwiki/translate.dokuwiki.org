@@ -37,7 +37,7 @@ class RepositoryEntityRepository extends  EntityRepository {
 
     public function getCoreRepositoryInformation($language) {
         $query = $this->getEntityManager()->createQuery(
-            'SELECT stats.completionPercent, repository.displayName, repository.state
+            'SELECT stats.completionPercent, repository.displayName, repository.state, repository.englishReadonly
              FROM dokuwikiTranslatorBundle:LanguageStatsEntity stats
              JOIN stats.repository repository
              WHERE repository.type = :type
@@ -52,14 +52,15 @@ class RepositoryEntityRepository extends  EntityRepository {
             return array(
                 'completionPercent' => 0,
                 'displayName' => 'DokuWiki',
-                'state' => RepositoryEntity::$STATE_ACTIVE
+                'state' => RepositoryEntity::$STATE_ACTIVE,
+                'englishReadonly' => true
             );
         }
     }
 
     public function getPluginRepositoryInformation($language) {
         $query = $this->getEntityManager()->createQuery('
-            SELECT stats.completionPercent, repository.name, repository.displayName, repository.state
+            SELECT stats.completionPercent, repository.name, repository.displayName, repository.state, repository.englishReadonly
             FROM dokuwikiTranslatorBundle:RepositoryEntity repository
             LEFT OUTER JOIN repository.translations stats
             WITH (stats.language = :language OR stats.language IS NULL)
@@ -93,16 +94,19 @@ class RepositoryEntityRepository extends  EntityRepository {
         $query = $this->getEntityManager()->createQuery('
         SELECT repository, translations, lang
             FROM dokuwikiTranslatorBundle:RepositoryEntity repository
-            JOIN repository.translations translations
-            JOIN translations.language lang
+            LEFT OUTER JOIN repository.translations translations
+            LEFT OUTER JOIN translations.language lang
             WHERE repository.type = :type
             AND repository.name = :name
         ');
 
         $query->setParameter('type', $type);
         $query->setParameter('name', $name);
-
-        return $query->getSingleResult();
+        try {
+            return $query->getSingleResult();
+        } catch (NoResultException $e) {
+            return array();
+        }
     }
 
 
