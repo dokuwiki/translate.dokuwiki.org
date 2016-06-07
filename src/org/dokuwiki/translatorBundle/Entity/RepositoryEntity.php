@@ -19,6 +19,7 @@ class RepositoryEntity {
 
     public static $TYPE_CORE   = 'core';
     public static $TYPE_PLUGIN = 'plugin';
+    public static $TYPE_TEMPLATE = 'template';
 
     /**
      * @ORM\Id

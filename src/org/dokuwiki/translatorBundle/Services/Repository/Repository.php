@@ -132,7 +132,7 @@ abstract class Repository {
         $this->logger->debug('Initializing plugin ' . $this->entity->getName());
         $this->entity->setState(RepositoryEntity::$STATE_ACTIVE);
         $this->mailService->sendEmail($this->entity->getEmail(), 'Your plugin is now active',
-                'dokuwikiTranslatorBundle:Mail:pluginReady.txt.twig', array('repo' => $this->entity));
+                'dokuwikiTranslatorBundle:Mail:extensionReady.txt.twig', array('repo' => $this->entity));
     }
 
     /**

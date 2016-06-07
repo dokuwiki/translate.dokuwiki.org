@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Form\RepositoryCreateType;
 
-class PluginController extends Controller implements InitializableController {
+class ExtensionController extends Controller implements InitializableController {
 
     /**
      * @var RepositoryEntityRepository
