@@ -30,7 +30,8 @@ class RepositoryCreateType extends AbstractType {
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(
             array(
-                'type' => RepositoryEntity::$TYPE_PLUGIN
+                'type' => RepositoryEntity::$TYPE_PLUGIN,
+                'validation_groups' => array(RepositoryEntity::$TYPE_PLUGIN)
             )
         );
     }

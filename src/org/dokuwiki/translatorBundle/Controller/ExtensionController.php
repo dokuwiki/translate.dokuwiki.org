@@ -42,6 +42,7 @@ class ExtensionController extends Controller implements InitializableController 
         $repository->setType($type);
 
         $options['type'] = $type;
+        $options['validation_groups'] = array('Default', $type);
         $form = $this->createForm(new RepositoryCreateType(), $repository, $options);
 
         if ($request->isMethod('POST')) {
