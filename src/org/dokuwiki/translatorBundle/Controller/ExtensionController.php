@@ -49,13 +49,13 @@ class ExtensionController extends Controller implements InitializableController 
             if ($form->isValid()) {
                 $this->addExtension($repository);
                 $data['repository'] = $repository;
-                return $this->render('dokuwikiTranslatorBundle:Plugin:added.html.twig', $data);
+                return $this->render('dokuwikiTranslatorBundle:Extension:added.html.twig', $data);
             }
         }
 
         $data['form'] = $form->createView();
 
-        return $this->render('dokuwikiTranslatorBundle:Plugin:add.html.twig', $data);
+        return $this->render('dokuwikiTranslatorBundle:Extension:add.html.twig', $data);
     }
 
     private function addExtension(RepositoryEntity &$repository) {
