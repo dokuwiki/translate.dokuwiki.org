@@ -7,7 +7,7 @@
             {% if repository.type == 'core' %}
                 <a href="{{ path("dokuwiki_translator_show") }} ">{{ repository.displayName|capitalize }}</a>
             {% else %}
-                <a href="{{ path("dokuwiki_translator_show_plugin", {'name': repository.name}) }} ">{{ repository.displayName|capitalize }}</a>
+                <a href="{{ path("dokuwiki_translator_show_extension", {'type': repository.type, 'name': repository.name}) }} ">{{ repository.displayName|capitalize }}</a>
             {% endif %}
             <span class="divider">/</span>
         </li>

@@ -112,7 +112,7 @@
                                     {% if repository.type == 'core' %}
                                         <a href="{{ path("dokuwiki_translate", {"lang":translation.language.code }) }}">update</a>
                                     {% else %}
-                                        <a href="{{ path("dokuwiki_translate_plugin", {"lang":translation.language.code, "name":repository.name }) }}">update</a>
+                                        <a href="{{ path("dokuwiki_translate_extension", {"type": repository.type, "lang":translation.language.code, "name":repository.name }) }}">update</a>
                                     {% endif %}
                                 {% endif %}
                             {% else %}

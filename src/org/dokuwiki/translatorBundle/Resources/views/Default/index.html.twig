@@ -25,7 +25,7 @@
         <div class="span12">
                 <div class="alert alert-success">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    Your plugin has been activated. It'll take some time until it's imported and ready to translate.
+                    Your extension has been activated. It'll take some time until it's imported and ready to translate.
                 </div>
         </div>
         {% endif %}
@@ -33,7 +33,7 @@
             <div class="span12">
                 <div class="alert alert-danger">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    Requested plugin is not active.
+                    Requested extension is not active.
                 </div>
             </div>
         {% endif %}
@@ -41,7 +41,7 @@
             <img src="{{ asset('bundles/dokuwikitranslator/images/dwloc.png') }}" alt="" id="logo" />
             <p>
                 This is the central hub for localization of the
-                <a href="https://dokuwiki.org">DokuWiki</a> Open Source wiki software and its plugins.
+                <a href="https://dokuwiki.org">DokuWiki</a> Open Source wiki software and its plugins and templates.
                 All translation efforts are coordinated through the
                 <a href="http://www.dokuwiki.org/mailinglist#i18n_mailing_list">
                     I18N Mailing List.
@@ -50,10 +50,11 @@
             </p>
             <p>
                 Below you can see the translation progress of DokuWiki and some
-                <a href="https://dokuwiki.org/plugins">DokuWiki Plugins</a>.
+                <a href="https://dokuwiki.org/plugins">DokuWiki Plugins</a> and
+                <a href="https://dokuwiki.org/template">DokuWiki Templates</a>.
                 The completeness of a translation is indicated by the percent value
                 (with English being the master language with always 100%).
-                The plugins are ordered by their popularity score gathered via the
+                The plugins and templates are ordered by their popularity score gathered via the
                 <a href="https://www.dokuwiki.org/plugin:popularity">Popularity Feedback Plugin</a>.
             </p>
             <p>
@@ -101,7 +102,7 @@
                 {% for repository in repositories %}
                         <tr>
                     <td class="name">
-                        <a href="{{ path("dokuwiki_translator_show_plugin", {'name': repository.name}) }}">{{ repository.displayName }}</a>
+                        <a href="{{ path("dokuwiki_translator_show_extension", {'type': repository.type, 'name': repository.name}) }}">{{ repository.displayName }}</a>
                     </td>
                     <td class="translation-progress">
                         <div class="progress progress-striped {{ progressbar.color(repository.completionPercent) }}">
@@ -122,7 +123,7 @@
                                     read-only
                                 </span>
                             {% else %}
-                                <a href="{{ path("dokuwiki_translate_plugin", {"name": repository.name}) }}">update</a>
+                                <a href="{{ path("dokuwiki_translate_extension", {'type': repository.type, "name": repository.name}) }}">update</a>
                             {% endif %}
                         {% else %}
                             processing

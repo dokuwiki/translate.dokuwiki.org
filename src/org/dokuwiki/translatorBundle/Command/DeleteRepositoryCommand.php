@@ -22,7 +22,7 @@ class DeleteRepositoryCommand extends ContainerAwareCommand {
     protected function configure() {
         $this->setName('dokuwiki:deleteRepo')
             ->setDescription('Delete a repository')
-            ->addArgument('type', InputArgument::REQUIRED, 'plugin or core')
+            ->addArgument('type', InputArgument::REQUIRED, 'template, plugin or core')
             ->addArgument('name', InputArgument::REQUIRED, 'repository name');
 
     }
@@ -34,8 +34,9 @@ class DeleteRepositoryCommand extends ContainerAwareCommand {
         $name = $input->getArgument('name');
         $type = $input->getArgument('type');
 
-        if (!in_array($type, array(RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN))) {
-            $output->writeln(sprintf('Type must be %s or %s', RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN));
+        $repositorytypes = array(RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN, RepositoryEntity::$TYPE_TEMPLATE);
+        if (!in_array($type, $repositorytypes)) {
+            $output->writeln(sprintf('Type must be %s, %s or %s', RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN,  RepositoryEntity::$TYPE_TEMPLATE));
             return;
         }
         try {

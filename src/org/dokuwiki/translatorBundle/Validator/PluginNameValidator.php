@@ -18,7 +18,7 @@ class PluginNameValidator extends ConstraintValidator {
 
     public function validate($value, Constraint $constraint) {
 
-        if ($this->api->getPluginInfo($value) === false) {
+        if ($this->api->getExtensionInfo($value) === false) {
             $this->context->addViolation($constraint->message, array('%string%' => $value));
         }
     }
