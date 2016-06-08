@@ -18,5 +18,7 @@ org\dokuwiki\translatorBundle\Entity\RepositoryEntity:
             - org\dokuwiki\translatorBundle\Validator\TemplateName:
                 groups: [template]
     constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: { fields: name, message: "There is already a registered plug-in with this name."}
+        - org\dokuwiki\translatorBundle\Validator\CustomUniqueEntity:
+            fields: [name, type]
+            message: "There is already a registered {{ type }} with the name \"{{ name }}\"."
 

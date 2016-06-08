@@ -33,6 +33,12 @@ services:
         calls:
             - [setApi, [@doku_wiki_repository_api]]
 
+    custom_unique_entity_validator:
+        class: org\dokuwiki\translatorBundle\Validator\CustomUniqueEntityValidator
+        tags:
+            - { name: validator.constraint_validator, alias: customuniqueentity }
+        arguments: [@doctrine]
+
     language_manager:
         class: "%language_manager.class%"
 
