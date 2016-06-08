@@ -69,6 +69,7 @@ class UpdateCommand extends ContainerAwareCommand {
         foreach ($updates as $update) {
             /**
              * @var TranslationUpdateEntity $update
+             * @var \org\dokuwiki\translatorBundle\Services\Repository\Repository $repository
              */
             $repository = $this->repositoryManager->getRepository($update->getRepository());
             $repository->createAndSendPatch($update);

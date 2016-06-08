@@ -208,6 +208,9 @@ abstract class Repository {
         $this->saveLanguage($translations);
     }
 
+    /**
+     * @param LocalText[] $translations
+     */
     private function updateTranslationStatistics($translations) {
         $this->repositoryStats->clearStats($this->entity);
         $this->repositoryStats->createStats($translations, $this->entity);
