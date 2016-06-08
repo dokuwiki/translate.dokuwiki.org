@@ -24,7 +24,7 @@ class ExtensionController extends Controller implements InitializableController 
     }
 
     /**
-     * Show form to add plugin to translation tool, show on successful submit confirmation
+     * Show form to add extension to translation tool, show on successful submit confirmation
      *
      * @param string $type
      * @param Request $request
@@ -114,7 +114,7 @@ class ExtensionController extends Controller implements InitializableController 
     }
 
     /**
-     * Show translation progress of requested plugin
+     * Show translation progress of requested extension
      *
      * @param string $type
      * @param string $name
