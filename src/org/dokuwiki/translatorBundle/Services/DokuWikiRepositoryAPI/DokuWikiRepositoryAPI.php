@@ -33,15 +33,17 @@ class DokuWikiRepositoryAPI {
         $cache = array();
         foreach ($content->plugin as $extension) {
             $repository = new RepositoryEntity();
-            $repository->setName(strtolower(strval($extension->id)));
-            $repository->setAuthor(strval($extension->author));
-            $repository->setDescription(strval($extension->description));
             if(substr($extension->id, 0, 9) == 'template:') {
                 $type = RepositoryEntity::$TYPE_TEMPLATE;
+                $name = substr($extension->id, 9);
             } else {
                 $type = RepositoryEntity::$TYPE_PLUGIN;
+                $name = $extension->id;
             }
-            $repository->setType(strval($type));
+            $repository->setName(strtolower(strval($name)));
+            $repository->setType($type);
+            $repository->setAuthor(strval($extension->author));
+            $repository->setDescription(strval($extension->description));
             $repository->setTags($this->mergeExtensionTags($extension->tags));
             $repository->setDisplayName(strval($extension->name));
             $repository->setPopularity(intval($extension->popularity));
