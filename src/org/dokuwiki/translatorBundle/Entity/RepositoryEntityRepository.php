@@ -112,8 +112,8 @@ class RepositoryEntityRepository extends  EntityRepository {
             'SELECT repository
              FROM dokuwikiTranslatorBundle:RepositoryEntity repository
              WHERE repository.type = :type
-             ANDrepository.name = :name
-             AND  repository.activationKey = :key
+             AND repository.name = :name
+             AND repository.activationKey = :key
              AND repository.state = :state'
         );
         $query->setParameter('type', $type);
