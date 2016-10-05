@@ -319,6 +319,7 @@ abstract class Repository {
     }
 
     private function createAndSendPatchWithException(TranslationUpdateEntity $update, $tmpDir) {
+        $this->logger->debug('send patch ' . $this->getType() . ' ' . $this->getName() . ' langupdate' . $update->getId());
         $this->openRepository();
 
         $tmpGit = $this->gitService->createRepositoryFromRemote($this->getRepositoryPath(), $tmpDir);
