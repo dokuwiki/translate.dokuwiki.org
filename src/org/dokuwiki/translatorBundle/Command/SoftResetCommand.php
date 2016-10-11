@@ -21,7 +21,7 @@ class SoftResetCommand extends ContainerAwareCommand {
     protected function configure() {
         $this->setName('dokuwiki:softReset')
             ->setDescription('Reset lock, tmp folder, error count and last updated')
-            ->addArgument('type', InputArgument::REQUIRED, 'plugin or core')
+            ->addArgument('type', InputArgument::REQUIRED, 'plugin, template or core')
             ->addArgument('name', InputArgument::REQUIRED, 'repository name');
 
     }
