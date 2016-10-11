@@ -21,7 +21,7 @@ class UpdateCommand extends ContainerAwareCommand {
 
     protected function configure() {
         $this->setName('dokuwiki:updateGit')
-            ->setDescription('Update git repositories');
+            ->setDescription('Update local git repositories and send pending translations');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
@@ -36,7 +36,7 @@ class UpdateCommand extends ContainerAwareCommand {
             $this->runUpdate();
             $this->processPendingTranslations();
         } catch (\PDOException $e) {
-            $this->getContainer()->get('logger')->err('Updater is already running');
+            $this->getContainer()->get('logger')->err('Updater had an exception occurring');
         }
         $this->unlock();
 
@@ -69,6 +69,7 @@ class UpdateCommand extends ContainerAwareCommand {
         foreach ($updates as $update) {
             /**
              * @var TranslationUpdateEntity $update
+             * @var \org\dokuwiki\translatorBundle\Services\Repository\Repository $repository
              */
             $repository = $this->repositoryManager->getRepository($update->getRepository());
             $repository->createAndSendPatch($update);

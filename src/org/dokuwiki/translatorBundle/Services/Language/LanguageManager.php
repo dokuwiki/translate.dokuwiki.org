@@ -10,9 +10,9 @@ class LanguageManager {
      *
      * @param string $langFolder Lang folder
      * @param string $prefix Prefix string for item keys in language array.
+     * @return LocalText[]
      * @throws NoLanguageFolderException
      * @throws NoDefaultLanguageException
-     * @return array()
      */
     public static function readLanguages($langFolder, $prefix = '') {
         if (!is_dir($langFolder)) {
@@ -37,6 +37,11 @@ class LanguageManager {
         return $languages;
     }
 
+    /**
+     * @param string $languageFolder
+     * @param string $prefix Prefix string for item keys in language array
+     * @return LocalText[]
+     */
     private static function readLanguage($languageFolder, $prefix) {
         $language = array();
 
@@ -66,6 +71,10 @@ class LanguageManager {
         return $language;
     }
 
+    /**
+     * @param Request $request
+     * @return string
+     */
     public function getLanguage(Request $request) {
         $language = $request->query->get('lang', null);
         if ($language !== null) {

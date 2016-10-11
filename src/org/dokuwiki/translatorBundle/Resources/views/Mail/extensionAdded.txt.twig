@@ -4,7 +4,7 @@
 {{ repository.displayName }} has been added to the DokuWiki translation tool.
 To activate your entry just click on the following link:
 
-{{ url('dokuwiki_translator_plugin_activate', {'name': repository.name, 'key': repository.activationKey}) }}
+{{ url('dokuwiki_translator_extension_activate', {'type': repository.type, 'name': repository.name, 'key': repository.activationKey}) }}
 
 After the activation it may take a few minutes until the language files are imported from your repository.
 

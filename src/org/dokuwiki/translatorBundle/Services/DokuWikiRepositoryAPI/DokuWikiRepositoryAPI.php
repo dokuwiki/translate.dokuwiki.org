@@ -25,22 +25,29 @@ class DokuWikiRepositoryAPI {
     }
 
     public function updateCache() {
-        $content = simplexml_load_file('https://www.dokuwiki.org/lib/plugins/pluginrepo/repository.php');
+        $content = simplexml_load_file('https://www.dokuwiki.org/lib/plugins/pluginrepo/repository.php?includetemplates=yes');
         if ($content === false) {
             return false;
         }
 
         $cache = array();
-        foreach ($content->plugin as $plugin) {
+        foreach ($content->plugin as $extension) {
             $repository = new RepositoryEntity();
-            $repository->setName(strtolower(strval($plugin->id)));
-            $repository->setAuthor(strval($plugin->author));
-            $repository->setDescription(strval($plugin->description));
-            $repository->setType(strval(RepositoryEntity::$TYPE_PLUGIN));
-            $repository->setTags($this->mergePluginTags($plugin->tags));
-            $repository->setDisplayName(strval($plugin->name));
-            $repository->setPopularity(intval($plugin->popularity));
-            $cache[$repository->getName()] = $repository;
+            if(substr($extension->id, 0, 9) == 'template:') {
+                $type = RepositoryEntity::$TYPE_TEMPLATE;
+                $name = substr($extension->id, 9);
+            } else {
+                $type = RepositoryEntity::$TYPE_PLUGIN;
+                $name = $extension->id;
+            }
+            $repository->setName(strtolower(strval($name)));
+            $repository->setType($type);
+            $repository->setAuthor(strval($extension->author));
+            $repository->setDescription(strval($extension->description));
+            $repository->setTags($this->mergeExtensionTags($extension->tags));
+            $repository->setDisplayName(strval($extension->name));
+            $repository->setPopularity(intval($extension->popularity));
+            $cache[$repository->getType() . ':'. $repository->getName()] = $repository;
 
             $this->updateRepositoryInformation($repository);
         }
@@ -51,7 +58,7 @@ class DokuWikiRepositoryAPI {
         return true;
     }
 
-    private function mergePluginTags(\SimpleXMLElement $tags) {
+    private function mergeExtensionTags(\SimpleXMLElement $tags) {
         $result = array();
         foreach ($tags->tag as $tag) {
             $result[] = strval($tag);
@@ -62,7 +69,7 @@ class DokuWikiRepositoryAPI {
 
     private function updateRepositoryInformation(RepositoryEntity $repository) {
         try {
-            $current = $this->repositoryRepository->getRepository(RepositoryEntity::$TYPE_PLUGIN, $repository->getName());
+            $current = $this->repositoryRepository->getRepository($repository->getType(), $repository->getName());
         } catch (NoResultException $ignored) {
             return;
         }
@@ -72,21 +79,22 @@ class DokuWikiRepositoryAPI {
     }
 
     /**
-     * @param string $id
+     * @param string $type
+     * @param string $name
      * @return bool|RepositoryEntity
      */
-    public function getPluginInfo($id) {
+    public function getExtensionInfo($type, $name) {
         $this->loadCache();
-        $id = strtolower($id);
-        if (!isset($this->cache[$id])) {
+        $name = strtolower($name);
+        if (!isset($this->cache[$type . ':'. $name])) {
             return false;
         }
 
-        return $this->cache[$id];
+        return $this->cache[$type . ':'. $name];
     }
 
-    public function mergePluginInfo(RepositoryEntity &$entity) {
-        $info = $this->getPluginInfo($entity->getName());
+    public function mergeExtensionInfo(RepositoryEntity &$entity) {
+        $info = $this->getExtensionInfo($entity->getType(), $entity->getName());
         $this->mergeRepository($entity, $info);
     }
 

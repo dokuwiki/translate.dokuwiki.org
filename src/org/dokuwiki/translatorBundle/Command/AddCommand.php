@@ -12,7 +12,7 @@ class AddCommand extends ContainerAwareCommand {
     protected function configure() {
         $this->setName('dokuwiki:add')
             ->setDescription('Adds a repository')
-            ->addArgument('type', null, 'Repository type: core or plugin')
+            ->addArgument('type', null, 'Repository type: core, plugin or template')
             ->addArgument('name', null, 'Name of the repository (lower case, no special chars or blanks)')
             ->addArgument('gitUrl', null, 'public git url')
             ->addArgument('branch', null, 'default branch')
@@ -26,7 +26,8 @@ class AddCommand extends ContainerAwareCommand {
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         $type = $input->getArgument('type');
-        if (!in_array($type, array(RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN))) {
+        $repositorytypes = array(RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN, RepositoryEntity::$TYPE_TEMPLATE);
+        if (!in_array($type, $repositorytypes)) {
             $output->writeln('Unknown type');
             return;
         }

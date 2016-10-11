@@ -58,9 +58,9 @@ class RepositoryEntityRepository extends  EntityRepository {
         }
     }
 
-    public function getPluginRepositoryInformation($language) {
+    public function getExtensionRepositoryInformation($language) {
         $query = $this->getEntityManager()->createQuery('
-            SELECT stats.completionPercent, repository.name, repository.displayName, repository.state, repository.englishReadonly
+            SELECT stats.completionPercent, repository.name, repository.type, repository.displayName, repository.state, repository.englishReadonly
             FROM dokuwikiTranslatorBundle:RepositoryEntity repository
             LEFT OUTER JOIN repository.translations stats
             WITH (stats.language = :language OR stats.language IS NULL)
@@ -83,14 +83,14 @@ class RepositoryEntityRepository extends  EntityRepository {
     }
 
     public function getCoreTranslation() {
-        return $this->getTranslation('dokuwiki', RepositoryEntity::$TYPE_CORE);
+        return $this->getTranslation(RepositoryEntity::$TYPE_CORE, 'dokuwiki');
     }
 
-    public function getPluginTranslation($name) {
-        return $this->getTranslation($name, RepositoryEntity::$TYPE_PLUGIN);
+    public function getExtensionTranslation($type, $name) {
+        return $this->getTranslation($type, $name);
     }
 
-    private function getTranslation($name, $type) {
+    private function getTranslation($type, $name) {
         $query = $this->getEntityManager()->createQuery('
         SELECT repository, translations, lang
             FROM dokuwikiTranslatorBundle:RepositoryEntity repository
@@ -107,14 +107,16 @@ class RepositoryEntityRepository extends  EntityRepository {
     }
 
 
-    public function getRepositoryByNameAndActivationKey($name, $activationKey) {
+    public function getRepositoryByNameAndActivationKey($type, $name, $activationKey) {
         $query = $this->getEntityManager()->createQuery(
             'SELECT repository
              FROM dokuwikiTranslatorBundle:RepositoryEntity repository
-             WHERE repository.name = :name
+             WHERE repository.type = :type
+             AND repository.name = :name
              AND repository.activationKey = :key
              AND repository.state = :state'
         );
+        $query->setParameter('type', $type);
         $query->setParameter('name', $name);
         $query->setParameter('key', $activationKey);
         $query->setParameter('state', RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);

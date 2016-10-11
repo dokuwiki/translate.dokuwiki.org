@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
 
-class PluginNameValidator extends ConstraintValidator {
+class TemplateNameValidator extends ConstraintValidator {
 
     /**
      * @var DokuWikiRepositoryAPI
@@ -19,7 +19,7 @@ class PluginNameValidator extends ConstraintValidator {
 
     public function validate($value, Constraint $constraint) {
 
-        if ($this->api->getExtensionInfo(RepositoryEntity::$TYPE_PLUGIN, $value) === false) {
+        if ($this->api->getExtensionInfo(RepositoryEntity::$TYPE_TEMPLATE, $value) === false) {
             $this->context->addViolation($constraint->message, array('%string%' => $value));
         }
     }

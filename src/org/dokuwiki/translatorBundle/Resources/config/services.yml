@@ -20,11 +20,24 @@ services:
         arguments: ["%data%", @doctrine.orm.entity_manager]
 
     plugin_name_validator:
-        class: "%plugin_name_validator.class%"
+        class: org\dokuwiki\translatorBundle\Validator\PluginNameValidator
         tags:
             - { name: validator.constraint_validator, alias: dwplugin }
         calls:
             - [setApi, [@doku_wiki_repository_api]]
+
+    template_name_validator:
+        class: org\dokuwiki\translatorBundle\Validator\TemplateNameValidator
+        tags:
+            - { name: validator.constraint_validator, alias: dwtemplate }
+        calls:
+            - [setApi, [@doku_wiki_repository_api]]
+
+    custom_unique_entity_validator:
+        class: org\dokuwiki\translatorBundle\Validator\CustomUniqueEntityValidator
+        tags:
+            - { name: validator.constraint_validator, alias: customuniqueentity }
+        arguments: [@doctrine]
 
     language_manager:
         class: "%language_manager.class%"

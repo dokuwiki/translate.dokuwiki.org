@@ -98,10 +98,16 @@ class TranslationUpdateEntity {
         return $this->id;
     }
 
+    /**
+     * @param RepositoryEntity $repository
+     */
     public function setRepository($repository) {
         $this->repository = $repository;
     }
 
+    /**
+     * @return RepositoryEntity
+     */
     public function getRepository() {
         return $this->repository;
     }

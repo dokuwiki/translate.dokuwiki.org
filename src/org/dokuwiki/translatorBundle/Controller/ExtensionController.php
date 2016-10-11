@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Form\RepositoryCreateType;
 
-class PluginController extends Controller implements InitializableController {
+class ExtensionController extends Controller implements InitializableController {
 
     /**
      * @var RepositoryEntityRepository
@@ -24,13 +24,14 @@ class PluginController extends Controller implements InitializableController {
     }
 
     /**
-     * Show form to add plugin to translation tool, show on successful submit confirmation
+     * Show form to add extension to translation tool, show on successful submit confirmation
      *
+     * @param string $type
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\Form\Exception\AlreadyBoundException
      */
-    public function indexAction(Request $request) {
+    public function indexAction($type, Request $request) {
 
         $data = array();
 
@@ -38,27 +39,30 @@ class PluginController extends Controller implements InitializableController {
         $repository->setEmail('');
         $repository->setUrl('');
         $repository->setBranch('master');
+        $repository->setType($type);
 
-        $form = $this->createForm(new RepositoryCreateType(), $repository);
+        $options['type'] = $type;
+        $options['validation_groups'] = array('Default', $type);
+        $form = $this->createForm(new RepositoryCreateType(), $repository, $options);
 
         if ($request->isMethod('POST')) {
             $form->bind($request);
             if ($form->isValid()) {
-                $this->addPlugin($repository);
+                $this->addExtension($repository);
                 $data['repository'] = $repository;
-                return $this->render('dokuwikiTranslatorBundle:Plugin:added.html.twig', $data);
+                return $this->render('dokuwikiTranslatorBundle:Extension:added.html.twig', $data);
             }
         }
 
         $data['form'] = $form->createView();
 
-        return $this->render('dokuwikiTranslatorBundle:Plugin:add.html.twig', $data);
+        return $this->render('dokuwikiTranslatorBundle:Extension:add.html.twig', $data);
     }
 
-    private function addPlugin(RepositoryEntity &$repository) {
+    private function addExtension(RepositoryEntity &$repository) {
         $api = $this->get('doku_wiki_repository_api');
 
-        $api->mergePluginInfo($repository);
+        $api->mergeExtensionInfo($repository);
         $repository->setLastUpdate(0);
         $repository->setState(RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);
         $repository->setActivationKey($this->generateActivationKey($repository));
@@ -74,25 +78,26 @@ class PluginController extends Controller implements InitializableController {
         $data = array(
             'repository' => $repository,
         );
-        $message->setBody($this->renderView('dokuwikiTranslatorBundle:Mail:pluginAdded.txt.twig', $data));
+        $message->setBody($this->renderView('dokuwikiTranslatorBundle:Mail:extensionAdded.txt.twig', $data));
         $this->get('mailer')->send($message);
     }
 
     private function generateActivationKey(RepositoryEntity $repository) {
-        return md5($repository->getName() . time());
+        return md5($repository->getType() . ':' . $repository->getName() . time());
     }
 
     /**
      * Handle activation link, redirects to homepage
      *
-     * @param $name
-     * @param $key
+     * @param string $type
+     * @param string $name
+     * @param string $key
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function activateAction($name, $key) {
+    public function activateAction($type, $name, $key) {
 
         try {
-            $repository = $this->repositoryRepository->getRepositoryByNameAndActivationKey($name, $key);
+            $repository = $this->repositoryRepository->getRepositoryByNameAndActivationKey($type, $name, $key);
 
             $repository->setState(RepositoryEntity::$STATE_INITIALIZING);
             $repository->setActivationKey('');
@@ -109,16 +114,17 @@ class PluginController extends Controller implements InitializableController {
     }
 
     /**
-     * Show translation progress of requested plugin
+     * Show translation progress of requested extension
      *
-     * @param $name
+     * @param string $type
+     * @param string $name
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function showAction($name) {
+    public function showAction($type, $name) {
         $data = array();
 
         try {
-            $data['repository'] = $this->repositoryRepository->getPluginTranslation($name);
+            $data['repository'] = $this->repositoryRepository->getExtensionTranslation($type, $name);
         } catch (NoResultException $e) {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }

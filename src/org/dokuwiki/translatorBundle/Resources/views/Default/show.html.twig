@@ -3,7 +3,7 @@
 {% block content %}
     <ul class="breadcrumb">
         <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a> <span class="divider">/</span></li>
-        <li class="active"><a href="#">{{ repository.displayName|capitalize }}</a></li>
+        <li class="active">{{ repository.displayName|capitalize }}</li>
     </ul>
     <div class="container">
         <div class="row">
@@ -112,7 +112,7 @@
                                     {% if repository.type == 'core' %}
                                         <a href="{{ path("dokuwiki_translate", {"lang":translation.language.code }) }}">update</a>
                                     {% else %}
-                                        <a href="{{ path("dokuwiki_translate_plugin", {"lang":translation.language.code, "name":repository.name }) }}">update</a>
+                                        <a href="{{ path("dokuwiki_translate_extension", {"type": repository.type, "lang":translation.language.code, "name":repository.name }) }}">update</a>
                                     {% endif %}
                                 {% endif %}
                             {% else %}

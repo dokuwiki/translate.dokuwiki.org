@@ -68,9 +68,10 @@ class TranslationController extends Controller implements InitializableControlle
         $previousTranslation = $repository->getLanguage($language);
 
         if($repositoryEntity->getEnglishReadonly() && $language == 'en') {
+            $param['type'] = $data['repositoryType'];
             $param['name'] = $data['repositoryName'];
             $param['englishreadonly'] = true;
-            return $this->redirect($this->generateUrl('dokuwiki_translator_show_plugin', $param));
+            return $this->redirect($this->generateUrl('dokuwiki_translator_show_extension', $param));
         }
 
         $validator = $this->validateTranslation($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
@@ -123,19 +124,20 @@ class TranslationController extends Controller implements InitializableControlle
     }
 
     /**
-     * Show form with translatable language strings for plugins
+     * Show form with translatable language strings for extensions
      *
-     * @param $name
+     * @param string $type
+     * @param string $name
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function translatePluginAction($name) {
+    public function translateExtensionAction($type, $name) {
 
-        return $this->translate(RepositoryEntity::$TYPE_PLUGIN, $name);
+        return $this->translate($type,  $name);
     }
 
     /**
      * @param string $type type of the translatable unit
-     * @param string $name name of the plugin
+     * @param string $name name of the extension
      * @param array $userInput input the user has already insert.
      *              This can contain the following keys:
      *                  - (array)  translation
@@ -146,7 +148,11 @@ class TranslationController extends Controller implements InitializableControlle
      */
     private function translate($type, $name, array $userInput = array()) {
         $language = $this->getLanguage();
-        $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($type, $name);
+        try {
+            $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($type, $name);
+        } catch (NoResultException $e) {
+            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+        }
 
         if ($repositoryEntity->getState() !== RepositoryEntity::$STATE_ACTIVE) {
             $data['notactive'] = true;

@@ -109,7 +109,7 @@ abstract class Repository {
     }
 
     private function updateWithException() {
-        $this->logger->debug('updating plugin ' . $this->entity->getName());
+        $this->logger->debug('updating ' . $this->entity->getType() . ' ' . $this->entity->getName());
         $path = $this->buildBasePath();
         if (!is_dir($path)) {
             mkdir($path, 0777, true);
@@ -129,10 +129,10 @@ abstract class Repository {
     }
 
     private function initialized() {
-        $this->logger->debug('Initializing plugin ' . $this->entity->getName());
+        $this->logger->debug('Initializing ' . $this->entity->getType() . ' ' . $this->entity->getName());
         $this->entity->setState(RepositoryEntity::$STATE_ACTIVE);
-        $this->mailService->sendEmail($this->entity->getEmail(), 'Your plugin is now active',
-                'dokuwikiTranslatorBundle:Mail:pluginReady.txt.twig', array('repo' => $this->entity));
+        $this->mailService->sendEmail($this->entity->getEmail(), 'Your ' . $this->entity->getType() . ' is now active',
+                'dokuwikiTranslatorBundle:Mail:extensionReady.txt.twig', array('repo' => $this->entity));
     }
 
     /**
@@ -208,6 +208,9 @@ abstract class Repository {
         $this->saveLanguage($translations);
     }
 
+    /**
+     * @param LocalText[] $translations
+     */
     private function updateTranslationStatistics($translations) {
         $this->repositoryStats->clearStats($this->entity);
         $this->repositoryStats->createStats($translations, $this->entity);
@@ -316,6 +319,7 @@ abstract class Repository {
     }
 
     private function createAndSendPatchWithException(TranslationUpdateEntity $update, $tmpDir) {
+        $this->logger->debug('send patch ' . $this->getType() . ' ' . $this->getName() . ' langupdate' . $update->getId());
         $this->openRepository();
 
         $tmpGit = $this->gitService->createRepositoryFromRemote($this->getRepositoryPath(), $tmpDir);
@@ -426,7 +430,7 @@ abstract class Repository {
     }
 
     /**
-     * @return array|string Relative path to the language folder. i.e. lang/ for plugins
+     * @return array|string Relative path to the language folder. i.e. lang/ for plugins and templates
      */
     protected abstract function getLanguageFolder();
 

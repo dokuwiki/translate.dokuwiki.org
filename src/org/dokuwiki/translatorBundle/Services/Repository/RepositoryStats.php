@@ -39,7 +39,7 @@ class RepositoryStats {
     }
 
     /**
-     * @param array $translations combined array with all translations
+     * @param LocalText[] $translations combined array with all translations
      * @param RepositoryEntity $repository Repository the translation belongs to
      */
     public function createStats($translations, RepositoryEntity $repository) {
@@ -64,6 +64,10 @@ class RepositoryStats {
         $this->entityManager->flush();
     }
 
+    /**
+     * @param string $languageCode
+     * @return LanguageNameEntity
+     */
     private function getLanguageEntityByCode($languageCode) {
         try {
             return $this->languageNameRepository->getLanguageByCode($languageCode);
@@ -76,6 +80,10 @@ class RepositoryStats {
         }
     }
 
+    /**
+     * @param LocalText $translation
+     * @return int
+     */
     private function calcStatsForLanguage($translation) {
         $value = 0;
         foreach ($translation as $path => $languageFile) {
@@ -84,6 +92,10 @@ class RepositoryStats {
         return $value;
     }
 
+    /**
+     * @param LocalText $languageFile
+     * @return int
+     */
     private function getTranslationValue($languageFile) {
         if ($languageFile->getType() == LocalText::$TYPE_MARKUP) {
             return 1;

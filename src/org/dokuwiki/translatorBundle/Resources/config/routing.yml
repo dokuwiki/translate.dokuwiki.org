@@ -2,25 +2,33 @@ dokuwiki_translator_homepage:
     pattern:  /
     defaults: { _controller: dokuwikiTranslatorBundle:Default:index }
 
-dokuwiki_translator_show_plugin:
-    pattern:  /plugin/{name}
-    defaults: { _controller: dokuwikiTranslatorBundle:Plugin:show}
+dokuwiki_translator_show_extension:
+    pattern:  /{type}/{name}
+    defaults: { _controller: dokuwikiTranslatorBundle:Extension:show}
+    requirements:
+        type: plugin|template
 
-dokuwiki_translator_plugin_add:
-    pattern:  /plugin
-    defaults: { _controller: dokuwikiTranslatorBundle:Plugin:index}
+dokuwiki_translator_extension_add:
+    pattern:  /{type}
+    defaults: { _controller: dokuwikiTranslatorBundle:Extension:index}
+    requirements:
+        type: plugin|template
 
-dokuwiki_translator_plugin_activate:
-    pattern:  /plugin/{name}/activate/{key}
-    defaults: { _controller: dokuwikiTranslatorBundle:Plugin:activate}
+dokuwiki_translator_extension_activate:
+    pattern:  /{type}/{name}/activate/{key}
+    defaults: { _controller: dokuwikiTranslatorBundle:Extension:activate}
+    requirements:
+        type: plugin|template
 
 dokuwiki_translate:
     pattern:  /translate/dokuwiki
     defaults: { _controller: dokuwikiTranslatorBundle:Translation:translateCore }
 
-dokuwiki_translate_plugin:
-    pattern:  /translate/plugin/{name}
-    defaults: { _controller: dokuwikiTranslatorBundle:Translation:translatePlugin}
+dokuwiki_translate_extension:
+    pattern:  /translate/{type}/{name}
+    defaults: { _controller: dokuwikiTranslatorBundle:Translation:translateExtension}
+    requirements:
+        type: plugin|template
 
 dokuwiki_translate_thanks:
     pattern:  /translate/thanks
