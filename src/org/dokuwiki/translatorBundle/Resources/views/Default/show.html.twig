@@ -21,7 +21,12 @@
                     <div class="alert alert-danger">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                         The English translation is marked as read-only. Improvements cannot be submitted via this tool.
-                        Please use the issue tracker or an pull request for proposing your changes.
+                        Please use the issue tracker or create a pull request for proposing your changes for
+                        {% if repository.type == 'core' %}
+                            DokuWiki.
+                        {% else %}
+                            this {{ repository.type }}.
+                        {% endif %}
                     </div>
                 </div>
             {% endif %}
