@@ -98,17 +98,24 @@ class UserTranslationValidator {
                 continue;
             }
         }
-        $authors = new AuthorList();
-        if (isset($this->previousTranslation[$path])) {
-            /** @var LocalText $prevTranslation */
-            $prevTranslation = $this->previousTranslation[$path];
-            $authors = $prevTranslation->getAuthors();
-        }
 
+        $authors = new AuthorList();
+        $header = '';
         if ($translationChanged && !empty($this->author)) {
             $authors->add(new Author($this->author, $this->authorEmail));
         }
-        return new LocalText($newContent, LocalText::$TYPE_ARRAY, $authors);
+        if (isset($this->previousTranslation[$path])) {
+            /** @var LocalText $prevTranslation */
+            $prevTranslation = $this->previousTranslation[$path];
+            $prevAuthors = $prevTranslation->getAuthors()->getAll();
+            foreach ($prevAuthors as $author) {
+                $authors->add($author);
+            }
+
+            $header = $prevTranslation->getHeader();
+        }
+
+        return new LocalText($newContent, LocalText::$TYPE_ARRAY, $authors, $header);
     }
 
     private function hasTranslationChanged($path, $key, $alreadyChanged) {
