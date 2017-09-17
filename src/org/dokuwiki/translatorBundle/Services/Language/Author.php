@@ -20,8 +20,8 @@ class Author {
     }
 
     public function equals(Author $author) {
-        if (mb_strtolower($author->getName()) !== mb_strtolower($this->getName())) return false;
-        if (mb_strtolower($author->getEmail()) !== mb_strtolower($this->getEmail())) return false;
+        if (mb_strtolower($author->getName()) !== mb_strtolower($this->getName())
+            && mb_strtolower($author->getEmail()) !== mb_strtolower($this->getEmail())) return false;
         return true;
     }
 
