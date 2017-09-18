@@ -4,6 +4,7 @@ namespace org\dokuwiki\translatorBundle\Services\Language;
 class LanguageFileParser {
 
     protected $content;
+    protected $header;
 
     /**
      * @var AuthorList
@@ -46,6 +47,7 @@ class LanguageFileParser {
         $this->author = new AuthorList();
         $this->lang = array();
         $this->lineNumber = 0;
+        $this->header = '';
 
         $this->goToStart();
 
@@ -150,6 +152,11 @@ class LanguageFileParser {
         return $string;
     }
 
+    /**
+     * Process content of single line comment: just skips the content
+     *
+     * @return string
+     */
     public function processSingleLineComment() {
         $endOfLine = strpos($this->content, "\n");
         if ($endOfLine === false) {
@@ -161,6 +168,12 @@ class LanguageFileParser {
         return LanguageFileParser::$MODE_PHP;
     }
 
+    /**
+     * Process content of multi line comment: filter authors and header text
+     *
+     * @return string
+     * @throws LanguageParseException
+     */
     public function processMultiLineComment() {
         $end = strpos($this->content, '*/');
         if ($end === false) {
@@ -168,13 +181,34 @@ class LanguageFileParser {
         }
         $comment = substr($this->content, 0, $end);
         $commentLines = explode("\n", $comment);
+        $lastLineWasEmpty = false;
         foreach($commentLines as $line) {
             $line = ltrim($line);
-            $line .= "\n";
-            if(!preg_match('/\* @author:? (.+?)(?: <(.*?)>)?\n/i', $line, $matches)) {
+            if(empty($line)) {
                 continue;
             }
-            $this->author->add(new Author(trim($matches[1]), isset($matches[2])?trim($matches[2]):''));
+
+            $line .= "\n";
+            if(preg_match('/\* @author:? (.+?)(?: <(.*?)>)?\n/i', $line, $matches)) {
+                $this->author->add(new Author(trim($matches[1]), isset($matches[2])?trim($matches[2]):''));
+                continue;
+            }
+
+            $multilineMarker = '*';
+            if ($this->stringStartsWith($line, $multilineMarker)) {
+                $line = substr($line, strlen($multilineMarker));
+                $line = ltrim($line, ' ');
+            }
+            if($line == "\n") {
+                //keep only one empty line
+                if(!$lastLineWasEmpty) {
+                    $this->header .= ' *' . $line;
+                }
+                $lastLineWasEmpty = true;
+            } else {
+                $this->header .= ' * ' . $line;
+                $lastLineWasEmpty = false;
+            }
         }
 
         $this->content = substr($this->content, $end + 2);
@@ -267,6 +301,10 @@ class LanguageFileParser {
         }
 
         return $string;
+    }
+
+    public function getHeader() {
+        return $this->header;
     }
 
     public function getAuthor() {

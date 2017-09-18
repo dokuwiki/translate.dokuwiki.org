@@ -59,7 +59,7 @@ class LanguageManager {
             if ($extension === '.php') {
                 $translation = LanguageFileParser::parseLangPHP("$languageFolder/$file");
                 $language[$prefix . $file] =
-                        new LocalText($translation->getLang(), LocalText::$TYPE_ARRAY, $translation->getAuthor());
+                        new LocalText($translation->getLang(), LocalText::$TYPE_ARRAY, $translation->getAuthor(), $translation->getHeader());
                 continue;
             }
 
