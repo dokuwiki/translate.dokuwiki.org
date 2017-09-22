@@ -13,9 +13,9 @@ class GitService {
     }
 
     /**
-     * Check if a folder is a git repository
+     * Check if folder where repository is (normally) stored exists
      *
-     * @param string $path
+     * @param string $path folder containing the git repository
      * @return bool
      */
     public function isRepository($path) {
@@ -26,6 +26,13 @@ class GitService {
         return $this->gitBinary;
     }
 
+    /**
+     * Returns GitRepository object for given path
+     *
+     * @param string $path folder containing the git repository
+     * @return GitRepository
+     * @throws GitException
+     */
     public function openRepository($path) {
         if (!$this->isRepository($path)) {
             throw new GitException("no git repository", $path);
@@ -33,6 +40,13 @@ class GitService {
         return new GitRepository($this, $path, $this->commandTimeout);
     }
 
+    /**
+     * Create in destination folder a git repository cloned from the local source path or remote source url
+     *
+     * @param string $source local path or remote url
+     * @param string $destination path
+     * @return GitRepository
+     */
     public function createRepositoryFromRemote($source, $destination) {
         $repository = new GitRepository($this, $destination, $this->commandTimeout);
         $repository->cloneFrom($source, $destination);

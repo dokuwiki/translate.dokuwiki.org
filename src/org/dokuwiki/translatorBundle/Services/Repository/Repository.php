@@ -136,10 +136,11 @@ abstract class Repository {
     }
 
     /**
-     * Update local repository
+     * Update local repository if already exist by pull, otherwise
      *
      * @throws GitCloneException
      * @throws GitHubForkException
+     *
      * @return boolean true if the repository is changed.
      */
     private function updateFromRemote() {
@@ -148,6 +149,7 @@ abstract class Repository {
             return $this->behavior->pull($this->git, $this->entity);
         }
 
+        //no repository exists yet
         try {
             $remote = $this->behavior->createOriginURL($this->entity);
             $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getRepositoryPath());
@@ -161,16 +163,29 @@ abstract class Repository {
         return true;
     }
 
+    /**
+     * Try to open repository, if existing set the GitRepository object
+     */
     private function openRepository() {
         if ($this->gitService->isRepository($this->getRepositoryPath())) {
             $this->git = $this->gitService->openRepository($this->getRepositoryPath());
         }
     }
 
+    /**
+     * Path to folder of git repository for this repository
+     *
+     * @return string
+     */
     private function getRepositoryPath() {
         return $this->buildBasePath() . 'repository/';
     }
 
+    /**
+     * Path of base folder of repository
+     *
+     * @return string path
+     */
     private function buildBasePath() {
         $path = $this->buildDataPath();
         $type = $this->getType();
@@ -181,6 +196,11 @@ abstract class Repository {
         return $path;
     }
 
+    /**
+     * Path to general data folder of translation tool
+     *
+     * @return string path
+     */
     private function buildDataPath() {
         if ($this->basePath === null) {
             $base = $this->dataFolder;
@@ -192,6 +212,9 @@ abstract class Repository {
         return $this->basePath;
     }
 
+    /**
+     * Read languages and store the serialized LocalText[] arrays of the translations
+     */
     public function updateLanguage() {
         $languageFolders = $this->getLanguageFolder();
 
@@ -209,6 +232,8 @@ abstract class Repository {
     }
 
     /**
+     * Refresh the statistics based on (last version of) translations
+     *
      * @param LocalText[] $translations
      */
     private function updateTranslationStatistics($translations) {
@@ -216,8 +241,11 @@ abstract class Repository {
         $this->repositoryStats->createStats($translations, $this->entity);
     }
 
-
-
+    /**
+     * Store existing language data serialized on disk
+     *
+     * @param LocalText[] $translations
+     */
     private function saveLanguage($translations) {
         $langFolder = $this->buildBasePath() . 'lang/';
         if (!file_exists($langFolder)) {
@@ -230,9 +258,10 @@ abstract class Repository {
     }
 
     /**
-     * Get language Data for a language code
+     * Retrieve language Data for a language code from disk
+     *
      * @param string $code language code
-     * @return array language data. array will be empty, if no language data is available
+     * @return LocalText[] array language data. array will be empty, if no language data is available
      */
     public function getLanguage($code) {
         $code = strtolower($code);
@@ -262,6 +291,11 @@ abstract class Repository {
         @unlink($this->getLockPath());
     }
 
+    /**
+     * path to lock file
+     *
+     * @return string
+     */
     private function getLockPath() {
         $path = $this->buildBasePath();
         $path .= 'locked';
@@ -269,9 +303,9 @@ abstract class Repository {
     }
 
     /**
-     * Schedule a new Translation update
+     * Schedule an submitted Translation update and store translation
      *
-     * @param array $translation Translated text
+     * @param LocalText[] $translation Translated text
      * @param string $author Author of the translation
      * @param string $email Authors email address of the translation
      * @param string $language language code for translation
@@ -295,6 +329,12 @@ abstract class Repository {
         return $translationUpdate->getId();
     }
 
+    /**
+     * Path to folder were submitted user translations are stored
+     *
+     * @param int $id
+     * @return string
+     */
     private function getUpdatePath($id) {
         $path = $this->buildBasePath() . 'updates/';
         if (!file_exists($path)) {
@@ -304,6 +344,11 @@ abstract class Repository {
         return $path;
     }
 
+    /**
+     * Create and send patch for the submitted translations
+     *
+     * @param TranslationUpdateEntity $update
+     */
     public function createAndSendPatch(TranslationUpdateEntity $update) {
         $tmpDir = $this->buildTempPath($update->getId());
         try {
@@ -318,19 +363,31 @@ abstract class Repository {
         $this->entityManager->flush();
     }
 
+    /**
+     * Actual creating and sending of patch for submitted translations
+     *
+     * @param TranslationUpdateEntity $update
+     * @param string $tmpDir path to folder of temporary local git repository
+     */
     private function createAndSendPatchWithException(TranslationUpdateEntity $update, $tmpDir) {
         $this->logger->debug('send patch ' . $this->getType() . ' ' . $this->getName() . ' langupdate' . $update->getId());
         $this->openRepository();
 
+        // clone the local temporary git repository
         $tmpGit = $this->gitService->createRepositoryFromRemote($this->getRepositoryPath(), $tmpDir);
-        $author = $this->prepareAuthor($update);
-
+        // add files to local temporary git repository
         $this->applyChanges($tmpGit, $tmpDir, $update);
-
+        // commit files to local temporary git repository
+        $author = $this->prepareAuthor($update);
         $tmpGit->commit('translation update', $author);
+
+
         $this->behavior->sendChange($tmpGit, $update, $this->git);
     }
 
+    /**
+     * @param $folder
+     */
     private function rrmdir($folder) {
         $fs = new Filesystem();
         // some files are write-protected by git - this removes write protection
@@ -339,6 +396,12 @@ abstract class Repository {
         $fs->remove($folder);
     }
 
+    /**
+     * path to tmp folder for e.g. storing branch for creating patch
+     *
+     * @param string|int $id
+     * @return string
+     */
     private function buildTempPath($id) {
         $path = $this->buildBasePath();
         $path .= "tmp";
@@ -348,6 +411,12 @@ abstract class Repository {
         return "$path/$id/";
     }
 
+    /**
+     * Prepare author string for commit
+     *
+     * @param TranslationUpdateEntity $update
+     * @return string
+     */
     private function prepareAuthor(TranslationUpdateEntity $update) {
         $author = $update->getAuthor();
         $email = $update->getEmail();
@@ -361,14 +430,21 @@ abstract class Repository {
         return escapeshellarg($author);
     }
 
+    /**
+     * Create new language file(s) in folder of git repository and add these to git
+     *
+     * @param GitRepository $git
+     * @param string $folder
+     * @param TranslationUpdateEntity $update
+     *
+     * @throws NoLanguageFileWrittenException
+     */
     private function applyChanges(GitRepository $git, $folder, TranslationUpdateEntity $update) {
+        /** @var LocalText[] $translations */
         $translations = unserialize(file_get_contents($this->getUpdatePath($update->getId())));
 
         $changes = false;
         foreach ($translations as $path => $translation) {
-            /**
-             * @var LocalText $translation
-             */
             $path = $folder . $path;
             $langFolder = dirname($path) . '/' . $update->getLanguage() . '/';
             if (!is_dir($langFolder)) {

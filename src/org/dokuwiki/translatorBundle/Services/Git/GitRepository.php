@@ -19,6 +19,16 @@ class GitRepository {
         $this->commandTimeout = $commandTimeout;
     }
 
+    /**
+     *
+     *
+     * @param string $source
+     * @param string $destination
+     * @param int $retries
+     * @return ProgrammCallResult
+     *
+     * @throws GitCloneException
+     */
     public function cloneFrom($source, $destination, $retries = 3) {
         try {
             $result = $this->run('clone', $source, $destination);
@@ -43,9 +53,11 @@ class GitRepository {
 
     /**
      * Pull from remote repository
+     *
      * @param string $remote repository alias or url
      * @param string $branch remote branch to pull
      * @return string
+     *
      * @throws GitPullException
      */
     public function pull($remote = 'origin', $branch = 'master') {
