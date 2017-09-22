@@ -34,9 +34,9 @@ class GitHubBehavior implements RepositoryBehavior {
      */
     function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) {
 
-        $remoteUrl = $originalGit->getRemoteUrl('origin');
+        $remoteUrl = $originalGit->getRemoteUrl();
         $tempGit->remoteAdd('github', $remoteUrl);
-        $branchName = 'lang_update_' . $update->getId();
+        $branchName = 'lang_update_' . $update->getId() . '_' . $update->getUpdated();
         $tempGit->branch($branchName);
         $tempGit->checkout($branchName);
 
