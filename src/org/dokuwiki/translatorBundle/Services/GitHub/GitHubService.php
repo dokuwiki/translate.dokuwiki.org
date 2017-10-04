@@ -47,7 +47,7 @@ class GitHubService {
     public function getUsernameAndRepositoryFromURL($url) {
         $result = preg_replace('#^(https://github.com/|git@.*?github.com:|git://github.com/)(.*)\.git$#', '$2', $url, 1, $counter);
         if ($counter === 0) {
-            throw new GitHubServiceException('Invalid GitHub URL: ' . $url);
+            throw new GitHubServiceException('Invalid GitHub clone URL: ' . $url);
         }
         $result = explode('/', $result);
 
