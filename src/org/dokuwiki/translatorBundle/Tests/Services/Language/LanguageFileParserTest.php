@@ -332,6 +332,14 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $parser->loadFile(dirname(__FILE__) . '/testLang.php');
         $parser->parse();
 
+        //note: first line is due to second * of opening comment tag /**
+        $expectedheader = ' *
+ * german language file
+ *
+ * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+';
+
+        $this->assertEquals($expectedheader, $parser->getHeader());
         $this->assertEquals(18, count($parser->getAuthor()->getAll()));
         $this->assertEquals(268, count($parser->getLang()));
         $this->assertEquals(41, count($parser->getLangByKey('js')));

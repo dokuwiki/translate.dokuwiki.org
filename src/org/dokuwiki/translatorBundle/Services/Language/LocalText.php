@@ -63,8 +63,14 @@ class LocalText {
             $php .= " *\n";
         }
         if(!empty($this->header)) {
+            $emptyline = " *\n";
+            if($this->startsWith($this->header, $emptyline)) {
+                $this->header = substr($this->header, strlen($emptyline));
+            }
             $php .= $this->header;
-            $php .= " *\n";
+            if(!$this->endsWith($this->header, "*\n")) {
+                $php .= " *\n";
+            }
         }
         $php .= $this->renderAuthors();
 
@@ -124,5 +130,18 @@ class LocalText {
 
     private function escapeText($text) {
         return str_replace("'", '\\\'', $text);
+    }
+
+
+    private function startsWith($haystack, $needle) {
+        $length = strlen($needle);
+        return (substr($haystack, 0, $length) === $needle);
+    }
+
+    private function endsWith($haystack, $needle) {
+        $length = strlen($needle);
+
+        return $length === 0 ||
+        (substr($haystack, -$length) === $needle);
     }
 }
