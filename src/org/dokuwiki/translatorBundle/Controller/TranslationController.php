@@ -182,10 +182,15 @@ class TranslationController extends Controller implements InitializableControlle
         }
 
         if($repositoryEntity->getEnglishReadonly() && $data['targetLanguage']->getCode() == 'en') {
-            $param['type'] = $type;
-            $param['name'] = $name;
             $param['englishreadonly'] = true;
-            return $this->redirect($this->generateUrl('dokuwiki_translator_show_extension', $param));
+
+            if($type === RepositoryEntity::$TYPE_CORE) {
+                return $this->redirect($this->generateUrl('dokuwiki_translator_show', $param));
+            } else {
+                $param['type'] = $type;
+                $param['name'] = $name;
+                return $this->redirect($this->generateUrl('dokuwiki_translator_show_extension', $param));
+            }
         }
 
         $data['captcha'] = $this->getCaptchaForm()->createView();
