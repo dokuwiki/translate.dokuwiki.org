@@ -10,18 +10,21 @@ class LocalText {
     private $type;
     private $content;
     private $authors;
+    private $header;
 
     /**
      * @param array|string $content translated text, on markup its string everything else array
      * @param string $type see {@see LocalText::TYPE_ARRAY} and {@see LocalText::$TYPE_MARKUP}
      * @param AuthorList $authors List of authors. Keyset are the author names, values may the email addresses.
      *                       Always empty on markup mode.
+     * @param string $header the other lines than the list of authors
      */
-    function __construct($content, $type, AuthorList $authors = null) {
+    function __construct($content, $type, AuthorList $authors = null, $header = '') {
         $this->content = $content;
         $this->type = $type;
         if ($authors === null) $authors = new AuthorList();
         $this->authors = $authors;
+        $this->header = $header;
     }
 
     public function getContent() {
@@ -36,22 +39,47 @@ class LocalText {
         return $this->authors;
     }
 
+    public function getHeader() {
+        return $this->header;
+    }
+
     public function render() {
         if ($this->type === LocalText::$TYPE_MARKUP) {
             return $this->getContent();
         }
 
         $php = "<?php\n\n";
-        $php .= $this->renderAuthors();
+        $php .= $this->renderHeader();
         $php .= $this->renderArray($this->content);
 
         return $php;
     }
 
-    private function renderAuthors() {
+    private function renderHeader() {
         $php = "/**\n";
-        $php.= " * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)\n";
-        $php.= " *\n";
+        $end = strpos($this->header, '@license');
+        if ($end === false) {
+            $php .= " * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)\n";
+            $php .= " *\n";
+        }
+        if(!empty($this->header)) {
+            $emptyline = " *\n";
+            if($this->startsWith($this->header, $emptyline)) {
+                $this->header = substr($this->header, strlen($emptyline));
+            }
+            $php .= $this->header;
+            if(!$this->endsWith($this->header, "*\n")) {
+                $php .= " *\n";
+            }
+        }
+        $php .= $this->renderAuthors();
+
+        $php .= " */\n";
+        return $php;
+    }
+
+    private function renderAuthors() {
+        $php = '';
 
         $authors = $this->authors->getAll();
 
@@ -66,7 +94,6 @@ class LocalText {
             }
             $php.="\n";
         }
-        $php.= " */\n";
 
         return $php;
     }
@@ -103,5 +130,18 @@ class LocalText {
 
     private function escapeText($text) {
         return str_replace("'", '\\\'', $text);
+    }
+
+
+    private function startsWith($haystack, $needle) {
+        $length = strlen($needle);
+        return (substr($haystack, 0, $length) === $needle);
+    }
+
+    private function endsWith($haystack, $needle) {
+        $length = strlen($needle);
+
+        return $length === 0 ||
+        (substr($haystack, -$length) === $needle);
     }
 }

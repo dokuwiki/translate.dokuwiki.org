@@ -7,14 +7,29 @@ use Symfony\Component\Validator\Validator;
 
 class UserTranslationValidator {
 
+    /** @var LocalText[]  */
     private $defaultTranslation;
+    /** @var LocalText[]  */
     private $previousTranslation;
+    /** @var LocalText[]  */
     private $userTranslation;
+    /** @var string  */
     private $author;
+    /** @var string  */
     private $authorEmail;
     private $validator;
     private $errors = array();
 
+    /**
+     * UserTranslationValidator constructor.
+     *
+     * @param LocalText[] $defaultTranslation
+     * @param LocalText[] $previousTranslation
+     * @param LocalText[] $userTranslation
+     * @param string $author
+     * @param string $authorEmail
+     * @param Validator $validator
+     */
     function __construct($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail, Validator $validator) {
         $this->defaultTranslation = $defaultTranslation;
         $this->userTranslation = $userTranslation;
@@ -44,7 +59,10 @@ class UserTranslationValidator {
         }
     }
 
-    function validate() {
+    /**
+     * @return LocalText[]
+     */
+    public function validate() {
         $newTranslation = array();
 
         /** @var LocalText $translation */
@@ -63,11 +81,20 @@ class UserTranslationValidator {
         return $newTranslation;
     }
 
+    /**
+     * @param $path
+     * @return LocalText
+     */
     private function validateMarkup($path) {
         $text = $this->fixLineEndings($this->userTranslation[$path]);
         return new LocalText($text, LocalText::$TYPE_MARKUP);
     }
 
+    /**
+     * @param string $path
+     * @param LocalText $translation
+     * @return LocalText
+     */
     private function validateArray($path, LocalText $translation) {
         $newContent = array();
         $translationChanged = false;
@@ -98,19 +125,32 @@ class UserTranslationValidator {
                 continue;
             }
         }
-        $authors = new AuthorList();
-        if (isset($this->previousTranslation[$path])) {
-            /** @var LocalText $prevTranslation */
-            $prevTranslation = $this->previousTranslation[$path];
-            $authors = $prevTranslation->getAuthors();
-        }
 
+        $authors = new AuthorList();
+        $header = '';
         if ($translationChanged && !empty($this->author)) {
             $authors->add(new Author($this->author, $this->authorEmail));
         }
-        return new LocalText($newContent, LocalText::$TYPE_ARRAY, $authors);
+        if (isset($this->previousTranslation[$path])) {
+            /** @var LocalText $prevTranslation */
+            $prevTranslation = $this->previousTranslation[$path];
+            $prevAuthors = $prevTranslation->getAuthors()->getAll();
+            foreach ($prevAuthors as $author) {
+                $authors->add($author);
+            }
+
+            $header = $prevTranslation->getHeader();
+        }
+
+        return new LocalText($newContent, LocalText::$TYPE_ARRAY, $authors, $header);
     }
 
+    /**
+     * @param string $path
+     * @param string $key
+     * @param bool $alreadyChanged
+     * @return bool
+     */
     private function hasTranslationChanged($path, $key, $alreadyChanged) {
         if ($alreadyChanged) return false;
 
@@ -128,6 +168,13 @@ class UserTranslationValidator {
         return $this->userTranslation[$path][$key] !== $previousText[$key];
     }
 
+    /**
+     * @param string $path
+     * @param string $key
+     * @param string $jsKey
+     * @param bool $alreadyChanged
+     * @return bool has changed
+     */
     private function hasJsTranslationChanged($path, $key, $jsKey, $alreadyChanged) {
         if ($alreadyChanged) return false;
 
@@ -150,14 +197,17 @@ class UserTranslationValidator {
         return $this->userTranslation[$path][$key][$jsKey] !== $previousText[$key][$jsKey];
     }
 
-
+    /**
+     * @param $string
+     * @return string
+     */
     private function fixLineEndings($string) {
         $string = str_replace("\r\n", "\n", $string);
         return $string;
     }
 
     /**
-     * @return array
+     * @return array of error messages
      */
     public function getErrors() {
         return $this->errors;

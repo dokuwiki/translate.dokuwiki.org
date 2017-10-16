@@ -14,6 +14,7 @@ interface RepositoryBehavior {
 
     /**
      * Called before a pull
+     *
      * @param GitRepository $git
      * @param RepositoryEntity $repository
      * @return bool true if the repository is changed

@@ -7,6 +7,7 @@ use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitCloneException;
 use org\dokuwiki\translatorBundle\Services\Git\GitPullException;
 use org\dokuwiki\translatorBundle\Services\Git\GitPushException;
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubCreatePullRequestException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubForkException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
@@ -88,6 +89,10 @@ class RepositoryErrorReporter {
 
         if ($e instanceof GitPushException) {
             return 'dokuwikiTranslatorBundle:Mail:importErrorUpdate.txt.twig';
+        }
+
+        if ($e instanceof GitHubServiceException) {
+            return 'dokuwikiTranslatorBundle:Mail:importErrorGitHubUrl.txt.twig';
         }
 
         if ($e instanceof GitCloneException) {

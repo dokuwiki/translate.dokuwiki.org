@@ -24,12 +24,16 @@ class LanguageFileParserTestDummy extends LanguageFileParser {
         return $this->author;
     }
 
-    public function getLang($key) {
+    public function getLangByKey($key) {
         return $this->lang[$key];
     }
 
-    public function getAllLang() {
+    public function getLang() {
         return $this->lang;
+    }
+
+    public function setHeader($header) {
+        $this->header = $header;
     }
 }
 
@@ -96,17 +100,21 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $expected->add(new Author('some one üß', 'email.address@someone'));
         $this->assertEquals($expected, $parser->getAuthor());
         $this->assertEquals('', $parser->getContent());
+        $this->assertEquals(" * some text\n * @var string some text\n", $parser->getHeader());
 
         $parser->setAuthor(new AuthorList());
-        $parser->setContent("some text\n * @var string some text\n   * @author some one üß <email.address@someone>\n* @author an other <email.some@bla>\n*/ text");
+        $parser->setHeader('');
+        $parser->setContent("some text\n * @var string some more text\n   * @author any one üß <email.address@anyone>\n* @author an other <email.some@bla>\n*/ text");
         $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processMultiLineComment());
         $expected = new AuthorList();
-        $expected->add(new Author('some one üß', 'email.address@someone'));
+        $expected->add(new Author('any one üß', 'email.address@anyone'));
         $expected->add(new Author('an other', 'email.some@bla'));
         $this->assertEquals($expected, $parser->getAuthor());
         $this->assertEquals(' text', $parser->getContent());
+       // $this->assertEquals(" * some text\n * @var string some more text\n", $parser->getHeader());
 
         $parser->setAuthor(new AuthorList());
+        $parser->setHeader('');
         $parser->setContent("some text\n * @var string some text\n   * @author one <one@example.com>\n* @author one <one@example.com>\n*/ text");
         $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processMultiLineComment());
         $expected = new AuthorList();
@@ -115,31 +123,58 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(' text', $parser->getContent());
 
         $parser->setAuthor(new AuthorList());
+        $parser->setHeader('');
         $parser->setContent("some text\n * @var string some text\n   * @author two <one@example.com>\n* @author one <one@example.com>\n*/ text");
         $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processMultiLineComment());
         $expected = new AuthorList();
         $expected->add(new Author('two', 'one@example.com'));
-        $expected->add(new Author('one', 'one@example.com'));
         $this->assertEquals($expected, $parser->getAuthor());
         $this->assertEquals(' text', $parser->getContent());
+        $this->assertEquals(" * some text\n * @var string some text\n", $parser->getHeader());
 
         $parser->setAuthor(new AuthorList());
+        $parser->setHeader('');
         $parser->setContent("some text\n * @var string some text\n   * @author one <one@example.com>\n* @author two <one@example.com>\n*/ text");
         $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processMultiLineComment());
         $expected = new AuthorList();
         $expected->add(new Author('one', 'one@example.com'));
-        $expected->add(new Author('two', 'one@example.com'));
         $this->assertEquals($expected, $parser->getAuthor());
         $this->assertEquals(' text', $parser->getContent());
+        $this->assertEquals(" * some text\n * @var string some text\n", $parser->getHeader());
 
 
         $parser->setAuthor(new AuthorList());
-        $parser->setContent("some text\n * @var string some text\n\n*/");
+        $parser->setHeader('');
+        $parser->setContent("some text\n * @var string some text\n * \n * \n\n\nect\n*/");
         $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processMultiLineComment());
         $this->assertEquals(new AuthorList(), $parser->getAuthor());
         $this->assertEquals('', $parser->getContent());
+        $this->assertEquals(" * some text\n * @var string some text\n *\n * ect\n", $parser->getHeader());
+
+        $parser->setAuthor(new AuthorList());
+        $parser->setHeader('');
+        $parser->setContent("some text\n * @var string some text\n   * @author one <one@example.com>\n* @author two <one@example.com>\n* more lines\n*\n*/ text");
+        $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processMultiLineComment());
+        $expected = new AuthorList();
+        $expected->add(new Author('one', 'one@example.com'));
+        $this->assertEquals($expected, $parser->getAuthor());
+        $this->assertEquals(' text', $parser->getContent());
+        $this->assertEquals(" * some text\n * @var string some text\n * more lines\n *\n", $parser->getHeader());
+
+        $parser->setAuthor(new AuthorList());
+        $parser->setHeader('');
+        $parser->setContent("\n * @author one <one@example.com>\n*/ text");
+        $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processMultiLineComment());
+        $expected = new AuthorList();
+        $expected->add(new Author('one', 'one@example.com'));
+        $this->assertEquals($expected, $parser->getAuthor());
+        $this->assertEquals(' text', $parser->getContent());
+        $this->assertEquals("", $parser->getHeader());
     }
 
+    /**
+     * handle multiple spaces between @author tag and the name
+     */
     function testIssue48() {
         $parser = new LanguageFileParserTestDummy();
         $parser->setAuthor(new AuthorList());
@@ -153,6 +188,9 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
 
     }
 
+    /**
+     * handle @author with trailing semicolon (however it is invalid phpdocs syntax)
+     */
     function testIssue38() {
         $parser = new LanguageFileParserTestDummy();
         $parser->setAuthor(new AuthorList());
@@ -163,6 +201,8 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $expected->add(new Author('one', 'one@example.com'));
         $this->assertEquals($expected, $parser->getAuthor());
         $this->assertEquals(' text', $parser->getContent());
+        $this->assertEquals(" * some text\n * @var string some text\n", $parser->getHeader());
+
 
     }
 
@@ -240,17 +280,17 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $parser->setContent('"Key"] = "value";');
         $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processLang());
         $this->assertEquals('', $parser->getContent());
-        $this->assertEquals('value', $parser->getLang('Key'));
+        $this->assertEquals('value', $parser->getLangByKey('Key'));
 
         $parser->setContent("'another']\t =  \n 'value' ;");
         $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processLang());
         $this->assertEquals('', $parser->getContent());
-        $this->assertEquals('value', $parser->getLang('another'));
+        $this->assertEquals('value', $parser->getLangByKey('another'));
 
         $parser->setContent('"Key"]="value";');
         $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processLang());
         $this->assertEquals('', $parser->getContent());
-        $this->assertEquals('value', $parser->getLang('Key'));
+        $this->assertEquals('value', $parser->getLangByKey('Key'));
     }
 
     function testProcessJsLang() {
@@ -259,12 +299,12 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $parser->setContent('\'js\']["Key"] = "value";');
         $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processLang());
         $this->assertEquals('', $parser->getContent());
-        $this->assertEquals(array('Key' => 'value'), $parser->getLang('js'));
+        $this->assertEquals(array('Key' => 'value'), $parser->getLangByKey('js'));
 
         $parser->setContent("'js'  ]\t [\n  \"Key\"] = \"value\";");
         $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processLang());
         $this->assertEquals('', $parser->getContent());
-        $this->assertEquals(array('Key' => 'value'), $parser->getLang('js'));
+        $this->assertEquals(array('Key' => 'value'), $parser->getLangByKey('js'));
     }
 
     /**
@@ -292,9 +332,17 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $parser->loadFile(dirname(__FILE__) . '/testLang.php');
         $parser->parse();
 
+        //note: first line is due to second * of opening comment tag /**
+        $expectedheader = ' *
+ * german language file
+ *
+ * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+';
+
+        $this->assertEquals($expectedheader, $parser->getHeader());
         $this->assertEquals(18, count($parser->getAuthor()->getAll()));
-        $this->assertEquals(268, count($parser->getAllLang()));
-        $this->assertEquals(41, count($parser->getLang('js')));
+        $this->assertEquals(268, count($parser->getLang()));
+        $this->assertEquals(41, count($parser->getLangByKey('js')));
     }
 
     function testCompleteFileWithClosing() {
@@ -305,8 +353,8 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $parser->parse();
 
         $this->assertEquals(18, count($parser->getAuthor()->getAll()));
-        $this->assertEquals(268, count($parser->getAllLang()));
-        $this->assertEquals(41, count($parser->getLang('js')));
+        $this->assertEquals(268, count($parser->getLang()));
+        $this->assertEquals(41, count($parser->getLangByKey('js')));
     }
 
 

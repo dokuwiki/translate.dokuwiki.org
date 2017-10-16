@@ -208,8 +208,8 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
         $authorEmail = 'e@ma.il';
 
         $expectedAuthors = new AuthorList();
-        $expectedAuthors->add(new Author('other', 'some'));
         $expectedAuthors->add(new Author('author', 'e@ma.il'));
+        $expectedAuthors->add(new Author('other', 'some'));
         $expected = array(
             'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $expectedAuthors)
         );
@@ -221,6 +221,70 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $result);
     }
 
+    function testValidateTranslationArrayKeepAuthorsRenamed() {
+        $defaultTranslation = array(
+            'path' => new LocalText(array('key' => 'value'), LocalText::$TYPE_ARRAY)
+        );
+        $prevAuthors = new AuthorList();
+        $prevAuthors->add(new Author('other', 'some'));
+        $prevAuthors->add(new Author('author old name', 'e@ma.il'));
+        $previousTranslation = array(
+            'path' => new LocalText(
+                array('key' => 'translated value'), LocalText::$TYPE_ARRAY, $prevAuthors)
+        );
+
+        $userTranslation = array(
+            'path' => array('key' => 'new translated value')
+        );
+
+        $author = 'author new name';
+        $authorEmail = 'e@ma.il';
+
+        $expectedAuthors = new AuthorList();
+        $expectedAuthors->add(new Author('author new name', 'e@ma.il'));
+        $expectedAuthors->add(new Author('other', 'some'));
+        $expected = array(
+            'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $expectedAuthors)
+        );
+
+        $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
+                                                  $userTranslation, $author, $authorEmail, $this->validator);
+        $result = $validator->validate();
+
+        $this->assertEquals($expected, $result);
+    }
+
+    function testValidateTranslationArrayKeepheader() {
+        $defaultTranslation = array(
+            'path' => new LocalText(array('key' => 'value'), LocalText::$TYPE_ARRAY, null, " * old header1\n * @licence GPL")
+        );
+        $prevAuthors = new AuthorList();
+        $prevAuthors->add(new Author('other', 'some'));
+        $previousTranslation = array(
+            'path' => new LocalText(
+                array('key' => 'translated value'), LocalText::$TYPE_ARRAY, $prevAuthors, " * old header2\n * @licence GPL")
+        );
+
+        $userTranslation = array(
+            'path' => array('key' => 'new translated value')
+        );
+
+        $author = 'author';
+        $authorEmail = 'e@ma.il';
+
+        $expectedAuthors = new AuthorList();
+        $expectedAuthors->add(new Author('author', 'e@ma.il'));
+        $expectedAuthors->add(new Author('other', 'some'));
+        $expected = array(
+            'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $expectedAuthors, " * old header2\n * @licence GPL")
+        );
+
+        $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
+                                                  $userTranslation, $author, $authorEmail, $this->validator);
+        $result = $validator->validate();
+
+        $this->assertEquals($expected, $result);
+    }
     function testValidateTranslationArrayAuthorsDoNotMix() {
         $authors = new AuthorList();
         $authors->add(new Author('other', 'some'));

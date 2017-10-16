@@ -25,12 +25,18 @@ class GitHubBehavior implements RepositoryBehavior {
         $this->gitHubService = $gitHubStatus;
     }
 
-
+    /**
+     * Create branch and push it to remote, create subsequently pull request at Github
+     *
+     * @param GitRepository $tempGit temporary local git repository
+     * @param TranslationUpdateEntity $update
+     * @param GitRepository $originalGit
+     */
     function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) {
 
-        $remoteUrl = $originalGit->getRemoteUrl('origin');
+        $remoteUrl = $originalGit->getRemoteUrl();
         $tempGit->remoteAdd('github', $remoteUrl);
-        $branchName = 'lang_update_' . $update->getId();
+        $branchName = 'lang_update_' . $update->getId() . '_' . $update->getUpdated();
         $tempGit->branch($branchName);
         $tempGit->checkout($branchName);
 
@@ -40,6 +46,12 @@ class GitHubBehavior implements RepositoryBehavior {
                 $update->getLanguage(), $update->getRepository()->getUrl(), $remoteUrl);
     }
 
+    /**
+     * Fork at Github and return url of the fork
+     *
+     * @param RepositoryEntity $repository
+     * @return string Git URL of the fork
+     */
     function createOriginURL(RepositoryEntity $repository) {
         return $this->api->createFork($repository->getUrl());
     }
@@ -57,6 +69,9 @@ class GitHubBehavior implements RepositoryBehavior {
         return $changed;
     }
 
+    /**
+     * @return bool|null
+     */
     function isFunctional() {
         return $this->gitHubService->isFunctional();
     }

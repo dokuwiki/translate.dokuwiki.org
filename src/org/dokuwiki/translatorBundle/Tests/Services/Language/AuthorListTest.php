@@ -23,18 +23,24 @@ class AuthorListTest extends \PHPUnit_Framework_TestCase {
         $list = new AuthorList();
         $list->add(new Author('name', 'email'));
         $list->add(new Author('name', 'email1'));
-        $this->assertEquals(2, count($list->getAll()));
+        $this->assertEquals(1, count($list->getAll()));
         $this->assertTrue($list->has(new Author('name', 'email')));
-        $this->assertTrue($list->has(new Author('name', 'email1')));
     }
 
     function testAddSameEmail() {
         $list = new AuthorList();
         $list->add(new Author('name', 'email'));
         $list->add(new Author('name1', 'email'));
-        $this->assertEquals(2, count($list->getAll()));
+        $this->assertEquals(1, count($list->getAll()));
         $this->assertTrue($list->has(new Author('name', 'email')));
-        $this->assertTrue($list->has(new Author('name1', 'email')));
     }
 
+    function testAddDifferentNameandEmail() {
+        $list = new AuthorList();
+        $list->add(new Author('name', 'email'));
+        $list->add(new Author('name1', 'email1'));
+        $this->assertEquals(2, count($list->getAll()));
+        $this->assertTrue($list->has(new Author('name', 'email')));
+        $this->assertTrue($list->has(new Author('name1', 'email1')));
+    }
 }

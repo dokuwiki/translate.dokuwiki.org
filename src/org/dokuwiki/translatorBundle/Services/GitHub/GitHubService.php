@@ -39,10 +39,15 @@ class GitHubService {
         return $this->gitHubUrlHack($result['ssh_url']);
     }
 
+    /**
+     * @param $url
+     * @return array|mixed
+     * @throws GitHubServiceException
+     */
     public function getUsernameAndRepositoryFromURL($url) {
         $result = preg_replace('#^(https://github.com/|git@.*?github.com:|git://github.com/)(.*)\.git$#', '$2', $url, 1, $counter);
         if ($counter === 0) {
-            throw new GitHubServiceException('Invalid GitHub URL: ' . $url);
+            throw new GitHubServiceException('Invalid GitHub clone URL: ' . $url);
         }
         $result = explode('/', $result);
 
@@ -54,6 +59,14 @@ class GitHubService {
         return str_replace('github.com', $this->gitHubUrl, $url);
     }
 
+    /**
+     * @param string $patchBranch   name of branch with language update
+     * @param string $branch        name of branch at remote
+     * @param string $languageCode
+     * @param string $url           remote url
+     * @param string $patchUrl      remote url
+     * @throws GitHubCreatePullRequestException
+     */
     public function createPullRequest($patchBranch, $branch, $languageCode, $url, $patchUrl) {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
         list($repoName, $ignored) = $this->getUsernameAndRepositoryFromURL($patchUrl);
