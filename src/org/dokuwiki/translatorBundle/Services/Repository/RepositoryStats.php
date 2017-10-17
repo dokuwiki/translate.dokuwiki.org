@@ -53,6 +53,11 @@ class RepositoryStats {
             $scores[$language] = $this->calcStatsForLanguage($translation);
         }
 
+        if($scores['en'] === 0 ) {
+            echo 'zero English strings available';
+            return;
+        }
+
         $max = $scores['en'];
         foreach ($scores as $language => $score) {
             $statsEntity = new LanguageStatsEntity();
