@@ -14,7 +14,7 @@ class PatchFormatCommand extends ContainerAwareCommand {
 
     protected function configure() {
         $this->setName('dokuwiki:updateLanguages')
-            ->setDescription('Updates all language information from local repository');
+            ->setDescription('Updates all language information from local repository. Refreshes the cached translation objects');
 
     }
 
