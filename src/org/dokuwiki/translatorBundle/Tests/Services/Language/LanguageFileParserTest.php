@@ -337,6 +337,8 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
  * german language file
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ *
+ * @package DokuWiki\lang\de\settings
 ';
 
         $this->assertEquals($expectedheader, $parser->getHeader());
