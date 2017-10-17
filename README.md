@@ -14,9 +14,14 @@ Configuration
 -----
 
 Copy app/config/parameters.yml.dist to app/config/parameters.yml and setup the configuration.
-Ensure you have a proper ssh key to your github account configured (no passphrase).
+The development version of the translation tool will create forks and perform pull requests to github.com. 
+To prevent these temporary repositories mix with your normal repositories, you have to setup a second github account for testing purposes.
+Ensure you have a proper ssh key to your github test account configured (no passphrase).
 
 http://sampreshan.svashishtha.com/2012/05/20/quicktip-github-multiple-accounts-access-with-ssh/
+
+For your default GitHub account you can use the `Host github.com`, while using e.g. `Host translationtesting.github.com` 
+for your test account. This last host should be configured in the parameters.yml of your local translation tool.
 
 Production setup
 ----------------

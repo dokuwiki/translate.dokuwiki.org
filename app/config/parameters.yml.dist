@@ -47,6 +47,7 @@ parameters:
     # GitHub url
     # you can change this on a development environment to setup a second ssh key for a second git account without
     # messing up your environment - http://sampreshan.svashishtha.com/2012/05/20/quicktip-github-multiple-accounts-access-with-ssh/
+    # Use e.g. Host justadomain.github.com for the second git account and Host github.com for your default account
     git_hub_url: github.com
 
     # Default locale. (there is just english)
