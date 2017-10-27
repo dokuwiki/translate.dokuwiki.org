@@ -136,7 +136,7 @@ abstract class Repository {
     }
 
     /**
-     * Update local repository if already exist by pull, otherwise
+     * Update local repository if already exist by pull, otherwise create local one
      *
      * @throws GitCloneException
      * @throws GitHubForkException
@@ -154,10 +154,10 @@ abstract class Repository {
             $remote = $this->behavior->createOriginURL($this->entity);
             $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getRepositoryPath());
         } catch (GitCloneException $e) {
-            $this->delete();
+            $this->deleteRepository();
             throw $e;
         } catch (GitHubForkException $e) {
-            $this->delete();
+            $this->deleteRepository();
             throw $e;
         }
         return true;
@@ -467,12 +467,20 @@ abstract class Repository {
         if (!$changes) throw new NoLanguageFileWrittenException();
     }
 
-    private function delete() {
-        $path = $this->buildBasePath();
+    /**
+     * Deletes the folder with the git repository checkout
+     */
+    private function deleteRepository() {
+        $path = $this->getRepositoryPath();
         if (!file_exists($path)) return;
         $this->rrmdir($path);
     }
 
+    /**
+     * Check if folder with git repository checkout exists
+     *
+     * @return bool
+     */
     public function hasGit() {
         return is_dir($this->getRepositoryPath());
     }
