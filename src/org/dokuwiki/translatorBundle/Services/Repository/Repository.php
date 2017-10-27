@@ -248,9 +248,13 @@ abstract class Repository {
      */
     private function saveLanguage($translations) {
         $langFolder = $this->buildBasePath() . 'lang/';
-        if (!file_exists($langFolder)) {
-            mkdir($langFolder, 0777, true);
+
+        // delete entire folder to ensure clean up deleted files
+        if (file_exists($langFolder)) {
+            $this->rrmdir($langFolder);
         }
+
+        mkdir($langFolder, 0777, true);
 
         foreach ($translations as $langCode => $files) {
             file_put_contents("$langFolder$langCode.ser", serialize($files));
@@ -283,10 +287,16 @@ abstract class Repository {
         return file_exists($this->getLockPath());
     }
 
+    /**
+     * Set lock in base folder of repository
+     */
     private function lock() {
         touch($this->getLockPath());
     }
 
+    /**
+     * Remove the lock
+     */
     private function unlock() {
         @unlink($this->getLockPath());
     }
