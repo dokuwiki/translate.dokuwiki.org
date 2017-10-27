@@ -31,12 +31,19 @@ class PlainBehavior implements RepositoryBehavior {
         );
     }
 
+    /**
+     * Return url of 'origin' repository, which is the original repository given
+     *
+     * @param RepositoryEntity $repository
+     * @return string
+     */
     function createOriginURL(RepositoryEntity $repository) {
         return $repository->getUrl();
     }
 
     /**
-     * Called before a pull
+     * Update repository from remote
+     *
      * @param GitRepository $git
      * @param RepositoryEntity $repository
      * @return bool true if the repository is changed

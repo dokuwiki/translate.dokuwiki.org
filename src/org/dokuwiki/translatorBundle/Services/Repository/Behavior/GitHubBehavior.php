@@ -47,7 +47,7 @@ class GitHubBehavior implements RepositoryBehavior {
     }
 
     /**
-     * Fork at Github and return url of the fork
+     * Fork original repo at Github and return url of the fork
      *
      * @param RepositoryEntity $repository
      * @return string Git URL of the fork
@@ -57,7 +57,7 @@ class GitHubBehavior implements RepositoryBehavior {
     }
 
     /**
-     * Update from original and push to fork
+     * Update from original and push to fork of translate tool
      *
      * @param GitRepository $git
      * @param RepositoryEntity $repository
