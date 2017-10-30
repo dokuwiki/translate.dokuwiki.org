@@ -9,8 +9,14 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class RepositoryCreateType extends AbstractType {
 
+    public static $ACTION_CREATE = 'create';
+    public static $ACTION_EDIT = 'edit';
+
+
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('name', 'text', array('label' => ucfirst($options['type']) . ' name'));
+        if($options['action'] == RepositoryCreateType::$ACTION_CREATE) {
+            $builder->add('name', 'text', array('label' => ucfirst($options['type']) . ' name'));
+        }
         $builder->add('email', 'text', array('label' => 'E-mail'));
         $builder->add('url', 'text', array('label' => 'Git clone url'));
         $builder->add('branch', 'text', array('label' => 'Main branch'));
@@ -31,7 +37,8 @@ class RepositoryCreateType extends AbstractType {
         $resolver->setDefaults(
             array(
                 'type' => RepositoryEntity::$TYPE_PLUGIN,
-                'validation_groups' => array(RepositoryEntity::$TYPE_PLUGIN)
+                'validation_groups' => array(RepositoryEntity::$TYPE_PLUGIN),
+                'action' => RepositoryCreateType::$ACTION_CREATE
             )
         );
     }

@@ -1,0 +1,60 @@
+{% extends 'dokuwikiTranslatorBundle:Default:index.html.twig' %}
+
+{% block content %}
+    <ul class="breadcrumb">
+        <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a> <span class="divider">/</span></li>
+        <li>
+            {% if repository.type == 'core' %}
+                <a href="{{ path("dokuwiki_translator_show") }} ">{{ repository.displayName|capitalize }}</a>
+            {% else %}
+                <a href="{{ path("dokuwiki_translator_show_extension", {'type': repository.type, 'name': repository.name}) }} ">{{ repository.displayName|capitalize }}</a>
+            {% endif %}
+            <span class="divider">/</span>
+        </li>
+        <li class="active">Edit Settings</li>
+    </ul>
+    <div class="container">
+        <div class="row">
+            <div class="span12">
+                <div class="page-header">
+                    <h1>Edit {{ form.vars.data.type|capitalize }} Settings</h1>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span6">
+                <p>
+                    Here you can edit the settings of your {{ form.vars.data.type }}. You can
+                    use this edit URL one time. After a succesfull save of this form you need to
+                    request a new edit URL for eventually other edits.
+                </p>
+
+                {% if errors is defined %}
+                    <ul>
+                        {% for error in errors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <form action="{{ path('dokuwiki_translator_extension_edit', {'type': repository.type, 'name': repository.name, 'key': repository.activationKey}) }}" class="form-horizontal" method="post">
+                    {{ form_widget(form) }}
+
+                    <div class="controls">
+                        <input type="submit" class="btn btn-primary" value="Update my {{ form.vars.data.type }}!"/>
+                        <a href="{{ path('dokuwiki_translator_extension_settings', {'type': repository.type, 'name': repository.name}) }}" class="btn">
+                            Abort
+                        </a>
+                    </div>
+                </form>
+            </div>
+            <div class="span6">
+                {% include 'dokuwikiTranslatorBundle:Template:explanation.html.twig'
+                    with { 'showname': false }
+                %}
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

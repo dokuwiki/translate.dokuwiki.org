@@ -480,7 +480,7 @@ abstract class Repository {
     /**
      * Deletes the folder with the git repository checkout
      */
-    private function deleteRepository() {
+    public function deleteRepository() {
         $path = $this->getRepositoryPath();
         if (!file_exists($path)) return;
         $this->rrmdir($path);

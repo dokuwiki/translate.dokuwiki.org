@@ -132,23 +132,52 @@ class RepositoryEntityRepository extends  EntityRepository {
     }
 
     /**
-     * @param $type
-     * @param $name
-     * @param $activationKey
+     * Returns repository if waiting for approval and the key matches
+     *
+     * @param string $type
+     * @param string $name
+     * @param string $activationKey
      * @return \org\dokuwiki\translatorBundle\Entity\RepositoryEntity
      */
     public function getRepositoryByNameAndActivationKey($type, $name, $activationKey) {
+        return $this->getRepositoryByNameAndKey($type, $name, $activationKey, $activation = true);
+    }
+
+    /**
+     * Returns editable repository, if is not waiting for approval and the key matches
+     *
+     * @param string $type
+     * @param string $name
+     * @param string $editKey
+     * @return \org\dokuwiki\translatorBundle\Entity\RepositoryEntity
+     */
+    public function getRepositoryByNameAndEditKey($type, $name, $editKey) {
+        return $this->getRepositoryByNameAndKey($type, $name, $editKey, $activation = false);
+    }
+
+    /**
+     * Returns repository for matching edit or activation key
+     *
+     * @param string $type
+     * @param string $name
+     * @param string $key
+     * @param bool $activation
+     * @return mixed
+     */
+    private function getRepositoryByNameAndKey($type, $name, $key, $activation = true) {
+        $operator = ($activation ? '=' : '<>');
+
         $query = $this->getEntityManager()->createQuery(
-            'SELECT repository
+            "SELECT repository
              FROM dokuwikiTranslatorBundle:RepositoryEntity repository
              WHERE repository.type = :type
              AND repository.name = :name
              AND repository.activationKey = :key
-             AND repository.state = :state'
+             AND repository.state $operator :state "
         );
         $query->setParameter('type', $type);
         $query->setParameter('name', $name);
-        $query->setParameter('key', $activationKey);
+        $query->setParameter('key', $key);
         $query->setParameter('state', RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);
         return $query->getSingleResult();
     }
