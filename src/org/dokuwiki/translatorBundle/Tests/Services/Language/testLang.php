@@ -21,6 +21,8 @@
  * @author Matthias Schulte <mailinglist@lupo49.de>
  * @author Paul Lachewsky <kaeptn.haddock@gmail.com>
  * @author Pierre Corell <info@joomla-praxis.de>
+ * @author Name Surname
+ * @author <info@test2.de>
  *
  *
  * @package DokuWiki\lang\de\settings

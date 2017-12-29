@@ -85,8 +85,13 @@ class LocalText {
 
         /** @var Author $author */
         foreach ($authors as $author) {
-            if ($author->getName() === '') continue;
-            $authorName = $this->escapeComment($author->getName());
+            if ($author->getName() === '' && $author->getEmail() === '') continue;
+            $name = $author->getName();
+            if($name === '') {
+                $user = explode('@', $author->getEmail(), 2);
+                $name = $user[0];
+            }
+            $authorName = $this->escapeComment($name);
             $php.= " * @author $authorName";
             if ($author->getEmail() !== '') {
                 $email = $this->escapeComment($author->getEmail());

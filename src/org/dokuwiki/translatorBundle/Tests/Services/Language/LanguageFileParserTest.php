@@ -189,6 +189,73 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * handle multiple loosy defined author tags
+     */
+    function testAuthorWithoutBrackets() {
+        $parser = new LanguageFileParserTestDummy();
+        $parser->setAuthor(new AuthorList());
+        $parser->setContent("some text\n * @var string some text\n   * @author onlyemail@example.com\n*/ text");
+        $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processMultiLineComment());
+
+        $expected = new AuthorList();
+        $expected->add(new Author('', 'onlyemail@example.com'));
+        $this->assertEquals($expected, $parser->getAuthor());
+        $this->assertEquals(' text', $parser->getContent());
+
+    }
+
+    /**
+     * handle multiple loosy defined author tags
+     */
+    function testAuthorWithoutEmail() {
+        $parser = new LanguageFileParserTestDummy();
+        $parser->setAuthor(new AuthorList());
+        $parser->setContent("some text\n * @var string some text\n   * @author    Only Name\n*/ text");
+        $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processMultiLineComment());
+
+        $expected = new AuthorList();
+        $expected->add(new Author('Only Name', ''));
+        $this->assertEquals($expected, $parser->getAuthor());
+        $this->assertEquals(' text', $parser->getContent());
+
+    }
+
+    /**
+     * handle multiple loosy defined author tags
+     */
+    function testAuthorOnlyemailinbrackets() {
+        $parser = new LanguageFileParserTestDummy();
+        $parser->setAuthor(new AuthorList());
+        $parser->setContent("some text\n * @var string some text\n   * @author   <onlybrackets@example.com>\n*/ text");
+        $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processMultiLineComment());
+
+        $expected = new AuthorList();
+        $expected->add(new Author('', 'onlybrackets@example.com'));
+        $this->assertEquals($expected, $parser->getAuthor());
+        $this->assertEquals(' text', $parser->getContent());
+
+    }
+
+    /**
+     * handle multiple loosy defined author tags
+     */
+    function testAuthorWithoutnameMultiple() {
+        $parser = new LanguageFileParserTestDummy();
+        $parser->setAuthor(new AuthorList());
+        $parser->setContent("some text\n * @var string some text\n   * @author onlyemail@example.com\n* @author    Only Name\n* @author <onlybrackets@example.com>\n*/ text");
+        $this->assertEquals(LanguageFileParser::$MODE_PHP, $parser->processMultiLineComment());
+
+        $expected = new AuthorList();
+        $expected->add(new Author('', 'onlyemail@example.com'));
+        $expected->add(new Author('Only Name', ''));
+        $expected->add(new Author('', 'onlybrackets@example.com'));
+        $this->assertEquals($expected, $parser->getAuthor());
+        $this->assertEquals(' text', $parser->getContent());
+
+    }
+
+
+    /**
      * handle @author with trailing semicolon (however it is invalid phpdocs syntax)
      */
     function testIssue38() {
@@ -342,7 +409,7 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
 ';
 
         $this->assertEquals($expectedheader, $parser->getHeader());
-        $this->assertEquals(18, count($parser->getAuthor()->getAll()));
+        $this->assertEquals(20, count($parser->getAuthor()->getAll()));
         $this->assertEquals(268, count($parser->getLang()));
         $this->assertEquals(41, count($parser->getLangByKey('js')));
     }
@@ -354,7 +421,7 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $parser->setContent($content);
         $parser->parse();
 
-        $this->assertEquals(18, count($parser->getAuthor()->getAll()));
+        $this->assertEquals(20, count($parser->getAuthor()->getAll()));
         $this->assertEquals(268, count($parser->getLang()));
         $this->assertEquals(41, count($parser->getLangByKey('js')));
     }
