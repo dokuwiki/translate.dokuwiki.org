@@ -5,7 +5,6 @@ namespace org\dokuwiki\translatorBundle\Controller;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
-use org\dokuwiki\translatorBundle\Form\RepositoryEditType;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,6 +61,11 @@ class ExtensionController extends Controller implements InitializableController 
         return $this->render('dokuwikiTranslatorBundle:Extension:add.html.twig', $data);
     }
 
+    /**
+     * Stores data of new extension
+     *
+     * @param RepositoryEntity $repository
+     */
     private function addExtension(RepositoryEntity $repository) {
         $api = $this->get('doku_wiki_repository_api');
 
@@ -177,6 +181,11 @@ class ExtensionController extends Controller implements InitializableController 
 
     }
 
+    /**
+     * Store edit key and sent one-time edit url
+     *
+     * @param RepositoryEntity $repository
+     */
     private function createAndSentEditKey(RepositoryEntity $repository) {
         $repository->setActivationKey($this->generateActivationKey($repository));
         $entityManager = $this->getDoctrine()->getManager();
@@ -239,15 +248,21 @@ class ExtensionController extends Controller implements InitializableController 
         return $this->render('dokuwikiTranslatorBundle:Extension:edit.html.twig', $data);
     }
 
-    private function updateExtension(RepositoryEntity $repositoryEntity, $originalvalues) {
+    /**
+     * Stores updated extension data, and delete cloned repository if obsolete
+     *
+     * @param RepositoryEntity $repositoryEntity
+     * @param array $originalValues
+     */
+    private function updateExtension(RepositoryEntity $repositoryEntity, $originalValues) {
         $repositoryEntity->setLastUpdate(0);
         $repositoryEntity->setActivationKey('');
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->merge($repositoryEntity);
         $entityManager->flush();
 
-        $changed = $originalvalues['branch'] !== $repositoryEntity->getBranch()
-                || $originalvalues['url'] !== $repositoryEntity->getUrl();
+        $changed = $originalValues['branch'] !== $repositoryEntity->getBranch()
+                || $originalValues['url'] !== $repositoryEntity->getUrl();
 
         if($changed) {
             $repository = $this->get('repository_manager')->getRepository($repositoryEntity);
