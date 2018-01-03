@@ -189,12 +189,31 @@ class LanguageFileParser {
             }
 
             $line .= "\n";
-            if(preg_match('/\* @author:? (.+?)(?: <(.*?)>)?\n/i', $line, $matches)) {
-                $this->author->add(new Author(trim($matches[1]), isset($matches[2])?trim($matches[2]):''));
+            if(preg_match('/\* @author:?[ ]+<(.*?)>\n/i', $line, $matches)) {
+                $this->author->add(new Author('', trim($matches[1])));
+                continue;
+            }elseif(preg_match('/\* @author:? (.+?)(?: <(.*?)>)?\n/i', $line, $matches)) {
+                $name = trim($matches[1]);
+                $email = '';
+                if(isset($matches[2])) {
+                    $email = trim($matches[2]);
+                } else {
+                    $nameparts = explode(" ", $name);
+                    foreach(array_reverse($nameparts) as $namepart) {
+                        $trimmed = trim($namepart);
+                        $isEmail = filter_var($trimmed, FILTER_VALIDATE_EMAIL);
+                        if($isEmail) {
+                            $name = trim(str_replace($trimmed, '', $name));
+                            $email = $trimmed;
+                            break;
+                        }
+                    }
+                }
+                $this->author->add(new Author($name, $email));
                 continue;
             }
 
-            $multilineMarker = '*';
+                $multilineMarker = '*';
             if ($this->stringStartsWith($line, $multilineMarker)) {
                 $line = substr($line, strlen($multilineMarker));
                 $line = ltrim($line, ' ');

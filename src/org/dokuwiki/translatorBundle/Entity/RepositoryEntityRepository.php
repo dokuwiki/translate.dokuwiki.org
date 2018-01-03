@@ -8,6 +8,9 @@ use Doctrine\ORM\Query;
 
 class RepositoryEntityRepository extends  EntityRepository {
 
+    /**
+     * @return RepositoryEntity
+     */
     public function getCoreRepository() {
         $query = $this->getEntityManager()->createQuery(
             'SELECT repository
@@ -23,6 +26,7 @@ class RepositoryEntityRepository extends  EntityRepository {
      * @param string $type
      * @param string $name
      * @return RepositoryEntity
+     *
      * @throws \Doctrine\ORM\NoResultException
      */
     public function getRepository($type, $name) {
@@ -35,6 +39,10 @@ class RepositoryEntityRepository extends  EntityRepository {
         return $repository;
     }
 
+    /**
+     * @param $language
+     * @return array
+     */
     public function getCoreRepositoryInformation($language) {
         $query = $this->getEntityManager()->createQuery(
             'SELECT stats.completionPercent, repository.displayName, repository.state, repository.englishReadonly
@@ -58,6 +66,10 @@ class RepositoryEntityRepository extends  EntityRepository {
         }
     }
 
+    /**
+     * @param $language
+     * @return array
+     */
     public function getExtensionRepositoryInformation($language) {
         $query = $this->getEntityManager()->createQuery('
             SELECT stats.completionPercent, repository.name, repository.type, repository.displayName, repository.state, repository.englishReadonly
@@ -82,14 +94,27 @@ class RepositoryEntityRepository extends  EntityRepository {
         }
     }
 
+    /**
+     * @return array
+     */
     public function getCoreTranslation() {
         return $this->getTranslation(RepositoryEntity::$TYPE_CORE, 'dokuwiki');
     }
 
+    /**
+     * @param $type
+     * @param $name
+     * @return array
+     */
     public function getExtensionTranslation($type, $name) {
         return $this->getTranslation($type, $name);
     }
 
+    /**
+     * @param $type
+     * @param $name
+     * @return array
+     */
     private function getTranslation($type, $name) {
         $query = $this->getEntityManager()->createQuery('
         SELECT repository, translations, lang
@@ -106,23 +131,63 @@ class RepositoryEntityRepository extends  EntityRepository {
         return $query->getSingleResult();
     }
 
-
+    /**
+     * Returns repository if waiting for approval and the key matches
+     *
+     * @param string $type
+     * @param string $name
+     * @param string $activationKey
+     * @return \org\dokuwiki\translatorBundle\Entity\RepositoryEntity
+     */
     public function getRepositoryByNameAndActivationKey($type, $name, $activationKey) {
+        return $this->getRepositoryByNameAndKey($type, $name, $activationKey, $activation = true);
+    }
+
+    /**
+     * Returns editable repository, if is not waiting for approval and the key matches
+     *
+     * @param string $type
+     * @param string $name
+     * @param string $editKey
+     * @return \org\dokuwiki\translatorBundle\Entity\RepositoryEntity
+     */
+    public function getRepositoryByNameAndEditKey($type, $name, $editKey) {
+        return $this->getRepositoryByNameAndKey($type, $name, $editKey, $activation = false);
+    }
+
+    /**
+     * Returns repository for matching edit or activation key
+     *
+     * @param string $type
+     * @param string $name
+     * @param string $key
+     * @param bool $activation
+     * @return mixed
+     */
+    private function getRepositoryByNameAndKey($type, $name, $key, $activation = true) {
+        $operator = ($activation ? '=' : '<>');
+
         $query = $this->getEntityManager()->createQuery(
-            'SELECT repository
+            "SELECT repository
              FROM dokuwikiTranslatorBundle:RepositoryEntity repository
              WHERE repository.type = :type
              AND repository.name = :name
              AND repository.activationKey = :key
-             AND repository.state = :state'
+             AND repository.state $operator :state "
         );
         $query->setParameter('type', $type);
         $query->setParameter('name', $name);
-        $query->setParameter('key', $activationKey);
+        $query->setParameter('key', $key);
         $query->setParameter('state', RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);
         return $query->getSingleResult();
     }
 
+    /**
+     * @param $maxAge
+     * @param $maxResults
+     * @param $maxErrors
+     * @return \org\dokuwiki\translatorBundle\Entity\RepositoryEntity[]
+     */
     public function getRepositoriesToUpdate($maxAge, $maxResults, $maxErrors) {
         $query = $this->getEntityManager()->createQuery(
             'SELECT repository

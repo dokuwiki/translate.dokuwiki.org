@@ -136,7 +136,7 @@ abstract class Repository {
     }
 
     /**
-     * Update local repository if already exist by pull, otherwise
+     * Update local repository if already exist by pull, otherwise create local one
      *
      * @throws GitCloneException
      * @throws GitHubForkException
@@ -152,12 +152,12 @@ abstract class Repository {
         //no repository exists yet
         try {
             $remote = $this->behavior->createOriginURL($this->entity);
-            $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getRepositoryPath());
+            $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getCloneDirectoryPath());
         } catch (GitCloneException $e) {
-            $this->delete();
+            $this->deleteCloneDirectory();
             throw $e;
         } catch (GitHubForkException $e) {
-            $this->delete();
+            $this->deleteCloneDirectory();
             throw $e;
         }
         return true;
@@ -167,8 +167,8 @@ abstract class Repository {
      * Try to open repository, if existing set the GitRepository object
      */
     private function openRepository() {
-        if ($this->gitService->isRepository($this->getRepositoryPath())) {
-            $this->git = $this->gitService->openRepository($this->getRepositoryPath());
+        if ($this->gitService->isRepository($this->getCloneDirectoryPath())) {
+            $this->git = $this->gitService->openRepository($this->getCloneDirectoryPath());
         }
     }
 
@@ -177,7 +177,7 @@ abstract class Repository {
      *
      * @return string
      */
-    private function getRepositoryPath() {
+    private function getCloneDirectoryPath() {
         return $this->buildBasePath() . 'repository/';
     }
 
@@ -248,9 +248,13 @@ abstract class Repository {
      */
     private function saveLanguage($translations) {
         $langFolder = $this->buildBasePath() . 'lang/';
-        if (!file_exists($langFolder)) {
-            mkdir($langFolder, 0777, true);
+
+        // delete entire folder to ensure clean up deleted files
+        if (file_exists($langFolder)) {
+            $this->rrmdir($langFolder);
         }
+
+        mkdir($langFolder, 0777, true);
 
         foreach ($translations as $langCode => $files) {
             file_put_contents("$langFolder$langCode.ser", serialize($files));
@@ -283,10 +287,16 @@ abstract class Repository {
         return file_exists($this->getLockPath());
     }
 
+    /**
+     * Set lock in base folder of repository
+     */
     private function lock() {
         touch($this->getLockPath());
     }
 
+    /**
+     * Remove the lock
+     */
     private function unlock() {
         @unlink($this->getLockPath());
     }
@@ -374,7 +384,7 @@ abstract class Repository {
         $this->openRepository();
 
         // clone the local temporary git repository
-        $tmpGit = $this->gitService->createRepositoryFromRemote($this->getRepositoryPath(), $tmpDir);
+        $tmpGit = $this->gitService->createRepositoryFromRemote($this->getCloneDirectoryPath(), $tmpDir);
         // add files to local temporary git repository
         $this->applyChanges($tmpGit, $tmpDir, $update);
         // commit files to local temporary git repository
@@ -467,14 +477,22 @@ abstract class Repository {
         if (!$changes) throw new NoLanguageFileWrittenException();
     }
 
-    private function delete() {
-        $path = $this->buildBasePath();
+    /**
+     * Deletes the folder with the git repository checkout
+     */
+    public function deleteCloneDirectory() {
+        $path = $this->getCloneDirectoryPath();
         if (!file_exists($path)) return;
         $this->rrmdir($path);
     }
 
+    /**
+     * Check if folder with git repository checkout exists
+     *
+     * @return bool
+     */
     public function hasGit() {
-        return is_dir($this->getRepositoryPath());
+        return is_dir($this->getCloneDirectoryPath());
     }
 
     /**

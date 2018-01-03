@@ -83,6 +83,9 @@ class RepositoryManager {
         $this->gitHubStatus = $gitHubStatus;
     }
 
+    /**
+     * @return \org\dokuwiki\translatorBundle\Services\Repository\Repository[]
+     */
     public function getRepositoriesToUpdate() {
         $repositories = $this->findRepositoriesToUpdate();
         $result = array();
@@ -93,6 +96,9 @@ class RepositoryManager {
         return $result;
     }
 
+    /**
+     * @return \org\dokuwiki\translatorBundle\Entity\RepositoryEntity[]
+     */
     private function findRepositoriesToUpdate() {
 
         try {
@@ -104,7 +110,7 @@ class RepositoryManager {
 
     /**
      * @param RepositoryEntity $repository
-     * @return Repository
+     * @return \org\dokuwiki\translatorBundle\Services\Repository\Repository
      */
     public function getRepository(RepositoryEntity $repository) {
         $behavior = $this->getRepositoryBehavior($repository);
@@ -121,6 +127,10 @@ class RepositoryManager {
                 $this->gitService, $behavior, $this->logger, $this->mailService);
     }
 
+    /**
+     * @param RepositoryEntity $repository
+     * @return \org\dokuwiki\translatorBundle\Services\Repository\Behavior\RepositoryBehavior
+     */
     private function getRepositoryBehavior(RepositoryEntity $repository) {
         $url = $repository->getUrl();
         if (preg_match('/^(git:\/\/|https:\/\/|git@)github\.com/i', $url)) {

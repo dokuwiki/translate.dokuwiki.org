@@ -27,4 +27,61 @@
         <th>Tags</th>
         <td>{{ repository.tags }}</td>
     </tr>
+    <tr>
+        <th>Popularity score</th>
+        <td>{{ repository.popularity }}</td>
+    </tr>
+    <tr>
+        <th>Git clone URL</th>
+        <td>{{ repository.url }}</td>
+    </tr>
+    <tr>
+        <th>Branch</th>
+        <td>{{ repository.branch }}</td>
+    </tr>
+    <tr>
+        <th>English&nbsp;read&#8209;only</th>
+        <td>
+            {% if repository.englishreadonly %}
+                Yes
+            {% else %}
+                No
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Last git update</th>
+        <td>{% if repository.lastupdate == 0 %}
+                None
+            {% else %}
+                {{ repository.lastupdate|date("m/d/Y") }}</td>
+            {% endif %}
+    </tr>
+    <tr>
+        <th>State</th>
+        <td>{% if repository.state == 'waiting' %}
+                Waiting for approval
+            {% elseif repository.state == 'initialProcessing' %}
+                Approved. Now initial processing.
+            {% elseif repository.state == 'active' %}
+                Active.
+            {% elseif repository.state == 'error' %}
+                Error happened.
+            {% else %}
+                {{ repository.state }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Error count</th>
+        <td>{{ repository.errorCount }}</td>
+    </tr>
+    {#<tr>#}
+        {#<th>Last stored error message</th>#}
+        {#<td>{{ repository.errorMsg }}</td>#}
+    {#</tr>#}
+    {#<tr>#}
+        {#<th>Key</th>#}
+        {#<td>{{ repository.activationKey }}</td>#}
+    {#</tr>#}
 </table>

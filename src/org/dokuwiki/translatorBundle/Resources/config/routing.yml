@@ -20,6 +20,18 @@ dokuwiki_translator_extension_activate:
     requirements:
         type: plugin|template
 
+dokuwiki_translator_extension_settings:
+    pattern:  /{type}/{name}/settings
+    defaults: { _controller: dokuwikiTranslatorBundle:Extension:settings}
+    requirements:
+        type: plugin|template
+
+dokuwiki_translator_extension_edit:
+    pattern:  /{type}/{name}/edit/{key}
+    defaults: { _controller: dokuwikiTranslatorBundle:Extension:edit}
+    requirements:
+        type: plugin|template
+
 dokuwiki_translate:
     pattern:  /translate/dokuwiki
     defaults: { _controller: dokuwikiTranslatorBundle:Translation:translateCore }
