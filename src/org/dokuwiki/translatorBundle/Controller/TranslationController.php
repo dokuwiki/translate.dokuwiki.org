@@ -74,7 +74,7 @@ class TranslationController extends Controller implements InitializableControlle
             return $this->redirect($this->generateUrl('dokuwiki_translator_show_extension', $param));
         }
 
-        $validator = $this->validateTranslation($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
+        $validator = $this->getUserTranslationValidator($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
         $newTranslation = $validator->validate();
         $errors = $validator->getErrors();
         if (!empty($errors)) {
@@ -106,7 +106,7 @@ class TranslationController extends Controller implements InitializableControlle
         return $response;
     }
 
-    protected function validateTranslation($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail) {
+    protected function getUserTranslationValidator($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail) {
         /** @var UserTranslationValidatorFactory $validatorFactory */
         $validatorFactory = $this->get('user_translation_validator_factory');
         $validator = $validatorFactory->getInstance($defaultTranslation, $previousTranslation,
