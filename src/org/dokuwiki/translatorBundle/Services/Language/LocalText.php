@@ -108,7 +108,7 @@ class LocalText {
         return $str;
     }
 
-    private function renderArray($array, $prefix = '', $elementsWritten = false) {
+    private function renderArray($array, $prefix = '', &$elementsWritten = false) {
         $php = '';
 
         foreach ($array as $key => $text) {
