@@ -444,7 +444,7 @@ abstract class Repository {
      * Create new language file(s) in folder of git repository and add these to git
      *
      * @param GitRepository $git
-     * @param string $folder
+     * @param string $folder temporary clone directory of repository
      * @param TranslationUpdateEntity $update
      *
      * @throws NoLanguageFileWrittenException

@@ -27,22 +27,39 @@ class LocalText {
         $this->header = $header;
     }
 
+    /**
+     * @return array|string
+     */
     public function getContent() {
         return $this->content;
     }
 
+    /**
+     * @return string
+     */
     public function getType() {
         return $this->type;
     }
 
+    /**
+     * @return AuthorList
+     */
     public function getAuthors() {
         return $this->authors;
     }
 
+    /**
+     * @return string
+     */
     public function getHeader() {
         return $this->header;
     }
 
+    /**
+     * Returns the rendered content of a language file
+     *
+     * @return string
+     */
     public function render() {
         if ($this->type === LocalText::$TYPE_MARKUP) {
             return $this->getContent();
@@ -108,6 +125,14 @@ class LocalText {
         return $str;
     }
 
+    /**
+     * @param array $array associative array with keys and localized strings
+     * @param string $prefix string included just for the key
+     * @param bool $elementsWritten by reference give back whether the inner loop has written elements
+     * @return string rendered content
+     *
+     * @throws LanguageFileIsEmptyException
+     */
     private function renderArray($array, $prefix = '', &$elementsWritten = false) {
         $php = '';
 
@@ -125,6 +150,7 @@ class LocalText {
             $php .= sprintf('%-30s', $left). " = '$text';\n";
             $elementsWritten = true;
         }
+
         if ($prefix === '') { // outer loop
             if (!$elementsWritten) {
                 throw new LanguageFileIsEmptyException();
