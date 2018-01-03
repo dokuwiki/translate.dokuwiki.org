@@ -5,6 +5,7 @@ namespace org\dokuwiki\translatorBundle\Controller;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
+use org\dokuwiki\translatorBundle\Services\Language\LocalText;
 use org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer;
 use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -74,7 +75,7 @@ class TranslationController extends Controller implements InitializableControlle
             return $this->redirect($this->generateUrl('dokuwiki_translator_show_extension', $param));
         }
 
-        $validator = $this->validateTranslation($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
+        $validator = $this->getUserTranslationValidator($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
         $newTranslation = $validator->validate();
         $errors = $validator->getErrors();
         if (!empty($errors)) {
@@ -106,7 +107,15 @@ class TranslationController extends Controller implements InitializableControlle
         return $response;
     }
 
-    protected function validateTranslation($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail) {
+    /**
+     * @param LocalText[] $defaultTranslation
+     * @param LocalText[] $previousTranslation
+     * @param array       $userTranslation
+     * @param string      $author
+     * @param string      $authorEmail
+     * @return \org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidator
+     */
+    protected function getUserTranslationValidator($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail) {
         /** @var UserTranslationValidatorFactory $validatorFactory */
         $validatorFactory = $this->get('user_translation_validator_factory');
         $validator = $validatorFactory->getInstance($defaultTranslation, $previousTranslation,
