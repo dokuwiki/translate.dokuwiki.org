@@ -251,7 +251,7 @@ class ExtensionController extends Controller implements InitializableController 
 
         if($changed) {
             $repository = $this->get('repository_manager')->getRepository($repositoryEntity);
-            $repository->deleteRepository();
+            $repository->deleteCloneDirectory();
         }
     }
 }

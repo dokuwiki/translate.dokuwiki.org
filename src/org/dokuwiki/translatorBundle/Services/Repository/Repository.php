@@ -152,12 +152,12 @@ abstract class Repository {
         //no repository exists yet
         try {
             $remote = $this->behavior->createOriginURL($this->entity);
-            $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getRepositoryPath());
+            $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getCloneDirectoryPath());
         } catch (GitCloneException $e) {
-            $this->deleteRepository();
+            $this->deleteCloneDirectory();
             throw $e;
         } catch (GitHubForkException $e) {
-            $this->deleteRepository();
+            $this->deleteCloneDirectory();
             throw $e;
         }
         return true;
@@ -167,8 +167,8 @@ abstract class Repository {
      * Try to open repository, if existing set the GitRepository object
      */
     private function openRepository() {
-        if ($this->gitService->isRepository($this->getRepositoryPath())) {
-            $this->git = $this->gitService->openRepository($this->getRepositoryPath());
+        if ($this->gitService->isRepository($this->getCloneDirectoryPath())) {
+            $this->git = $this->gitService->openRepository($this->getCloneDirectoryPath());
         }
     }
 
@@ -177,7 +177,7 @@ abstract class Repository {
      *
      * @return string
      */
-    private function getRepositoryPath() {
+    private function getCloneDirectoryPath() {
         return $this->buildBasePath() . 'repository/';
     }
 
@@ -384,7 +384,7 @@ abstract class Repository {
         $this->openRepository();
 
         // clone the local temporary git repository
-        $tmpGit = $this->gitService->createRepositoryFromRemote($this->getRepositoryPath(), $tmpDir);
+        $tmpGit = $this->gitService->createRepositoryFromRemote($this->getCloneDirectoryPath(), $tmpDir);
         // add files to local temporary git repository
         $this->applyChanges($tmpGit, $tmpDir, $update);
         // commit files to local temporary git repository
@@ -480,8 +480,8 @@ abstract class Repository {
     /**
      * Deletes the folder with the git repository checkout
      */
-    public function deleteRepository() {
-        $path = $this->getRepositoryPath();
+    public function deleteCloneDirectory() {
+        $path = $this->getCloneDirectoryPath();
         if (!file_exists($path)) return;
         $this->rrmdir($path);
     }
@@ -492,7 +492,7 @@ abstract class Repository {
      * @return bool
      */
     public function hasGit() {
-        return is_dir($this->getRepositoryPath());
+        return is_dir($this->getCloneDirectoryPath());
     }
 
     /**
