@@ -45,7 +45,7 @@ class ExtensionController extends Controller implements InitializableController 
 
         $options['type'] = $type;
         $options['validation_groups'] = array('Default', $type);
-        $options['action'] = RepositoryCreateType::$ACTION_CREATE;
+        $options['action'] = RepositoryCreateType::ACTION_CREATE;
         $form = $this->createForm(new RepositoryCreateType(), $repository, $options);
 
         if ($request->isMethod('POST')) {
@@ -220,7 +220,7 @@ class ExtensionController extends Controller implements InitializableController 
 
         $options['type'] = $type;
         $options['validation_groups'] = array('Default', $type);
-        $options['action'] = RepositoryCreateType::$ACTION_EDIT;
+        $options['action'] = RepositoryCreateType::ACTION_EDIT;
         $form = $this->createForm(new RepositoryCreateType(), $repository, $options);
 
         if ($request->isMethod('POST')) {
