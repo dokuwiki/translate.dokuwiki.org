@@ -79,8 +79,10 @@ class RepositoryErrorReporter {
     }
 
     /**
+     * Returns for exceptions that needs attention of user an email template
+     *
      * @param \Exception $e
-     * @return string
+     * @return string template referrer
      */
     private function determineEmailTemplateUpdate(\Exception $e) {
         if ($e instanceof GitPullException) {
