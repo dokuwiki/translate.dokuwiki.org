@@ -74,7 +74,14 @@
     </tr>
     <tr>
         <th>Error count</th>
-        <td>{{ repository.errorCount }}</td>
+        <td>
+            {{ repository.errorCount }}
+            {% if repository.errorCount >= maxErrorCount %}
+                <br /><span style="color:#dd514c">Translation submissions to the git repository are paused because
+                of {{ maxErrorCount }} or more errors. Check your email for the error messages or get in contact via forum,
+                mailinglist or <a href="https://github.com/dokufreaks/dokuwiki-translation">issue tracker</a>.</span>
+            {% endif %}
+        </td>
     </tr>
     {#<tr>#}
         {#<th>Last stored error message</th>#}

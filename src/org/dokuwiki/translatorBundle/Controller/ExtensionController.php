@@ -52,6 +52,7 @@ class ExtensionController extends Controller implements InitializableController 
             if ($form->isValid()) {
                 $this->addExtension($repository);
                 $data['repository'] = $repository;
+                $data['maxErrorCount'] = $this->container->getParameter('maxErrorCount');
                 return $this->render('dokuwikiTranslatorBundle:Extension:added.html.twig', $data);
             }
         }
@@ -175,7 +176,7 @@ class ExtensionController extends Controller implements InitializableController 
             }
             $data['form'] = $form->createView();
         }
-
+        $data['maxErrorCount'] = $this->container->getParameter('maxErrorCount');
         $data['repository'] = $repository;
         return $this->render('dokuwikiTranslatorBundle:Extension:settings.html.twig', $data);
 
@@ -242,7 +243,6 @@ class ExtensionController extends Controller implements InitializableController 
                 return $this->redirect($this->generateUrl('dokuwiki_translator_extension_settings', $param));
             }
         }
-
         $data['repository'] = $repository;
         $data['form'] = $form->createView();
         return $this->render('dokuwikiTranslatorBundle:Extension:edit.html.twig', $data);
