@@ -3,6 +3,7 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Github\Exception\RuntimeException;
 use Monolog\Logger;
+use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitAddException;
 use org\dokuwiki\translatorBundle\Services\Git\GitBranchException;
 use org\dokuwiki\translatorBundle\Services\Git\GitCheckoutException;
@@ -493,6 +494,16 @@ abstract class Repository {
      */
     public function hasGit() {
         return is_dir($this->getCloneDirectoryPath());
+    }
+
+    /**
+     * Get information about the open pull requests i.e. url and count
+     *
+     * @param LanguageNameEntity $languageNameEntity
+     * @return array with count and list url
+     */
+    public function getOpenPRlistInfo(LanguageNameEntity $languageNameEntity) {
+        return $this->behavior->getOpenPRlistInfo($this->entity, $languageNameEntity);
     }
 
     /**

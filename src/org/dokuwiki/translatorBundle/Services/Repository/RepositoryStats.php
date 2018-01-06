@@ -45,7 +45,7 @@ class RepositoryStats {
     public function createStats($translations, RepositoryEntity $repository) {
         $scores = array();
         if (!isset($translations['en'])) {
-            echo 'none created';
+            echo 'none created ';
             return;
         }
 
@@ -54,7 +54,7 @@ class RepositoryStats {
         }
 
         if($scores['en'] === 0 ) {
-            echo 'zero English strings available';
+            echo 'zero English strings available ';
             return;
         }
 

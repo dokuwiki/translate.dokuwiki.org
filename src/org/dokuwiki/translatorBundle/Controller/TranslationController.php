@@ -202,6 +202,7 @@ class TranslationController extends Controller implements InitializableControlle
             }
         }
 
+        $data['openPR'] = $this->getOpenPRlistInfo($repositoryEntity, $data['targetLanguage']);
         $data['captcha'] = $this->getCaptchaForm()->createView();
 
         return $this->render('dokuwikiTranslatorBundle:Translate:translate.html.twig', $data);
@@ -242,6 +243,19 @@ class TranslationController extends Controller implements InitializableControlle
      */
     private function getLanguageNameEntityRepository() {
         return $this->entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
+    }
+
+    /**
+     * Get information about the open pull requests of the given language
+     *
+     * @param $repositoryEntity
+     * @param $languageNameEntity
+     * @return array with string listURL and int count
+     */
+    private function getOpenPRlistInfo($repositoryEntity, $languageNameEntity) {
+        $repositoryManager = $this->getRepositoryManager();
+        $repository = $repositoryManager->getRepository($repositoryEntity);
+        return $repository->getOpenPRlistInfo($languageNameEntity);
     }
 
     /**

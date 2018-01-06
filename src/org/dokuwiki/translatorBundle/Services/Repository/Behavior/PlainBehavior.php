@@ -2,6 +2,7 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Repository\Behavior;
 
+use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
@@ -14,12 +15,12 @@ class PlainBehavior implements RepositoryBehavior {
      */
     private $mailService;
 
-    function __construct($mailService) {
+    public function __construct($mailService) {
         $this->mailService = $mailService;
     }
 
 
-    function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) {
+    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) {
         $patch = $tempGit->createPatch();
 
         $this->mailService->sendPatchEmail(
@@ -37,7 +38,7 @@ class PlainBehavior implements RepositoryBehavior {
      * @param RepositoryEntity $repository
      * @return string
      */
-    function createOriginURL(RepositoryEntity $repository) {
+    public function createOriginURL(RepositoryEntity $repository) {
         return $repository->getUrl();
     }
 
@@ -48,11 +49,25 @@ class PlainBehavior implements RepositoryBehavior {
      * @param RepositoryEntity $repository
      * @return bool true if the repository is changed
      */
-    function pull(GitRepository $git, RepositoryEntity $repository) {
+    public function pull(GitRepository $git, RepositoryEntity $repository) {
         return $git->pull('origin', $repository->getBranch()) === GitRepository::$PULL_CHANGED;
     }
 
-    function isFunctional() {
+    public function isFunctional() {
         return true;
+    }
+
+    /**
+     * Get information about the open pull requests i.e. url and count
+     *
+     * @param RepositoryEntity $repository
+     * @param LanguageNameEntity $language
+     * @return array
+     */
+    public function getOpenPRlistInfo(RepositoryEntity $repository, LanguageNameEntity $language) {
+        return array(
+            'count' => 0,
+            'listURL' => ''
+        );
     }
 }

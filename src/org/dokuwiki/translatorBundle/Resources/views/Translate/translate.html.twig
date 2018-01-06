@@ -32,8 +32,29 @@
                 </p>
                 <p>
                     When you're done click the submit button. Your changes will be automatically submitted to the developers.
-                    You can find your changes <a href="https://github.com/dokuwiki-translate">here</a>.
+                    {% if openPR.count == 0 %}
+                        {% if openPR.listURL == '' %}
+                            You can find your changes <a href="https://github.com/dokuwiki-translate?tab=repositories">here</a>.
+                        {% else %}
+                            You can find previous {{ targetLanguage.name }} translation submissions
+                            <a href="{{ openPR.listURL }}">here</a>.
+                        {% endif %}
+                    {% endif %}
                 </p>
+
+                {% if openPR.count > 0 %}
+                    <div class="alert alert-info">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        There
+                        {% if openPR.count == 1%}
+                            is <b>1 translation</b>
+                        {% else %}
+                            are <b>{{ openPR.count }} translations</b>
+                        {% endif %}
+                        not merged for the {{ targetLanguage.name }} translation of the {{ repository.displayName }}.
+                        You can find open submissions at <a href="{{ openPR.listURL }}">GitHub</a>.
+                    </div>
+                {% endif %}
 
                 <h2>{{ targetLanguage.name }} translation</h2>
 

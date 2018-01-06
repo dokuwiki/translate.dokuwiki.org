@@ -83,4 +83,33 @@ class GitHubService {
         }
     }
 
+    /**
+     * Get information about the open pull requests i.e. url and count
+     *
+     * @param string $url remote url
+     * @param string $languageCode
+     *
+     * @return array
+     */
+    public function getOpenPRlistInfo($url, $languageCode) {
+        list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
+
+        $info = [
+            'listURL' => '',
+            'count' => 0
+        ];
+
+        try {
+            $q = 'Translation update ('.$languageCode.') in:title repo:'.$user.'/'.$repository.' type:pr state:open';
+            $results = $this->client->api('search')->issues($q, $sort = 'updated', $order = 'desc');
+
+            $info = [
+                'listURL' => 'https://github.com/'.$user.'/'.$repository.'/pulls?q=is%3Apr+is%3Aopen+Translation+update+%28'.$languageCode.'%29',
+                'count' => (int) $results['total_count']
+            ];
+        } catch (\Exception $e) {
+        }
+
+        return $info;
+    }
 }
