@@ -47,6 +47,7 @@ class SoftResetCommand extends ContainerAwareCommand {
         }
 
         $this->resetRepo($repo);
+
         $data = $this->getContainer()->getParameter('data');
         $data .= sprintf('/%s/%s/', $type, $name);
         $fs = new Filesystem();
@@ -55,12 +56,14 @@ class SoftResetCommand extends ContainerAwareCommand {
             $fs->chmod($data . 'tmp', 0777, 0000, true);
             // https://bugs.php.net/bug.php?id=52176
             $fs->remove($data . 'tmp');
+            $this->output->write('/tmp folder deleted. ');
         }
 
         if (is_file($data . 'locked')) {
             $fs->remove($data . 'locked');
+            $this->output->write('Lock removed. ');
         }
-
+        $this->output->writeln('done');
     }
 
     /**
@@ -78,6 +81,7 @@ class SoftResetCommand extends ContainerAwareCommand {
         $repo->setErrorCount(0);
         $repo->setLastUpdate(0);
         $this->getEntityManager()->flush($repo);
+        $this->output->write('Repository state, error count and update date reset. ');
     }
 
 
