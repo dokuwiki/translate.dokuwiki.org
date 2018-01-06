@@ -19,7 +19,7 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
 
     protected function configure() {
         $this->setName('dokuwiki:editRepo')
-            ->setDescription('Let edit some properties of repository. Supported: giturl, branch, state, englishReadonly')
+            ->setDescription('Let edit some properties of repository. Supported: giturl, branch, state, email, englishReadonly')
             ->addArgument('type', InputArgument::REQUIRED, 'plugin, template or core')
             ->addArgument('name', InputArgument::REQUIRED, 'repository name')
             ->addArgument('property', InputArgument::REQUIRED, 'property name')
@@ -94,6 +94,10 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
 
             case 'englishReadonly':
                 $repo->setEnglishReadonly($value === 'true' ? true : false);
+                break;
+
+            case 'email':
+                $repo->setEmail($value);
                 break;
 
             default:
