@@ -30,13 +30,32 @@
                     </div>
                 </div>
             {% endif %}
-            <div class="span12">
+
+            <div class="span8">
                 <p>
                     This page shows the translation progress of {{ repository.displayName|capitalize }}.
                     English is the master language which has always 100% progress.
                     Please help by adding translations.
                 </p>
+            </div>
+            <div class="span4">
+                <div class="well well-small">
+                    <form action="{% if repository.type == 'core' %}{{  path("dokuwiki_translate") }}{% else %}{{ path("dokuwiki_translate_extension", {"type": repository.type, "name":repository.name }) }}{% endif %}" method="get" class="form-inline">
+                        <label for="language">Show the translatable strings for</label>
+                        <select id="language" name="lang">
+                            {% for language in languages %}
+                                <option value="{{ language.code }}"
+                                        {% if language.code == currentLanguage %} selected="selected"{% endif %}}>
+                                    {{ language.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <input type="submit" value="Go" class="btn btn-primary" />
+                    </form>
+                </div>
+            </div>
 
+            <div class="span12">
                 <div class="row">
                     {% if featureAddTranslationFromDetail %}
                         <div class="span4">

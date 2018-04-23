@@ -64,6 +64,8 @@ class DefaultController extends Controller implements InitializableController {
     public function showAction() {
         $data = array();
         $data['repository'] = $this->repositoryRepository->getCoreTranslation();
+        $data['currentLanguage'] = $this->get('language_manager')->getLanguage($this->getRequest());
+        $data['languages'] = $this->languageRepository->getAvailableLanguages();
         $data['featureImport'] = $this->container->getParameter('featureImport');
         $data['featureAddTranslationFromDetail'] = $this->container->getParameter('featureAddTranslationFromDetail');
         $data['englishreadonly'] = $this->getRequest()->query->has('englishreadonly');
