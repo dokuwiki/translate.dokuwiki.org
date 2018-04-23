@@ -4,6 +4,7 @@ namespace org\dokuwiki\translatorBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
+use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -18,10 +19,13 @@ class ExtensionController extends Controller implements InitializableController 
      * @var RepositoryEntityRepository
      */
     private $repositoryRepository;
+    /** @var  LanguageNameEntityRepository */
+    private $languageRepository;
 
     public function initialize(Request $request) {
         $entityManager = $this->getDoctrine()->getManager();
         $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
+        $this->languageRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
     }
 
     /**
@@ -137,6 +141,8 @@ class ExtensionController extends Controller implements InitializableController 
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
 
+        $data['currentLanguage'] = $this->get('language_manager')->getLanguage($this->getRequest());
+        $data['languages'] = $this->languageRepository->getAvailableLanguages();
         $data['featureImport'] = $this->container->getParameter('featureImport');
         $data['featureAddTranslationFromDetail'] = $this->container->getParameter('featureAddTranslationFromDetail');
         $data['englishreadonly'] = $this->getRequest()->query->has('englishreadonly');
