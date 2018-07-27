@@ -16,11 +16,11 @@ class LanguageManager {
      */
     public static function readLanguages($langFolder, $prefix = '') {
         if (!is_dir($langFolder)) {
-            throw new NoLanguageFolderException();
+            throw new NoLanguageFolderException("$langFolder is not a directory");
         }
 
         if (!is_dir("$langFolder/en/")) {
-            throw new NoDefaultLanguageException();
+            throw new NoDefaultLanguageException("$langFolder/en/ is not a directory");
         }
 
         $folders = scandir($langFolder);
