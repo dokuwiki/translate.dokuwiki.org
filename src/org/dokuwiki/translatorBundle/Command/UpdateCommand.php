@@ -26,7 +26,7 @@ class UpdateCommand extends ContainerAwareCommand {
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         if (!$this->lock()) {
-            $this->getContainer()->get('logger')->err('Updater is already running');
+            $this->getContainer()->get('logger')->error('Updater is already running');
             return;
         }
 
@@ -36,7 +36,7 @@ class UpdateCommand extends ContainerAwareCommand {
             $this->runUpdate();
             $this->processPendingTranslations();
         } catch (\PDOException $e) {
-            $this->getContainer()->get('logger')->err('Updater had an exception occurring');
+            $this->getContainer()->get('logger')->error('Updater had an exception occurring');
         }
         $this->unlock();
 
