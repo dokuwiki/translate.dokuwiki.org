@@ -15,7 +15,7 @@ class ShowStatsCommand extends ContainerAwareCommand {
 
     protected function configure() {
         $this->setName('dokuwiki:showStats')
-            ->setDescription('Show some statistics for maintainance');
+            ->setDescription('Show some statistics for maintenance');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
