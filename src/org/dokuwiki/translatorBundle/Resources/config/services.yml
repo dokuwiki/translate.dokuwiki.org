@@ -8,64 +8,62 @@ parameters:
 
 services:
     repository_manager:
-        class: "%repository_manager.class%"
-        arguments: ["%data%", @doctrine.orm.entity_manager, "%reprositoryUpdateAge%", "%maxRepositoriesToUpdatePerRun%", @repository_stats , @git_service, @mail_service, @git_hub_service, @logger, "%maxErrorCount%", @git_hub_status_service]
+        class: '%repository_manager.class%'
+        arguments: ['%data%', '@doctrine.orm.entity_manager', '%repositoryUpdateAge%', '%maxRepositoriesToUpdatePerRun%', '@repository_stats' , '@git_service', '@mail_service', '@git_hub_service', '@logger', '%maxErrorCount%', '@git_hub_status_service']
 
     repository_stats:
-        class: "%repository_stats.class%"
-        arguments: [ @doctrine.orm.entity_manager]
+        class: '%repository_stats.class%'
+        arguments: [ '@doctrine.orm.entity_manager']
 
     doku_wiki_repository_api:
-        class: "%doku_wiki_repository_api.class%"
-        arguments: ["%data%", @doctrine.orm.entity_manager]
+        class: '%doku_wiki_repository_api.class%'
+        arguments: ['%data%', '@doctrine.orm.entity_manager']
 
     plugin_name_validator:
         class: org\dokuwiki\translatorBundle\Validator\PluginNameValidator
         tags:
             - { name: validator.constraint_validator, alias: dwplugin }
         calls:
-            - [setApi, [@doku_wiki_repository_api]]
+            - [setApi, ['@doku_wiki_repository_api']]
 
     template_name_validator:
         class: org\dokuwiki\translatorBundle\Validator\TemplateNameValidator
         tags:
             - { name: validator.constraint_validator, alias: dwtemplate }
         calls:
-            - [setApi, [@doku_wiki_repository_api]]
+            - [setApi, ['@doku_wiki_repository_api']]
 
     custom_unique_entity_validator:
         class: org\dokuwiki\translatorBundle\Validator\CustomUniqueEntityValidator
         tags:
             - { name: validator.constraint_validator, alias: customuniqueentity }
-        arguments: [@doctrine]
+        arguments: ['@doctrine']
 
     language_manager:
         class: "%language_manager.class%"
 
     listener.before_controller:
         class: org\dokuwiki\translatorBundle\EventListener\BeforeControllerListener
-        scope: "request"
         tags:
-            - { name: kernel.event_listener, event: "kernel.controller", method: "onKernelController" }
+            - { name: kernel.event_listener, event: 'kernel.controller', method: 'onKernelController' }
 
     listener.kernel_exception:
         class: org\dokuwiki\translatorBundle\EventListener\RouteNotFoundExceptionListener
-        arguments: [@logger, @twig]
-        scope: "request"
+        arguments: ['@logger', '@twig']
         tags:
-            - { name: kernel.event_listener, event: "kernel.exception", method: "onKernelException" }
+            - { name: kernel.event_listener, event: 'kernel.exception', method: 'onKernelException' }
 
     git_service:
         class: org\dokuwiki\translatorBundle\Services\Git\GitService
-        arguments: ["%git_bin%", "%command_timeout%"]
+        arguments: ['%git_bin%', '%command_timeout%']
 
     mail_service:
         class: org\dokuwiki\translatorBundle\Services\Mail\MailService
-        arguments: [@mailer, @twig, "%mailer_from%", @logger]
+        arguments: ['@mailer', '@twig', '%mailer_from%', '@logger']
 
     git_hub_service:
         class: org\dokuwiki\translatorBundle\Services\GitHub\GitHubService
-        arguments: ["%git_hub_token%", "%data%", "%git_hub_url%"]
+        arguments: ['%git_hub_token%', '%data%', '%git_hub_url%']
 
     git_hub_status_service:
         class: org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService
@@ -73,11 +71,10 @@ services:
 
     user_translation_validator_factory:
         class: org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorFactory
-        arguments: [@validator]
+        arguments: ['@validator']
 
     translation_preparer:
         class: org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer
-        arguments: [@validator]
 
     doku_wiki_toolbar_extension:
         class: org\dokuwiki\translatorBundle\Twig\DokuWikiToolbarExtension
