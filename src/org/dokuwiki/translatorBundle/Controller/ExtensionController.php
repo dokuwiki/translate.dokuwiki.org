@@ -2,11 +2,9 @@
 
 namespace org\dokuwiki\translatorBundle\Controller;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
-use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
@@ -19,7 +17,10 @@ class ExtensionController extends Controller implements InitializableController 
      * @var RepositoryEntityRepository
      */
     private $repositoryRepository;
-    /** @var  LanguageNameEntityRepository */
+
+    /**
+     * @var  LanguageNameEntityRepository
+     */
     private $languageRepository;
 
     public function initialize(Request $request) {
@@ -36,7 +37,7 @@ class ExtensionController extends Controller implements InitializableController 
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\Form\Exception\AlreadyBoundException
      */
-    public function indexAction($type, Request $request) {
+    public function indexAction(Request $request, $type) {
 
         $data = array();
 
@@ -49,16 +50,14 @@ class ExtensionController extends Controller implements InitializableController 
         $options['type'] = $type;
         $options['validation_groups'] = array('Default', $type);
         $options['action'] = RepositoryCreateType::ACTION_CREATE;
-        $form = $this->createForm(new RepositoryCreateType(), $repository, $options);
+        $form = $this->createForm(RepositoryCreateType::class, $repository, $options);
 
-        if ($request->isMethod('POST')) {
-            $form->bind($request);
-            if ($form->isValid()) {
-                $this->addExtension($repository);
-                $data['repository'] = $repository;
-                $data['maxErrorCount'] = $this->container->getParameter('maxErrorCount');
-                return $this->render('dokuwikiTranslatorBundle:Extension:added.html.twig', $data);
-            }
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $this->addExtension($repository);
+            $data['repository'] = $repository;
+            $data['maxErrorCount'] = $this->container->getParameter('maxErrorCount');
+            return $this->render('dokuwikiTranslatorBundle:Extension:added.html.twig', $data);
         }
 
         $data['form'] = $form->createView();
@@ -105,6 +104,8 @@ class ExtensionController extends Controller implements InitializableController 
      * @param string $name
      * @param string $key
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function activateAction($type, $name, $key) {
 
@@ -128,11 +129,14 @@ class ExtensionController extends Controller implements InitializableController 
     /**
      * Show translation progress of requested extension
      *
+     * @param Request $request
      * @param string $type
      * @param string $name
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function showAction($type, $name) {
+    public function showAction(Request $request, $type, $name) {
         $data = array();
 
         try {
@@ -141,11 +145,11 @@ class ExtensionController extends Controller implements InitializableController 
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
 
-        $data['currentLanguage'] = $this->get('language_manager')->getLanguage($this->getRequest());
+        $data['currentLanguage'] = $this->get('language_manager')->getLanguage($request);
         $data['languages'] = $this->languageRepository->getAvailableLanguages();
         $data['featureImport'] = $this->container->getParameter('featureImport');
         $data['featureAddTranslationFromDetail'] = $this->container->getParameter('featureAddTranslationFromDetail');
-        $data['englishreadonly'] = $this->getRequest()->query->has('englishreadonly');
+        $data['englishReadonly'] = $request->query->has('englishReadonly');
 
         return $this->render('dokuwikiTranslatorBundle:Default:show.html.twig', $data);
     }
@@ -153,32 +157,30 @@ class ExtensionController extends Controller implements InitializableController 
     /**
      * Show settings and request unique url for edit form of extension configuration
      *
+     * @param Request $request
      * @param string $type
      * @param string $name
-     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function settingsAction($type, $name, Request $request) {
+    public function settingsAction(Request $request, $type, $name) {
         $data = array();
 
         try {
-            $repository = $this->repositoryRepository->getRepository($type, $name);  // get not waiting repos TODO only for form
+            $repository = $this->repositoryRepository->getRepository($type, $name);
         } catch (NoResultException $e) {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
 
-        $data['urlsent'] = false;
+        $data['urlSent'] = false;
         if($repository->getState() !== RepositoryEntity::$STATE_WAITING_FOR_APPROVAL) {
             $options['type'] = $type;
             $options['validation_groups'] = array('Default', $type);
-            $form = $this->createForm(new RepositoryRequestEditType(), $repository, $options);
+            $form = $this->createForm(RepositoryRequestEditType::class, $repository, $options);
 
-            if ($request->isMethod('POST')) {
-                $form->bind($request);
-                if ($form->isValid()) {
-                    $this->createAndSentEditKey($repository);
-                    $data['urlsent'] = true;
-                }
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+                $this->createAndSentEditKey($repository);
+                $data['urlSent'] = true;
             }
             $data['form'] = $form->createView();
         }
@@ -219,8 +221,10 @@ class ExtensionController extends Controller implements InitializableController 
      * @param string $key
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function editAction($type, $name, $key, Request $request) {
+    public function editAction(Request $request, $type, $name, $key) {
         $data = array();
 
         try {
@@ -229,7 +233,7 @@ class ExtensionController extends Controller implements InitializableController 
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
 
-        $originalvalues = array(
+        $originalValues = array(
             'url' => $repository->getUrl(),
             'branch' => $repository->getBranch()
         );
@@ -237,18 +241,17 @@ class ExtensionController extends Controller implements InitializableController 
         $options['type'] = $type;
         $options['validation_groups'] = array('Default', $type);
         $options['action'] = RepositoryCreateType::ACTION_EDIT;
-        $form = $this->createForm(new RepositoryCreateType(), $repository, $options);
+        $form = $this->createForm(RepositoryCreateType::class, $repository, $options);
 
-        if ($request->isMethod('POST')) {
-            $form->bind($request);
-            if ($form->isValid()) {
-                $this->updateExtension($repository, $originalvalues);
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $this->updateExtension($repository, $originalValues);
 
-                $param['type'] = $type;
-                $param['name'] = $name;
-                return $this->redirect($this->generateUrl('dokuwiki_translator_extension_settings', $param));
-            }
+            $param['type'] = $type;
+            $param['name'] = $name;
+            return $this->redirect($this->generateUrl('dokuwiki_translator_extension_settings', $param));
         }
+
         $data['repository'] = $repository;
         $data['form'] = $form->createView();
         return $this->render('dokuwikiTranslatorBundle:Extension:edit.html.twig', $data);
