@@ -4,7 +4,9 @@ namespace org\dokuwiki\translatorBundle\Services\GitHub;
 
 use Github\Client;
 use Github\Exception\RuntimeException;
-use Github\HttpClient\CachedHttpClient;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
+use Cache\Adapter\Filesystem\FilesystemCachePool;
 
 class GitHubService {
 
@@ -18,9 +20,18 @@ class GitHubService {
             return;
         }
         $this->token = $gitHubApiToken;
-        $this->client = new Client(
-            new CachedHttpClient(array('cache_dir' => "$dataFolder/githubcache"))
+
+        $filesystemAdapter = new Local($dataFolder); // folders are relative to folder set here
+        $filesystem        = new Filesystem($filesystemAdapter);
+
+        $pool = new FilesystemCachePool($filesystem);
+        $pool->setFolder('githubcache');
+
+        $this->client = Client::createWithHttpClient(
+            new \Http\Adapter\Guzzle6\Client()
         );
+
+        $this->client->addCache($pool);
         $this->client->authenticate($gitHubApiToken, null, Client::AUTH_URL_TOKEN);
     }
 
