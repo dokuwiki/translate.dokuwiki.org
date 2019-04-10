@@ -3,13 +3,16 @@
 namespace org\dokuwiki\translatorBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\Query;
 
 class RepositoryEntityRepository extends  EntityRepository {
 
     /**
      * @return RepositoryEntity
+     *
+     * @throws NonUniqueResultException If the query result is not unique.
+     * @throws NoResultException        If the query returned no result.
      */
     public function getCoreRepository() {
         $query = $this->getEntityManager()->createQuery(
@@ -27,7 +30,7 @@ class RepositoryEntityRepository extends  EntityRepository {
      * @param string $name
      * @return RepositoryEntity
      *
-     * @throws \Doctrine\ORM\NoResultException
+     * @throws NoResultException
      */
     public function getRepository($type, $name) {
         $repository = $this->findOneBy(
@@ -42,6 +45,8 @@ class RepositoryEntityRepository extends  EntityRepository {
     /**
      * @param $language
      * @return array
+     *
+     * @throws NonUniqueResultException If the query result is not unique.
      */
     public function getCoreRepositoryInformation($language) {
         $query = $this->getEntityManager()->createQuery(
@@ -92,6 +97,9 @@ class RepositoryEntityRepository extends  EntityRepository {
 
     /**
      * @return array
+     *
+     * @throws NonUniqueResultException If the query result is not unique.
+     * @throws NoResultException        If the query returned no result.
      */
     public function getCoreTranslation() {
         return $this->getTranslation(RepositoryEntity::$TYPE_CORE, 'dokuwiki');
@@ -101,6 +109,9 @@ class RepositoryEntityRepository extends  EntityRepository {
      * @param $type
      * @param $name
      * @return array
+     *
+     * @throws NonUniqueResultException If the query result is not unique.
+     * @throws NoResultException        If the query returned no result.
      */
     public function getExtensionTranslation($type, $name) {
         return $this->getTranslation($type, $name);
@@ -110,6 +121,9 @@ class RepositoryEntityRepository extends  EntityRepository {
      * @param $type
      * @param $name
      * @return array
+     *
+     * @throws NonUniqueResultException If the query result is not unique.
+     * @throws NoResultException        If the query returned no result.
      */
     private function getTranslation($type, $name) {
         $query = $this->getEntityManager()->createQuery('
@@ -133,7 +147,10 @@ class RepositoryEntityRepository extends  EntityRepository {
      * @param string $type
      * @param string $name
      * @param string $activationKey
-     * @return \org\dokuwiki\translatorBundle\Entity\RepositoryEntity
+     * @return RepositoryEntity
+     *
+     * @throws NonUniqueResultException If the query result is not unique.
+     * @throws NoResultException        If the query returned no result.
      */
     public function getRepositoryByNameAndActivationKey($type, $name, $activationKey) {
         return $this->getRepositoryByNameAndKey($type, $name, $activationKey, $activation = true);
@@ -145,7 +162,10 @@ class RepositoryEntityRepository extends  EntityRepository {
      * @param string $type
      * @param string $name
      * @param string $editKey
-     * @return \org\dokuwiki\translatorBundle\Entity\RepositoryEntity
+     * @return RepositoryEntity
+     *
+     * @throws NonUniqueResultException If the query result is not unique.
+     * @throws NoResultException        If the query returned no result.
      */
     public function getRepositoryByNameAndEditKey($type, $name, $editKey) {
         return $this->getRepositoryByNameAndKey($type, $name, $editKey, $activation = false);
@@ -159,6 +179,9 @@ class RepositoryEntityRepository extends  EntityRepository {
      * @param string $key
      * @param bool $activation
      * @return mixed
+     *
+     * @throws NonUniqueResultException If the query result is not unique.
+     * @throws NoResultException        If the query returned no result.
      */
     private function getRepositoryByNameAndKey($type, $name, $key, $activation = true) {
         $operator = ($activation ? '=' : '<>');
@@ -179,10 +202,12 @@ class RepositoryEntityRepository extends  EntityRepository {
     }
 
     /**
+     * Get the repositories
+     *
      * @param $maxAge
      * @param $maxResults
      * @param $maxErrors
-     * @return \org\dokuwiki\translatorBundle\Entity\RepositoryEntity[]
+     * @return RepositoryEntity[]
      */
     public function getRepositoriesToUpdate($maxAge, $maxResults, $maxErrors) {
         $query = $this->getEntityManager()->createQuery(

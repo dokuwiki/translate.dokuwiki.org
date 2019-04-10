@@ -26,6 +26,13 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
             ->addArgument('value', InputArgument::REQUIRED, 'string or true/false');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     *
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     protected function execute(InputInterface $input, OutputInterface $output) {
 
         $this->output = $output;
@@ -66,6 +73,8 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
      * @param RepositoryEntity $repo
      * @param string $property
      * @param string $value
+     *
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     protected function editRepo(RepositoryEntity $repo, $property, $value) {
 

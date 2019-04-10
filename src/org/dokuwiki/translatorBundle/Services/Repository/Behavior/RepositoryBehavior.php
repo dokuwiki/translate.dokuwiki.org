@@ -6,9 +6,20 @@ use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubForkException;
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
 
 interface RepositoryBehavior {
 
+
+    /**
+     * Sent request to author of remote repository to include the change, applies the best method available
+     *
+     * @param GitRepository $tempGit
+     * @param TranslationUpdateEntity $update
+     * @param GitRepository $originalGit
+     * @return mixed
+     */
     public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit);
 
     /**
@@ -18,6 +29,9 @@ interface RepositoryBehavior {
      *
      * @param RepositoryEntity $repository
      * @return string
+     *
+     * @throws GitHubForkException
+     * @throws GitHubServiceException
      */
     public function createOriginURL(RepositoryEntity $repository);
 
@@ -31,6 +45,11 @@ interface RepositoryBehavior {
     public function pull(GitRepository $git, RepositoryEntity $repository);
 
 
+    /**
+     * Check if remote repository is functional
+     *
+     * @return mixed
+     */
     public function isFunctional();
 
     /**

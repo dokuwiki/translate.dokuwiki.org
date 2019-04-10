@@ -23,6 +23,13 @@ class RouteNotFoundExceptionListener implements EventSubscriberInterface {
         $this->twig = $twig;
     }
 
+    /**
+     * @param GetResponseForExceptionEvent $event
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
     public function onKernelException(GetResponseForExceptionEvent $event) {
         if(!$event) {
             $this->logger->error("Unknown kernel.exception in ".__CLASS__);

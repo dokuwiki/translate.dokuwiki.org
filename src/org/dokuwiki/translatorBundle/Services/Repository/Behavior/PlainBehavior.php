@@ -5,6 +5,8 @@ namespace org\dokuwiki\translatorBundle\Services\Repository\Behavior;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
+use org\dokuwiki\translatorBundle\Services\Git\GitCreatePatchException;
+use org\dokuwiki\translatorBundle\Services\Git\GitPullException;
 use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 
@@ -20,6 +22,15 @@ class PlainBehavior implements RepositoryBehavior {
     }
 
 
+    /**
+     * No possibility available to open pull request to remote repository, therefore a patch is sent by email
+     *
+     * @param GitRepository $tempGit
+     * @param TranslationUpdateEntity $update
+     * @param GitRepository $originalGit
+     *
+     * @throws GitCreatePatchException
+     */
     public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) {
         $patch = $tempGit->createPatch();
 
@@ -48,6 +59,8 @@ class PlainBehavior implements RepositoryBehavior {
      * @param GitRepository $git
      * @param RepositoryEntity $repository
      * @return bool true if the repository is changed
+     *
+     * @throws GitPullException
      */
     public function pull(GitRepository $git, RepositoryEntity $repository) {
         return $git->pull('origin', $repository->getBranch()) === GitRepository::$PULL_CHANGED;

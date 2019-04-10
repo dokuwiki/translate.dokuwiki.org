@@ -27,6 +27,13 @@ class DeleteRepositoryCommand extends ContainerAwareCommand {
 
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     *
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     protected function execute(InputInterface $input, OutputInterface $output) {
 
         $this->output = $output;

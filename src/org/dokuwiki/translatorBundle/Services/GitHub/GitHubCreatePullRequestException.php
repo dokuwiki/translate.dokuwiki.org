@@ -3,6 +3,8 @@
 namespace org\dokuwiki\translatorBundle\Services\GitHub;
 
 
-class GitHubCreatePullRequestException extends \Exception {
+use Exception;
+
+class GitHubCreatePullRequestException extends Exception {
 
 }

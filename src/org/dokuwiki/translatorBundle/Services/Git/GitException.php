@@ -2,9 +2,11 @@
 namespace org\dokuwiki\translatorBundle\Services\Git;
 
 
-class GitException extends \Exception {
+use Exception;
 
-    function __construct($msg, $path='', \Exception $previous = null) {
+class GitException extends Exception {
+
+    function __construct($msg, $path='', Exception $previous = null) {
         if($path) $msg .= "\nPath: $path";
         if($previous) $msg .= "\n" . $previous->getMessage();
 

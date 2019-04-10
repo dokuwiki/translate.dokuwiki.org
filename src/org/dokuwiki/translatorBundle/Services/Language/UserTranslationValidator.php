@@ -17,7 +17,14 @@ class UserTranslationValidator {
     private $author;
     /** @var string  */
     private $authorEmail;
+
+    /**
+     * @var ValidatorInterface
+     */
     private $validator;
+    /**
+     * @var string[]
+     */
     private $errors = array();
 
     /**
@@ -41,6 +48,9 @@ class UserTranslationValidator {
         $this->validateAuthorName();
     }
 
+    /**
+     * Validate the email of author of this submission
+     */
     private function validateAuthorEmail() {
         if ($this->authorEmail === '') {
             $this->errors['email'] = 'No email address given.';
@@ -53,6 +63,9 @@ class UserTranslationValidator {
         }
     }
 
+    /**
+     * Validate the name of author of this submission
+     */
     private function validateAuthorName() {
         if ($this->author === '') {
             $this->errors['author'] = 'No author name given.';
@@ -60,6 +73,8 @@ class UserTranslationValidator {
     }
 
     /**
+     * Validates the user submitted strings
+     *
      * @return LocalText[]
      */
     public function validate() {
@@ -82,6 +97,8 @@ class UserTranslationValidator {
     }
 
     /**
+     * Validate strings with wiki syntax for txt-files
+     *
      * @param $path
      * @return LocalText
      */
@@ -91,6 +108,8 @@ class UserTranslationValidator {
     }
 
     /**
+     * Validate the submitted language strings
+     *
      * @param string $path
      * @param LocalText $translation
      * @return LocalText
@@ -146,6 +165,8 @@ class UserTranslationValidator {
     }
 
     /**
+     * Compare submitted translation to existing translation
+     *
      * @param string $path
      * @param string $key
      * @param bool $alreadyChanged
@@ -169,6 +190,8 @@ class UserTranslationValidator {
     }
 
     /**
+     * Compare sub-arrays of submitted translation to existing translation
+     *
      * @param string $path
      * @param string $key
      * @param string $jsKey
@@ -198,6 +221,8 @@ class UserTranslationValidator {
     }
 
     /**
+     * Fixes line endings by replacing
+     *
      * @param $string
      * @return string
      */
@@ -207,7 +232,9 @@ class UserTranslationValidator {
     }
 
     /**
-     * @return array of error messages
+     * Returns the collected error messages
+     *
+     * @return string[] of error messages
      */
     public function getErrors() {
         return $this->errors;

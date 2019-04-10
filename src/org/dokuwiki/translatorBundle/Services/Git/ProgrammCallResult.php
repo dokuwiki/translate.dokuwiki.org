@@ -3,9 +3,16 @@ namespace org\dokuwiki\translatorBundle\Services\Git;
 
 class ProgrammCallResult {
 
+    /** @var string */
     private $output;
+
+    /** @var int|null */
     private $exitCode;
+
+    /** @var string */
     private $error;
+
+    /** @var string */
     private $command;
 
     function __construct($exitCode, $output, $error, $command) {

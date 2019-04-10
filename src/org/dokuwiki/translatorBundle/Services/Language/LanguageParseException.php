@@ -1,7 +1,9 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
-class LanguageParseException extends \Exception {
+use Exception;
+
+class LanguageParseException extends Exception {
 
     private $lineNumber;
     private $fileName;

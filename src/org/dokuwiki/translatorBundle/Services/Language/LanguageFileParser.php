@@ -3,16 +3,40 @@ namespace org\dokuwiki\translatorBundle\Services\Language;
 
 class LanguageFileParser {
 
+
+    /**
+     * @var string content of language file
+     */
     protected $content;
+
+    /**
+     * @var string
+     */
     protected $header;
 
     /**
      * @var AuthorList
      */
     protected $author;
+
+    /**
+     * @var array associated array with per key the language string
+     */
     protected $lang;
+
+    /**
+     * @var int Total number of lines of language file
+     */
     protected $totalLineNumbers;
+
+    /**
+     * @var string Path to language file
+     */
     protected $file = '';
+
+    /**
+     * @var string Stores trimmed ending of content
+     */
     protected $trimmedEnding;
 
     public static $MODE_PHP = 'php';
@@ -22,6 +46,13 @@ class LanguageFileParser {
     public static $MODE_PHP_END = 'php end';
     public static $MODE_PHP_UNKNOWN = 'php unknown';
 
+    /**
+     * Load content from file
+     *
+     * @param $file
+     *
+     * @throws LanguageFileDoesNotExistException
+     */
     public function loadFile($file) {
         if (!is_file($file)) {
             throw new LanguageFileDoesNotExistException();
@@ -37,12 +68,28 @@ class LanguageFileParser {
         $this->content = ltrim($content);
     }
 
+    /**
+     * Parse a .php language file
+     *
+     * @param string $file
+     * @return LanguageFileParser
+     *
+     * @throws LanguageFileDoesNotExistException
+     * @throws LanguageParseException
+     */
     public static function parseLangPHP($file) {
         $parser = new LanguageFileParser();
         $parser->loadFile($file);
         return $parser->parse();
     }
 
+    /**
+     * Parse the loaded content
+     *
+     * @return $this
+     *
+     * @throws LanguageParseException
+     */
     public function parse() {
         $this->author = new AuthorList();
         $this->lang = array();
@@ -73,6 +120,13 @@ class LanguageFileParser {
         return $this;
     }
 
+    /**
+     * Process a content line starting with $lang[
+     *
+     * @return string LanguageFileParser::$MODE_PHP
+     *
+     * @throws LanguageParseException
+     */
     public function processLang() {
         $key = $this->getString();
         $this->content = rtrim($this->content);
@@ -106,6 +160,13 @@ class LanguageFileParser {
         return LanguageFileParser::$MODE_PHP;
     }
 
+    /**
+     * Get a string from content (concatenated strings are joined), content is shortened
+     *
+     * @return string
+     *
+     * @throws LanguageParseException
+     */
     public function getString() {
         $string = '';
         while (true) {
@@ -120,6 +181,13 @@ class LanguageFileParser {
         return $string;
     }
 
+    /**
+     * Get first string from content, content is shortened
+     *
+     * @return bool|string
+     *
+     * @throws LanguageParseException
+     */
     public function getFirstString() {
         $stringDelimiter = $this->content[0];
         if (!in_array($stringDelimiter, array('\'', '"'))) {
@@ -171,6 +239,7 @@ class LanguageFileParser {
      * Process content of multi line comment: filter authors and header text
      *
      * @return string
+     *
      * @throws LanguageParseException
      */
     public function processMultiLineComment() {
@@ -233,6 +302,11 @@ class LanguageFileParser {
         return LanguageFileParser::$MODE_PHP;
     }
 
+    /**
+     * Determine next mode, content is shortened
+     *
+     * @return string one of the LanguageFileParser::$MODE_* modes
+     */
     public function determineNextMode() {
         $this->content = ltrim($this->content);
 
@@ -254,6 +328,11 @@ class LanguageFileParser {
         return LanguageFileParser::$MODE_PHP_UNKNOWN;
     }
 
+    /**
+     * Jump to first php-start-tag in content, if existing
+     *
+     * @throws LanguageParseException
+     */
     function goToStart() {
         $phpStart = strpos($this->content, '<?php');
         if ($phpStart === -1) {
@@ -262,20 +341,39 @@ class LanguageFileParser {
         $this->content = substr($this->content, $phpStart + 5);
     }
 
+    /**
+     * Does content starts with $needle
+     *
+     * @param string $needle
+     * @return bool
+     */
     private function contentStartsWith($needle) {
         return $this->stringStartsWith($this->content, $needle);
     }
 
+    /**
+     * Does $haystack starts with the $needle
+     *
+     * @param string $haystack given string
+     * @param string $needle search for this text in string
+     * @return bool
+     */
     private function stringStartsWith($haystack, $needle) {
         return !strncmp($haystack, $needle, strlen($needle));
     }
 
+    /**
+     * Shorten the content from the begin with the given length
+     *
+     * @param $length
+     */
     private function shortContentBy($length) {
         $this->content = substr($this->content, $length);
     }
 
     /**
      * Escapes a string according to http://php.net/manual/en/language.types.string.php
+     *
      * @param string $string the string to escape
      * @param string $delimiter ' or "
      * @return string escaped string
@@ -287,12 +385,20 @@ class LanguageFileParser {
         return $this->escapeDoubleQuoted($string);
     }
 
+    /**
+     * @param $string
+     * @return mixed
+     */
     private function escapeSingleQuoted($string) {
         $string = str_replace('\\\\', '\\', $string);
         $string = str_replace('\\\'', '\'', $string);
         return $string;
     }
 
+    /**
+     * @param $string
+     * @return mixed
+     */
     private function escapeDoubleQuoted($string) {
         $string = str_replace('\\\\', '\\', $string);
         $string = str_replace('\\n', "\n", $string);
@@ -321,22 +427,40 @@ class LanguageFileParser {
         return $string;
     }
 
+    /**
+     * @return mixed
+     */
     public function getHeader() {
         return $this->header;
     }
 
+    /**
+     * @return AuthorList
+     */
     public function getAuthor() {
         return $this->author;
     }
 
+    /**
+     * @return string
+     */
     public function getContent() {
         return $this->content;
     }
 
+    /**
+     * @return mixed
+     */
     public function getLang() {
         return $this->lang;
     }
 
+    /**
+     * Creates a LanguageParseException
+     *
+     * @param string $message
+     * @return LanguageParseException
+     */
     private function createException($message) {
         $remaining = $this->content . $this->trimmedEnding;
         $remaining = explode("\n", $remaining);

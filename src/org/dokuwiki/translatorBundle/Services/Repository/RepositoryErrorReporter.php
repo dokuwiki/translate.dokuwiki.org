@@ -2,15 +2,14 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
+use Exception;
 use Monolog\Logger;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitCloneException;
 use org\dokuwiki\translatorBundle\Services\Git\GitPullException;
 use org\dokuwiki\translatorBundle\Services\Git\GitPushException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubCreatePullRequestException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubForkException;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageParseException;
 use org\dokuwiki\translatorBundle\Services\Language\NoDefaultLanguageException;
 use org\dokuwiki\translatorBundle\Services\Language\NoLanguageFolderException;
@@ -35,7 +34,15 @@ class RepositoryErrorReporter {
         $this->logger = $logger;
     }
 
-    private function handleError(\Exception $e, Repository $repo, $update) {
+    /**
+     * General error handler function
+     *
+     * @param Exception $e
+     * @param Repository $repo
+     * @param bool $update true if repository fork update, false if sending submitted translation
+     * @return string
+     */
+    private function handleError(Exception $e, Repository $repo, $update) {
         $this->data = array();
         $this->data['repo'] =  $repo->getEntity();
         $this->data['exception'] = $e;
@@ -45,8 +52,11 @@ class RepositoryErrorReporter {
             $template = $this->determineEmailTemplateTranslation($e);
         }
 
-        $this->logger->err(sprintf('error during repository update (%s: %s)',
-                get_class($e), $e->getMessage()));
+        $this->logger->error(sprintf(
+            'error during repository update (%s: %s)',
+            get_class($e),
+            $e->getMessage()
+        ));
         $this->logger->debug($e->getTraceAsString());
         if ($template !== '' && $repo->isFunctional()) {
             $repo->getEntity()->setErrorCount($repo->getEntity()->getErrorCount() + 1);
@@ -63,28 +73,48 @@ class RepositoryErrorReporter {
         }
     }
 
-    public function handleTranslationError(\Exception $e, Repository $repo) {
+    /**
+     * Handle errors during sending of a submitted translation
+     *
+     * @param Exception $e
+     * @param Repository $repo
+     * @return string
+     */
+    public function handleTranslationError(Exception $e, Repository $repo) {
         return $this->handleError($e, $repo, false);
     }
 
-    private function determineEmailTemplateTranslation(\Exception $e) {
+    /**
+     * Returns an email template for exceptions that needs attention of extension author
+     *
+     * @param Exception $e
+     * @return string template referrer
+     */
+    private function determineEmailTemplateTranslation(Exception $e) {
         if ($e instanceof GitHubCreatePullRequestException) {
             return 'dokuwikiTranslatorBundle:Mail:translationErrorPullRequest.txt.twig';
         }
         return '';
     }
 
-    public function handleUpdateError(\Exception $e, Repository $repo) {
+    /**
+     * Handle errors during creation/update of local repository fork
+     *
+     * @param Exception $e
+     * @param Repository $repo
+     * @return string
+     */
+    public function handleUpdateError(Exception $e, Repository $repo) {
         return $this->handleError($e, $repo, true);
     }
 
     /**
-     * Returns for exceptions that needs attention of user an email template
+     * Returns an email template for exceptions that needs attention of extension author
      *
-     * @param \Exception $e
+     * @param Exception $e
      * @return string template referrer
      */
-    private function determineEmailTemplateUpdate(\Exception $e) {
+    private function determineEmailTemplateUpdate(Exception $e) {
         if ($e instanceof GitPullException) {
             return 'dokuwikiTranslatorBundle:Mail:importErrorUpdate.txt.twig';
         }

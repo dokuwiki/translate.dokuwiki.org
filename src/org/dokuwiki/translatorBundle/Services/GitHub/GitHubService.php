@@ -2,6 +2,7 @@
 
 namespace org\dokuwiki\translatorBundle\Services\GitHub;
 
+use Exception;
 use Github\Client;
 use Github\Exception\RuntimeException;
 use League\Flysystem\Adapter\Local;
@@ -37,8 +38,10 @@ class GitHubService {
 
     /**
      * @param string $url GitHub URL to create the fork from
-     * @throws GitHubForkException
      * @return string Git URL of the fork
+     *
+     * @throws GitHubForkException
+     * @throws GitHubServiceException
      */
     public function createFork($url) {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
@@ -53,6 +56,7 @@ class GitHubService {
     /**
      * @param $url
      * @return array|mixed
+     *
      * @throws GitHubServiceException
      */
     public function getUsernameAndRepositoryFromURL($url) {
@@ -71,12 +75,14 @@ class GitHubService {
     }
 
     /**
-     * @param string $patchBranch   name of branch with language update
-     * @param string $branch        name of branch at remote
+     * @param string $patchBranch name of branch with language update
+     * @param string $branch name of branch at remote
      * @param string $languageCode
-     * @param string $url           remote url
-     * @param string $patchUrl      remote url
+     * @param string $url remote url
+     * @param string $patchUrl remote url
+     *
      * @throws GitHubCreatePullRequestException
+     * @throws GitHubServiceException
      */
     public function createPullRequest($patchBranch, $branch, $languageCode, $url, $patchUrl) {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
@@ -99,8 +105,9 @@ class GitHubService {
      *
      * @param string $url remote url
      * @param string $languageCode
-     *
      * @return array
+     *
+     * @throws GitHubServiceException
      */
     public function getOpenPRListInfo($url, $languageCode) {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
@@ -118,7 +125,7 @@ class GitHubService {
                 'listURL' => 'https://github.com/'.$user.'/'.$repository.'/pulls?q=is%3Apr+is%3Aopen+Translation+update+%28'.$languageCode.'%29',
                 'count' => (int) $results['total_count']
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         return $info;

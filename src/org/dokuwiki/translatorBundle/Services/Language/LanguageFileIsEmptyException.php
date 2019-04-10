@@ -9,5 +9,7 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
-class LanguageFileIsEmptyException extends \Exception {
+use Exception;
+
+class LanguageFileIsEmptyException extends Exception {
 }

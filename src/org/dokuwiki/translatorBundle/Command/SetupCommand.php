@@ -40,6 +40,14 @@ class SetupCommand extends ContainerAwareCommand {
 
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     protected function execute(InputInterface $input, OutputInterface $output) {
         $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
         $this->repositoryRepository = $this->entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
@@ -51,6 +59,10 @@ class SetupCommand extends ContainerAwareCommand {
         $this->addDokuWikiRepo();
     }
 
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     private function addDokuWikiRepo() {
         try {
             $this->repositoryRepository->getCoreRepository();
@@ -80,6 +92,9 @@ class SetupCommand extends ContainerAwareCommand {
 
     }
 
+    /**
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     private function addLanguageNames() {
         $names = array(
             'af' => 'Afrikaans',

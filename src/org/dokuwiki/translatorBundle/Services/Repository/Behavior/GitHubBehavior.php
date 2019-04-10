@@ -5,8 +5,17 @@ namespace org\dokuwiki\translatorBundle\Services\Repository\Behavior;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
+use org\dokuwiki\translatorBundle\Services\Git\GitAddException;
+use org\dokuwiki\translatorBundle\Services\Git\GitBranchException;
+use org\dokuwiki\translatorBundle\Services\Git\GitCheckoutException;
+use org\dokuwiki\translatorBundle\Services\Git\GitNoRemoteException;
+use org\dokuwiki\translatorBundle\Services\Git\GitPullException;
+use org\dokuwiki\translatorBundle\Services\Git\GitPushException;
 use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubCreatePullRequestException;
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubForkException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubService;
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
 
 class GitHubBehavior implements RepositoryBehavior {
@@ -32,6 +41,14 @@ class GitHubBehavior implements RepositoryBehavior {
      * @param GitRepository $tempGit temporary local git repository
      * @param TranslationUpdateEntity $update
      * @param GitRepository $originalGit
+     *
+     * @throws GitHubCreatePullRequestException
+     * @throws GitHubServiceException
+     * @throws GitAddException
+     * @throws GitBranchException
+     * @throws GitCheckoutException
+     * @throws GitNoRemoteException
+     * @throws GitPushException
      */
     public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) {
 
@@ -52,6 +69,9 @@ class GitHubBehavior implements RepositoryBehavior {
      *
      * @param RepositoryEntity $repository
      * @return string Git URL of the fork
+     *
+     * @throws GitHubForkException
+     * @throws GitHubServiceException
      */
     public function createOriginURL(RepositoryEntity $repository) {
         return $this->api->createFork($repository->getUrl());
@@ -63,6 +83,9 @@ class GitHubBehavior implements RepositoryBehavior {
      * @param GitRepository $git
      * @param RepositoryEntity $repository
      * @return bool true if the repository is changed
+     *
+     * @throws GitPullException
+     * @throws GitPushException
      */
     public function pull(GitRepository $git, RepositoryEntity $repository) {
         $changed = $git->pull($repository->getUrl(), $repository->getBranch()) === GitRepository::$PULL_CHANGED;
@@ -70,8 +93,11 @@ class GitHubBehavior implements RepositoryBehavior {
         return $changed;
     }
 
+
     /**
-     * @return bool|null
+     * Check if GitHub is functional
+     *
+     * @return bool
      */
     public function isFunctional() {
         return $this->gitHubService->isFunctional();
@@ -83,6 +109,8 @@ class GitHubBehavior implements RepositoryBehavior {
      * @param RepositoryEntity $repository
      * @param LanguageNameEntity $language
      * @return array
+     *
+     * @throws GitHubServiceException
      */
     public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language) {
         return $this->api->getOpenPRListInfo($repository->getUrl(), $language->getCode());

@@ -10,6 +10,8 @@
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
 
-class UserTranslationValidatorException extends \Exception {
+use Exception;
+
+class UserTranslationValidatorException extends Exception {
 
 }
