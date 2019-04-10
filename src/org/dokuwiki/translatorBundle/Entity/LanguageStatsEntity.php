@@ -34,7 +34,7 @@ class LanguageStatsEntity {
     private $completionPercent;
 
     /**
-     * @ORM\ManyToOne(targetEntity="RepositoryEntity")
+     * @ORM\ManyToOne(targetEntity="RepositoryEntity" , inversedBy="translations")
      * @var RepositoryEntity
      */
     private $repository;
