@@ -46,7 +46,6 @@ class LanguageFileParser {
     public function parse() {
         $this->author = new AuthorList();
         $this->lang = array();
-        $this->lineNumber = 0;
         $this->header = '';
 
         $this->goToStart();
