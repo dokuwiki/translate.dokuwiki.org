@@ -42,7 +42,7 @@
     <tr>
         <th>English&nbsp;read&#8209;only</th>
         <td>
-            {% if repository.englishreadonly %}
+            {% if repository.englishReadonly %}
                 Yes
             {% else %}
                 No
@@ -51,10 +51,10 @@
     </tr>
     <tr>
         <th>Last git update</th>
-        <td>{% if repository.lastupdate == 0 %}
+        <td>{% if repository.lastUpdate == 0 %}
                 None
             {% else %}
-                {{ repository.lastupdate|date("m/d/Y") }}</td>
+                {{ repository.lastUpdate|date("m/d/Y") }}</td>
             {% endif %}
     </tr>
     <tr>
