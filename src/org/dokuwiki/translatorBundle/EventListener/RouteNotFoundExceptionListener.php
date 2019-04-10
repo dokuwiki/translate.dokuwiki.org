@@ -39,6 +39,6 @@ class RouteNotFoundExceptionListener implements EventSubscriberInterface {
 
     public static function getSubscribedEvents()
     {
-        return array('kernel.exception', 'onKernelException');
+        return array('kernel.exception' => 'onKernelException');
     }
 }
