@@ -40,5 +40,5 @@ interface RepositoryBehavior {
      * @param LanguageNameEntity $language
      * @return array
      */
-    public function getOpenPRlistInfo(RepositoryEntity $repository, LanguageNameEntity $language);
+    public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language);
 }

@@ -84,7 +84,7 @@ class GitHubBehavior implements RepositoryBehavior {
      * @param LanguageNameEntity $language
      * @return array
      */
-    public function getOpenPRlistInfo(RepositoryEntity $repository, LanguageNameEntity $language) {
-        return $this->api->getOpenPRlistInfo($repository->getUrl(), $language->getCode());
+    public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language) {
+        return $this->api->getOpenPRListInfo($repository->getUrl(), $language->getCode());
     }
 }
