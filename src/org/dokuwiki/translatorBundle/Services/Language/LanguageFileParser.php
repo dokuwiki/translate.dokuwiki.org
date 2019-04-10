@@ -24,7 +24,7 @@ class LanguageFileParser {
 
     public function loadFile($file) {
         if (!is_file($file)) {
-            throw new LanguageFileDoseNotExistException();
+            throw new LanguageFileDoesNotExistException();
         }
         $this->file = $file;
         $content = file_get_contents($file);
