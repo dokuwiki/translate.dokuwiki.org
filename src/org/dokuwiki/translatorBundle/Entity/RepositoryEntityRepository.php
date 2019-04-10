@@ -87,11 +87,7 @@ class RepositoryEntityRepository extends  EntityRepository {
         $query->setParameter('stateInit', RepositoryEntity::$STATE_INITIALIZING);
         $query->setParameter('language', $language);
 
-        try {
-            return $query->getResult();
-        } catch (NoResultException $e) {
-            return array();
-        }
+        return $query->getResult();
     }
 
     /**

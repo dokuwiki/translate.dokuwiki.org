@@ -3,7 +3,6 @@
 namespace org\dokuwiki\translatorBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\NoResultException;
 
 class TranslationUpdateEntityRepository extends EntityRepository {
 
@@ -15,11 +14,7 @@ class TranslationUpdateEntityRepository extends EntityRepository {
              WHERE job.state = :state'
         );
         $query->setParameter('state', TranslationUpdateEntity::$STATE_UNDONE);
-        try {
-            return $query->getResult();
-        } catch (NoResultException $e) {
-            return array();
-        }
+        return $query->getResult();
     }
 
 }

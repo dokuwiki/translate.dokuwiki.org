@@ -100,12 +100,7 @@ class RepositoryManager {
      * @return \org\dokuwiki\translatorBundle\Entity\RepositoryEntity[]
      */
     private function findRepositoriesToUpdate() {
-
-        try {
-            return $this->repositoryRepository->getRepositoriesToUpdate($this->repositoryAgeToUpdate, $this->maxRepositoriesToUpdatePerRun, $this->maxErrors);
-        } catch (NoResultException $ignored) {
-            return array();
-        }
+        return $this->repositoryRepository->getRepositoriesToUpdate($this->repositoryAgeToUpdate, $this->maxRepositoriesToUpdatePerRun, $this->maxErrors);
     }
 
     /**

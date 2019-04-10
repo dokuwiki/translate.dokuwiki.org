@@ -25,15 +25,11 @@ class LanguageNameEntityRepository extends EntityRepository {
     }
 
     public function getAvailableLanguages() {
-        try {
-            return $this->getEntityManager()->createQuery('
-                SELECT languageName
-                FROM dokuwikiTranslatorBundle:LanguageNameEntity languageName
-                ORDER BY languageName.name ASC
-            ')->getResult();
-        } catch (NoResultException $e) {
-            return array();
-        }
+        return $this->getEntityManager()->createQuery('
+            SELECT languageName
+            FROM dokuwikiTranslatorBundle:LanguageNameEntity languageName
+            ORDER BY languageName.name ASC
+        ')->getResult();
     }
 
 }

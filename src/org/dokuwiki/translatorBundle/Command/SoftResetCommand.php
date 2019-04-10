@@ -45,8 +45,12 @@ class SoftResetCommand extends ContainerAwareCommand {
             $output->writeln('nothing found');
             return;
         }
-
-        $this->resetRepo($repo);
+        try {
+            $this->resetRepo($repo);
+        }catch (OptimisticLockException $e) {
+            $output->writeln('database locked');
+            return;
+        }
 
         $data = $this->getContainer()->getParameter('data');
         $data .= sprintf('/%s/%s/', $type, $name);

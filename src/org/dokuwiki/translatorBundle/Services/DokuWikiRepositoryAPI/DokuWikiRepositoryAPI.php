@@ -4,6 +4,7 @@ namespace org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 
@@ -51,7 +52,11 @@ class DokuWikiRepositoryAPI {
 
             $this->updateRepositoryInformation($repository);
         }
-        $this->entityManager->flush();
+        try {
+            $this->entityManager->flush();
+        } catch (OptimisticLockException $e) {
+            return false;
+        }
         file_put_contents($this->cachePath, serialize($cache));
         $this->cache = $cache;
 
