@@ -2,6 +2,7 @@
 namespace org\dokuwiki\translatorBundle\Services\Mail;
 
 use Monolog\Logger;
+use Twig\Environment;
 
 class MailService {
 
@@ -27,7 +28,7 @@ class MailService {
 
     private $lastMessage;
 
-    function __construct(\Swift_Mailer $mailer, \Twig_Environment $twig, $from, Logger $logger) {
+    function __construct(Swift_Mailer $mailer, Environment $twig, $from, Logger $logger) {
         $this->mailer = $mailer;
         $this->template = $twig;
         $this->from = $from;
