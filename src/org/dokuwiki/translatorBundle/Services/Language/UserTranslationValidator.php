@@ -3,7 +3,7 @@
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
 use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Validator;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserTranslationValidator {
 
@@ -28,9 +28,9 @@ class UserTranslationValidator {
      * @param LocalText[] $userTranslation
      * @param string $author
      * @param string $authorEmail
-     * @param Validator $validator
+     * @param ValidatorInterface $validator
      */
-    function __construct($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail, Validator $validator) {
+    function __construct($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail, ValidatorInterface $validator) {
         $this->defaultTranslation = $defaultTranslation;
         $this->userTranslation = $userTranslation;
         $this->previousTranslation = $previousTranslation;
@@ -47,7 +47,7 @@ class UserTranslationValidator {
             return;
         }
         $email = new Email();
-        $errorList = $this->validator->validateValue($this->authorEmail, $email);
+        $errorList = $this->validator->validate($this->authorEmail, $email);
         if (count($errorList) !== 0) {
             $this->errors['email'] = 'No valid email address given.';
         }

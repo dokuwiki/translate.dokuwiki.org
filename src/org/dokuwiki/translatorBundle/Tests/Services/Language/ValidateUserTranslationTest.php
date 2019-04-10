@@ -3,7 +3,7 @@
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Validator;
+use Symfony\Component\Validator\Validator\RecursiveValidator;
 
 class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
 
@@ -384,11 +384,11 @@ class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
     }
 }
 
-class ValidatorDummy extends Validator {
+class ValidatorDummy extends RecursiveValidator {
 
     function __construct() {}
 
-    public function validateValue($value, Constraint $constraint, $groups = null) {
+    public function validate($value, $constraints = null, $groups = null, $deep = false) {
         return array();
     }
 
