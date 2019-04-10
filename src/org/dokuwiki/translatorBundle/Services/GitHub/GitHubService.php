@@ -102,7 +102,7 @@ class GitHubService {
      *
      * @return array
      */
-    public function getOpenPRlistInfo($url, $languageCode) {
+    public function getOpenPRListInfo($url, $languageCode) {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
 
         $info = [

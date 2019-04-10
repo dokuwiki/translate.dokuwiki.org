@@ -502,8 +502,8 @@ abstract class Repository {
      * @param LanguageNameEntity $languageNameEntity
      * @return array with count and list url
      */
-    public function getOpenPRlistInfo(LanguageNameEntity $languageNameEntity) {
-        return $this->behavior->getOpenPRlistInfo($this->entity, $languageNameEntity);
+    public function getOpenPRListInfo(LanguageNameEntity $languageNameEntity) {
+        return $this->behavior->getOpenPRListInfo($this->entity, $languageNameEntity);
     }
 
     /**

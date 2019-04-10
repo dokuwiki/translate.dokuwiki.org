@@ -86,16 +86,16 @@ class UpdateCommand extends ContainerAwareCommand {
      * @return bool false if still locked
      */
     private function lock() {
-        $lockfile = $this->getLockFilePath();
+        $lockFile = $this->getLockFilePath();
 
         // If lock file exists, check if stale.  If exists and is not stale, return TRUE
         // else, create lock file and return FALSE.
-        if(@symlink("/proc/".getmypid(), $lockfile) !== false)
+        if(@symlink("/proc/".getmypid(), $lockFile) !== false)
             return true;
 
         // link already exists, check if it's stale
-        if(is_link($lockfile) && !is_dir($lockfile)) {
-            $this->getContainer()->get('logger')->err('The updater is locked, but its PID is gone, ignoring the lock');
+        if(is_link($lockFile) && !is_dir($lockFile)) {
+            $this->getContainer()->get('logger')->error('The updater is locked, but its PID is gone, ignoring the lock');
             $this->unlock();
             return $this->lock();
         }

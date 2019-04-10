@@ -33,8 +33,8 @@ class SoftResetCommand extends ContainerAwareCommand {
         $name = $input->getArgument('name');
         $type = $input->getArgument('type');
 
-        $repositorytypes = array(RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN, RepositoryEntity::$TYPE_TEMPLATE);
-        if (!in_array($type, $repositorytypes)) {
+        $repositoryTypes = array(RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN, RepositoryEntity::$TYPE_TEMPLATE);
+        if (!in_array($type, $repositoryTypes)) {
             $output->writeln(sprintf('Type must be %s, %s or %s', RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN, RepositoryEntity::$TYPE_TEMPLATE));
             return;
         }

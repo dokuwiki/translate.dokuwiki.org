@@ -198,9 +198,9 @@ class LanguageFileParser {
                 if(isset($matches[2])) {
                     $email = trim($matches[2]);
                 } else {
-                    $nameparts = explode(" ", $name);
-                    foreach(array_reverse($nameparts) as $namepart) {
-                        $trimmed = trim($namepart);
+                    $nameParts = explode(" ", $name);
+                    foreach(array_reverse($nameParts) as $namePart) {
+                        $trimmed = trim($namePart);
                         $isEmail = filter_var($trimmed, FILTER_VALIDATE_EMAIL);
                         if($isEmail) {
                             $name = trim(str_replace($trimmed, '', $name));

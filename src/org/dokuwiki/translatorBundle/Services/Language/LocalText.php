@@ -80,9 +80,9 @@ class LocalText {
             $php .= " *\n";
         }
         if(!empty($this->header)) {
-            $emptyline = " *\n";
-            if($this->startsWith($this->header, $emptyline)) {
-                $this->header = substr($this->header, strlen($emptyline));
+            $emptyLine = " *\n";
+            if($this->startsWith($this->header, $emptyLine)) {
+                $this->header = substr($this->header, strlen($emptyLine));
             }
             $php .= $this->header;
             if(!$this->endsWith($this->header, "*\n")) {
