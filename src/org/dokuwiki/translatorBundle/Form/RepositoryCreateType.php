@@ -2,10 +2,13 @@
 
 namespace org\dokuwiki\translatorBundle\Form;
 
+use Gregwar\CaptchaBundle\Type\CaptchaType;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RepositoryCreateType extends AbstractType {
 
@@ -15,25 +18,16 @@ class RepositoryCreateType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         if($options['action'] == RepositoryCreateType::ACTION_CREATE) {
-            $builder->add('name', 'text', array('label' => ucfirst($options['type']) . ' name'));
+            $builder->add('name', TextType::class, array('label' => ucfirst($options['type']) . ' name'));
         }
-        $builder->add('email', 'text', array('label' => 'E-mail'));
-        $builder->add('url', 'text', array('label' => 'Git clone url'));
-        $builder->add('branch', 'text', array('label' => 'Main branch'));
-        $builder->add('englishReadonly', 'checkbox', array('label' => 'English Readonly', 'required' => false));
-        $builder->add('captcha', 'captcha');
+        $builder->add('email', TextType::class, array('label' => 'E-mail'))
+                ->add('url', TextType::class, array('label' => 'Git clone url'))
+                ->add('branch', TextType::class, array('label' => 'Main branch'))
+                ->add('englishReadonly', CheckboxType::class, array('label' => 'English Readonly', 'required' => false))
+                ->add('captcha', CaptchaType::class);
     }
 
-    /**
-     * Returns the name of this type.
-     *
-     * @return string The name of this type
-     */
-    public function getName() {
-        return 'repository';
-    }
-
-    public function setDefaultOptions(OptionsResolverInterface $resolver) {
+    public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(
             array(
                 'type' => RepositoryEntity::$TYPE_PLUGIN,
