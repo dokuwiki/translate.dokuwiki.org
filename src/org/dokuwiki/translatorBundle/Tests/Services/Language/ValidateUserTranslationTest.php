@@ -2,10 +2,10 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
-use Symfony\Component\Validator\Constraint;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
 
-class ValidateUserTranslationTest extends \PHPUnit_Framework_TestCase {
+class ValidateUserTranslationTest extends TestCase {
 
     private $validator;
 

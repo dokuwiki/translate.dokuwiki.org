@@ -2,13 +2,15 @@
 
 namespace org\dokuwiki\translatorBundle\Services\GitHub;
 
+use PHPUnit\Framework\TestCase;
+
 class GitHubStatusServiceExtend extends GitHubStatusService {
     public function testCheckResponse($content) {
         return $this->checkResponse($content);
     }
 }
 
-class GitHubStatusServiceTest extends \PHPUnit_Framework_TestCase {
+class GitHubStatusServiceTest extends TestCase {
 
     public function testCheckResponseGood() {
         $service = new GitHubStatusServiceExtend();

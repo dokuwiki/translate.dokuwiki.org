@@ -2,7 +2,9 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
-class AuthorListTest extends \PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class AuthorListTest extends TestCase {
 
     function testAdd() {
         $list = new AuthorList();
@@ -35,7 +37,7 @@ class AuthorListTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($list->has(new Author('name', 'email')));
     }
 
-    function testAddDifferentNameandEmail() {
+    function testAddDifferentNameAndEmail() {
         $list = new AuthorList();
         $list->add(new Author('name', 'email'));
         $list->add(new Author('name1', 'email1'));
@@ -53,12 +55,12 @@ class AuthorListTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($list->has(new Author('', 'email2')));
     }
 
-    function testAddDifferentNamesEmptyemails() {
+    function testAddDifferentNamesEmptyEmails() {
         $list = new AuthorList();
-        $list->add(new Author('naam1', ''));
-        $list->add(new Author('naam2', ''));
+        $list->add(new Author('name1', ''));
+        $list->add(new Author('name2', ''));
         $this->assertEquals(2, count($list->getAll()));
-        $this->assertTrue($list->has(new Author('naam1', '')));
-        $this->assertTrue($list->has(new Author('naam2', '')));
+        $this->assertTrue($list->has(new Author('name1', '')));
+        $this->assertTrue($list->has(new Author('name2', '')));
     }
 }

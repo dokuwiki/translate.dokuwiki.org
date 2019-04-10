@@ -2,7 +2,9 @@
 
 namespace org\dokuwiki\translatorBundle\Services\GitHub;
 
-class GitHubServiceTest extends \PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class GitHubServiceTest extends TestCase {
 
     function testGetUsernameAndRepositoryFromURLWithHTTP() {
         $api = new GitHubService('', '', '', false);
@@ -15,6 +17,7 @@ class GitHubServiceTest extends \PHPUnit_Framework_TestCase {
 
     function testGetUsernameAndRepositoryFromURLWithGit() {
         $api = new GitHubService('', '', '', false);
+
 
         $result = $api->getUsernameAndRepositoryFromURL('git@github.com:splitbrain/dokuwiki.git');
         $this->assertEquals(array('splitbrain', 'dokuwiki'), $result);
@@ -38,7 +41,7 @@ class GitHubServiceTest extends \PHPUnit_Framework_TestCase {
     function testGetUsernameAndRepositoryFromURLWithError() {
         $api = new GitHubService('', '', '', false);
 
-        $this->setExpectedException('org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException');
+        $this->expectException(GitHubServiceException::class);
         $api->getUsernameAndRepositoryFromURL('Wrong:splitbrain/dokuwiki.git');
     }
 

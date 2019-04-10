@@ -2,7 +2,9 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
-class TranslationPreparerTest extends \PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class TranslationPreparerTest extends TestCase {
 
     public function testPrepareMarkup() {
         $default = array('path' => new LocalText('original', LocalText::$TYPE_MARKUP));
