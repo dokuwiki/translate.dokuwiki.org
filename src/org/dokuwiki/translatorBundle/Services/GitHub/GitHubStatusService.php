@@ -24,12 +24,13 @@ class GitHubStatusService {
      * @return bool true if status is good, otherwise false
      */
     private function checkFunctional() {
-        $content = file_get_contents('https://status.github.com/api/status.json');
+        // more about the GitHub status api, see: https://www.githubstatus.com/api
+        $content = file_get_contents('https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json');
         return $this->checkResponse($content);
     }
 
     /**
-     * Returns true if response status is good, otherwise false
+     * Returns true if response status of API Requests is good, otherwise false
      *
      * @param string|false $content
      * @return bool
@@ -39,10 +40,16 @@ class GitHubStatusService {
             return false;
         }
         $status = json_decode($content);
-        if ($status === null) {
+        if ($status === null || !isset($status->components)) {
             return false;
         }
-        return ($status->status === 'good');
+
+        foreach($status->components as $component) {
+            if ($component->name === 'API Requests') {
+                return $component->status === 'operational';
+            }
+        }
+        return false;
     }
 
 }
