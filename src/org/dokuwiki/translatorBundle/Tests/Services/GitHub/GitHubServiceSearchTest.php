@@ -32,9 +32,9 @@ class GitHubServiceSearchTest extends WebTestCase {
      * @throws GitHubServiceException
      */
     public function testGitHubSearch($url, $languageCode, $expectedUrl, $number) {
-        $kernel = static::createKernel();
-        $kernel->boot();
-        $api = $kernel->getContainer()->get('git_hub_service');
+        self::bootKernel();
+
+        $api = static::$kernel->getContainer()->get('git_hub_service');
 
         $info = $api->getOpenPRListInfo($url, $languageCode);
         $this->assertEquals($expectedUrl, $info['listURL']);
