@@ -4,6 +4,10 @@ namespace org\dokuwiki\translatorBundle\Command;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
+use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
+use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntityRepository;
+use org\dokuwiki\translatorBundle\Services\Repository\Repository;
+use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 use PDOException;
 use Swift_MemorySpool;
 use Swift_Transport_SpoolTransport;
@@ -11,10 +15,6 @@ use Swift_TransportException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
-use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntityRepository;
-use org\dokuwiki\translatorBundle\Services\Repository\Repository;
-use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 
 class UpdateCommand extends ContainerAwareCommand {
 

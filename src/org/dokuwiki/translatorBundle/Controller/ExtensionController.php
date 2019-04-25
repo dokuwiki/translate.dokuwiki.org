@@ -4,12 +4,12 @@ namespace org\dokuwiki\translatorBundle\Controller;
 
 use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Form\RepositoryCreateType;
 use org\dokuwiki\translatorBundle\Form\RepositoryRequestEditType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class ExtensionController extends Controller implements InitializableController {
 

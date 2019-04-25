@@ -6,18 +6,18 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
+use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
+use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
 use org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer;
 use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidator;
 use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorFactory;
+use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
-use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 use Symfony\Component\HttpFoundation\Response;
 
 class TranslationController extends Controller implements InitializableController {

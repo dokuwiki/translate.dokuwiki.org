@@ -2,15 +2,15 @@
 
 namespace org\dokuwiki\translatorBundle\Command;
 
-use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NoResultException;
+use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
+use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 
 class SetupCommand extends ContainerAwareCommand {
 
