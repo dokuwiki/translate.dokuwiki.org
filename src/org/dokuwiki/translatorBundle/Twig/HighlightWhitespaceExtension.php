@@ -7,15 +7,6 @@ use Twig_SimpleFilter;
 
 class HighlightWhitespaceExtension extends Twig_Extension {
 
-    /**
-     * Returns the name of the extension.
-     *
-     * @return string The extension name
-     */
-    public function getName() {
-        return 'highlight_whitespace';
-    }
-
     public function getFilters() {
         return array(
             new Twig_SimpleFilter('highlight_whitespace', array($this, 'highlightWhitespace'),
