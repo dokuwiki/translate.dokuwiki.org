@@ -1,61 +1,61 @@
 dokuwiki_translator_homepage:
-    pattern:  /
+    path:  /
     defaults: { _controller: dokuwikiTranslatorBundle:Default:index }
 
 dokuwiki_translator_show_extension:
-    pattern:  /{type}/{name}
+    path:  /{type}/{name}
     defaults: { _controller: dokuwikiTranslatorBundle:Extension:show}
     requirements:
         type: plugin|template
 
 dokuwiki_translator_extension_add:
-    pattern:  /{type}
+    path:  /{type}
     defaults: { _controller: dokuwikiTranslatorBundle:Extension:index}
     requirements:
         type: plugin|template
 
 dokuwiki_translator_extension_activate:
-    pattern:  /{type}/{name}/activate/{key}
+    path:  /{type}/{name}/activate/{key}
     defaults: { _controller: dokuwikiTranslatorBundle:Extension:activate}
     requirements:
         type: plugin|template
 
 dokuwiki_translator_extension_settings:
-    pattern:  /{type}/{name}/settings
+    path:  /{type}/{name}/settings
     defaults: { _controller: dokuwikiTranslatorBundle:Extension:settings}
     requirements:
         type: plugin|template
 
 dokuwiki_translator_extension_edit:
-    pattern:  /{type}/{name}/edit/{key}
+    path:  /{type}/{name}/edit/{key}
     defaults: { _controller: dokuwikiTranslatorBundle:Extension:edit}
     requirements:
         type: plugin|template
 
 dokuwiki_translate:
-    pattern:  /translate/dokuwiki
+    path:  /translate/dokuwiki
     defaults: { _controller: dokuwikiTranslatorBundle:Translation:translateCore }
 
 dokuwiki_translate_extension:
-    pattern:  /translate/{type}/{name}
+    path:  /translate/{type}/{name}
     defaults: { _controller: dokuwikiTranslatorBundle:Translation:translateExtension}
     requirements:
         type: plugin|template
 
 dokuwiki_translate_thanks:
-    pattern:  /translate/thanks
+    path:  /translate/thanks
     defaults: { _controller: dokuwikiTranslatorBundle:Translation:thanks }
 
 dokuwiki_translate_save:
-    pattern:  /translate/save
+    path:  /translate/save
     defaults: { _controller: dokuwikiTranslatorBundle:Translation:save}
 
 dokuwiki_translator_show:
-    pattern:  /dokuwiki
+    path:  /dokuwiki
     defaults: { _controller: dokuwikiTranslatorBundle:Default:show}
 
 dokuwiki_translator_redirect_old:
-    pattern: /translate.php
+    path: /translate.php
     defaults:
         _controller: FrameworkBundle:Redirect:urlRedirect
         path: /

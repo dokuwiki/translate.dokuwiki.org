@@ -2,7 +2,9 @@
 
 namespace org\dokuwiki\translatorBundle\Services\GitHub;
 
-class GitHubServiceTest extends \PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class GitHubServiceTest extends TestCase {
 
     function testGetUsernameAndRepositoryFromURLWithHTTP() {
         $api = new GitHubService('', '', '', false);
@@ -13,8 +15,30 @@ class GitHubServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(array('dom-mel', 'dokuwiki'), $result);
     }
 
-    function testGetUsernameAndRepositoryFromURLWithGit() {
+    public function dataProvider_getUsernameAndRepositoryFromURL() {
+        return [
+            ['git@github.com:splitbrain/dokuwiki.git',      ['splitbrain', 'dokuwiki']],
+            ['git@github.com:dom-mel/dokuwiki.git',         ['dom-mel', 'dokuwiki']],
+            ['git@sub.github.com:splitbrain/dokuwiki.git',  ['splitbrain', 'dokuwiki']],
+            ['git@sub.github.com:dom-mel/dokuwiki.git',     ['dom-mel', 'dokuwiki']],
+            ['git://github.com/splitbrain/dokuwiki.git',    ['splitbrain', 'dokuwiki']],
+            ['git://github.com/dom-mel/dokuwiki.git',       ['dom-mel', 'dokuwiki']],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProvider_getUsernameAndRepositoryFromURL
+     *
+     * @param $url
+     * @param $expected
+     *
+     * @throws GitHubServiceException
+     */
+    function testGetUsernameAndRepositoryFromURLWithGit($url, $expected) {
         $api = new GitHubService('', '', '', false);
+
+        $result = $api->getUsernameAndRepositoryFromURL($url);
+        $this->assertEquals($expected, $result);
 
         $result = $api->getUsernameAndRepositoryFromURL('git@github.com:splitbrain/dokuwiki.git');
         $this->assertEquals(array('splitbrain', 'dokuwiki'), $result);
@@ -38,8 +62,15 @@ class GitHubServiceTest extends \PHPUnit_Framework_TestCase {
     function testGetUsernameAndRepositoryFromURLWithError() {
         $api = new GitHubService('', '', '', false);
 
-        $this->setExpectedException('org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException');
+        $this->expectException(GitHubServiceException::class);
         $api->getUsernameAndRepositoryFromURL('Wrong:splitbrain/dokuwiki.git');
+    }
+
+    function testGetUsernameAndRepositoryFromURLWithErrorNoGitExtension() {
+        $api = new GitHubService('', '', '', false);
+
+        $this->expectException(GitHubServiceException::class);
+        $api->getUsernameAndRepositoryFromURL('https://github.com/Klap-in/dokuwiki-plugin-docnavigation');
     }
 
     function testGitHubUrlHack() {

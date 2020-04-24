@@ -2,19 +2,37 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
+/**
+ * Object with content of a .php or a .txt language file
+ */
 class LocalText {
 
     public static $TYPE_ARRAY = 'array';
     public static $TYPE_MARKUP = 'markup';
 
+    /**
+     * @var string see {@see LocalText::$TYPE_ARRAY} and {@see LocalText::$TYPE_MARKUP}
+     */
     private $type;
+
+    /**
+     * @var array|string
+     */
     private $content;
+
+    /**
+     * @var AuthorList
+     */
     private $authors;
+
+    /**
+     * @var string
+     */
     private $header;
 
     /**
      * @param array|string $content translated text, on markup its string everything else array
-     * @param string $type see {@see LocalText::TYPE_ARRAY} and {@see LocalText::$TYPE_MARKUP}
+     * @param string $type see {@see LocalText::$TYPE_ARRAY} and {@see LocalText::$TYPE_MARKUP}
      * @param AuthorList $authors List of authors. Keyset are the author names, values may the email addresses.
      *                       Always empty on markup mode.
      * @param string $header the other lines than the list of authors
@@ -28,6 +46,8 @@ class LocalText {
     }
 
     /**
+     * Returns content of language file
+     *
      * @return array|string
      */
     public function getContent() {
@@ -35,6 +55,8 @@ class LocalText {
     }
 
     /**
+     * Returns type
+     *
      * @return string
      */
     public function getType() {
@@ -42,6 +64,8 @@ class LocalText {
     }
 
     /**
+     * Returns AuthorList
+     *
      * @return AuthorList
      */
     public function getAuthors() {
@@ -49,6 +73,8 @@ class LocalText {
     }
 
     /**
+     * Returns header for .php file
+     *
      * @return string
      */
     public function getHeader() {
@@ -59,6 +85,8 @@ class LocalText {
      * Returns the rendered content of a language file
      *
      * @return string
+     *
+     * @throws LanguageFileIsEmptyException
      */
     public function render() {
         if ($this->type === LocalText::$TYPE_MARKUP) {
@@ -72,6 +100,11 @@ class LocalText {
         return $php;
     }
 
+    /**
+     * Returns rendered header for .php file
+     *
+     * @return string
+     */
     private function renderHeader() {
         $php = "/**\n";
         $end = strpos($this->header, '@license');
@@ -80,9 +113,9 @@ class LocalText {
             $php .= " *\n";
         }
         if(!empty($this->header)) {
-            $emptyline = " *\n";
-            if($this->startsWith($this->header, $emptyline)) {
-                $this->header = substr($this->header, strlen($emptyline));
+            $emptyLine = " *\n";
+            if($this->startsWith($this->header, $emptyLine)) {
+                $this->header = substr($this->header, strlen($emptyLine));
             }
             $php .= $this->header;
             if(!$this->endsWith($this->header, "*\n")) {
@@ -95,6 +128,11 @@ class LocalText {
         return $php;
     }
 
+    /**
+     * Returns header lines for the authors of the file
+     *
+     * @return string
+     */
     private function renderAuthors() {
         $php = '';
 
@@ -120,12 +158,20 @@ class LocalText {
         return $php;
     }
 
+    /**
+     * Escape comments in header
+     *
+     * @param $str
+     * @return mixed
+     */
     private function escapeComment($str) {
         $str = str_replace('*/', '', $str);
         return $str;
     }
 
     /**
+     * Returns rendered array of language strings
+     *
      * @param array $array associative array with keys and localized strings
      * @param string $prefix string included just for the key
      * @param bool $elementsWritten by reference give back whether the inner loop has written elements
@@ -159,16 +205,36 @@ class LocalText {
         return $php;
     }
 
+    /**
+     * Returns escaped text
+     *
+     * @param string $text
+     * @return string
+     */
     private function escapeText($text) {
         return str_replace("'", '\\\'', $text);
     }
 
 
+    /**
+     * Check if string starts with the needle
+     *
+     * @param $haystack
+     * @param $needle
+     * @return bool
+     */
     private function startsWith($haystack, $needle) {
         $length = strlen($needle);
         return (substr($haystack, 0, $length) === $needle);
     }
 
+    /**
+     * Check if string ends with needle
+     *
+     * @param $haystack
+     * @param $needle
+     * @return bool
+     */
     private function endsWith($haystack, $needle) {
         $length = strlen($needle);
 

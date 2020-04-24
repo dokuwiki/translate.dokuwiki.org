@@ -2,13 +2,13 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
-use Symfony\Component\Validator\Validator;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserTranslationValidatorFactory {
 
     private $validator;
 
-    public function __construct(Validator $validator) {
+    public function __construct(ValidatorInterface $validator) {
         $this->validator = $validator;
     }
 

@@ -2,7 +2,6 @@
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Git\GitService;
@@ -11,6 +10,7 @@ use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\GitHubBehavior;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\PlainBehavior;
+use org\dokuwiki\translatorBundle\Services\Repository\Behavior\RepositoryBehavior;
 use Symfony\Bridge\Monolog\Logger;
 
 class RepositoryManager {
@@ -84,7 +84,9 @@ class RepositoryManager {
     }
 
     /**
-     * @return \org\dokuwiki\translatorBundle\Services\Repository\Repository[]
+     * Returns Repositories that need creation/update of local repository forks
+     *
+     * @return Repository[]
      */
     public function getRepositoriesToUpdate() {
         $repositories = $this->findRepositoriesToUpdate();
@@ -97,20 +99,19 @@ class RepositoryManager {
     }
 
     /**
-     * @return \org\dokuwiki\translatorBundle\Entity\RepositoryEntity[]
+     * Find RepositoryEntities to create/update local repository forks (checks for last update date, max per update and max errors per repository)
+     *
+     * @return RepositoryEntity[]
      */
     private function findRepositoriesToUpdate() {
-
-        try {
-            return $this->repositoryRepository->getRepositoriesToUpdate($this->repositoryAgeToUpdate, $this->maxRepositoriesToUpdatePerRun, $this->maxErrors);
-        } catch (NoResultException $ignored) {
-            return array();
-        }
+        return $this->repositoryRepository->getRepositoriesToUpdate($this->repositoryAgeToUpdate, $this->maxRepositoriesToUpdatePerRun, $this->maxErrors);
     }
 
     /**
+     * Retrieve Repository for given RepositoryEntity
+     *
      * @param RepositoryEntity $repository
-     * @return \org\dokuwiki\translatorBundle\Services\Repository\Repository
+     * @return Repository
      */
     public function getRepository(RepositoryEntity $repository) {
         $behavior = $this->getRepositoryBehavior($repository);
@@ -128,8 +129,10 @@ class RepositoryManager {
     }
 
     /**
+     * Retrieve RepositoryBehavior for given RepositoryEntity
+     *
      * @param RepositoryEntity $repository
-     * @return \org\dokuwiki\translatorBundle\Services\Repository\Behavior\RepositoryBehavior
+     * @return RepositoryBehavior
      */
     private function getRepositoryBehavior(RepositoryEntity $repository) {
         $url = $repository->getUrl();

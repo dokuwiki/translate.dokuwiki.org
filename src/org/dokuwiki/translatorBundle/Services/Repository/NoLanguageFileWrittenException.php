@@ -2,5 +2,7 @@
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 
-class NoLanguageFileWrittenException extends \Exception {
+use Exception;
+
+class NoLanguageFileWrittenException extends Exception {
 }

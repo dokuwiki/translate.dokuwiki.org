@@ -4,8 +4,10 @@ namespace org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
+use SimpleXMLElement;
 
 class DokuWikiRepositoryAPI {
 
@@ -24,6 +26,9 @@ class DokuWikiRepositoryAPI {
         $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
     }
 
+    /**
+     * @return bool
+     */
     public function updateCache() {
         $content = simplexml_load_file('https://www.dokuwiki.org/lib/plugins/pluginrepo/repository.php?includetemplates=yes');
         if ($content === false) {
@@ -51,14 +56,22 @@ class DokuWikiRepositoryAPI {
 
             $this->updateRepositoryInformation($repository);
         }
-        $this->entityManager->flush();
+        try {
+            $this->entityManager->flush();
+        } catch (OptimisticLockException $e) {
+            return false;
+        }
         file_put_contents($this->cachePath, serialize($cache));
         $this->cache = $cache;
 
         return true;
     }
 
-    private function mergeExtensionTags(\SimpleXMLElement $tags) {
+    /**
+     * @param SimpleXMLElement $tags
+     * @return string
+     */
+    private function mergeExtensionTags(SimpleXMLElement $tags) {
         $result = array();
         foreach ($tags->tag as $tag) {
             $result[] = strval($tag);

@@ -42,7 +42,7 @@
     <tr>
         <th>English&nbsp;read&#8209;only</th>
         <td>
-            {% if repository.englishreadonly %}
+            {% if repository.englishReadonly %}
                 Yes
             {% else %}
                 No
@@ -51,10 +51,10 @@
     </tr>
     <tr>
         <th>Last git update</th>
-        <td>{% if repository.lastupdate == 0 %}
+        <td>{% if repository.lastUpdate == 0 %}
                 None
             {% else %}
-                {{ repository.lastupdate|date("m/d/Y") }}</td>
+                {{ repository.lastUpdate|date("m/d/Y") }}</td>
             {% endif %}
     </tr>
     <tr>
@@ -79,7 +79,7 @@
             {% if repository.errorCount >= maxErrorCount %}
                 <br /><span style="color:#dd514c">Translation submissions to the git repository are paused because
                 of {{ maxErrorCount }} or more errors. Check your email for the error messages or get in contact via forum,
-                mailinglist or <a href="https://github.com/dokufreaks/dokuwiki-translation">issue tracker</a>.</span>
+                mailing list or <a href="https://github.com/dokufreaks/dokuwiki-translation">issue tracker</a>.</span>
             {% endif %}
         </td>
     </tr>

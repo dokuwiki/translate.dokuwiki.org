@@ -6,13 +6,16 @@ use Symfony\Component\HttpFoundation\Request;
 class LanguageManager {
 
     /**
-     * read languages from lang folder.
+     * Read languages from a lang folder.
      *
      * @param string $langFolder Lang folder
      * @param string $prefix Prefix string for item keys in language array.
      * @return LocalText[]
-     * @throws NoLanguageFolderException
+     *
+     * @throws LanguageFileDoesNotExistException
+     * @throws LanguageParseException
      * @throws NoDefaultLanguageException
+     * @throws NoLanguageFolderException
      */
     public static function readLanguages($langFolder, $prefix = '') {
         if (!is_dir($langFolder)) {
@@ -38,9 +41,14 @@ class LanguageManager {
     }
 
     /**
+     * Read all available language files for a language
+     *
      * @param string $languageFolder
      * @param string $prefix Prefix string for item keys in language array
      * @return LocalText[]
+     *
+     * @throws LanguageFileDoesNotExistException
+     * @throws LanguageParseException
      */
     private static function readLanguage($languageFolder, $prefix) {
         $language = array();
@@ -72,6 +80,8 @@ class LanguageManager {
     }
 
     /**
+     * Determine the current language from url, session or browser
+     *
      * @param Request $request
      * @return string
      */

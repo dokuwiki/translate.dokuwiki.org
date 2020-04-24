@@ -1,8 +1,9 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Git;
-use org\dokuwiki\translatorBundle\Services\Git\ProgrammCallResult;
 
-class GitCommandException extends \Exception {
+use Exception;
+
+class GitCommandException extends Exception {
     public $result;
 
     function __construct(ProgrammCallResult $result) {

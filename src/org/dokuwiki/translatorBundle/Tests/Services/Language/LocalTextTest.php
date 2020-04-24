@@ -2,7 +2,9 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
-class LocalTextTest extends \PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class LocalTextTest extends TestCase {
 
 
 
@@ -28,7 +30,7 @@ CONTENT;
         $this->assertEquals($expected, $result);
     }
 
-    public function testSinglelineLicence() {
+    public function testSingleLineLicence() {
 
         $expected = <<<'CONTENT'
 <?php
@@ -50,7 +52,7 @@ CONTENT;
         $this->assertEquals($expected, $result);
     }
 
-    public function testLicenceSurroundedByEmptyCommentlines() {
+    public function testLicenceSurroundedByEmptyCommentLines() {
 
         $expected = <<<'CONTENT'
 <?php
@@ -72,7 +74,7 @@ CONTENT;
         $this->assertEquals($expected, $result);
     }
 
-    public function testNolicencetag() {
+    public function testNoLicenceTag() {
 
         $expected = <<<'CONTENT'
 <?php
@@ -99,7 +101,7 @@ CONTENT;
     /**
      * @expectedException \org\dokuwiki\translatorBundle\Services\Language\LanguageFileIsEmptyException
      */
-    public function testNostrings() {
+    public function testNoStrings() {
 
 
         $author = new AuthorList();
@@ -109,7 +111,7 @@ CONTENT;
         $translation->render();
     }
 
-    public function testLicencewithmoreAndNoEmails() {
+    public function testLicenceWithMoreAndNoEmails() {
 
         $expected = <<<'CONTENT'
 <?php
@@ -140,7 +142,7 @@ CONTENT;
         $this->assertEquals($expected, $result);
     }
 
-    public function testLicencewithmoreAndNoNames() {
+    public function testLicenceWithMoreAndNoNames() {
 
         $expected = <<<'CONTENT'
 <?php

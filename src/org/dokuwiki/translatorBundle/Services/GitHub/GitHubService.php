@@ -2,9 +2,12 @@
 
 namespace org\dokuwiki\translatorBundle\Services\GitHub;
 
+use Exception;
 use Github\Client;
 use Github\Exception\RuntimeException;
-use Github\HttpClient\CachedHttpClient;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
+use Cache\Adapter\Filesystem\FilesystemCachePool;
 
 class GitHubService {
 
@@ -18,16 +21,27 @@ class GitHubService {
             return;
         }
         $this->token = $gitHubApiToken;
-        $this->client = new Client(
-            new CachedHttpClient(array('cache_dir' => "$dataFolder/githubcache"))
+
+        $filesystemAdapter = new Local($dataFolder); // folders are relative to folder set here
+        $filesystem        = new Filesystem($filesystemAdapter);
+
+        $pool = new FilesystemCachePool($filesystem);
+        $pool->setFolder('githubcache');
+
+        $this->client = Client::createWithHttpClient(
+            new \Http\Adapter\Guzzle6\Client()
         );
+
+        $this->client->addCache($pool);
         $this->client->authenticate($gitHubApiToken, null, Client::AUTH_URL_TOKEN);
     }
 
     /**
      * @param string $url GitHub URL to create the fork from
-     * @throws GitHubForkException
      * @return string Git URL of the fork
+     *
+     * @throws GitHubForkException
+     * @throws GitHubServiceException
      */
     public function createFork($url) {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
@@ -42,6 +56,7 @@ class GitHubService {
     /**
      * @param $url
      * @return array|mixed
+     *
      * @throws GitHubServiceException
      */
     public function getUsernameAndRepositoryFromURL($url) {
@@ -60,12 +75,14 @@ class GitHubService {
     }
 
     /**
-     * @param string $patchBranch   name of branch with language update
-     * @param string $branch        name of branch at remote
+     * @param string $patchBranch name of branch with language update
+     * @param string $branch name of branch at remote
      * @param string $languageCode
-     * @param string $url           remote url
-     * @param string $patchUrl      remote url
+     * @param string $url remote url
+     * @param string $patchUrl remote url
+     *
      * @throws GitHubCreatePullRequestException
+     * @throws GitHubServiceException
      */
     public function createPullRequest($patchBranch, $branch, $languageCode, $url, $patchUrl) {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
@@ -88,10 +105,11 @@ class GitHubService {
      *
      * @param string $url remote url
      * @param string $languageCode
-     *
      * @return array
+     *
+     * @throws GitHubServiceException
      */
-    public function getOpenPRlistInfo($url, $languageCode) {
+    public function getOpenPRListInfo($url, $languageCode) {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
 
         $info = [
@@ -107,7 +125,7 @@ class GitHubService {
                 'listURL' => 'https://github.com/'.$user.'/'.$repository.'/pulls?q=is%3Apr+is%3Aopen+Translation+update+%28'.$languageCode.'%29',
                 'count' => (int) $results['total_count']
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         return $info;

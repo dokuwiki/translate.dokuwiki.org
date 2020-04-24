@@ -1,6 +1,8 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
+use PHPUnit\Framework\TestCase;
+
 class LanguageFileParserTestDummy extends LanguageFileParser {
 
 
@@ -37,7 +39,7 @@ class LanguageFileParserTestDummy extends LanguageFileParser {
     }
 }
 
-class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
+class LanguageFileParserTest extends TestCase {
 
     function testGoToStart() {
         $parser = new LanguageFileParserTestDummy();
@@ -400,7 +402,7 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
         $parser->parse();
 
         //note: first line is due to second * of opening comment tag /**
-        $expectedheader = ' *
+        $expectedHeader = ' *
  * german language file
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
@@ -408,7 +410,7 @@ class LanguageFileParserTest extends \PHPUnit_Framework_TestCase {
  * @package DokuWiki\lang\de\settings
 ';
 
-        $this->assertEquals($expectedheader, $parser->getHeader());
+        $this->assertEquals($expectedHeader, $parser->getHeader());
         $this->assertEquals(20, count($parser->getAuthor()->getAll()));
         $this->assertEquals(268, count($parser->getLang()));
         $this->assertEquals(41, count($parser->getLangByKey('js')));

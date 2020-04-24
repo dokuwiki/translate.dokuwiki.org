@@ -4,7 +4,7 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 class CoreRepository extends Repository {
 
     /**
-     * @return string Relative path to the language folder. i.e. lang/ for plugins
+     * @return string[] Relative path to the language folder. i.e. lang/ for plugins
      */
     protected function getLanguageFolder() {
         return array(

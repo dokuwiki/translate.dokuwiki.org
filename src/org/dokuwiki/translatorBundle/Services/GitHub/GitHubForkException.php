@@ -2,6 +2,8 @@
 
 namespace org\dokuwiki\translatorBundle\Services\GitHub;
 
-class GitHubForkException extends \Exception{
+use Exception;
+
+class GitHubForkException extends Exception{
 
 }

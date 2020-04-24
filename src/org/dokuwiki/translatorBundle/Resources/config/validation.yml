@@ -6,13 +6,13 @@ org\dokuwiki\translatorBundle\Entity\RepositoryEntity:
             - Url: { protocols: [http, https, git, ssh] }
         branch:
             - NotBlank: ~
-            - Regex: "/^\S+$/"
+            - Regex: '/^\S+$/'
         email:
             - NotBlank: ~
             - Email: ~
         name:
             - NotBlank: ~
-            - Regex: "/^[a-z0-9]+$/"
+            - Regex: '/^[a-z0-9]+$/'
             - org\dokuwiki\translatorBundle\Validator\PluginName:
                 groups: [plugin]
             - org\dokuwiki\translatorBundle\Validator\TemplateName:

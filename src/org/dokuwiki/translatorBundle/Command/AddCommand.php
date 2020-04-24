@@ -26,8 +26,8 @@ class AddCommand extends ContainerAwareCommand {
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         $type = $input->getArgument('type');
-        $repositorytypes = array(RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN, RepositoryEntity::$TYPE_TEMPLATE);
-        if (!in_array($type, $repositorytypes)) {
+        $repositoryTypes = array(RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN, RepositoryEntity::$TYPE_TEMPLATE);
+        if (!in_array($type, $repositoryTypes)) {
             $output->writeln('Unknown type');
             return;
         }

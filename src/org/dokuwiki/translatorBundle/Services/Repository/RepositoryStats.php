@@ -4,6 +4,7 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\LanguageStatsEntity;
@@ -34,13 +35,22 @@ class RepositoryStats {
         $this->languageNameRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
     }
 
+    /**
+     * Clear all language statistics of this repository
+     *
+     * @param RepositoryEntity $entity
+     */
     public function clearStats(RepositoryEntity $entity) {
         $this->languageStatsRepository->clearStats($entity);
     }
 
     /**
+     * Create new language statistics for this repository
+     *
      * @param LocalText[] $translations combined array with all translations
      * @param RepositoryEntity $repository Repository the translation belongs to
+     *
+     * @throws OptimisticLockException
      */
     public function createStats($translations, RepositoryEntity $repository) {
         $scores = array();
@@ -70,6 +80,8 @@ class RepositoryStats {
     }
 
     /**
+     * Search for LanguageNameEntity, if not existing it is created
+     *
      * @param string $languageCode
      * @return LanguageNameEntity
      */
@@ -86,6 +98,8 @@ class RepositoryStats {
     }
 
     /**
+     * Count strings from all language files of language
+     *
      * @param LocalText $translation
      * @return int
      */
@@ -98,6 +112,8 @@ class RepositoryStats {
     }
 
     /**
+     * Count strings per language file
+     *
      * @param LocalText $languageFile
      * @return int
      */

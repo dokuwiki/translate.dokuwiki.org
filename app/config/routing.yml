@@ -1,4 +1,4 @@
 dokuwiki_translator:
-    resource: "@dokuwikiTranslatorBundle/Resources/config/routing.yml"
+    resource: '@dokuwikiTranslatorBundle/Resources/config/routing.yml'
     prefix:   /
 

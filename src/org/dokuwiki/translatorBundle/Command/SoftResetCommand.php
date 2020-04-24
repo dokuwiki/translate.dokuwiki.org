@@ -4,6 +4,7 @@ namespace org\dokuwiki\translatorBundle\Command;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -33,8 +34,8 @@ class SoftResetCommand extends ContainerAwareCommand {
         $name = $input->getArgument('name');
         $type = $input->getArgument('type');
 
-        $repositorytypes = array(RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN, RepositoryEntity::$TYPE_TEMPLATE);
-        if (!in_array($type, $repositorytypes)) {
+        $repositoryTypes = array(RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN, RepositoryEntity::$TYPE_TEMPLATE);
+        if (!in_array($type, $repositoryTypes)) {
             $output->writeln(sprintf('Type must be %s, %s or %s', RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN, RepositoryEntity::$TYPE_TEMPLATE));
             return;
         }
@@ -45,8 +46,12 @@ class SoftResetCommand extends ContainerAwareCommand {
             $output->writeln('nothing found');
             return;
         }
-
-        $this->resetRepo($repo);
+        try {
+            $this->resetRepo($repo);
+        }catch (OptimisticLockException $e) {
+            $output->writeln('database locked');
+            return;
+        }
 
         $data = $this->getContainer()->getParameter('data');
         $data .= sprintf('/%s/%s/', $type, $name);
@@ -75,6 +80,8 @@ class SoftResetCommand extends ContainerAwareCommand {
 
     /**
      * @param $repo
+     *
+     * @throws OptimisticLockException
      */
     protected function resetRepo(RepositoryEntity $repo) {
         $repo->setState(RepositoryEntity::$STATE_ACTIVE);

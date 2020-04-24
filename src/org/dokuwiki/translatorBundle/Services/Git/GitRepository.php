@@ -11,8 +11,16 @@ class GitRepository {
 
     private $gitService;
     private $path;
+    /** @var int|float|null */
     private $commandTimeout;
 
+    /**
+     * GitRepository constructor.
+     *
+     * @param GitService $gitService
+     * @param string $path folder containing git repository
+     * @param int $commandTimeout max time a git command can run in sec
+     */
     public function __construct(GitService $gitService, $path, $commandTimeout) {
         $this->gitService = $gitService;
         $this->path = $path;
@@ -74,6 +82,13 @@ class GitRepository {
         return GitRepository::$PULL_CHANGED;
     }
 
+    /**
+     * @param string $name
+     * @param string $path
+     * @return ProgrammCallResult
+     *
+     * @throws GitAddException
+     */
     public function remoteAdd($name, $path) {
         try {
             return $this->run('remote', 'add', $name, $path);
@@ -82,6 +97,13 @@ class GitRepository {
         }
     }
 
+    /**
+     * @param string $message
+     * @param string $author
+     * @return ProgrammCallResult
+     *
+     * @throws GitCommitException
+     */
     public function commit($message, $author) {
         try {
             return $this->run('commit', '-m', $message, '--author', $author);
@@ -90,6 +112,12 @@ class GitRepository {
         }
     }
 
+    /**
+     * @param string $revision
+     * @return string
+     *
+     * @throws GitCreatePatchException
+     */
     public function createPatch($revision = 'HEAD~1') {
         try {
             $result = $this->run('format-patch', '--stdout', $revision);
@@ -99,10 +127,23 @@ class GitRepository {
         }
     }
 
+    /**
+     * @param string $file path
+     * @return ProgrammCallResult
+     *
+     * @throws GitCommandException
+     */
     public function add($file) {
         return $this->run('add', $file);
     }
 
+    /**
+     * @param string $origin
+     * @param string $branch
+     * @return ProgrammCallResult
+     *
+     * @throws GitPushException
+     */
     public function push($origin, $branch) {
         try {
             return $this->run('push', $origin, $branch);
@@ -111,6 +152,11 @@ class GitRepository {
         }
     }
 
+    /**
+     * @return string git url
+     *
+     * @throws GitNoRemoteException
+     */
     public function getRemoteUrl() {
         $config = $this->path . '/.git/config';
         if (!file_exists($config)) throw new GitNoRemoteException('Repo has no config', $this->path);
@@ -123,6 +169,12 @@ class GitRepository {
         return $matches[1];
     }
 
+    /**
+     * @param string $name branch name
+     * @return ProgrammCallResult
+     *
+     * @throws GitBranchException
+     */
     public function branch($name) {
         try {
             return $this->run('branch', $name);
@@ -131,6 +183,12 @@ class GitRepository {
         }
     }
 
+    /**
+     * @param string $name branch name
+     * @return ProgrammCallResult
+     *
+     * @throws GitCheckoutException
+     */
     public function checkout($name) {
         try {
             return $this->run('checkout', $name);
@@ -139,6 +197,12 @@ class GitRepository {
         }
     }
 
+    /**
+     * @param string ... the arguments that will be arguments of the command
+     * @return ProgrammCallResult
+     *
+     * @throws GitCommandException
+     */
     private function run() {
         $arguments = func_get_args();
         $command = array($this->gitService->getGitBinary());
@@ -157,6 +221,10 @@ class GitRepository {
         return $result;
     }
 
+    /**
+     * @param string $command
+     * @return ProgrammCallResult
+     */
     private function runCommand($command) {
         if (file_exists($this->path)) {
             $process = new Process($command, $this->path);

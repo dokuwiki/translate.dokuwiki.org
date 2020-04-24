@@ -2,7 +2,10 @@
 
 namespace org\dokuwiki\translatorBundle\Twig;
 
-class HighlightWhitespaceExtension extends \Twig_Extension {
+use Twig_Extension;
+use Twig_SimpleFilter;
+
+class HighlightWhitespaceExtension extends Twig_Extension {
 
     /**
      * Returns the name of the extension.
@@ -15,7 +18,7 @@ class HighlightWhitespaceExtension extends \Twig_Extension {
 
     public function getFilters() {
         return array(
-            new \Twig_SimpleFilter('highlight_whitespace', array($this, 'highlightWhitespace'),
+            new Twig_SimpleFilter('highlight_whitespace', array($this, 'highlightWhitespace'),
                 array('pre_escape' => 'html', 'is_safe' => array('html')))
         );
     }

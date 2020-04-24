@@ -4,17 +4,21 @@ namespace org\dokuwiki\translatorBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
 use org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer;
+use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidator;
 use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
+use Symfony\Component\HttpFoundation\Response;
 
 class TranslationController extends Controller implements InitializableController {
 
@@ -31,16 +35,15 @@ class TranslationController extends Controller implements InitializableControlle
      * Try to save translated strings and redirect to thank page, home page or back to form
      *
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return Response
+     *
      * @throws NoResultException
-     * @throws \Symfony\Component\Form\Exception\AlreadyBoundException
+     * @throws OptimisticLockException
      */
     public function saveAction(Request $request) {
         if ($request->getMethod() !== 'POST') {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
-
-
 
         $action = $request->request->get('action', array());
         if (!isset($action['save'])) {
@@ -61,7 +64,7 @@ class TranslationController extends Controller implements InitializableControlle
 
         $data['name'] = $request->request->get('name', '');
         $data['email'] = $request->request->get('email', '');
-        $language = $this->getLanguage();
+        $language = $this->getLanguage($request);
 
         $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($data['repositoryType'], $data['repositoryName']);
         $repository = $this->getRepositoryManager()->getRepository($repositoryEntity);
@@ -71,7 +74,7 @@ class TranslationController extends Controller implements InitializableControlle
         if($repositoryEntity->getEnglishReadonly() && $language == 'en') {
             $param['type'] = $data['repositoryType'];
             $param['name'] = $data['repositoryName'];
-            $param['englishreadonly'] = true;
+            $param['englishReadonly'] = true;
             return $this->redirect($this->generateUrl('dokuwiki_translator_show_extension', $param));
         }
 
@@ -84,18 +87,18 @@ class TranslationController extends Controller implements InitializableControlle
             $userInput['errors'] = $errors;
             $userInput['author'] = $data['name'];
             $userInput['authorMail'] = $data['email'];
-            return $this->translate($data['repositoryType'], $data['repositoryName'], $userInput);
+            return $this->translate($request, $data['repositoryType'], $data['repositoryName'], $userInput);
         }
 
         $form = $this->getCaptchaForm();
-        $form->bind($this->getRequest());
+        $form->handleRequest($request);
         if (!$form->isValid()) {
             $userInput = array();
             $userInput['translation'] = $data['translation'];
             $userInput['errors'] = $errors;
             $userInput['author'] = $data['name'];
             $userInput['authorMail'] = $data['email'];
-            return $this->translate($data['repositoryType'], $data['repositoryName'], $userInput);
+            return $this->translate($request, $data['repositoryType'], $data['repositoryName'], $userInput);
         }
 
         $repository->addTranslationUpdate($newTranslation, $data['name'], $data['email'], $language);
@@ -113,7 +116,7 @@ class TranslationController extends Controller implements InitializableControlle
      * @param array       $userTranslation
      * @param string      $author
      * @param string      $authorEmail
-     * @return \org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidator
+     * @return UserTranslationValidator
      */
     protected function getUserTranslationValidator($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail) {
         /** @var UserTranslationValidatorFactory $validatorFactory */
@@ -126,25 +129,27 @@ class TranslationController extends Controller implements InitializableControlle
     /**
      * Show form with translatable language strings for DokuWiki
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @param Request $request
+     * @return RedirectResponse|Response
      */
-    public function translateCoreAction() {
-        return $this->translate(RepositoryEntity::$TYPE_CORE, 'dokuwiki');
+    public function translateCoreAction(Request $request) {
+        return $this->translate($request, RepositoryEntity::$TYPE_CORE, 'dokuwiki');
     }
 
     /**
      * Show form with translatable language strings for extensions
      *
+     * @param Request $request
      * @param string $type
      * @param string $name
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      */
-    public function translateExtensionAction($type, $name) {
-
-        return $this->translate($type,  $name);
+    public function translateExtensionAction(Request $request, $type, $name) {
+        return $this->translate($request, $type, $name);
     }
 
     /**
+     * @param Request $request
      * @param string $type type of the translatable unit
      * @param string $name name of the extension
      * @param array $userInput input the user has already insert.
@@ -153,10 +158,10 @@ class TranslationController extends Controller implements InitializableControlle
      *                  - (array)  errors
      *                  - (string) author
      *                  - (string) authorMail
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      */
-    private function translate($type, $name, array $userInput = array()) {
-        $language = $this->getLanguage();
+    private function translate(Request $request, $type, $name, array $userInput = array()) {
+        $language = $this->getLanguage($request);
         try {
             $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($type, $name);
         } catch (NoResultException $e) {
@@ -164,7 +169,7 @@ class TranslationController extends Controller implements InitializableControlle
         }
 
         if ($repositoryEntity->getState() !== RepositoryEntity::$STATE_ACTIVE) {
-            $data['notactive'] = true;
+            $data['notActive'] = true;
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage', $data));
         }
 
@@ -174,7 +179,7 @@ class TranslationController extends Controller implements InitializableControlle
         $data['errors'] = isset($userInput['errors'])?$userInput['errors']:array();
 
 
-        $cookies = $this->getRequest()->cookies;
+        $cookies = $request->cookies;
         if (isset($userInput['author'])) $data['author'] = $userInput['author'];
         elseif ($cookies->has('author')) $data['author'] = $cookies->get('author');
         else $data['author'] =  '';
@@ -191,7 +196,7 @@ class TranslationController extends Controller implements InitializableControlle
         }
 
         if($repositoryEntity->getEnglishReadonly() && $data['targetLanguage']->getCode() == 'en') {
-            $param['englishreadonly'] = true;
+            $param['englishReadonly'] = true;
 
             if($type === RepositoryEntity::$TYPE_CORE) {
                 return $this->redirect($this->generateUrl('dokuwiki_translator_show', $param));
@@ -202,7 +207,7 @@ class TranslationController extends Controller implements InitializableControlle
             }
         }
 
-        $data['openPR'] = $this->getOpenPRlistInfo($repositoryEntity, $data['targetLanguage']);
+        $data['openPR'] = $this->getOpenPRListInfo($repositoryEntity, $data['targetLanguage']);
         $data['captcha'] = $this->getCaptchaForm()->createView();
 
         return $this->render('dokuwikiTranslatorBundle:Translate:translate.html.twig', $data);
@@ -210,7 +215,7 @@ class TranslationController extends Controller implements InitializableControlle
 
     private function getCaptchaForm() {
         return $this->createFormBuilder()
-            ->add('captcha', 'captcha')
+            ->add('captcha', CaptchaType::class)
             ->getForm();
     }
 
@@ -252,23 +257,23 @@ class TranslationController extends Controller implements InitializableControlle
      * @param $languageNameEntity
      * @return array with string listURL and int count
      */
-    private function getOpenPRlistInfo($repositoryEntity, $languageNameEntity) {
+    private function getOpenPRListInfo($repositoryEntity, $languageNameEntity) {
         $repositoryManager = $this->getRepositoryManager();
         $repository = $repositoryManager->getRepository($repositoryEntity);
-        return $repository->getOpenPRlistInfo($languageNameEntity);
+        return $repository->getOpenPRListInfo($languageNameEntity);
     }
 
     /**
      * Show page to thank for the submitted translation
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function thanksAction() {
         return $this->render('dokuwikiTranslatorBundle:Translate:thanks.html.twig');
     }
 
-    private function getLanguage() {
-        return $this->get('language_manager')->getLanguage($this->getRequest());
+    private function getLanguage($request) {
+        return $this->get('language_manager')->getLanguage($request);
     }
 
     /**
