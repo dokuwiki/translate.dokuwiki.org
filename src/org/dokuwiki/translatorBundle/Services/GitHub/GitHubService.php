@@ -96,7 +96,7 @@ class GitHubService {
                 'body'  => 'This pull request contains some translation updates.'
             ));
         } catch (RuntimeException $e) {
-            throw new GitHubCreatePullRequestException('', 0, $e);
+            throw new GitHubForkException($e->getMessage()." $user/$repository", 0, $e);
         }
     }
 
