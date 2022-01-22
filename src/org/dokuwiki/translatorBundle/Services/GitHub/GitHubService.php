@@ -2,12 +2,12 @@
 
 namespace org\dokuwiki\translatorBundle\Services\GitHub;
 
+use Cache\Adapter\Filesystem\FilesystemCachePool;
 use Exception;
 use Github\Client;
 use Github\Exception\RuntimeException;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
-use Cache\Adapter\Filesystem\FilesystemCachePool;
 
 class GitHubService {
 
@@ -96,7 +96,7 @@ class GitHubService {
                 'body'  => 'This pull request contains some translation updates.'
             ));
         } catch (RuntimeException $e) {
-            throw new GitHubForkException($e->getMessage()." $user/$repository", 0, $e);
+            throw new GitHubCreatePullRequestException($e->getMessage() . " $user/$repository", 0, $e);
         }
     }
 
