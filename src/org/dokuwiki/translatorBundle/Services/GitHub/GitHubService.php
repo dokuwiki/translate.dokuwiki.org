@@ -33,7 +33,7 @@ class GitHubService {
         );
 
         $this->client->addCache($pool);
-        $this->client->authenticate($gitHubApiToken, null, Client::AUTH_URL_TOKEN);
+        $this->client->authenticate($gitHubApiToken, null, Client::AUTH_ACCESS_TOKEN);
     }
 
     /**
