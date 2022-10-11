@@ -16,6 +16,7 @@ class CoreRepository extends Repository {
             'lib/plugins/authplain/lang',
             'lib/plugins/config/lang',
             'lib/plugins/extension/lang',
+            'lib/plugins/logviewer/lang',
             'lib/plugins/popularity/lang',
             'lib/plugins/revert/lang',
             'lib/plugins/styling/lang',
