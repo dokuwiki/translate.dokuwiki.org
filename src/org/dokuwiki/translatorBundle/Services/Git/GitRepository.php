@@ -70,7 +70,7 @@ class GitRepository {
      */
     public function pull($remote = 'origin', $branch = 'master') {
         try {
-            $result = $this->run('pull', $remote, $branch);
+            $result = $this->run('pull', '-f', $remote, $branch);
         } catch (GitCommandException $e) {
             throw new GitPullException("Failed to pull $remote/$branch", $this->path, $e);
         }
@@ -146,7 +146,7 @@ class GitRepository {
      */
     public function push($origin, $branch) {
         try {
-            return $this->run('push', $origin, $branch);
+            return $this->run('push', '-f', $origin, $branch);
         } catch (GitCommandException $e) {
             throw new GitPushException("Failed to push to $origin/$branch", $this->path, $e);
         }
