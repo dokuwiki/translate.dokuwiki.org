@@ -2,14 +2,14 @@
 
 namespace org\dokuwiki\translatorBundle\Twig;
 
+use Twig\TwigFunction;
 use Twig_Extension;
-use Twig_SimpleFunction;
 
 class DokuWikiToolbarExtension extends Twig_Extension {
 
     public function getFunctions() {
         return array(
-            new Twig_SimpleFunction('dokuWikiToolbar', array(&$this, 'dokuWikiToolbar')),
+            new TwigFunction('dokuWikiToolbar', array(&$this, 'dokuWikiToolbar')),
         );
     }
 

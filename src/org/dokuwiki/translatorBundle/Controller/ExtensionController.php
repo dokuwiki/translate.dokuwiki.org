@@ -2,6 +2,7 @@
 
 namespace org\dokuwiki\translatorBundle\Controller;
 
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
@@ -9,7 +10,9 @@ use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Form\RepositoryCreateType;
 use org\dokuwiki\translatorBundle\Form\RepositoryRequestEditType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ExtensionController extends Controller implements InitializableController {
 
@@ -34,8 +37,7 @@ class ExtensionController extends Controller implements InitializableController 
      *
      * @param string $type
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws \Symfony\Component\Form\Exception\AlreadyBoundException
+     * @return Response
      */
     public function indexAction(Request $request, $type) {
 
@@ -103,9 +105,9 @@ class ExtensionController extends Controller implements InitializableController 
      * @param string $type
      * @param string $name
      * @param string $key
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return RedirectResponse
      *
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function activateAction($type, $name, $key) {
 
@@ -115,7 +117,7 @@ class ExtensionController extends Controller implements InitializableController 
             $repository->setState(RepositoryEntity::$STATE_INITIALIZING);
             $repository->setActivationKey('');
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->merge($repository);
+//            $entityManager->merge($repository); //entity from getRepository is already managed?
             $entityManager->flush();
 
             $data['activated'] = true;
@@ -132,9 +134,9 @@ class ExtensionController extends Controller implements InitializableController 
      * @param Request $request
      * @param string $type
      * @param string $name
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      *
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function showAction(Request $request, $type, $name) {
         $data = array();
@@ -160,7 +162,7 @@ class ExtensionController extends Controller implements InitializableController 
      * @param Request $request
      * @param string $type
      * @param string $name
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      */
     public function settingsAction(Request $request, $type, $name) {
         $data = array();
@@ -198,7 +200,7 @@ class ExtensionController extends Controller implements InitializableController 
     private function createAndSentEditKey(RepositoryEntity $repository) {
         $repository->setActivationKey($this->generateActivationKey($repository));
         $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->merge($repository);
+//        $entityManager->merge($repository); //entity from getRepository is already managed?
         $entityManager->flush();
 
         // FIXME replace with mail service
@@ -220,9 +222,9 @@ class ExtensionController extends Controller implements InitializableController 
      * @param string $name
      * @param string $key
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      *
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function editAction(Request $request, $type, $name, $key) {
         $data = array();
@@ -267,7 +269,7 @@ class ExtensionController extends Controller implements InitializableController 
         $repositoryEntity->setLastUpdate(0);
         $repositoryEntity->setActivationKey('');
         $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->merge($repositoryEntity);
+//        $entityManager->merge($repositoryEntity); //entity from getRepository is already managed?
         $entityManager->flush();
 
         $changed = $originalValues['branch'] !== $repositoryEntity->getBranch()

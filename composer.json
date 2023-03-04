@@ -6,17 +6,15 @@
         "psr-0": { "": "src/" }
     },
     "require": {
-        "php": ">=5.6",
-        "symfony/symfony": "2.8.*",
-        "doctrine/orm": "~2.4,>=2.4.5",
-        "doctrine/doctrine-bundle": "~1.2",
-        "twig/extensions": "1.4.*",
+        "php": "5.6.*|7.0.*",
+        "symfony/symfony": "3.0.*",
+        "symfony/swiftmailer-bundle": "2.6.*|3.0",
         "symfony/assetic-bundle": "2.8.*",
-        "symfony/swiftmailer-bundle": "2.6.*",
-        "symfony/monolog-bundle": "2.12.*",
-        "sensio/distribution-bundle": "4.*",
+        "symfony/monolog-bundle": "2.12.*|3.0",
+        "doctrine/orm": "~2.5",
+        "doctrine/doctrine-bundle": "~1.2",
+        "sensio/distribution-bundle": "4.*|5.0",
         "sensio/framework-extra-bundle": "3.*",
-        "sensio/generator-bundle": "3.*",
         "jms/security-extra-bundle": "1.6.*",
         "jms/di-extra-bundle": "1.9.*",
         "leafo/lessphp": "dev-master",
@@ -45,7 +43,12 @@
         "symfony-web-dir": "web"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "2.8.15",
+        "symfony/phpunit-bridge": "3.0.*",
         "phpunit/phpunit": "5.7"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }

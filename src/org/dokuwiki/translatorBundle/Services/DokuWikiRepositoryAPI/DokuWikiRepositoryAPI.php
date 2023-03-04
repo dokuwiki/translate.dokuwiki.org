@@ -5,6 +5,7 @@ namespace org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use SimpleXMLElement;
@@ -27,7 +28,10 @@ class DokuWikiRepositoryAPI {
     }
 
     /**
+     * Update the cache with data from the API, also stored on disk for reuse
+     *
      * @return bool
+     * @throws ORMException
      */
     public function updateCache() {
         $content = simplexml_load_file('https://www.dokuwiki.org/lib/plugins/pluginrepo/repository.php?includetemplates=yes');
@@ -80,6 +84,13 @@ class DokuWikiRepositoryAPI {
         return implode(', ', $result);
     }
 
+    /**
+     * Updates the $current repository entity with data from the API
+     *
+     * @param RepositoryEntity $repository entity with data set from the API
+     * @return void
+     * @throws ORMException
+     */
     private function updateRepositoryInformation(RepositoryEntity $repository) {
         try {
             $current = $this->repositoryRepository->getRepository($repository->getType(), $repository->getName());
@@ -88,10 +99,12 @@ class DokuWikiRepositoryAPI {
         }
 
         $this->mergeRepository($current, $repository);
-        $this->entityManager->merge($current);
+//        $this->entityManager->merge($current); //entity from getRepository is already managed?
     }
 
     /**
+     * Get extension info from the cached API data
+     *
      * @param string $type
      * @param string $name
      * @return bool|RepositoryEntity
@@ -106,20 +119,38 @@ class DokuWikiRepositoryAPI {
         return $this->cache[$type . ':'. $name];
     }
 
+    /**
+     * Updates $entity with cached info from the API
+     *
+     * @param RepositoryEntity $entity
+     * @return void
+     */
     public function mergeExtensionInfo(RepositoryEntity &$entity) {
         $info = $this->getExtensionInfo($entity->getType(), $entity->getName());
         $this->mergeRepository($entity, $info);
     }
 
-    private function mergeRepository(RepositoryEntity &$left, RepositoryEntity &$other) {
-        $left->setAuthor($other->getAuthor());
-        $left->setDescription($other->getDescription());
-        $left->setType($other->getType());
-        $left->setTags($other->getTags());
-        $left->setDisplayName($other->getDisplayName());
-        $left->setPopularity($other->getPopularity());
+    /**
+     * Merges the relevant info from the API into the local entity
+     *
+     * @param RepositoryEntity $left local entity
+     * @param RepositoryEntity $apiInfo entity with data from API
+     * @return void
+     */
+    private function mergeRepository(RepositoryEntity &$left, RepositoryEntity &$apiInfo) {
+        $left->setAuthor($apiInfo->getAuthor());
+        $left->setDescription($apiInfo->getDescription());
+        $left->setType($apiInfo->getType());
+        $left->setTags($apiInfo->getTags());
+        $left->setDisplayName($apiInfo->getDisplayName());
+        $left->setPopularity($apiInfo->getPopularity());
     }
 
+    /**
+     * Loads the cache from file, and reports if it is available
+     *
+     * @return bool cache is loaded
+     */
     private function loadCache() {
         if ($this->cache !== null) {
             return true;
