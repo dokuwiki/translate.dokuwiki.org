@@ -4,6 +4,7 @@ namespace org\dokuwiki\translatorBundle\Command;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\ORMException;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
@@ -62,6 +63,7 @@ class SetupCommand extends ContainerAwareCommand {
     /**
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
      */
     private function addDokuWikiRepo() {
         try {
@@ -94,6 +96,7 @@ class SetupCommand extends ContainerAwareCommand {
 
     /**
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
      */
     private function addLanguageNames() {
         $names = array(

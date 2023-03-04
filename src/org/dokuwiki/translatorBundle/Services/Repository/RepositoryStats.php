@@ -5,6 +5,7 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\LanguageStatsEntity;
@@ -50,7 +51,7 @@ class RepositoryStats {
      * @param LocalText[] $translations combined array with all translations
      * @param RepositoryEntity $repository Repository the translation belongs to
      *
-     * @throws OptimisticLockException
+     * @throws OptimisticLockException|ORMException
      */
     public function createStats($translations, RepositoryEntity $repository) {
         $scores = array();
@@ -84,6 +85,8 @@ class RepositoryStats {
      *
      * @param string $languageCode
      * @return LanguageNameEntity
+     *
+     * @throws ORMException
      */
     private function getLanguageEntityByCode($languageCode) {
         try {

@@ -3,6 +3,7 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Exception;
 use Monolog\Logger;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
@@ -101,6 +102,7 @@ abstract class Repository {
      * Create or update the local repository fork and update cached language files
      *
      * @throws OptimisticLockException
+     * @throws ORMException
      */
     public function update() {
         try {
@@ -197,8 +199,9 @@ abstract class Repository {
      * @throws GitException
      */
     private function openRepository() {
-        if ($this->gitService->isRepository($this->getCloneDirectoryPath())) {
-            $this->git = $this->gitService->openRepository($this->getCloneDirectoryPath());
+        $cloneRepositoryPath = $this->getCloneDirectoryPath();
+        if ($this->gitService->isRepository($cloneRepositoryPath)) {
+            $this->git = $this->gitService->openRepository($cloneRepositoryPath);
         }
     }
 
@@ -357,6 +360,7 @@ abstract class Repository {
      * @return int id of queue element in database
      *
      * @throws OptimisticLockException
+     * @throws ORMException
      */
     public function addTranslationUpdate($translation, $author, $email, $language) {
         $translationUpdate = new TranslationUpdateEntity();
@@ -397,6 +401,7 @@ abstract class Repository {
      * @param TranslationUpdateEntity $update
      *
      * @throws OptimisticLockException
+     * @throws ORMException
      */
     public function createAndSendPatch(TranslationUpdateEntity $update) {
         $tmpDir = $this->buildTempPath($update->getId());

@@ -5,6 +5,7 @@ namespace org\dokuwiki\translatorBundle\Command;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\ORMException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -33,6 +34,7 @@ class DeleteRepositoryCommand extends ContainerAwareCommand {
      * @return int|null|void
      *
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
 
