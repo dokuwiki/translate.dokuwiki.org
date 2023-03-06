@@ -6,6 +6,9 @@ use Doctrine\ORM\EntityRepository;
 
 class TranslationUpdateEntityRepository extends EntityRepository {
 
+    /**
+     * @return TranslationUpdateEntity[]
+     */
     public function getPendingTranslationUpdates() {
         $query = $this->getEntityManager()->createQuery(
             'SELECT job

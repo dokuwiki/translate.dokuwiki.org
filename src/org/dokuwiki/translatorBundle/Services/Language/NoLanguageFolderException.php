@@ -1,4 +1,6 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Language;
 
-class NoLanguageFolderException extends \Exception {}
+use Exception;
+
+class NoLanguageFolderException extends Exception {}

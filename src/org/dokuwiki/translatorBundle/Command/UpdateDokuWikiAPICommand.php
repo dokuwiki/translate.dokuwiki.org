@@ -1,6 +1,7 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Command;
 
+use Doctrine\ORM\ORMException;
 use org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,6 +14,9 @@ class UpdateDokuWikiAPICommand extends ContainerAwareCommand {
             ->setDescription('Update cache from dokuwiki api');
     }
 
+    /**
+     * @throws ORMException
+     */
     protected function execute(InputInterface $input, OutputInterface $output) {
         /**
          * @var DokuWikiRepositoryAPI $api

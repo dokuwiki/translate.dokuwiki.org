@@ -2,11 +2,13 @@
 
 namespace org\dokuwiki\translatorBundle\Controller;
 
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller implements InitializableController {
 
@@ -31,9 +33,9 @@ class DefaultController extends Controller implements InitializableController {
      * Language determined from url parameter, session or client info
      *
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      *
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function indexAction(Request $request) {
         $lang = $request->query->get('lang', null);
@@ -61,10 +63,10 @@ class DefaultController extends Controller implements InitializableController {
      * Show translation progress of DokuWiki
      *
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      *
      * @throws NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function showAction(Request $request) {
         $data = array();

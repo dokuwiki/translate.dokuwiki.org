@@ -275,10 +275,9 @@ class LanguageFileParserTest extends TestCase {
 
     }
 
-    /**
-     * @expectedException \org\dokuwiki\translatorBundle\Services\Language\LanguageParseException
-     */
     function testProcessMultiLineCommentParserException() {
+        $this->expectException(LanguageParseException::class);
+
         $parser = new LanguageFileParserTestDummy();
         $parser->setAuthor(new AuthorList());
         $parser->setContent("some text\n * @var string some text\n\n");
@@ -333,10 +332,9 @@ class LanguageFileParserTest extends TestCase {
         $this->assertEquals('', $parser->getContent());
     }
 
-    /**
-     * @expectedException \org\dokuwiki\translatorBundle\Services\Language\LanguageParseException
-     */
     function testGetStringUnknownEnd() {
+        $this->expectException(LanguageParseException::class);
+
         $parser = new LanguageFileParserTestDummy();
 
         $parser->setContent('"Hello . \' whats up\'');
@@ -376,20 +374,18 @@ class LanguageFileParserTest extends TestCase {
         $this->assertEquals(array('Key' => 'value'), $parser->getLangByKey('js'));
     }
 
-    /**
-     * @expectedException \org\dokuwiki\translatorBundle\Services\Language\LanguageParseException
-     */
     function testProcessLangException() {
+        $this->expectException(LanguageParseException::class);
+
         $parser = new LanguageFileParserTestDummy();
 
         $parser->setContent('"Key"] = "value"');
         $parser->processLang();
     }
 
-    /**
-     * @expectedException \org\dokuwiki\translatorBundle\Services\Language\LanguageParseException
-     */
     function testProcessLangExceptionSyntax() {
+        $this->expectException(LanguageParseException::class);
+
         $parser = new LanguageFileParserTestDummy();
 
         $parser->setContent('"Key" = "value"');
@@ -405,15 +401,15 @@ class LanguageFileParserTest extends TestCase {
         $expectedHeader = ' *
  * german language file
  *
- * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ * @license    GPL 2 (https://www.gnu.org/licenses/gpl.html)
  *
  * @package DokuWiki\lang\de\settings
 ';
 
         $this->assertEquals($expectedHeader, $parser->getHeader());
-        $this->assertEquals(20, count($parser->getAuthor()->getAll()));
-        $this->assertEquals(268, count($parser->getLang()));
-        $this->assertEquals(41, count($parser->getLangByKey('js')));
+        $this->assertCount(20, $parser->getAuthor()->getAll());
+        $this->assertCount(268, $parser->getLang());
+        $this->assertCount(41, $parser->getLangByKey('js'));
     }
 
     function testCompleteFileWithClosing() {
@@ -423,9 +419,9 @@ class LanguageFileParserTest extends TestCase {
         $parser->setContent($content);
         $parser->parse();
 
-        $this->assertEquals(20, count($parser->getAuthor()->getAll()));
-        $this->assertEquals(268, count($parser->getLang()));
-        $this->assertEquals(41, count($parser->getLangByKey('js')));
+        $this->assertCount(20, $parser->getAuthor()->getAll());
+        $this->assertCount(268, $parser->getLang());
+        $this->assertCount(41, $parser->getLangByKey('js'));
     }
 
 

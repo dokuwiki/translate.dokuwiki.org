@@ -82,14 +82,14 @@ class LanguageStatsEntity {
     }
 
     /**
-     * @param \org\dokuwiki\translatorBundle\Entity\RepositoryEntity $repository
+     * @param RepositoryEntity $repository
      */
     public function setRepository($repository) {
         $this->repository = $repository;
     }
 
     /**
-     * @return \org\dokuwiki\translatorBundle\Entity\RepositoryEntity
+     * @return RepositoryEntity
      */
     public function getRepository() {
         return $this->repository;

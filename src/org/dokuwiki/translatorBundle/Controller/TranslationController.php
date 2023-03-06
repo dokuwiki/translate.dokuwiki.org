@@ -5,6 +5,7 @@ namespace org\dokuwiki\translatorBundle\Controller;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
@@ -39,6 +40,7 @@ class TranslationController extends Controller implements InitializableControlle
      *
      * @throws NoResultException
      * @throws OptimisticLockException
+     * @throws ORMException
      */
     public function saveAction(Request $request) {
         if ($request->getMethod() !== 'POST') {

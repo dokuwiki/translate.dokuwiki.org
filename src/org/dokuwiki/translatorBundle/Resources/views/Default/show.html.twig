@@ -46,7 +46,7 @@
                         <select id="language" name="lang">
                             {% for language in languages %}
                                 <option value="{{ language.code }}"
-                                        {% if language.code == currentLanguage %} selected="selected"{% endif %}}>
+                                        {% if language.code == currentLanguage %} selected="selected"{% endif %}>
                                     {{ language.name }}
                                 </option>
                             {% endfor %}
@@ -67,7 +67,7 @@
                                         Your language isn't listed? Just start translating!
                                     </p>
                                     <label for="new-language">
-                                        <a href="http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" target="_blank">
+                                        <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" target="_blank">
                                             Two letter language code</a>
                                     </label>
                                     <input type="text" placeholder="en" id="new-language" />

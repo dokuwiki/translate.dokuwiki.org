@@ -2,13 +2,14 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
+use Exception;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 
-class RepositoryUpdateException extends \Exception {
+class RepositoryUpdateException extends Exception {
 
     private $repo;
 
-    function __construct($message, RepositoryEntity $repo, \Exception $previous) {
+    function __construct($message, RepositoryEntity $repo, Exception $previous) {
         $this->repo = $repo;
         parent::__construct($message, 0, $previous);
     }

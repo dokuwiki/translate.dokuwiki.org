@@ -6,6 +6,9 @@ use Swift_Attachment;
 use Swift_Mailer;
 use Swift_Message;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class MailService {
 
@@ -56,6 +59,10 @@ class MailService {
      * @param string $subject Subject of the mail
      * @param string $template The template name
      * @param array $data data for the template placeholders
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function sendEmail($to, $subject, $template, $data = array()) {
         if ($to === '') return;
@@ -72,11 +79,15 @@ class MailService {
      * @param string $patch the created patch
      * @param string $template The template name
      * @param array $data data for the template placeholders
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function sendPatchEmail($to, $subject, $patch, $template, $data = array()) {
         $message = $this->createMessage($to, $subject, $template, $data);
 
-        $attachment = Swift_Attachment::newInstance($patch, 'language.patch', 'text/plain');
+        $attachment = new Swift_Attachment($patch, 'language.patch', 'text/plain');
         $message->attach($attachment);
 
         $this->send($message);
@@ -100,13 +111,17 @@ class MailService {
      * @param string $template The template name
      * @param array $data data for the template placeholders
      * @return Swift_Message
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     private function createMessage($to, $subject, $template, $data = array()) {
-        $message = Swift_Message::newInstance();
-        $message->setTo($to);
-        $message->setSubject($subject);
-        $message->setFrom($this->from);
-        $message->setBody($this->template->render($template, $data));
+        $message = (new Swift_Message())
+            ->setTo($to)
+            ->setSubject($subject)
+            ->setFrom($this->from)
+            ->setBody($this->template->render($template, $data));
         $this->lastMessage = $message;
         return $message;
     }
@@ -123,7 +138,7 @@ class MailService {
         $context['subject'] = $message->getSubject();
         $context['text'] = $message->getBody();
 
-        $this->logger->debug(sprintf('Sending mail'), $context);
+        $this->logger->debug('Sending mail "{subject}"', $context);
 
     }
 
@@ -133,7 +148,5 @@ class MailService {
     public function getLastMessage() {
         return $this->lastMessage;
     }
-
-
 
 }

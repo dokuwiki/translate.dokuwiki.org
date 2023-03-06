@@ -153,7 +153,7 @@ class RepositoryEntityRepository extends  EntityRepository {
      * @throws NoResultException        If the query returned no result.
      */
     public function getRepositoryByNameAndActivationKey($type, $name, $activationKey) {
-        return $this->getRepositoryByNameAndKey($type, $name, $activationKey, $activation = true);
+        return $this->getRepositoryByNameAndKey($type, $name, $activationKey);
     }
 
     /**
@@ -168,7 +168,7 @@ class RepositoryEntityRepository extends  EntityRepository {
      * @throws NoResultException        If the query returned no result.
      */
     public function getRepositoryByNameAndEditKey($type, $name, $editKey) {
-        return $this->getRepositoryByNameAndKey($type, $name, $editKey, $activation = false);
+        return $this->getRepositoryByNameAndKey($type, $name, $editKey, false);
     }
 
     /**

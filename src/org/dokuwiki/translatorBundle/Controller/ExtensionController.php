@@ -9,6 +9,8 @@ use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Form\RepositoryCreateType;
 use org\dokuwiki\translatorBundle\Form\RepositoryRequestEditType;
+use org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
+use Swift_Message;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,6 +75,9 @@ class ExtensionController extends Controller implements InitializableController 
      * @param RepositoryEntity $repository
      */
     private function addExtension(RepositoryEntity $repository) {
+        /**
+         * @var DokuWikiRepositoryAPI $api
+         */
         $api = $this->get('doku_wiki_repository_api');
 
         $api->mergeExtensionInfo($repository);
@@ -84,14 +89,14 @@ class ExtensionController extends Controller implements InitializableController 
         $entityManager->flush();
 
         // FIXME replace with mail service
-        $message = \Swift_Message::newInstance();
-        $message->setSubject('Registration');
-        $message->setTo($repository->getEmail());
-        $message->setFrom($this->container->getParameter('mailer_from'));
         $data = array(
             'repository' => $repository,
         );
-        $message->setBody($this->renderView('dokuwikiTranslatorBundle:Mail:extensionAdded.txt.twig', $data));
+        $message = (new Swift_Message())
+            ->setSubject('Registration')
+            ->setTo($repository->getEmail())
+            ->setFrom($this->container->getParameter('mailer_from'))
+            ->setBody($this->renderView('dokuwikiTranslatorBundle:Mail:extensionAdded.txt.twig', $data));
         $this->get('mailer')->send($message);
     }
 
@@ -204,14 +209,14 @@ class ExtensionController extends Controller implements InitializableController 
         $entityManager->flush();
 
         // FIXME replace with mail service
-        $message = \Swift_Message::newInstance();
-        $message->setSubject('Edit ' . $repository->getType() . ' settings in DokuWiki Translation Tool');
-        $message->setTo($repository->getEmail());
-        $message->setFrom($this->container->getParameter('mailer_from'));
         $data = array(
             'repository' => $repository,
         );
-        $message->setBody($this->renderView('dokuwikiTranslatorBundle:Mail:extensionEditUrl.txt.twig', $data));
+        $message = (new Swift_Message())
+            ->setSubject('Edit ' . $repository->getType() . ' settings in DokuWiki Translation Tool')
+            ->setTo($repository->getEmail())
+            ->setFrom($this->container->getParameter('mailer_from'))
+            ->setBody($this->renderView('dokuwikiTranslatorBundle:Mail:extensionEditUrl.txt.twig', $data));
         $this->get('mailer')->send($message);
     }
 

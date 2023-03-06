@@ -14,6 +14,9 @@ use org\dokuwiki\translatorBundle\Services\Language\LanguageParseException;
 use org\dokuwiki\translatorBundle\Services\Language\NoDefaultLanguageException;
 use org\dokuwiki\translatorBundle\Services\Language\NoLanguageFolderException;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class RepositoryErrorReporter {
 
@@ -41,6 +44,10 @@ class RepositoryErrorReporter {
      * @param Repository $repo
      * @param bool $update true if repository fork update, false if sending submitted translation
      * @return string
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     private function handleError(Exception $e, Repository $repo, $update) {
         $this->data = array();
@@ -79,6 +86,10 @@ class RepositoryErrorReporter {
      * @param Exception $e
      * @param Repository $repo
      * @return string
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function handleTranslationError(Exception $e, Repository $repo) {
         return $this->handleError($e, $repo, false);
@@ -103,6 +114,10 @@ class RepositoryErrorReporter {
      * @param Exception $e
      * @param Repository $repo
      * @return string
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function handleUpdateError(Exception $e, Repository $repo) {
         return $this->handleError($e, $repo, true);

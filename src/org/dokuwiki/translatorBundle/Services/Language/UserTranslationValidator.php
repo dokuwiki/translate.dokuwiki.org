@@ -32,7 +32,7 @@ class UserTranslationValidator {
      *
      * @param LocalText[] $defaultTranslation
      * @param LocalText[] $previousTranslation
-     * @param LocalText[] $userTranslation
+     * @param array $userTranslation
      * @param string $author
      * @param string $authorEmail
      * @param ValidatorInterface $validator
@@ -141,7 +141,6 @@ class UserTranslationValidator {
                 if ($this->hasJsTranslationChanged($path, $key, $jsKey, $translationChanged)) {
                     $translationChanged = true;
                 }
-                continue;
             }
         }
 
@@ -227,8 +226,7 @@ class UserTranslationValidator {
      * @return string
      */
     private function fixLineEndings($string) {
-        $string = str_replace("\r\n", "\n", $string);
-        return $string;
+        return str_replace("\r\n", "\n", $string);
     }
 
     /**

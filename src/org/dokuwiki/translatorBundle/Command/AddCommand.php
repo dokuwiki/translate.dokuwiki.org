@@ -24,6 +24,13 @@ class AddCommand extends ContainerAwareCommand {
 
     }
 
+    /**
+     * Executes the current command.
+     *
+     * @param InputInterface $input  An InputInterface instance
+     * @param OutputInterface $output An OutputInterface instance
+     * @return void null or 0 if everything went fine, or an error code
+     */
     protected function execute(InputInterface $input, OutputInterface $output) {
         $type = $input->getArgument('type');
         $repositoryTypes = array(RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN, RepositoryEntity::$TYPE_TEMPLATE);

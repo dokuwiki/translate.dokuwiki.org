@@ -5,6 +5,7 @@ namespace org\dokuwiki\translatorBundle\Services\GitHub;
 use Cache\Adapter\Filesystem\FilesystemCachePool;
 use Exception;
 use Github\Client;
+use Github\Exception\MissingArgumentException;
 use Github\Exception\RuntimeException;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
@@ -55,7 +56,7 @@ class GitHubService {
 
     /**
      * @param $url
-     * @return array|mixed
+     * @return array
      *
      * @throws GitHubServiceException
      */
@@ -64,9 +65,7 @@ class GitHubService {
         if ($counter === 0) {
             throw new GitHubServiceException('Invalid GitHub clone URL: ' . $url);
         }
-        $result = explode('/', $result);
-
-        return $result;
+        return explode('/', $result);
     }
 
     public function gitHubUrlHack($url) {
@@ -83,6 +82,7 @@ class GitHubService {
      *
      * @throws GitHubCreatePullRequestException
      * @throws GitHubServiceException
+     * @throws MissingArgumentException
      */
     public function createPullRequest($patchBranch, $branch, $languageCode, $url, $patchUrl) {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);

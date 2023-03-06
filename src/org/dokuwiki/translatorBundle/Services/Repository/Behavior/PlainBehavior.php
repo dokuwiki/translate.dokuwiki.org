@@ -9,6 +9,9 @@ use org\dokuwiki\translatorBundle\Services\Git\GitCreatePatchException;
 use org\dokuwiki\translatorBundle\Services\Git\GitPullException;
 use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class PlainBehavior implements RepositoryBehavior {
 
@@ -30,6 +33,9 @@ class PlainBehavior implements RepositoryBehavior {
      * @param GitRepository $originalGit
      *
      * @throws GitCreatePatchException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) {
         $patch = $tempGit->createPatch();

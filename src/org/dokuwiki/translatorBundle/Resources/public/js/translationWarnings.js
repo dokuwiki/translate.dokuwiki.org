@@ -27,7 +27,7 @@ $(document).ready(function() {
         this.pagination = $('.pagination');
         this.pagination.empty();
 
-        // hide pagination on less items
+        // hide pagination on fewer items
         this.setupEvents();
         if (this.usePagination()) {
             this.drawPaginationBar();
@@ -115,7 +115,7 @@ $(document).ready(function() {
 
         $('input[type=submit]').click(function() {
             $(window).unbind('beforeunload');
-            if ($(this).attr('id') == 'save__button') {
+            if ($(this).attr('id') === 'save__button') {
                 that.filterText = '';
                 that.filter();
             }
@@ -124,18 +124,18 @@ $(document).ready(function() {
 
 
     TranslationTable.prototype.drawFilterControls = function() {
-        var parent = $('.translation-filter');
+        let parent = $('.translation-filter');
         parent.append($('<div class="span12"><h4>Filter</h4></div>'));
 
-        var form = $('<div class="span4"></div>');
+        let form = $('<div class="span4"></div>');
         form.append($('<label for="table-filter">Filter translations for:</label>'));
-        var filter = $('<input id="table-filter" type="text" class="input-xlarge" />');
+        let filter = $('<input id="table-filter" type="text" class="input-xlarge" />');
         form.append(filter);
         parent.append(form);
 
         var that = this;
-        var changed = function() {
-            var newVal = $(this).val();
+        let changed = function() {
+            let newVal = $(this).val();
             if (that.filterText == newVal) {
                 return;
             }
@@ -145,7 +145,7 @@ $(document).ready(function() {
         filter.keyup(changed);
 
         parent.append($('<div class="span6">This filter will search in both, translated and original text. '
-                + 'Additionally it will search in the path of the translated file and the translation keys.'
+                + 'Additionally, it will search in the path of the translated file and the translation keys.'
                 + '</div>'));
     };
 
@@ -159,7 +159,7 @@ $(document).ready(function() {
 
     TranslationTable.prototype.drawPaginationBar = function() {
         this.pagination.empty();
-        var ul = $('<ul></ul>');
+        let ul = $('<ul></ul>');
         this.pagination.append(ul);
 
 
@@ -204,14 +204,14 @@ $(document).ready(function() {
         if (end > this.lastPage) {
             end = this.lastPage;
         }
-        for (var i = start; i <= end; i++) {
+        for (let i = start; i <= end; i++) {
             ul.append(this.paginationPageElement(i));
         }
     };
 
     TranslationTable.prototype.paginationPageElement = function(page) {
-        var element = this.paginationElement(page);
-        var that = this;
+        let element = this.paginationElement(page);
+        let that = this;
         element.click(function() {
             that.selectPage(jQuery(this).text());
         });
@@ -222,16 +222,16 @@ $(document).ready(function() {
     };
 
     TranslationTable.prototype.paginationElement = function(text) {
-        var page = $('<li></li>');
-        var link = $('<a></a>');
+        let page = $('<li></li>');
+        let link = $('<a></a>');
         link.text(text);
         page.append(link);
         return page;
     };
 
     TranslationTable.prototype.paginationSpacer = function() {
-        var page = $('<li class="disabled"></li>');
-        var link = $('<a>…</a>');
+        let page = $('<li class="disabled"></li>');
+        let link = $('<a>…</a>');
         page.append(link);
         return page;
     };
@@ -247,8 +247,8 @@ $(document).ready(function() {
     };
 
     TranslationTable.prototype.focusFirstTextarea = function() {
-        var first = $('table td:visible textarea:first');
-        var tmp = first.val();
+        let first = $('table td:visible textarea:first');
+        let tmp = first.val();
         first.focus();
         first.val(tmp);
     };
@@ -262,25 +262,25 @@ $(document).ready(function() {
     };
 
     TranslationTable.prototype.checkTextarea = function(element, popover) {
-        var warnElement = element.parents('tr');
+        let warnElement = element.parents('tr');
 
-        if (element.val() == '') {
+        if (element.val() === '') {
             warnElement.addClass('warning');
             if (popover) element.popover('show');
             return;
         }
 
-        var originalTranslation = warnElement.find('td:first');
-        var regex = new RegExp(
+        let originalTranslation = warnElement.find('td:first');
+        let regex = new RegExp(
             "%[bcdeEufFgGosxX]{1}",
             "g"
         );
-        var leftMatch = originalTranslation.text().match(regex);
-        var rightMatch = element.val().match(regex);
+        let leftMatch = originalTranslation.text().match(regex);
+        let rightMatch = element.val().match(regex);
         if (leftMatch != null || rightMatch != null) {
 
             if (rightMatch == null || leftMatch == null ||
-                rightMatch.length != leftMatch.length) {
+                rightMatch.length !== leftMatch.length) {
                 warnElement.addClass('warning');
                 element.popover({
                     placement: 'top',
@@ -293,16 +293,19 @@ $(document).ready(function() {
             }
         }
 
-        var leftSpaces = originalTranslation.find('span').length;
+        let leftSpaces = originalTranslation.find('span').length;
         regex = new RegExp(
             "([ \t]+)\n",
             "g"
         );
-        var rightSpaces = element.val().match(regex);
-        if (rightSpaces == null) rightSpaces = 0;
-        else rightSpaces = rightSpaces.length;
+        let rightSpaces = element.val().match(regex);
+        if (rightSpaces == null) {
+            rightSpaces = 0;
+        } else {
+            rightSpaces = rightSpaces.length;
+        }
 
-        if (leftSpaces != rightSpaces) {
+        if (leftSpaces !== rightSpaces) {
             warnElement.addClass('warning');
             element.popover({
                 placement: 'top',

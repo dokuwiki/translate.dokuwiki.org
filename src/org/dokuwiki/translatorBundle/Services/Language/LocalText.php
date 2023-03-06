@@ -33,8 +33,8 @@ class LocalText {
     /**
      * @param array|string $content translated text, on markup its string everything else array
      * @param string $type see {@see LocalText::$TYPE_ARRAY} and {@see LocalText::$TYPE_MARKUP}
-     * @param AuthorList $authors List of authors. Keyset are the author names, values may the email addresses.
-     *                       Always empty on markup mode.
+     * @param AuthorList $authors List of authors. Key set are the author names, values may the email addresses.
+     *                            Always empty on markup mode.
      * @param string $header the other lines than the list of authors
      */
     function __construct($content, $type, AuthorList $authors = null, $header = '') {
@@ -109,7 +109,7 @@ class LocalText {
         $php = "/**\n";
         $end = strpos($this->header, '@license');
         if ($end === false) {
-            $php .= " * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)\n";
+            $php .= " * @license    GPL 2 (https://www.gnu.org/licenses/gpl.html)\n";
             $php .= " *\n";
         }
         if(!empty($this->header)) {
@@ -138,7 +138,6 @@ class LocalText {
 
         $authors = $this->authors->getAll();
 
-        /** @var Author $author */
         foreach ($authors as $author) {
             if ($author->getName() === '' && $author->getEmail() === '') continue;
             $name = $author->getName();
@@ -161,12 +160,11 @@ class LocalText {
     /**
      * Escape comments in header
      *
-     * @param $str
-     * @return mixed
+     * @param string $str
+     * @return string
      */
     private function escapeComment($str) {
-        $str = str_replace('*/', '', $str);
-        return $str;
+        return str_replace('*/', '', $str);
     }
 
     /**

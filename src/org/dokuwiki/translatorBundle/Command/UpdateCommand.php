@@ -4,6 +4,7 @@ namespace org\dokuwiki\translatorBundle\Command;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Repository\Repository;
@@ -31,10 +32,11 @@ class UpdateCommand extends ContainerAwareCommand {
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null|void
+     * @return void
      *
      * @throws OptimisticLockException
      * @throws Swift_TransportException
+     * @throws ORMException
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
         if (!$this->lock()) {
@@ -69,6 +71,7 @@ class UpdateCommand extends ContainerAwareCommand {
      * Run the
      *
      * @throws OptimisticLockException
+     * @throws ORMException
      */
     private function runUpdate() {
         $repositories = $this->repositoryManager->getRepositoriesToUpdate();
@@ -82,6 +85,7 @@ class UpdateCommand extends ContainerAwareCommand {
 
     /**
      * @throws OptimisticLockException
+     * @throws ORMException
      */
     private function processPendingTranslations() {
         $updates = $this->getTranslationUpdateRepository()->getPendingTranslationUpdates();

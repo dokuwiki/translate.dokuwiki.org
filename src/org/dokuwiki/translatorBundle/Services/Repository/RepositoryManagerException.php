@@ -1,5 +1,7 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
-class RepositoryManagerException extends \Exception {
+use Exception;
+
+class RepositoryManagerException extends Exception {
 }

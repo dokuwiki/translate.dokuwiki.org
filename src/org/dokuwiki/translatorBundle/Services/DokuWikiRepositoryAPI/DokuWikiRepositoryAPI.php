@@ -89,7 +89,6 @@ class DokuWikiRepositoryAPI {
      *
      * @param RepositoryEntity $repository entity with data set from the API
      * @return void
-     * @throws ORMException
      */
     private function updateRepositoryInformation(RepositoryEntity $repository) {
         try {

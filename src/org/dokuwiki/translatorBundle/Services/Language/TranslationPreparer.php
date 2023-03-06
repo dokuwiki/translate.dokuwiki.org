@@ -24,11 +24,6 @@ class TranslationPreparer {
     private $availableTranslations;
 
     /**
-     * @var
-     */
-    private $arrayMode;
-
-    /**
      * Returns for all strings in the default translation, data entries for the translation form
      * Sorted in translatable and, next, already translated strings
      *
@@ -47,10 +42,10 @@ class TranslationPreparer {
 
             if ($translation instanceof LocalText) { //TODO defaultTranslation could be only LocalText[], only user translation should provide raw arrays??
                 $type = $translation->getType();
-                $this->arrayMode = false;
+                $arrayMode = false;
             } else {
                 $type = is_array($translation) ? LocalText::$TYPE_ARRAY : LocalText::$TYPE_MARKUP;
-                $this->arrayMode = true;
+                $arrayMode = true;
             }
 
             if ($type !== LocalText::$TYPE_ARRAY) {
@@ -58,7 +53,7 @@ class TranslationPreparer {
                 continue;
             }
 
-            if (!$this->arrayMode) {
+            if (!$arrayMode) {
                 $translation = $translation->getContent();
             }
             foreach ($translation as $key => $text) {

@@ -28,6 +28,13 @@ class SoftResetCommand extends ContainerAwareCommand {
 
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return void
+     *
+     * @throws ORMException
+     */
     protected function execute(InputInterface $input, OutputInterface $output) {
 
         $this->output = $output;

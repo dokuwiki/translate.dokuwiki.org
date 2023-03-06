@@ -3,7 +3,9 @@
 namespace org\dokuwiki\translatorBundle\Command;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
@@ -44,10 +46,11 @@ class SetupCommand extends ContainerAwareCommand {
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null|void
+     * @return void
      *
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws NonUniqueResultException
+     * @throws OptimisticLockException
+     * @throws ORMException
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
         $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
@@ -61,8 +64,8 @@ class SetupCommand extends ContainerAwareCommand {
     }
 
     /**
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws NonUniqueResultException
+     * @throws OptimisticLockException
      * @throws ORMException
      */
     private function addDokuWikiRepo() {
@@ -95,7 +98,7 @@ class SetupCommand extends ContainerAwareCommand {
     }
 
     /**
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      * @throws ORMException
      */
     private function addLanguageNames() {

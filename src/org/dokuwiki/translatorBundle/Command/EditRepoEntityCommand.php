@@ -4,6 +4,7 @@ namespace org\dokuwiki\translatorBundle\Command;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -30,9 +31,10 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null|void
+     * @return void
      *
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
+     * @throws ORMException
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
 
@@ -75,7 +77,7 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
      * @param string $property
      * @param string $value
      *
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      * @throws ORMException
      */
     protected function editRepo(RepositoryEntity $repo, $property, $value) {
@@ -104,7 +106,7 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
                 break;
 
             case 'englishReadonly':
-                $repo->setEnglishReadonly($value === 'true' ? true : false);
+                $repo->setEnglishReadonly($value === 'true');
                 break;
 
             case 'email':

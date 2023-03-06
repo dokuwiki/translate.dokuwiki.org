@@ -1,7 +1,7 @@
 {% extends '::base.html.twig' %}
 
 {% block form_row %}
-    {% spaceless %}
+    {% apply spaceless %}
         <div class="control-group {% if errors|length %}error{% endif %}">
             {{ form_label(form) }}
             <div class="controls">
@@ -9,11 +9,11 @@
                 {{ form_errors(form) }}
             </div>
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock form_row %}
 
 {% block form_label %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% if not compound %}
             {% set label_attr = label_attr|merge({'for': id}) %}
         {% endif %}
@@ -25,11 +25,11 @@
         {% endif %}
         {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' control-label')|trim}) %}
         <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}</label>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock form_label %}
 
 {% block form_errors %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% if errors|length > 0 %}
             <span class="help-inline">
                     {% for error in errors %}
@@ -41,5 +41,5 @@
                     {% endfor %}
             </span>
         {% endif %}
-    {% endspaceless %}
+    {% endapply %}
 {% endblock form_errors %}

@@ -27,6 +27,9 @@ use org\dokuwiki\translatorBundle\Services\Language\NoLanguageFolderException;
 use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\RepositoryBehavior;
 use Symfony\Component\Filesystem\Filesystem;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 abstract class Repository {
 
@@ -107,7 +110,7 @@ abstract class Repository {
     public function update() {
         try {
             $this->updateWithException();
-            $this->entity->setLastUpdate(intval(time()));
+            $this->entity->setLastUpdate(time());
             $this->entity->setErrorCount(0);
             if ($this->entity->getState() === RepositoryEntity::$STATE_INITIALIZING) {
                 $this->initialized();
@@ -132,6 +135,8 @@ abstract class Repository {
      * @throws LanguageParseException
      * @throws NoDefaultLanguageException
      * @throws NoLanguageFolderException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     private function updateWithException() {
         $this->logger->debug('updating ' . $this->entity->getType() . ' ' . $this->entity->getName());
@@ -155,6 +160,10 @@ abstract class Repository {
 
     /**
      * If initialization succeeded, sent notification to plugin author
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     private function initialized() {
         $this->logger->debug('Initializing ' . $this->entity->getType() . ' ' . $this->entity->getName());
@@ -248,10 +257,12 @@ abstract class Repository {
     /**
      * Read languages and store the serialized LocalText[] arrays of the translations
      *
-     * @throws NoDefaultLanguageException
-     * @throws NoLanguageFolderException
      * @throws LanguageFileDoesNotExistException
      * @throws LanguageParseException
+     * @throws NoDefaultLanguageException
+     * @throws NoLanguageFolderException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function updateLanguage() {
         $languageFolders = $this->getLanguageFolder();
@@ -273,6 +284,9 @@ abstract class Repository {
      * Refresh the statistics based on (last version of) translations
      *
      * @param LocalText[] $translations
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     private function updateTranslationStatistics($translations) {
         $this->repositoryStats->clearStats($this->entity);

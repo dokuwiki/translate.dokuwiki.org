@@ -133,7 +133,7 @@ class LanguageFileParser {
 
         $javaScriptLang = ($key === 'js');
         if ($javaScriptLang) {
-            $this->content = preg_replace('/^\s*\]\s*\[\s*/', '', $this->content, 1, $found);
+            $this->content = preg_replace('/^\s*]\s*\[\s*/', '', $this->content, 1, $found);
             if ($found === 0) {
                 throw $this->createException('Wrong key/value syntax');
             }
@@ -141,7 +141,7 @@ class LanguageFileParser {
             $this->content = rtrim($this->content);
         }
 
-        $this->content = preg_replace('/^\s*\]\s*=\s*/', '', $this->content, 1, $found);
+        $this->content = preg_replace('/^\s*]\s*=\s*/', '', $this->content, 1, $found);
         if ($found === 0) {
             throw $this->createException('Wrong key/value syntax');
         }
@@ -184,7 +184,7 @@ class LanguageFileParser {
     /**
      * Get first string from content, content is shortened
      *
-     * @return bool|string
+     * @return string
      *
      * @throws LanguageParseException
      */
@@ -387,17 +387,16 @@ class LanguageFileParser {
 
     /**
      * @param $string
-     * @return mixed
+     * @return string
      */
     private function escapeSingleQuoted($string) {
         $string = str_replace('\\\\', '\\', $string);
-        $string = str_replace('\\\'', '\'', $string);
-        return $string;
+        return str_replace('\\\'', '\'', $string);
     }
 
     /**
      * @param $string
-     * @return mixed
+     * @return string
      */
     private function escapeDoubleQuoted($string) {
         $string = str_replace('\\\\', '\\', $string);
@@ -428,7 +427,7 @@ class LanguageFileParser {
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getHeader() {
         return $this->header;
@@ -449,7 +448,7 @@ class LanguageFileParser {
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getLang() {
         return $this->lang;

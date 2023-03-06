@@ -2,6 +2,7 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Repository\Behavior;
 
+use Github\Exception\MissingArgumentException;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
@@ -49,6 +50,7 @@ class GitHubBehavior implements RepositoryBehavior {
      * @throws GitCheckoutException
      * @throws GitNoRemoteException
      * @throws GitPushException
+     * @throws MissingArgumentException
      */
     public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) {
 

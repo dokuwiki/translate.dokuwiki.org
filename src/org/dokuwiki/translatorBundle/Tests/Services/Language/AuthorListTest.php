@@ -9,7 +9,7 @@ class AuthorListTest extends TestCase {
     function testAdd() {
         $list = new AuthorList();
         $list->add(new Author('name', 'email'));
-        $this->assertEquals(1, count($list->getAll()));
+        $this->assertCount(1, $list->getAll());
         $this->assertTrue($list->has(new Author('name', 'email')));
     }
 
@@ -17,7 +17,7 @@ class AuthorListTest extends TestCase {
         $list = new AuthorList();
         $list->add(new Author('name', 'email'));
         $list->add(new Author('name', 'email'));
-        $this->assertEquals(1, count($list->getAll()));
+        $this->assertCount(1, $list->getAll());
         $this->assertTrue($list->has(new Author('name', 'email')));
     }
 
@@ -25,7 +25,7 @@ class AuthorListTest extends TestCase {
         $list = new AuthorList();
         $list->add(new Author('name', 'email'));
         $list->add(new Author('name', 'email1'));
-        $this->assertEquals(1, count($list->getAll()));
+        $this->assertCount(1, $list->getAll());
         $this->assertTrue($list->has(new Author('name', 'email')));
     }
 
@@ -33,7 +33,7 @@ class AuthorListTest extends TestCase {
         $list = new AuthorList();
         $list->add(new Author('name', 'email'));
         $list->add(new Author('name1', 'email'));
-        $this->assertEquals(1, count($list->getAll()));
+        $this->assertCount(1, $list->getAll());
         $this->assertTrue($list->has(new Author('name', 'email')));
     }
 
@@ -41,7 +41,7 @@ class AuthorListTest extends TestCase {
         $list = new AuthorList();
         $list->add(new Author('name', 'email'));
         $list->add(new Author('name1', 'email1'));
-        $this->assertEquals(2, count($list->getAll()));
+        $this->assertCount(2, $list->getAll());
         $this->assertTrue($list->has(new Author('name', 'email')));
         $this->assertTrue($list->has(new Author('name1', 'email1')));
     }
@@ -50,7 +50,7 @@ class AuthorListTest extends TestCase {
         $list = new AuthorList();
         $list->add(new Author('', 'email1'));
         $list->add(new Author('', 'email2'));
-        $this->assertEquals(2, count($list->getAll()));
+        $this->assertCount(2, $list->getAll());
         $this->assertTrue($list->has(new Author('', 'email1')));
         $this->assertTrue($list->has(new Author('', 'email2')));
     }
@@ -59,7 +59,7 @@ class AuthorListTest extends TestCase {
         $list = new AuthorList();
         $list->add(new Author('name1', ''));
         $list->add(new Author('name2', ''));
-        $this->assertEquals(2, count($list->getAll()));
+        $this->assertCount(2, $list->getAll());
         $this->assertTrue($list->has(new Author('name1', '')));
         $this->assertTrue($list->has(new Author('name2', '')));
     }
