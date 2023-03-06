@@ -75,7 +75,7 @@ class SetupCommand extends ContainerAwareCommand {
 
         } catch(NoResultException $e) {
             $repository = new RepositoryEntity();
-            $repository->setUrl('git://github.com/splitbrain/dokuwiki.git');
+            $repository->setUrl('git://github.com/dokuwiki/dokuwiki.git');
             $repository->setBranch('master');
             $repository->setLastUpdate(0);
             $repository->setName('dokuwiki');
