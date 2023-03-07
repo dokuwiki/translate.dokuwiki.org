@@ -38,4 +38,28 @@ class AppKernel extends Kernel
     {
         $loader->load(__DIR__.'/config/config_'.$this->getEnvironment().'.yml');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRootDir()
+    {
+        return __DIR__;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCacheDir()
+    {
+        return dirname(__DIR__) . '/var/cache/' . $this->getEnvironment();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLogDir()
+    {
+        return dirname(__DIR__) . '/var/logs';
+    }
 }
