@@ -1,7 +1,9 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Services\Language;
+namespace dokuwikiTranslaterBundle\tests\Services\Language;
 
+use org\dokuwiki\translatorBundle\Services\Language\LocalText;
+use org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer;
 use PHPUnit\Framework\TestCase;
 
 class TranslationPreparerTest extends TestCase {

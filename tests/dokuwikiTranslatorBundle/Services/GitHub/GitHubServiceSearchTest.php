@@ -1,7 +1,7 @@
 <?php
+namespace dokuwikiTranslaterBundle\tests\Services\GitHub;
 
-namespace org\dokuwiki\translatorBundle\Services\GitHub;
-
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class GitHubServiceSearchTest extends WebTestCase {

@@ -1,6 +1,10 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Services\Language;
+namespace dokuwikiTranslaterBundle\tests\Services\Language;
 
+use org\dokuwiki\translatorBundle\Services\Language\Author;
+use org\dokuwiki\translatorBundle\Services\Language\AuthorList;
+use org\dokuwiki\translatorBundle\Services\Language\LanguageFileParser;
+use org\dokuwiki\translatorBundle\Services\Language\LanguageParseException;
 use PHPUnit\Framework\TestCase;
 
 class LanguageFileParserTestDummy extends LanguageFileParser {

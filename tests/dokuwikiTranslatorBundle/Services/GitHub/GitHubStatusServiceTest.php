@@ -1,9 +1,13 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Services\GitHub;
+namespace dokuwikiTranslaterBundle\tests\Services\GitHub;
 
+use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Dummy class for the service
+ */
 class GitHubStatusServiceExtend extends GitHubStatusService {
     public function testCheckResponse($content) {
         return $this->checkResponse($content);

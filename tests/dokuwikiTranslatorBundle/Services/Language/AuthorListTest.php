@@ -1,7 +1,9 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Services\Language;
+namespace dokuwikiTranslaterBundle\tests\Services\Language;
 
+use org\dokuwiki\translatorBundle\Services\Language\Author;
+use org\dokuwiki\translatorBundle\Services\Language\AuthorList;
 use PHPUnit\Framework\TestCase;
 
 class AuthorListTest extends TestCase {
