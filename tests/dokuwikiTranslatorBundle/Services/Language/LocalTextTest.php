@@ -1,6 +1,6 @@
 <?php
 
-namespace dokuwikiTranslaterBundle\tests\Services\Language;
+namespace Tests\dokuwikiTranslatorBundle\Services\Language;
 
 use org\dokuwiki\translatorBundle\Services\Language\Author;
 use org\dokuwiki\translatorBundle\Services\Language\AuthorList;

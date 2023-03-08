@@ -1,15 +1,15 @@
 <?php
-namespace dokuwikiTranslaterBundle\tests\Services\GitHub;
+namespace Tests\dokuwikiTranslatorBundle\Services\GitHub;
 
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class GitHubServiceSearchTest extends WebTestCase {
+class GitHubServiceSearchTest extends KernelTestCase {
 
     /**
      * @return array
      */
-    public function dataProvider_GitHubSearch() {
+    public function dataProvider_GitHubSearch(): array
+    {
          return [
              [
                  'https://github.com/Klap-in/dokuwiki-plugin-docnavigation.git',
@@ -28,8 +28,7 @@ class GitHubServiceSearchTest extends WebTestCase {
      * @param string $languageCode
      * @param string $expectedUrl
      * @param int $number
-     * 
-     * @throws GitHubServiceException
+     *
      */
     public function testGitHubSearch($url, $languageCode, $expectedUrl, $number) {
         self::bootKernel();

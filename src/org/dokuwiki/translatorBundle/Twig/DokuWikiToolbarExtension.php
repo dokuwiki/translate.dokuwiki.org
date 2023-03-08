@@ -2,10 +2,10 @@
 
 namespace org\dokuwiki\translatorBundle\Twig;
 
+use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use Twig_Extension;
 
-class DokuWikiToolbarExtension extends Twig_Extension {
+class DokuWikiToolbarExtension extends AbstractExtension {
 
     public function getFunctions() {
         return array(

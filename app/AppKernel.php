@@ -17,15 +17,20 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new JMS\AopBundle\JMSAopBundle(),
-            new JMS\DiExtraBundle\JMSDiExtraBundle($this),
+            new JMS\DiExtraBundle\JMSDiExtraBundle(),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new org\dokuwiki\translatorBundle\dokuwikiTranslatorBundle(),
             new Gregwar\CaptchaBundle\GregwarCaptchaBundle(),
         );
 
-        if (in_array($this->getEnvironment(), array('dev', 'test'))) {
+        if (in_array($this->getEnvironment(), ['dev', 'test'])) {
+            $bundles[] = new Symfony\Bundle\DebugBundle\DebugBundle();
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
+        }
+
+        if ('dev' === $this->getEnvironment()) {
+            $bundles[] = new Symfony\Bundle\WebServerBundle\WebServerBundle();
         }
 
         return $bundles;

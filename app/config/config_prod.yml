@@ -17,6 +17,8 @@ monolog:
             type:  stream
             path:  '%kernel.logs_dir%/%kernel.environment%.log'
             level: debug
-
+        console:
+            type: console
+            process_psr_3_messages: false
 framework:
     trusted_hosts: ['.*\.?translate\.dokuwiki\.org$']

@@ -1,6 +1,6 @@
 <?php
 
-namespace dokuwikiTranslaterBundle\tests\Services\GitHub;
+namespace Tests\dokuwikiTranslatorBundle\Services\GitHub;
 
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
 use PHPUnit\Framework\TestCase;

@@ -1,6 +1,7 @@
 imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
+#    - { resource: services.yml }
 
 framework:
     #esi:             ~
@@ -67,3 +68,8 @@ swiftmailer:
     spool:     { type: memory }
 
 gregwar_captcha: ~
+
+# temporary
+sensio_framework_extra:
+    router:
+        annotations: false

@@ -2,10 +2,10 @@
 
 namespace org\dokuwiki\translatorBundle\Twig;
 
+use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
-use Twig_Extension;
 
-class HighlightWhitespaceExtension extends Twig_Extension {
+class HighlightWhitespaceExtension extends AbstractExtension {
 
     public function getFilters() {
         return array(
