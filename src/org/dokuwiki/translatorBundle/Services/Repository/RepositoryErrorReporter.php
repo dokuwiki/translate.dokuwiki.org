@@ -59,10 +59,15 @@ class RepositoryErrorReporter {
             $template = $this->determineEmailTemplateTranslation($e);
         }
 
+        $file = '';
+        if(isset($this->data['fileName'])) {
+            $file = 'in file: ' . $this->data['fileName'] . '(' . $this->data['lineNumber'] . ')';
+        }
         $this->logger->error(sprintf(
-            'error during repository update (%s: %s)',
+            'error during repository update (%s: %s) %s',
             get_class($e),
-            $e->getMessage()
+            $e->getMessage(),
+            $file
         ));
         $this->logger->debug($e->getTraceAsString());
         if ($template !== '' && $repo->isFunctional()) {

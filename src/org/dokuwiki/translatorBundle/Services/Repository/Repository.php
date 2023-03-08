@@ -104,8 +104,11 @@ abstract class Repository {
     /**
      * Create or update the local repository fork and update cached language files
      *
-     * @throws OptimisticLockException
+     * @throws LoaderError
      * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function update() {
         try {
@@ -192,10 +195,7 @@ abstract class Repository {
         try {
             $remote = $this->behavior->createOriginURL($this->entity);
             $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getCloneDirectoryPath());
-        } catch (GitCloneException $e) {
-            $this->deleteCloneDirectory();
-            throw $e;
-        } catch (GitHubForkException $e) {
+        } catch (GitCloneException|GitHubForkException $e) {
             $this->deleteCloneDirectory();
             throw $e;
         }
@@ -414,8 +414,11 @@ abstract class Repository {
      *
      * @param TranslationUpdateEntity $update
      *
-     * @throws OptimisticLockException
+     * @throws LoaderError
      * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function createAndSendPatch(TranslationUpdateEntity $update) {
         $tmpDir = $this->buildTempPath($update->getId());

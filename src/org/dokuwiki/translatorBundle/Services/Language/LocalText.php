@@ -33,7 +33,7 @@ class LocalText {
     /**
      * @param array|string $content translated text, on markup its string everything else array
      * @param string $type see {@see LocalText::$TYPE_ARRAY} and {@see LocalText::$TYPE_MARKUP}
-     * @param AuthorList $authors List of authors. Key set are the author names, values may the email addresses.
+     * @param AuthorList|null $authors List of authors. Key set are the author names, values may the email addresses.
      *                            Always empty on markup mode.
      * @param string $header the other lines than the list of authors
      */

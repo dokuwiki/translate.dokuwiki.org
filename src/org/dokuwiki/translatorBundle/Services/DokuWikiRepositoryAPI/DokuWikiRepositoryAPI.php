@@ -124,7 +124,7 @@ class DokuWikiRepositoryAPI {
      * @param RepositoryEntity $entity
      * @return void
      */
-    public function mergeExtensionInfo(RepositoryEntity &$entity) {
+    public function mergeExtensionInfo(RepositoryEntity $entity) {
         $info = $this->getExtensionInfo($entity->getType(), $entity->getName());
         $this->mergeRepository($entity, $info);
     }
@@ -136,7 +136,7 @@ class DokuWikiRepositoryAPI {
      * @param RepositoryEntity $apiInfo entity with data from API
      * @return void
      */
-    private function mergeRepository(RepositoryEntity &$left, RepositoryEntity &$apiInfo) {
+    private function mergeRepository(RepositoryEntity $left, RepositoryEntity $apiInfo) {
         $left->setAuthor($apiInfo->getAuthor());
         $left->setDescription($apiInfo->getDescription());
         $left->setType($apiInfo->getType());

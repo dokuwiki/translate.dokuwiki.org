@@ -176,9 +176,9 @@ class TranslationController extends Controller implements InitializableControlle
         }
 
         $data['repository'] = $repositoryEntity;
-        $userTranslation = isset($userInput['translation'])?$userInput['translation']:array();
+        $userTranslation = $userInput['translation'] ?? [];
         $data['translations'] = $this->prepareLanguages($language, $repositoryEntity, $userTranslation);
-        $data['errors'] = isset($userInput['errors'])?$userInput['errors']:array();
+        $data['errors'] = $userInput['errors'] ?? [];
 
 
         $cookies = $request->cookies;
