@@ -94,7 +94,7 @@ class TranslationController extends Controller implements InitializableControlle
 
         $form = $this->getCaptchaForm();
         $form->handleRequest($request);
-        if (!$form->isValid()) {
+        if (!($form->isSubmitted() && $form->isValid())) {
             $userInput = array();
             $userInput['translation'] = $data['translation'];
             $userInput['errors'] = $errors;

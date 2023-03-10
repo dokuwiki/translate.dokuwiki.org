@@ -57,7 +57,7 @@ class ExtensionController extends Controller implements InitializableController 
         $form = $this->createForm(RepositoryCreateType::class, $repository, $options);
 
         $form->handleRequest($request);
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->addExtension($repository);
             $data['repository'] = $repository;
             $data['maxErrorCount'] = $this->container->getParameter('maxErrorCount');
@@ -185,7 +185,7 @@ class ExtensionController extends Controller implements InitializableController 
             $form = $this->createForm(RepositoryRequestEditType::class, $repository, $options);
 
             $form->handleRequest($request);
-            if ($form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 $this->createAndSentEditKey($repository);
                 $data['urlSent'] = true;
             }
@@ -251,7 +251,7 @@ class ExtensionController extends Controller implements InitializableController 
         $form = $this->createForm(RepositoryCreateType::class, $repository, $options);
 
         $form->handleRequest($request);
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->updateExtension($repository, $originalValues);
 
             $param['type'] = $type;
