@@ -22,8 +22,6 @@
         "doctrine/doctrine-bundle": "^1.6",
         "sensio/distribution-bundle": "^5.0.19",
         "sensio/framework-extra-bundle": "^5.0.0",
-        "jms/security-extra-bundle": "1.6.*",
-        "jms/di-extra-bundle": "1.9.*",
         "leafo/lessphp": "dev-master",
         "gregwar/captcha-bundle": "2.*",
         "knplabs/github-api": "^2.7",
