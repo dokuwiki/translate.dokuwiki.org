@@ -25,6 +25,11 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
+    # explicit commands registration
+    org\dokuwiki\translatorBundle\Command\:
+        resource: '../../Command/*'
+        #        resource: '../../src/org/dokuwiki/translatorBundle/Command/*'
+        tags: ['console.command']
 
     org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager:
         arguments:
@@ -75,9 +80,3 @@ services:
             $gitHubApiToken: '%git_hub_token%'
             $dataFolder: '%data%'
             $gitHubUrl: '%git_hub_url%'
-
-    # explicit commands registration
-    org\dokuwiki\translatorBundle\Command\:
-        resource: '../../Command/*'
-#        resource: '../../src/org/dokuwiki/translatorBundle/Command/*'
-        tags: ['console.command']
