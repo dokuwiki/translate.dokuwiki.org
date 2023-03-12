@@ -102,7 +102,6 @@ class DokuWikiRepositoryAPI {
         }
 
         $this->mergeRepository($current, $repository);
-//        $this->entityManager->merge($current); //entity from getRepository is already managed?
     }
 
     /**

@@ -125,7 +125,6 @@ class ExtensionController extends Controller implements InitializableController 
             $repository->setState(RepositoryEntity::$STATE_INITIALIZING);
             $repository->setActivationKey('');
             $entityManager = $this->getDoctrine()->getManager();
-//            $entityManager->merge($repository); //entity from getRepository is already managed?
             $entityManager->flush();
 
             $data['activated'] = true;
@@ -209,7 +208,6 @@ class ExtensionController extends Controller implements InitializableController 
     private function createAndSentEditKey(RepositoryEntity $repository) {
         $repository->setActivationKey($this->generateActivationKey($repository));
         $entityManager = $this->getDoctrine()->getManager();
-//        $entityManager->merge($repository); //entity from getRepository is already managed?
         $entityManager->flush();
 
         // FIXME replace with mail service
@@ -280,7 +278,6 @@ class ExtensionController extends Controller implements InitializableController 
         $repositoryEntity->setLastUpdate(0);
         $repositoryEntity->setActivationKey('');
         $entityManager = $this->getDoctrine()->getManager();
-//        $entityManager->merge($repositoryEntity); //entity from getRepository is already managed?
         $entityManager->flush();
 
         $changed = $originalValues['branch'] !== $repositoryEntity->getBranch()
