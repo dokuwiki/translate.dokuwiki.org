@@ -12,6 +12,7 @@ use org\dokuwiki\translatorBundle\Form\RepositoryRequestEditType;
 use org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageManager;
 use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
+use Swift_Mailer;
 use Swift_Message;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -46,9 +47,10 @@ class ExtensionController extends Controller implements InitializableController 
      * @param Request $request
      * @param string $type
      * @param DokuWikiRepositoryAPI $api
+     * @param Swift_Mailer $mailer
      * @return Response
      */
-    public function indexAction(Request $request, $type, DokuWikiRepositoryAPI $api) {
+    public function indexAction(Request $request, $type, DokuWikiRepositoryAPI $api, Swift_Mailer $mailer) {
 
         $data = array();
 
@@ -65,7 +67,7 @@ class ExtensionController extends Controller implements InitializableController 
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->addExtension($repository, $api);
+            $this->addExtension($repository, $api, $mailer);
             $data['repository'] = $repository;
             $data['maxErrorCount'] = $this->container->getParameter('maxErrorCount');
             return $this->render('dokuwikiTranslatorBundle:Extension:added.html.twig', $data);
@@ -81,8 +83,9 @@ class ExtensionController extends Controller implements InitializableController 
      *
      * @param RepositoryEntity $repository
      * @param DokuWikiRepositoryAPI $api
+     * @param Swift_Mailer $mailer
      */
-    private function addExtension(RepositoryEntity $repository, DokuWikiRepositoryAPI $api) {
+    private function addExtension(RepositoryEntity $repository, DokuWikiRepositoryAPI $api, Swift_Mailer $mailer) {
         $api->mergeExtensionInfo($repository);
         $repository->setLastUpdate(0);
         $repository->setState(RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);
@@ -100,7 +103,7 @@ class ExtensionController extends Controller implements InitializableController 
             ->setTo($repository->getEmail())
             ->setFrom($this->container->getParameter('mailer_from'))
             ->setBody($this->renderView('dokuwikiTranslatorBundle:Mail:extensionAdded.txt.twig', $data));
-        $this->get('mailer')->send($message);
+        $mailer->send($message);
     }
 
     private function generateActivationKey(RepositoryEntity $repository) {
@@ -170,9 +173,10 @@ class ExtensionController extends Controller implements InitializableController 
      * @param Request $request
      * @param string $type
      * @param string $name
+     * @param Swift_Mailer $mailer
      * @return RedirectResponse|Response
      */
-    public function settingsAction(Request $request, $type, $name) {
+    public function settingsAction(Request $request, $type, $name, Swift_Mailer $mailer) {
         $data = array();
 
         try {
@@ -189,7 +193,7 @@ class ExtensionController extends Controller implements InitializableController 
 
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $this->createAndSentEditKey($repository);
+                $this->createAndSentEditKey($repository, $mailer);
                 $data['urlSent'] = true;
             }
             $data['form'] = $form->createView();
@@ -204,8 +208,9 @@ class ExtensionController extends Controller implements InitializableController 
      * Store edit key and sent one-time edit url
      *
      * @param RepositoryEntity $repository
+     * @param Swift_Mailer $mailer
      */
-    private function createAndSentEditKey(RepositoryEntity $repository) {
+    private function createAndSentEditKey(RepositoryEntity $repository, Swift_Mailer $mailer) {
         $repository->setActivationKey($this->generateActivationKey($repository));
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->flush();
@@ -219,7 +224,7 @@ class ExtensionController extends Controller implements InitializableController 
             ->setTo($repository->getEmail())
             ->setFrom($this->container->getParameter('mailer_from'))
             ->setBody($this->renderView('dokuwikiTranslatorBundle:Mail:extensionEditUrl.txt.twig', $data));
-        $this->get('mailer')->send($message);
+        $mailer->send($message);
     }
 
     /**
