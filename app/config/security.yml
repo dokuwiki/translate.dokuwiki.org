@@ -33,6 +33,7 @@ security:
             #anonymous: ~
             #http_basic:
             #    realm: "Secured Demo Area"
+            logout_on_user_change: true
 
     access_control:
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
