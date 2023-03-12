@@ -1,10 +1,11 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Entity;
+namespace org\dokuwiki\translatorBundle\EntityRepository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 
 class RepositoryEntityRepository extends  EntityRepository {
 

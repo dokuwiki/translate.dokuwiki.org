@@ -2,12 +2,24 @@
 
 namespace org\dokuwiki\translatorBundle\Command;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AddCommand extends ContainerAwareCommand {
+
+    /**
+     * @var Registry
+     */
+    private $entityManager;
+
+    public function __construct(Registry $doctrine) {
+
+        $this->entityManager = $doctrine->getManager();
+        parent::__construct();
+    }
 
     protected function configure() {
         $this->setName('dokuwiki:add')
@@ -55,8 +67,8 @@ class AddCommand extends ContainerAwareCommand {
         $repo->setTags('');
         $repo->setEnglishReadonly($input->getArgument('englishReadonly') == 'true');
 
-        $this->getContainer()->get('doctrine')->getManager()->persist($repo);
-        $this->getContainer()->get('doctrine')->getManager()->flush();
+        $this->entityManager->persist($repo);
+        $this->entityManager->flush();
 
     }
 }

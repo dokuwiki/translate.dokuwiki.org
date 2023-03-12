@@ -2,6 +2,7 @@
 namespace org\dokuwiki\translatorBundle\Command;
 
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -18,6 +19,17 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
      * @var OutputInterface
      */
     private $output;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    public function __construct(Registry $doctrine) {
+        $this->entityManager = $doctrine->getManager();
+
+        parent::__construct();
+    }
 
     protected function configure() {
         $this->setName('dokuwiki:editRepo')
@@ -53,7 +65,8 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
             return;
         }
         try {
-            $repo = $this->getEntityManager()->getRepository('dokuwikiTranslatorBundle:RepositoryEntity')
+            $repo = $this->entityManager
+                ->getRepository('dokuwikiTranslatorBundle:RepositoryEntity')
                 ->getRepository($type, $name);
         } catch (NoResultException $e) {
             $output->writeln('nothing found');
@@ -63,13 +76,6 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
         $property = $input->getArgument('property');
         $value = $input->getArgument('value');
         $this->editRepo($repo, $property, $value);
-    }
-
-    /**
-     * @return EntityManager
-     */
-    private function  getEntityManager() {
-        return $this->getContainer()->get('doctrine')->getManager();
     }
 
     /**
@@ -118,9 +124,8 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
                 return;
         }
 
-        $this->getEntityManager()->flush($repo);
+        $this->entityManager->flush($repo);
         $this->output->writeln('done');
     }
-
 
 }

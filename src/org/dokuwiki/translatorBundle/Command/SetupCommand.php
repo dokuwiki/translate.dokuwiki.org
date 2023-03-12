@@ -2,15 +2,16 @@
 
 namespace org\dokuwiki\translatorBundle\Command;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -37,6 +38,12 @@ class SetupCommand extends ContainerAwareCommand {
      */
     private $output;
 
+    public function __construct(Registry $doctrine) {
+        $this->entityManager = $doctrine->getManager();
+
+        parent::__construct();
+    }
+
     protected function configure() {
         $this->setName('dokuwiki:setup')
              ->setDescription('Prepare software for first run');
@@ -53,7 +60,6 @@ class SetupCommand extends ContainerAwareCommand {
      * @throws ORMException
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
         $this->repositoryRepository = $this->entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
         $this->languageRepository = $this->entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
 

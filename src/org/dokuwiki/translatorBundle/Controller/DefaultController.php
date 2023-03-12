@@ -4,8 +4,9 @@ namespace org\dokuwiki\translatorBundle\Controller;
 
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
+use org\dokuwiki\translatorBundle\Services\Language\LanguageManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,12 +21,12 @@ class DefaultController extends Controller implements InitializableController {
     /**
      * @var LanguageNameEntityRepository
      */
-    private $languageRepository;
+    private $languageNameRepository;
 
     public function initialize(Request $request) {
         $entityManager = $this->getDoctrine()->getManager();
         $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
-        $this->languageRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
+        $this->languageNameRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
     }
 
     /**
@@ -33,26 +34,27 @@ class DefaultController extends Controller implements InitializableController {
      * Language determined from url parameter, session or client info
      *
      * @param Request $request
+     * @param LanguageManager $languageManager
      * @return Response
      *
      * @throws NonUniqueResultException
      */
-    public function indexAction(Request $request) {
+    public function indexAction(Request $request, LanguageManager $languageManager) {
         $lang = $request->query->get('lang', null);
 
         if (!empty($lang)) {
             try {
-                $this->languageRepository->getLanguageByCode($lang);
+                $this->languageNameRepository->getLanguageByCode($lang);
             } catch (NoResultException $e) {
                 // just ignore unknown language codes because of spam.
                 return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
             }
         }
 
-        $data['currentLanguage'] = $this->get('language_manager')->getLanguage($request);
+        $data['currentLanguage'] = $languageManager->getLanguage($request);
         $data['coreRepository'] = $this->repositoryRepository->getCoreRepositoryInformation($data['currentLanguage']);
         $data['repositories'] = $this->repositoryRepository->getExtensionRepositoryInformation($data['currentLanguage']);
-        $data['languages'] = $this->languageRepository->getAvailableLanguages();
+        $data['languages'] = $this->languageNameRepository->getAvailableLanguages();
         $data['activated'] = $request->query->has('activated');
         $data['notActive'] = $request->query->has('notActive');
 
@@ -63,16 +65,17 @@ class DefaultController extends Controller implements InitializableController {
      * Show translation progress of DokuWiki
      *
      * @param Request $request
+     * @param LanguageManager $languageManager
      * @return Response
      *
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function showAction(Request $request) {
+    public function showAction(Request $request, LanguageManager $languageManager) {
         $data = array();
         $data['repository'] = $this->repositoryRepository->getCoreTranslation();
-        $data['currentLanguage'] = $this->get('language_manager')->getLanguage($request);
-        $data['languages'] = $this->languageRepository->getAvailableLanguages();
+        $data['currentLanguage'] = $languageManager->getLanguage($request);
+        $data['languages'] = $this->languageNameRepository->getAvailableLanguages();
         $data['featureImport'] = $this->container->getParameter('featureImport');
         $data['featureAddTranslationFromDetail'] = $this->container->getParameter('featureAddTranslationFromDetail');
         $data['englishReadonly'] = $request->query->has('englishReadonly');

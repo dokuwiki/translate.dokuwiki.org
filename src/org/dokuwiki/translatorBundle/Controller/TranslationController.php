@@ -3,13 +3,15 @@
 namespace org\dokuwiki\translatorBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
+use org\dokuwiki\translatorBundle\Services\Language\LanguageManager;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
 use org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer;
 use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidator;
@@ -27,22 +29,48 @@ class TranslationController extends Controller implements InitializableControlle
      * @var EntityManager
      */
     private $entityManager;
+    /**
+     * @var RepositoryManager
+     */
+    private $repositoryManager;
+    /**
+     * @var LanguageManager
+     */
+    private $languageManager;
+    /**
+     * @var TranslationPreparer
+     */
+    private $translationPreparer;
+    /**
+     * @var RepositoryEntityRepository
+     */
+    private $repoRepository;
+
+    public function __construct(RepositoryManager $repositoryManager, LanguageManager $languageManager, TranslationPreparer $translationPreparer, EntityManagerInterface $entityManager) {
+
+        $this->repositoryManager = $repositoryManager;
+        $this->languageManager = $languageManager;
+        $this->translationPreparer = $translationPreparer;
+        $this->entityManager = $entityManager;
+        $this->repoRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
+    }
 
     public function initialize(Request $request) {
-        $this->entityManager = $this->getDoctrine()->getManager();
+//        $this->entityManager = $this->getDoctrine()->getManager();
     }
 
     /**
      * Try to save translated strings and redirect to thank page, home page or back to form
      *
      * @param Request $request
+     * @param UserTranslationValidatorFactory $validatorFactory
      * @return Response
      *
      * @throws NoResultException
-     * @throws OptimisticLockException
      * @throws ORMException
+     * @throws OptimisticLockException
      */
-    public function saveAction(Request $request) {
+    public function saveAction(Request $request, UserTranslationValidatorFactory $validatorFactory) {
         if ($request->getMethod() !== 'POST') {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
@@ -68,8 +96,8 @@ class TranslationController extends Controller implements InitializableControlle
         $data['email'] = $request->request->get('email', '');
         $language = $this->getLanguage($request);
 
-        $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($data['repositoryType'], $data['repositoryName']);
-        $repository = $this->getRepositoryManager()->getRepository($repositoryEntity);
+        $repositoryEntity = $this->repoRepository->getRepository($data['repositoryType'], $data['repositoryName']);
+        $repository = $this->repositoryManager->getRepository($repositoryEntity);
         $defaultTranslation = $repository->getLanguage('en');
         $previousTranslation = $repository->getLanguage($language);
 
@@ -80,7 +108,7 @@ class TranslationController extends Controller implements InitializableControlle
             return $this->redirect($this->generateUrl('dokuwiki_translator_show_extension', $param));
         }
 
-        $validator = $this->getUserTranslationValidator($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email']);
+        $validator = $this->getUserTranslationValidator($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email'], $validatorFactory);
         $newTranslation = $validator->validate();
         $errors = $validator->getErrors();
         if (!empty($errors)) {
@@ -115,17 +143,15 @@ class TranslationController extends Controller implements InitializableControlle
     /**
      * @param LocalText[] $defaultTranslation
      * @param LocalText[] $previousTranslation
-     * @param array       $userTranslation
-     * @param string      $author
-     * @param string      $authorEmail
+     * @param array $userTranslation
+     * @param string $author
+     * @param string $authorEmail
+     * @param UserTranslationValidatorFactory $validatorFactory
      * @return UserTranslationValidator
      */
-    protected function getUserTranslationValidator($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail) {
-        /** @var UserTranslationValidatorFactory $validatorFactory */
-        $validatorFactory = $this->get('user_translation_validator_factory');
-        $validator = $validatorFactory->getInstance($defaultTranslation, $previousTranslation,
+    protected function getUserTranslationValidator(array $defaultTranslation, array $previousTranslation, array $userTranslation, $author, $authorEmail, UserTranslationValidatorFactory $validatorFactory) {
+        return $validatorFactory->getInstance($defaultTranslation, $previousTranslation,
                 $userTranslation, $author, $authorEmail);
-        return $validator;
     }
 
     /**
@@ -165,7 +191,7 @@ class TranslationController extends Controller implements InitializableControlle
     private function translate(Request $request, $type, $name, array $userInput = array()) {
         $language = $this->getLanguage($request);
         try {
-            $repositoryEntity = $this->getRepositoryEntityRepository()->getRepository($type, $name);
+            $repositoryEntity = $this->repoRepository->getRepository($type, $name);
         } catch (NoResultException $e) {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
@@ -221,16 +247,8 @@ class TranslationController extends Controller implements InitializableControlle
             ->getForm();
     }
 
-    /**
-     * @return RepositoryManager
-     */
-    private function getRepositoryManager() {
-        return $this->get('repository_manager');
-    }
-
     private function prepareLanguages($language, $repositoryEntity, array $userTranslation) {
-        $repositoryManager = $this->getRepositoryManager();
-        $repository = $repositoryManager->getRepository($repositoryEntity);
+        $repository = $this->repositoryManager->getRepository($repositoryEntity);
 
         $defaultTranslation = $repository->getLanguage('en');
 
@@ -239,10 +257,7 @@ class TranslationController extends Controller implements InitializableControlle
             $targetTranslation = $repository->getLanguage($language);
         }
 
-        /** @var TranslationPreparer $translationPreparer */
-        $translationPreparer = $this->get('translation_preparer');
-
-        return $translationPreparer->prepare($defaultTranslation, $targetTranslation);
+        return $this->translationPreparer->prepare($defaultTranslation, $targetTranslation);
     }
 
     /**
@@ -260,8 +275,7 @@ class TranslationController extends Controller implements InitializableControlle
      * @return array with string listURL and int count
      */
     private function getOpenPRListInfo($repositoryEntity, $languageNameEntity) {
-        $repositoryManager = $this->getRepositoryManager();
-        $repository = $repositoryManager->getRepository($repositoryEntity);
+        $repository = $this->repositoryManager->getRepository($repositoryEntity);
         return $repository->getOpenPRListInfo($languageNameEntity);
     }
 
@@ -275,13 +289,6 @@ class TranslationController extends Controller implements InitializableControlle
     }
 
     private function getLanguage($request) {
-        return $this->get('language_manager')->getLanguage($request);
-    }
-
-    /**
-     * @return RepositoryEntityRepository
-     */
-    private function getRepositoryEntityRepository() {
-        return $this->entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
+        return $this->languageManager->getLanguage($request);
     }
 }

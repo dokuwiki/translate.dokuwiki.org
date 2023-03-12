@@ -5,7 +5,7 @@ namespace org\dokuwiki\translatorBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="org\dokuwiki\translatorBundle\Entity\LanguageStatsEntityRepository")
+ * @ORM\Entity(repositoryClass="org\dokuwiki\translatorBundle\EntityRepository\LanguageStatsEntityRepository")
  * @ORM\Table(name="languageStats")
  *      indexes={@ORM\Index(name="langName_idx", columns={"language"})}
  * )

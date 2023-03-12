@@ -3,9 +3,10 @@
 namespace org\dokuwiki\translatorBundle\Command;
 
 use DateTime;
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Exception;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,19 +14,31 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ShowStatsCommand extends ContainerAwareCommand {
 
+    /**
+     * @var RepositoryManager
+     */
+    private $repositoryManager;
+
+    /**
+     * @var RepositoryEntityRepository
+     */
+    private $repositoryEntityRepository;
+
+    public function __construct(Registry $doctrine, RepositoryManager $repositoryManager) {
+
+        $this->repositoryEntityRepository = $doctrine->getManager()->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
+        $this->repositoryManager = $repositoryManager;
+        parent::__construct();
+    }
     protected function configure() {
         $this->setName('dokuwiki:showStats')
             ->setDescription('Show some statistics for maintenance');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        /** @var RepositoryManager $repoManager */
-        $repoManager = $this->getContainer()->get('repository_manager');
-        /** @var RepositoryEntityRepository $repoRepository */
-        $repoRepository = $this->getContainer()->get('doctrine')->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
 
         /** @var RepositoryEntity[] $repositories */
-        $repositories = $repoRepository->findAll();
+        $repositories = $this->repositoryEntityRepository->findAll();
         $output->writeln('found ' . count($repositories) . ' repositories');
         foreach ($repositories as $repoEntity) {
             try {
@@ -36,7 +49,7 @@ class ShowStatsCommand extends ContainerAwareCommand {
                 $output->write($date->format('Y-m-d H:i:s') . ' ');
                 $output->write('cnt:' . $repoEntity->getErrorCount() . ' ' . str_replace("\n", "\n   ", $repoEntity->getErrorMsg()));
 
-                $repo = $repoManager->getRepository($repoEntity);
+                $repo = $this->repositoryManager->getRepository($repoEntity);
                 if (!$repo->hasGit()) {
                     $output->writeln('- no local checkout found');
                     continue;

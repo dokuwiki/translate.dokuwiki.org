@@ -2,6 +2,7 @@
 namespace org\dokuwiki\translatorBundle\Services\Mail;
 
 use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Swift_Attachment;
 use Swift_Mailer;
 use Swift_Message;
@@ -39,12 +40,13 @@ class MailService {
 
     /**
      * MailService constructor.
+     *
      * @param Swift_Mailer $mailer
      * @param Environment $twig
      * @param $from
      * @param Logger $logger
      */
-    function __construct(Swift_Mailer $mailer, Environment $twig, $from, Logger $logger) {
+    function __construct(Swift_Mailer $mailer, Environment $twig, $from, LoggerInterface $logger) {
         $this->mailer = $mailer;
         $this->template = $twig;
         $this->from = $from;

@@ -3,13 +3,14 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\LanguageStatsEntity;
-use org\dokuwiki\translatorBundle\Entity\LanguageStatsEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\LanguageStatsEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
 
@@ -30,7 +31,7 @@ class RepositoryStats {
      */
     private $languageNameRepository;
 
-    function __construct(EntityManager $entityManager) {
+    function __construct(EntityManagerInterface $entityManager) {
         $this->entityManager = $entityManager;
         $this->languageStatsRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageStatsEntity');
         $this->languageNameRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');

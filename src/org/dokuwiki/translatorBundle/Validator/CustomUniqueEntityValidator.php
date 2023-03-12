@@ -1,11 +1,21 @@
 <?php
 namespace org\dokuwiki\translatorBundle\Validator;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\Validator\Constraint;
 
 class CustomUniqueEntityValidator extends UniqueEntityValidator {
+
+    /**
+     * Type-hinted for auto wiring of service
+     *
+     * @param Registry $registry
+     */
+    public function __construct(Registry $registry) {
+        parent::__construct($registry);
+    }
 
     /**
      * @param RepositoryEntity $entity

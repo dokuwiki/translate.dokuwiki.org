@@ -4,7 +4,7 @@ namespace org\dokuwiki\translatorBundle\Command;
 
 use Exception;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,7 +20,7 @@ class UpdateLanguagesCommand extends ContainerAwareCommand {
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         /** @var RepositoryManager $repoManager */
-        $repoManager = $this->getContainer()->get('repository_manager');
+        $repoManager = $this->getContainer()->get(RepositoryManager::class);
         /** @var RepositoryEntityRepository $repoRepository */
         $repoRepository = $this->getContainer()->get('doctrine')->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
 

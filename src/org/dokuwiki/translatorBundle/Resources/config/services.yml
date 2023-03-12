@@ -1,87 +1,83 @@
 parameters:
-    repository.class: org\dokuwiki\translatorBundle\Services\Repository\Repository
-    repository_manager.class: org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager
-    repository_stats.class: org\dokuwiki\translatorBundle\Services\Repository\RepositoryStats
-    doku_wiki_repository_api.class: org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI
-    plugin_name_validator.class: org\dokuwiki\translatorBundle\Validator\PluginNameValidator
-    language_manager.class: org\dokuwiki\translatorBundle\Services\Language\LanguageManager
+#    parameter_name: value
 
 services:
-    repository_manager:
-        class: '%repository_manager.class%'
-        arguments: ['%data%', '@doctrine.orm.entity_manager', '%repositoryUpdateAge%', '%maxRepositoriesToUpdatePerRun%', '@repository_stats' , '@git_service', '@mail_service', '@git_hub_service', '@logger', '%maxErrorCount%', '@git_hub_status_service']
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
 
-    repository_stats:
-        class: '%repository_stats.class%'
-        arguments: [ '@doctrine.orm.entity_manager']
+    # makes classes in src/AppBundle available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    org\dokuwiki\translatorBundle\:
+        resource: '../../*'
+#        resource: '../../src/org/dokuwiki/translatorBundle/*'
+        # you can exclude directories or files
+        # but if a service is unused, it's removed anyway e.g {Entity,Repository}
+        exclude: '../../{Entity,Test}'
+#        exclude: '../../src/org/dokuwiki/translatorBundle/{Entity}'
 
-    doku_wiki_repository_api:
-        class: '%doku_wiki_repository_api.class%'
-        arguments: ['%data%', '@doctrine.orm.entity_manager']
+    # controllers are imported separately to make sure they're public
+    # and have a tag that allows actions to type-hint services
+    org\dokuwiki\translatorBundle\Controller\:
+        resource: '../../Controller'
+#        resource: '../../src/org/dokuwiki/translatorBundle/Controller'
+        public: true
+        tags: ['controller.service_arguments']
 
-    plugin_name_validator:
-        class: org\dokuwiki\translatorBundle\Validator\PluginNameValidator
-        tags:
-            - { name: validator.constraint_validator, alias: dwplugin }
+
+    org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager:
+        arguments:
+            $dataFolder: '%data%'
+            $repositoryAgeToUpdate: '%repositoryUpdateAge%'
+            $maxRepositoriesToUpdatePerRun: '%maxRepositoriesToUpdatePerRun%'
+            $maxErrors: '%maxErrorCount%'
+
+    org\dokuwiki\translatorBundle\Services\Repository\RepositoryStats:
+
+    org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI:
+        arguments:
+            $dataFolder: '%data%'
+
+    org\dokuwiki\translatorBundle\Validator\PluginNameValidator:
         calls:
-            - [setApi, ['@doku_wiki_repository_api']]
+            - [setApi, ['@org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI']]
 
-    template_name_validator:
-        class: org\dokuwiki\translatorBundle\Validator\TemplateNameValidator
-        tags:
-            - { name: validator.constraint_validator, alias: dwtemplate }
+    org\dokuwiki\translatorBundle\Validator\TemplateNameValidator:
         calls:
-            - [setApi, ['@doku_wiki_repository_api']]
+            - [setApi, ['@org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI']]
 
-    custom_unique_entity_validator:
-        class: org\dokuwiki\translatorBundle\Validator\CustomUniqueEntityValidator
+    org\dokuwiki\translatorBundle\Validator\CustomUniqueEntityValidator:
         tags:
-            - { name: validator.constraint_validator, alias: customuniqueentity }
-        arguments: ['@doctrine']
+            - { name: validator.constraint_validator }
 
-    language_manager:
-        class: "%language_manager.class%"
-
-    listener.before_controller:
-        class: org\dokuwiki\translatorBundle\EventListener\BeforeControllerListener
+#    listener.before_controller:
+    org\dokuwiki\translatorBundle\EventListener\BeforeControllerListener:
         tags:
             - { name: kernel.event_listener, event: 'kernel.controller', method: 'onKernelController' }
 
-    listener.kernel_exception:
-        class: org\dokuwiki\translatorBundle\EventListener\RouteNotFoundExceptionListener
-        arguments: ['@logger', '@twig']
+#    listener.kernel_exception:
+    org\dokuwiki\translatorBundle\EventListener\RouteNotFoundExceptionListener:
         tags:
             - { name: kernel.event_listener, event: 'kernel.exception', method: 'onKernelException' }
 
-    git_service:
-        class: org\dokuwiki\translatorBundle\Services\Git\GitService
-        arguments: ['%git_bin%', '%command_timeout%']
+    org\dokuwiki\translatorBundle\Services\Git\GitService:
+        arguments:
+            $gitBinary: '%git_bin%'
+            $commandTimeout: '%command_timeout%'
 
-    mail_service:
-        class: org\dokuwiki\translatorBundle\Services\Mail\MailService
-        arguments: ['@mailer', '@twig', '%mailer_from%', '@logger']
+    org\dokuwiki\translatorBundle\Services\Mail\MailService:
+        arguments:
+            $from: '%mailer_from%'
 
-    git_hub_service:
-        class: org\dokuwiki\translatorBundle\Services\GitHub\GitHubService
-        arguments: ['%git_hub_token%', '%data%', '%git_hub_url%']
+    org\dokuwiki\translatorBundle\Services\GitHub\GitHubService:
+        arguments:
+            $gitHubApiToken: '%git_hub_token%'
+            $dataFolder: '%data%'
+            $gitHubUrl: '%git_hub_url%'
 
-    git_hub_status_service:
-        class: org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService
-        arguments: []
-
-    user_translation_validator_factory:
-        class: org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidatorFactory
-        arguments: ['@validator']
-
-    translation_preparer:
-        class: org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer
-
-    doku_wiki_toolbar_extension:
-        class: org\dokuwiki\translatorBundle\Twig\DokuWikiToolbarExtension
-        tags:
-            - { name: twig.extension }
-
-    highlight_whitespace:
-            class: org\dokuwiki\translatorBundle\Twig\HighlightWhitespaceExtension
-            tags:
-                - { name: twig.extension }
+    # explicit commands registration
+    org\dokuwiki\translatorBundle\Command\:
+        resource: '../../Command/*'
+#        resource: '../../src/org/dokuwiki/translatorBundle/Command/*'
+        tags: ['console.command']

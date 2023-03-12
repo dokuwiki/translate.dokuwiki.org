@@ -3,7 +3,9 @@
 namespace org\dokuwiki\translatorBundle\Command;
 
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -20,6 +22,17 @@ class DeleteRepositoryCommand extends ContainerAwareCommand {
      * @var OutputInterface
      */
     private $output;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager) {
+
+        $this->entityManager = $entityManager;
+        parent::__construct();
+    }
 
     protected function configure() {
         $this->setName('dokuwiki:deleteRepo')
@@ -50,17 +63,17 @@ class DeleteRepositoryCommand extends ContainerAwareCommand {
             return;
         }
         try {
-            $repo = $this->getEntityManager()->getRepository('dokuwikiTranslatorBundle:RepositoryEntity')
+            $repo = $this->entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity')
                 ->getRepository($type, $name);
         } catch (NoResultException $e) {
             $output->writeln('nothing found');
             return;
         }
 
-        $this->getEntityManager()->getRepository('dokuwikiTranslatorBundle:LanguageStatsEntity')
+        $this->entityManager->getRepository('dokuwikiTranslatorBundle:LanguageStatsEntity')
             ->clearStats($repo);
-        $this->getEntityManager()->remove($repo);
-        $this->getEntityManager()->flush();
+        $this->entityManager->remove($repo);
+        $this->entityManager->flush();
         $data = $this->getContainer()->getParameter('data');
         $data .= sprintf('/%s/%s/', $type, $name);
 
@@ -72,13 +85,6 @@ class DeleteRepositoryCommand extends ContainerAwareCommand {
             $fs->remove($data);
         }
 
-    }
-
-    /**
-     * @return EntityManager
-     */
-    private function  getEntityManager() {
-        return $this->getContainer()->get('doctrine')->getManager();
     }
 
 }

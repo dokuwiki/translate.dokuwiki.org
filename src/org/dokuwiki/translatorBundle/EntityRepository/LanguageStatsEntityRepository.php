@@ -1,8 +1,9 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Entity;
+namespace org\dokuwiki\translatorBundle\EntityRepository;
 
 use Doctrine\ORM\EntityRepository;
+use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
 
 class LanguageStatsEntityRepository extends EntityRepository {
 

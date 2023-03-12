@@ -2,8 +2,9 @@
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Git\GitService;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubService;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
@@ -11,6 +12,7 @@ use org\dokuwiki\translatorBundle\Services\Mail\MailService;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\GitHubBehavior;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\PlainBehavior;
 use org\dokuwiki\translatorBundle\Services\Repository\Behavior\RepositoryBehavior;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Monolog\Logger;
 
 class RepositoryManager {
@@ -64,10 +66,10 @@ class RepositoryManager {
     private $repositoryAgeToUpdate;
     private $maxRepositoriesToUpdatePerRun;
 
-    function __construct($dataFolder, EntityManager $entityManager, $repositoryAgeToUpdate,
+    function __construct($dataFolder, EntityManagerInterface $entityManager, $repositoryAgeToUpdate,
                 $maxRepositoriesToUpdatePerRun, RepositoryStats $repositoryStats,
                 GitService $gitService, MailService $mailService, GitHubService $gitHubService,
-                Logger $logger, $maxErrors, GitHubStatusService $gitHubStatus) {
+                LoggerInterface $logger, $maxErrors, GitHubStatusService $gitHubStatus) {
 
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;

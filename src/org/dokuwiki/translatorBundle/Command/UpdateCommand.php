@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
-use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\TranslationUpdateEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Repository\Repository;
 use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 use PDOException;
@@ -44,7 +44,7 @@ class UpdateCommand extends ContainerAwareCommand {
             return;
         }
 
-        $this->repositoryManager = $this->getContainer()->get('repository_manager');
+        $this->repositoryManager = $this->getContainer()->get(RepositoryManager::class);
 
         try {
             $this->runUpdate();

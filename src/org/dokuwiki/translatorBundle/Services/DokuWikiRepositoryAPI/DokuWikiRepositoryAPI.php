@@ -3,17 +3,21 @@
 namespace org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
 use SimpleXMLElement;
 
 class DokuWikiRepositoryAPI {
 
     private $cachePath;
     private $cache = null;
+    /**
+     * @var EntityManager
+     */
     private $entityManager;
 
     /**
@@ -21,7 +25,7 @@ class DokuWikiRepositoryAPI {
      */
     private $repositoryRepository;
 
-    function __construct($dataFolder, EntityManager $entityManager) {
+    function __construct($dataFolder, EntityManagerInterface $entityManager) {
         $this->cachePath = "$dataFolder/dokuwikiRepositoryAPI.ser";
         $this->entityManager = $entityManager;
         $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');

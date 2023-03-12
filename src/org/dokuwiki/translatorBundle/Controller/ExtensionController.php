@@ -4,12 +4,14 @@ namespace org\dokuwiki\translatorBundle\Controller;
 
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntityRepository;
+use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Form\RepositoryCreateType;
 use org\dokuwiki\translatorBundle\Form\RepositoryRequestEditType;
 use org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
+use org\dokuwiki\translatorBundle\Services\Language\LanguageManager;
+use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 use Swift_Message;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -28,6 +30,10 @@ class ExtensionController extends Controller implements InitializableController 
      */
     private $languageRepository;
 
+//    public function __construct(RepositoryEntityRepository $repositoryRepository, LanguageNameEntityRepository $languageRepository) {
+//        $this->repositoryRepository = $repositoryRepository;
+//        $this->languageRepository = $languageRepository;
+//    }
     public function initialize(Request $request) {
         $entityManager = $this->getDoctrine()->getManager();
         $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
@@ -37,11 +43,12 @@ class ExtensionController extends Controller implements InitializableController 
     /**
      * Show form to add extension to translation tool, show on successful submit confirmation
      *
-     * @param string $type
      * @param Request $request
+     * @param string $type
+     * @param DokuWikiRepositoryAPI $api
      * @return Response
      */
-    public function indexAction(Request $request, $type) {
+    public function indexAction(Request $request, $type, DokuWikiRepositoryAPI $api) {
 
         $data = array();
 
@@ -58,7 +65,7 @@ class ExtensionController extends Controller implements InitializableController 
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->addExtension($repository);
+            $this->addExtension($repository, $api);
             $data['repository'] = $repository;
             $data['maxErrorCount'] = $this->container->getParameter('maxErrorCount');
             return $this->render('dokuwikiTranslatorBundle:Extension:added.html.twig', $data);
@@ -73,13 +80,9 @@ class ExtensionController extends Controller implements InitializableController 
      * Stores data of new extension
      *
      * @param RepositoryEntity $repository
+     * @param DokuWikiRepositoryAPI $api
      */
-    private function addExtension(RepositoryEntity $repository) {
-        /**
-         * @var DokuWikiRepositoryAPI $api
-         */
-        $api = $this->get('doku_wiki_repository_api');
-
+    private function addExtension(RepositoryEntity $repository, DokuWikiRepositoryAPI $api) {
         $api->mergeExtensionInfo($repository);
         $repository->setLastUpdate(0);
         $repository->setState(RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);
@@ -139,11 +142,12 @@ class ExtensionController extends Controller implements InitializableController 
      * @param Request $request
      * @param string $type
      * @param string $name
+     * @param LanguageManager $languageManager
      * @return RedirectResponse|Response
      *
      * @throws NonUniqueResultException
      */
-    public function showAction(Request $request, $type, $name) {
+    public function showAction(Request $request, $type, $name, LanguageManager $languageManager) {
         $data = array();
 
         try {
@@ -152,7 +156,7 @@ class ExtensionController extends Controller implements InitializableController 
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
 
-        $data['currentLanguage'] = $this->get('language_manager')->getLanguage($request);
+        $data['currentLanguage'] = $languageManager->getLanguage($request);
         $data['languages'] = $this->languageRepository->getAvailableLanguages();
         $data['featureImport'] = $this->container->getParameter('featureImport');
         $data['featureAddTranslationFromDetail'] = $this->container->getParameter('featureAddTranslationFromDetail');
@@ -223,15 +227,16 @@ class ExtensionController extends Controller implements InitializableController 
     /**
      * Edit form of extension configuration
      *
+     * @param Request $request
      * @param string $type
      * @param string $name
      * @param string $key
-     * @param Request $request
+     * @param RepositoryManager $repositoryManager
      * @return RedirectResponse|Response
      *
      * @throws NonUniqueResultException
      */
-    public function editAction(Request $request, $type, $name, $key) {
+    public function editAction(Request $request, $type, $name, $key, RepositoryManager $repositoryManager) {
         $data = array();
 
         try {
@@ -252,7 +257,7 @@ class ExtensionController extends Controller implements InitializableController 
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->updateExtension($repository, $originalValues);
+            $this->updateExtension($repository, $originalValues, $repositoryManager);
 
             $param['type'] = $type;
             $param['name'] = $name;
@@ -269,8 +274,9 @@ class ExtensionController extends Controller implements InitializableController 
      *
      * @param RepositoryEntity $repositoryEntity
      * @param array $originalValues
+     * @param RepositoryManager $repositoryManager
      */
-    private function updateExtension(RepositoryEntity $repositoryEntity, $originalValues) {
+    private function updateExtension(RepositoryEntity $repositoryEntity, $originalValues, RepositoryManager $repositoryManager) {
         $repositoryEntity->setLastUpdate(0);
         $repositoryEntity->setActivationKey('');
         $entityManager = $this->getDoctrine()->getManager();
@@ -281,7 +287,7 @@ class ExtensionController extends Controller implements InitializableController 
                 || $originalValues['url'] !== $repositoryEntity->getUrl();
 
         if($changed) {
-            $repository = $this->get('repository_manager')->getRepository($repositoryEntity);
+            $repository = $repositoryManager->getRepository($repositoryEntity);
             $repository->deleteCloneDirectory();
         }
     }
