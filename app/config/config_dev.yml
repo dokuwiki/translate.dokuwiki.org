@@ -28,8 +28,8 @@ monolog:
             path: '%kernel.logs_dir%/%kernel.environment%-doctrine.log'
             channels: doctrine
 
-assetic:
-    use_controller: true
+#assetic:
+#    use_controller: true
 
 swiftmailer:
     disable_delivery:  true

@@ -164,10 +164,7 @@
 
 {% block javascript %}
     {{ parent() }}
-    {% javascripts
-            '@dokuwikiTranslatorBundle/Resources/public/js/translationWarnings.js'
-            '@dokuwikiTranslatorBundle/Resources/public/js/jquery.autosize-min.js'
-    %}
-    <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
+
+    <link href="{{ asset('@dokuwikiTranslatorBundle/Resources/public/js/translationWarnings.js') }}" rel="stylesheet" />
+    <link href="{{ asset('@dokuwikiTranslatorBundle/Resources/public/js/jquery.autosize-min.js') }}" rel="stylesheet" />
 {% endblock %}

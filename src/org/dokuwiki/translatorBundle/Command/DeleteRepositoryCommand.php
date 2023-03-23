@@ -3,7 +3,6 @@
 namespace org\dokuwiki\translatorBundle\Command;
 
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;

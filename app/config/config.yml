@@ -29,19 +29,19 @@ twig:
         - 'dokuwikiTranslatorBundle:Template:fields.html.twig'
 
 # Assetic Configuration
-assetic:
-    debug:          '%kernel.debug%'
-    use_controller: true
-    #java: '/usr/bin/java'
-    filters:
-        cssrewrite: ~
-       #less:
-        #    node: /usr/bin/node
-        #    node_paths:
-        #        - '%kernel.project_dir%/node_modules'
-        lessphp:
-            file: '%kernel.project_dir%/vendor/leafo/lessphp/lessc.inc.php'
-            apply_to: '\.less$'
+#assetic:
+#    debug:          '%kernel.debug%'
+#    use_controller: true
+#    #java: '/usr/bin/java'
+#    filters:
+#        cssrewrite: ~
+#       #less:
+#        #    node: /usr/bin/node
+#        #    node_paths:
+#        #        - '%kernel.project_dir%/node_modules'
+#        lessphp:
+#            file: '%kernel.project_dir%/vendor/leafo/lessphp/lessc.inc.php'
+#            apply_to: '\.less$'
 
 # Doctrine Configuration
 doctrine:
@@ -68,7 +68,7 @@ swiftmailer:
 
 gregwar_captcha: ~
 
-# temporary
-sensio_framework_extra:
-    router:
-        annotations: false
+## temporary
+#sensio_framework_extra:
+#    router:
+#        annotations: false

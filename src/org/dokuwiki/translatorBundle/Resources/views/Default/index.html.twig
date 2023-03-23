@@ -3,10 +3,9 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>{% block title %}DokuWiki Localization{% endblock %}</title>
-    {% stylesheets filter='lessphp,cssrewrite' output='css/compiled-main.css'
-            '@dokuwikiTranslatorBundle/Resources/public/less/start.less' %}
-        <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="all" />
-    {% endstylesheets %}
+    {% block stylesheets %}
+        <link href="{{ asset('css/compiled-main.css') }}" rel="stylesheet" media="all" />
+    {% endblock %}
     <meta charset="utf-8">
     <link rel="shortcut icon" href="{{ asset('bundles/dokuwikitranslator/images/favicon.ico') }}" />
     <link rel="apple-touch-icon" href="{{ asset('bundles/dokuwikitranslator/images/apple-touch-icon.png') }}" />
@@ -173,13 +172,9 @@
 
 {{ dokuWikiToolbar() }}
 
-{% block javascript %}
-    {% javascripts '@dokuwikiTranslatorBundle/Resources/public/js/jquery-1.9.1.min.js'
-            '@dokuwikiTranslatorBundle/Resources/public/js/bootstrap.min.js'
-
-            %}
-        <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
+{% block javascripts %}
+    <script src="{{ asset('@dokuwikiTranslatorBundle/Resources/public/js/jquery-1.9.1.min.js') }}"></script>
+    <script src="{{ asset('@dokuwikiTranslatorBundle/Resources/public/js/bootstrap.min.js') }}"></script>
 {% endblock %}
 </body>
 </html>
