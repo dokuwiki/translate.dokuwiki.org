@@ -172,6 +172,20 @@
             "translations/.gitignore"
         ]
     },
+    "symfony/twig-bundle": {
+        "version": "4.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "4.4",
+            "ref": "73baff3f7b3cea12a73812a7cfd2c0924a9e250f"
+        },
+        "files": [
+            "config/packages/test/twig.yaml",
+            "config/packages/twig.yaml",
+            "templates/base.html.twig"
+        ]
+    },
     "symfony/validator": {
         "version": "4.4",
         "recipe": {
@@ -184,5 +198,8 @@
             "config/packages/test/validator.yaml",
             "config/packages/validator.yaml"
         ]
+    },
+    "twig/extra-bundle": {
+        "version": "v3.5.1"
     }
 }
