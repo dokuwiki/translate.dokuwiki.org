@@ -29,3 +29,85 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+
+#TEMPORARY, remove after move
+    # makes classes in src/AppBundle available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    org\dokuwiki\translatorBundle\:
+        resource: '../src/org/dokuwiki/translatorBundle/*'
+        # you can exclude directories or files
+        # but if a service is unused, it's removed anyway e.g {Entity,Repository}
+        exclude: '../src/org/dokuwiki/translatorBundle/{Entity,Test}'
+
+    # controllers are imported separately to make sure they're public
+    # and have a tag that allows actions to type-hint services
+    org\dokuwiki\translatorBundle\Controller\:
+        resource: '../src/org/dokuwiki/translatorBundle/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+#END TEMPORARY, remove after move
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    # explicit commands registration
+    org\dokuwiki\translatorBundle\Command\:
+        resource: '../src/org/dokuwiki/translatorBundle/Command/*'
+        #        resource: '../../src/org/dokuwiki/translatorBundle/Command/*'
+        tags: [ 'console.command' ]
+
+    org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager:
+        arguments:
+            $dataFolder: '%data%'
+            $repositoryAgeToUpdate: '%repositoryUpdateAge%'
+            $maxRepositoriesToUpdatePerRun: '%maxRepositoriesToUpdatePerRun%'
+            $maxErrors: '%maxErrorCount%'
+
+    org\dokuwiki\translatorBundle\Services\Repository\RepositoryStats:
+
+    org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI:
+        arguments:
+            $dataFolder: '%data%'
+
+    org\dokuwiki\translatorBundle\Validator\PluginNameValidator:
+        calls:
+            - [ setApi, [ '@org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI' ] ]
+
+    org\dokuwiki\translatorBundle\Validator\TemplateNameValidator:
+        calls:
+            - [ setApi, [ '@org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI' ] ]
+
+    org\dokuwiki\translatorBundle\Validator\CustomUniqueEntityValidator:
+        tags:
+            - { name: validator.constraint_validator }
+
+    #    listener.before_controller:
+    org\dokuwiki\translatorBundle\EventListener\BeforeControllerListener:
+        tags:
+            - { name: kernel.event_listener, event: 'kernel.controller', method: 'onKernelController' }
+
+    #    listener.kernel_exception:
+    org\dokuwiki\translatorBundle\EventListener\RouteNotFoundExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: 'kernel.exception', method: 'onKernelException' }
+
+    org\dokuwiki\translatorBundle\Services\Git\GitService:
+        arguments:
+            $gitBinary: '%git_bin%'
+            $commandTimeout: '%command_timeout%'
+
+    org\dokuwiki\translatorBundle\Services\Mail\MailService:
+        arguments:
+            $from: '%mailer_from%'
+
+    org\dokuwiki\translatorBundle\Services\GitHub\GitHubService:
+        arguments:
+            $gitHubApiToken: '%git_hub_token%'
+            $dataFolder: '%data%'
+            $gitHubUrl: '%git_hub_url%'
+
+
+    # example of adding aliases, if one does not exist
+    # Symfony\Component\Security\Guard\GuardAuthenticatorHandler: '@security.authentication.guard_handler'
