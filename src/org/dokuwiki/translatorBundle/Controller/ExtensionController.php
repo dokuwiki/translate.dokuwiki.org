@@ -5,7 +5,7 @@ namespace org\dokuwiki\translatorBundle\Controller;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use App\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Form\RepositoryCreateType;
 use org\dokuwiki\translatorBundle\Form\RepositoryRequestEditType;

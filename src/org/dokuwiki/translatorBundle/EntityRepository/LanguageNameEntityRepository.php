@@ -4,13 +4,13 @@ namespace org\dokuwiki\translatorBundle\EntityRepository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
+use App\Entity\LanguageNameEntity;
 
 class LanguageNameEntityRepository extends EntityRepository {
 
     /**
      * @param string $code language code
-     * @return LanguageNameEntity
+     * @return \App\Entity\LanguageNameEntity
      *
      * @throws NoResultException
      */

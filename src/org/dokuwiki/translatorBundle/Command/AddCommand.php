@@ -3,7 +3,7 @@
 namespace org\dokuwiki\translatorBundle\Command;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use App\Entity\RepositoryEntity;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

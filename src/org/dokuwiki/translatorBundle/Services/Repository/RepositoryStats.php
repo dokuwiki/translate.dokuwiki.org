@@ -7,11 +7,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
+use App\Entity\LanguageNameEntity;
 use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
-use org\dokuwiki\translatorBundle\Entity\LanguageStatsEntity;
+use App\Entity\LanguageStatsEntity;
 use org\dokuwiki\translatorBundle\EntityRepository\LanguageStatsEntityRepository;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use App\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
 
 class RepositoryStats {
@@ -40,7 +40,7 @@ class RepositoryStats {
     /**
      * Clear all language statistics of this repository
      *
-     * @param RepositoryEntity $entity
+     * @param \App\Entity\RepositoryEntity $entity
      */
     public function clearStats(RepositoryEntity $entity) {
         $this->languageStatsRepository->clearStats($entity);
@@ -50,7 +50,7 @@ class RepositoryStats {
      * Create new language statistics for this repository
      *
      * @param LocalText[] $translations combined array with all translations
-     * @param RepositoryEntity $repository Repository the translation belongs to
+     * @param \App\Entity\RepositoryEntity $repository Repository the translation belongs to
      *
      * @throws OptimisticLockException|ORMException
      */

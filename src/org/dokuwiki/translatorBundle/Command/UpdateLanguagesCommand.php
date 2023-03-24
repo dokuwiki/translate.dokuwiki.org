@@ -3,7 +3,7 @@
 namespace org\dokuwiki\translatorBundle\Command;
 
 use Exception;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use App\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;

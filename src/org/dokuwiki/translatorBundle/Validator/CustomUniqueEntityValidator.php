@@ -2,7 +2,7 @@
 namespace org\dokuwiki\translatorBundle\Validator;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use App\Entity\RepositoryEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\Validator\Constraint;
 
@@ -18,7 +18,7 @@ class CustomUniqueEntityValidator extends UniqueEntityValidator {
     }
 
     /**
-     * @param RepositoryEntity $entity
+     * @param \App\Entity\RepositoryEntity $entity
      * @param Constraint       $constraint
      */
     public function validate($entity, Constraint $constraint) {

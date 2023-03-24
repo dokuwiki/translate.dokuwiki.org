@@ -9,7 +9,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
 use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use App\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageManager;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;

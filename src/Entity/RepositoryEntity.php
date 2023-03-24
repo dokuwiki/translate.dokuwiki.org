@@ -1,5 +1,5 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Entity;
+namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;

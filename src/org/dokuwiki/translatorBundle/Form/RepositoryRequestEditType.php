@@ -5,7 +5,7 @@ namespace org\dokuwiki\translatorBundle\Form;
 
 
 use Gregwar\CaptchaBundle\Type\CaptchaType;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use App\Entity\RepositoryEntity;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;

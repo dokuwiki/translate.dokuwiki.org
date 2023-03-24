@@ -6,10 +6,16 @@ doctrine:
         # either here or in the DATABASE_URL env var (see .env file)
         #server_version: '15'
 
-        # only needed for MySQL
-        charset: utf8mb4
+#        # note:utf8mb4 needed for emoticons and extra chars of some languages
+#        # only needed for MySQL
+#        charset: utf8mb4
+#        default_table_options:
+#            collate: utf8mb4_unicode_ci
+
+        #previous default value of old symfony releases.
+        charset: utf8
         default_table_options:
-            collate: utf8mb4_unicode_ci
+            collate: utf8_general_ci #guessed!
 
         # backtrace queries in profiler (increases memory usage per request)
         #profiling_collect_backtrace: '%kernel.debug%'

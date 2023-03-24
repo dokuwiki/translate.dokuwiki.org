@@ -1,6 +1,7 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Entity;
+namespace App\Entity;
 
+use App\Entity\RepositoryEntity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

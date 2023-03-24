@@ -3,7 +3,7 @@
 namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Exception;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use App\Entity\RepositoryEntity;
 
 class RepositoryUpdateException extends Exception {
 

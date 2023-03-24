@@ -3,7 +3,7 @@
 namespace org\dokuwiki\translatorBundle\EntityRepository;
 
 use Doctrine\ORM\EntityRepository;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use App\Entity\RepositoryEntity;
 
 class LanguageStatsEntityRepository extends EntityRepository {
 

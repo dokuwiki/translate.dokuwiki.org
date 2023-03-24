@@ -2,9 +2,9 @@
 
 namespace org\dokuwiki\translatorBundle\Services\Repository\Behavior;
 
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
+use App\Entity\LanguageNameEntity;
+use App\Entity\RepositoryEntity;
+use App\Entity\TranslationUpdateEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubForkException;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
@@ -55,8 +55,8 @@ interface RepositoryBehavior {
     /**
      * Get information about the open pull requests i.e. url and count
      *
-     * @param RepositoryEntity $repository
-     * @param LanguageNameEntity $language
+     * @param \App\Entity\RepositoryEntity $repository
+     * @param \App\Entity\LanguageNameEntity $language
      * @return array
      */
     public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language);

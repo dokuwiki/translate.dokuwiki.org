@@ -3,7 +3,7 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use App\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Git\GitService;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubService;

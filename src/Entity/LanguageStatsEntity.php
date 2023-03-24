@@ -1,8 +1,10 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Entity;
+namespace App\Entity;
 
+use App\Entity\LanguageNameEntity;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\RepositoryEntity;
 
 /**
  * @ORM\Entity(repositoryClass="org\dokuwiki\translatorBundle\EntityRepository\LanguageStatsEntityRepository")

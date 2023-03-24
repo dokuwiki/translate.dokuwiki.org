@@ -5,12 +5,12 @@ namespace org\dokuwiki\translatorBundle\EntityRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use App\Entity\RepositoryEntity;
 
 class RepositoryEntityRepository extends  EntityRepository {
 
     /**
-     * @return RepositoryEntity
+     * @return \App\Entity\RepositoryEntity
      *
      * @throws NonUniqueResultException If the query result is not unique.
      * @throws NoResultException        If the query returned no result.
@@ -148,7 +148,7 @@ class RepositoryEntityRepository extends  EntityRepository {
      * @param string $type
      * @param string $name
      * @param string $activationKey
-     * @return RepositoryEntity
+     * @return \App\Entity\RepositoryEntity
      *
      * @throws NonUniqueResultException If the query result is not unique.
      * @throws NoResultException        If the query returned no result.
@@ -208,7 +208,7 @@ class RepositoryEntityRepository extends  EntityRepository {
      * @param $maxAge
      * @param $maxResults
      * @param $maxErrors
-     * @return RepositoryEntity[]
+     * @return \App\Entity\RepositoryEntity[]
      */
     public function getRepositoriesToUpdate($maxAge, $maxResults, $maxErrors) {
         $query = $this->getEntityManager()->createQuery(

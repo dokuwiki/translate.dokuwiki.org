@@ -5,7 +5,7 @@ namespace org\dokuwiki\translatorBundle\Command;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Exception;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use App\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -37,7 +37,7 @@ class ShowStatsCommand extends ContainerAwareCommand {
 
     protected function execute(InputInterface $input, OutputInterface $output) {
 
-        /** @var RepositoryEntity[] $repositories */
+        /** @var \App\Entity\RepositoryEntity[] $repositories */
         $repositories = $this->repositoryEntityRepository->findAll();
         $output->writeln('found ' . count($repositories) . ' repositories');
         foreach ($repositories as $repoEntity) {

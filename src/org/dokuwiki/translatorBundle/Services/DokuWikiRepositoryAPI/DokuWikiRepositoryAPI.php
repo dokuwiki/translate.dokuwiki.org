@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
+use App\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
 use SimpleXMLElement;
 
@@ -109,7 +109,7 @@ class DokuWikiRepositoryAPI {
      *
      * @param string $type
      * @param string $name
-     * @return bool|RepositoryEntity
+     * @return bool|\App\Entity\RepositoryEntity
      */
     public function getExtensionInfo($type, $name) {
         $this->loadCache();
@@ -124,7 +124,7 @@ class DokuWikiRepositoryAPI {
     /**
      * Updates $entity with cached info from the API
      *
-     * @param RepositoryEntity $entity
+     * @param \App\Entity\RepositoryEntity $entity
      * @return void
      */
     public function mergeExtensionInfo(RepositoryEntity $entity) {
@@ -135,8 +135,8 @@ class DokuWikiRepositoryAPI {
     /**
      * Merges the relevant info from the API into the local entity
      *
-     * @param RepositoryEntity $left local entity
-     * @param RepositoryEntity $apiInfo entity with data from API
+     * @param \App\Entity\RepositoryEntity $left local entity
+     * @param \App\Entity\RepositoryEntity $apiInfo entity with data from API
      * @return void
      */
     private function mergeRepository(RepositoryEntity $left, RepositoryEntity $apiInfo) {

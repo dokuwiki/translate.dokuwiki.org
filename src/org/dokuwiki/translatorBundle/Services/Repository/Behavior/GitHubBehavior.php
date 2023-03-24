@@ -3,9 +3,9 @@
 namespace org\dokuwiki\translatorBundle\Services\Repository\Behavior;
 
 use Github\Exception\MissingArgumentException;
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
+use App\Entity\LanguageNameEntity;
+use App\Entity\RepositoryEntity;
+use App\Entity\TranslationUpdateEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitAddException;
 use org\dokuwiki\translatorBundle\Services\Git\GitBranchException;
 use org\dokuwiki\translatorBundle\Services\Git\GitCheckoutException;
@@ -109,7 +109,7 @@ class GitHubBehavior implements RepositoryBehavior {
      * Get information about the open pull requests i.e. url and count
      *
      * @param RepositoryEntity $repository
-     * @param LanguageNameEntity $language
+     * @param \App\Entity\LanguageNameEntity $language
      * @return array
      *
      * @throws GitHubServiceException

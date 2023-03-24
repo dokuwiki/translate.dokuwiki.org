@@ -6,9 +6,9 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Exception;
 use Monolog\Logger;
-use org\dokuwiki\translatorBundle\Entity\LanguageNameEntity;
-use org\dokuwiki\translatorBundle\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Entity\TranslationUpdateEntity;
+use App\Entity\LanguageNameEntity;
+use App\Entity\RepositoryEntity;
+use App\Entity\TranslationUpdateEntity;
 use org\dokuwiki\translatorBundle\Services\Git\GitCloneException;
 use org\dokuwiki\translatorBundle\Services\Git\GitCommandException;
 use org\dokuwiki\translatorBundle\Services\Git\GitCommitException;
@@ -42,7 +42,7 @@ abstract class Repository {
     private $git = null;
 
     /**
-     * @var RepositoryEntity Database representation
+     * @var \App\Entity\RepositoryEntity Database representation
      */
     protected $entity;
 
