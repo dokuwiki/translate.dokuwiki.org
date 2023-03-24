@@ -12,12 +12,6 @@ framework:
     session:         ~
     assets: ~
 
-# Twig Configuration
-twig:
-    debug:            '%kernel.debug%'
-    strict_variables: '%kernel.debug%'
-    form_themes:
-        - 'dokuwikiTranslatorBundle:Template:fields.html.twig'
 
 # Assetic Configuration
 #assetic:
