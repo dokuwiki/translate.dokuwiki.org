@@ -4,4 +4,4 @@ twig:
     strict_variables: '%kernel.debug%'
     exception_controller: null
     form_themes:
-        - 'dokuwikiTranslatorBundle:Template:fields.html.twig'
+        - 'Template:fields.html.twig'

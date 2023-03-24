@@ -7,7 +7,6 @@ parameters:
     container.autowiring.strict_mode: true
 
 framework:
-    session:         ~
     assets: ~
 
 
