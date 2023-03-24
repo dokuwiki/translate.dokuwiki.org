@@ -7,8 +7,6 @@ parameters:
     container.autowiring.strict_mode: true
 
 framework:
-    csrf_protection: true
-    default_locale:  '%locale%'
     session:         ~
     assets: ~
 
