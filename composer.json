@@ -31,6 +31,7 @@
         "knplabs/github-api": "^2.7",
         "leafo/lessphp": "dev-master",
         "php-http/guzzle6-adapter": "^1.1",
+        "symfony/asset": "4.4.*",
         "symfony/console": "^4.0",
         "symfony/flex": "^1.19",
         "symfony/form": "4.4.*",
