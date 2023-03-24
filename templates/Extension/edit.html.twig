@@ -1,4 +1,4 @@
-{% extends 'dokuwikiTranslatorBundle:Default:index.html.twig' %}
+{% extends 'Default:index.html.twig' %}
 
 {% block content %}
     <ul class="breadcrumb">
@@ -48,7 +48,7 @@
                 </form>
             </div>
             <div class="span6">
-                {% include 'dokuwikiTranslatorBundle:Template:explanation.html.twig'
+                {% include 'Template:explanation.html.twig'
                     with { 'showname': false }
                 %}
             </div>
