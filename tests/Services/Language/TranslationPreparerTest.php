@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\dokuwikiTranslatorBundle\Services\Language;
+namespace App\Tests\Services\Language;
 
 use App\Services\Language\LocalText;
 use App\Services\Language\TranslationPreparer;

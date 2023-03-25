@@ -1,5 +1,5 @@
 <?php
-namespace Tests\dokuwikiTranslatorBundle\Services\GitHub;
+namespace App\Tests\Services\GitHub;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
