@@ -1,13 +1,13 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Services\Repository\Behavior;
+namespace App\Services\Repository\Behavior;
 
 use App\Entity\LanguageNameEntity;
 use App\Entity\RepositoryEntity;
 use App\Entity\TranslationUpdateEntity;
-use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubForkException;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
+use App\Services\Git\GitRepository;
+use App\Services\GitHub\GitHubForkException;
+use App\Services\GitHub\GitHubServiceException;
 
 interface RepositoryBehavior {
 

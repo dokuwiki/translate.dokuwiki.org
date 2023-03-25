@@ -2,10 +2,10 @@
 
 namespace Tests\dokuwikiTranslatorBundle\Services\Language;
 
-use org\dokuwiki\translatorBundle\Services\Language\Author;
-use org\dokuwiki\translatorBundle\Services\Language\AuthorList;
-use org\dokuwiki\translatorBundle\Services\Language\LocalText;
-use org\dokuwiki\translatorBundle\Services\Language\UserTranslationValidator;
+use App\Services\Language\Author;
+use App\Services\Language\AuthorList;
+use App\Services\Language\LocalText;
+use App\Services\Language\UserTranslationValidator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
 

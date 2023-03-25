@@ -1,6 +1,6 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\DependencyInjection;
+namespace App\DependencyInjection;
 
 use Exception;
 use Symfony\Component\Config\FileLocator;

@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-namespace org\dokuwiki\translatorBundle\Services\Language;
+namespace App\Services\Language;
 
 
 use Exception;

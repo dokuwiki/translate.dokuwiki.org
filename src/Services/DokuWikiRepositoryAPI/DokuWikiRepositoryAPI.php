@@ -1,6 +1,6 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI;
+namespace App\Services\DokuWikiRepositoryAPI;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;

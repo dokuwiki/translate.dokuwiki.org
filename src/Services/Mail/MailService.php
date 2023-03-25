@@ -1,5 +1,5 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Services\Mail;
+namespace App\Services\Mail;
 
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;

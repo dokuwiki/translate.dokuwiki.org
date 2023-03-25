@@ -1,6 +1,6 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Services\Language;
+namespace App\Services\Language;
 
 class AuthorList {
 

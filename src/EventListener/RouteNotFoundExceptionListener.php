@@ -1,6 +1,6 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\EventListener;
+namespace App\EventListener;
 
 
 use Psr\Log\LoggerInterface;

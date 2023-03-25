@@ -2,8 +2,8 @@
 
 namespace Tests\dokuwikiTranslatorBundle\Services\Language;
 
-use org\dokuwiki\translatorBundle\Services\Language\LocalText;
-use org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer;
+use App\Services\Language\LocalText;
+use App\Services\Language\TranslationPreparer;
 use PHPUnit\Framework\TestCase;
 
 class TranslationPreparerTest extends TestCase {

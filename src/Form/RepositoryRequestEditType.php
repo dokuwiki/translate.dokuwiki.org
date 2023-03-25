@@ -1,6 +1,6 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Form;
+namespace App\Form;
 
 
 

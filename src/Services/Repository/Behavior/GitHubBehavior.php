@@ -1,23 +1,23 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Services\Repository\Behavior;
+namespace App\Services\Repository\Behavior;
 
 use Github\Exception\MissingArgumentException;
 use App\Entity\LanguageNameEntity;
 use App\Entity\RepositoryEntity;
 use App\Entity\TranslationUpdateEntity;
-use org\dokuwiki\translatorBundle\Services\Git\GitAddException;
-use org\dokuwiki\translatorBundle\Services\Git\GitBranchException;
-use org\dokuwiki\translatorBundle\Services\Git\GitCheckoutException;
-use org\dokuwiki\translatorBundle\Services\Git\GitNoRemoteException;
-use org\dokuwiki\translatorBundle\Services\Git\GitPullException;
-use org\dokuwiki\translatorBundle\Services\Git\GitPushException;
-use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubCreatePullRequestException;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubForkException;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubService;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
+use App\Services\Git\GitAddException;
+use App\Services\Git\GitBranchException;
+use App\Services\Git\GitCheckoutException;
+use App\Services\Git\GitNoRemoteException;
+use App\Services\Git\GitPullException;
+use App\Services\Git\GitPushException;
+use App\Services\Git\GitRepository;
+use App\Services\GitHub\GitHubCreatePullRequestException;
+use App\Services\GitHub\GitHubForkException;
+use App\Services\GitHub\GitHubService;
+use App\Services\GitHub\GitHubServiceException;
+use App\Services\GitHub\GitHubStatusService;
 
 class GitHubBehavior implements RepositoryBehavior {
 

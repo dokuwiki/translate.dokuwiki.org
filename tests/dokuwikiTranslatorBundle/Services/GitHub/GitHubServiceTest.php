@@ -2,8 +2,8 @@
 
 namespace Tests\dokuwikiTranslatorBundle\Services\GitHub;
 
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubService;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
+use App\Services\GitHub\GitHubService;
+use App\Services\GitHub\GitHubServiceException;
 use PHPUnit\Framework\TestCase;
 
 class GitHubServiceTest extends TestCase {

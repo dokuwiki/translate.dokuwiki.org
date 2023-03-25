@@ -1,6 +1,6 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Services\GitHub;
+namespace App\Services\GitHub;
 
 use Exception;
 

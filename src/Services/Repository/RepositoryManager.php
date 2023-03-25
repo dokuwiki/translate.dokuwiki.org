@@ -1,17 +1,17 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Services\Repository;
+namespace App\Services\Repository;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\RepositoryEntity;
 use App\Repository\RepositoryEntityRepository;
-use org\dokuwiki\translatorBundle\Services\Git\GitService;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubService;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
-use org\dokuwiki\translatorBundle\Services\Mail\MailService;
-use org\dokuwiki\translatorBundle\Services\Repository\Behavior\GitHubBehavior;
-use org\dokuwiki\translatorBundle\Services\Repository\Behavior\PlainBehavior;
-use org\dokuwiki\translatorBundle\Services\Repository\Behavior\RepositoryBehavior;
+use App\Services\Git\GitService;
+use App\Services\GitHub\GitHubService;
+use App\Services\GitHub\GitHubStatusService;
+use App\Services\Mail\MailService;
+use App\Services\Repository\Behavior\GitHubBehavior;
+use App\Services\Repository\Behavior\PlainBehavior;
+use App\Services\Repository\Behavior\RepositoryBehavior;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Monolog\Logger;
 

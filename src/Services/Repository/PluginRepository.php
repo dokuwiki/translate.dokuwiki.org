@@ -1,6 +1,6 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Services\Repository;
+namespace App\Services\Repository;
 
 class PluginRepository extends Repository {
 

@@ -1,14 +1,14 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Command;
+namespace App\Command;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use App\Entity\TranslationUpdateEntity;
 use App\Repository\TranslationUpdateEntityRepository;
-use org\dokuwiki\translatorBundle\Services\Repository\Repository;
-use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
+use App\Services\Repository\Repository;
+use App\Services\Repository\RepositoryManager;
 use PDOException;
 use Swift_MemorySpool;
 use Swift_Transport_SpoolTransport;

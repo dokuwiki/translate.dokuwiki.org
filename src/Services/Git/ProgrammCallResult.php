@@ -1,5 +1,5 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Services\Git;
+namespace App\Services\Git;
 
 class ProgrammCallResult {
 

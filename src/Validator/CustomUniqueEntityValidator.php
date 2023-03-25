@@ -1,5 +1,5 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Validator;
+namespace App\Validator;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use App\Entity\RepositoryEntity;

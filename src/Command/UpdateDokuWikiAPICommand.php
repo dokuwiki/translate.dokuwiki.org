@@ -1,8 +1,8 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Command;
+namespace App\Command;
 
 use Doctrine\ORM\ORMException;
-use org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
+use App\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

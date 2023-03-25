@@ -1,19 +1,19 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Services\Repository;
+namespace App\Services\Repository;
 
 use Exception;
 use Monolog\Logger;
-use org\dokuwiki\translatorBundle\Services\Git\GitCloneException;
-use org\dokuwiki\translatorBundle\Services\Git\GitPullException;
-use org\dokuwiki\translatorBundle\Services\Git\GitPushException;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubCreatePullRequestException;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubForkException;
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubServiceException;
-use org\dokuwiki\translatorBundle\Services\Language\LanguageParseException;
-use org\dokuwiki\translatorBundle\Services\Language\NoDefaultLanguageException;
-use org\dokuwiki\translatorBundle\Services\Language\NoLanguageFolderException;
-use org\dokuwiki\translatorBundle\Services\Mail\MailService;
+use App\Services\Git\GitCloneException;
+use App\Services\Git\GitPullException;
+use App\Services\Git\GitPushException;
+use App\Services\GitHub\GitHubCreatePullRequestException;
+use App\Services\GitHub\GitHubForkException;
+use App\Services\GitHub\GitHubServiceException;
+use App\Services\Language\LanguageParseException;
+use App\Services\Language\NoDefaultLanguageException;
+use App\Services\Language\NoLanguageFolderException;
+use App\Services\Mail\MailService;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;

@@ -8,7 +8,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use App\Repository\LanguageNameEntityRepository;
 use App\Repository\RepositoryEntityRepository;
-use org\dokuwiki\translatorBundle\Services\Language\LanguageManager;
+use App\Services\Language\LanguageManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -1,13 +1,13 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Command;
+namespace App\Command;
 
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Exception;
 use App\Entity\RepositoryEntity;
 use App\Repository\RepositoryEntityRepository;
-use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
+use App\Services\Repository\RepositoryManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

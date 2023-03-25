@@ -1,5 +1,5 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Validator;
+namespace App\Validator;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 

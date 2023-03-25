@@ -1,6 +1,6 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Command;
+namespace App\Command;
 
 
 use App\Entity\LanguageStatsEntity;

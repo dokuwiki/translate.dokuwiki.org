@@ -1,5 +1,5 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Services\Repository;
+namespace App\Services\Repository;
 
 class CoreRepository extends Repository {
 

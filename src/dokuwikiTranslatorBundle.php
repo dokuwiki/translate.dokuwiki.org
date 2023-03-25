@@ -1,6 +1,6 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle;
+namespace App;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

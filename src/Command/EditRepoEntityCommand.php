@@ -1,5 +1,5 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Command;
+namespace App\Command;
 
 
 use Doctrine\Bundle\DoctrineBundle\Registry;

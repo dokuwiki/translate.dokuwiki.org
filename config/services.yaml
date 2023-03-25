@@ -86,11 +86,11 @@ services:
 
     org\dokuwiki\translatorBundle\Validator\PluginNameValidator:
         calls:
-            - [ setApi, [ '@org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI' ] ]
+            - [ setApi, [ '@App\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI' ] ]
 
     org\dokuwiki\translatorBundle\Validator\TemplateNameValidator:
         calls:
-            - [ setApi, [ '@org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI' ] ]
+            - [ setApi, [ '@App\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI' ] ]
 
     org\dokuwiki\translatorBundle\Validator\CustomUniqueEntityValidator:
         tags:

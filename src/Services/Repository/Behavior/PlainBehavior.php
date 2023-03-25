@@ -1,14 +1,14 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Services\Repository\Behavior;
+namespace App\Services\Repository\Behavior;
 
 use App\Entity\LanguageNameEntity;
 use App\Entity\RepositoryEntity;
 use App\Entity\TranslationUpdateEntity;
-use org\dokuwiki\translatorBundle\Services\Git\GitCreatePatchException;
-use org\dokuwiki\translatorBundle\Services\Git\GitPullException;
-use org\dokuwiki\translatorBundle\Services\Git\GitRepository;
-use org\dokuwiki\translatorBundle\Services\Mail\MailService;
+use App\Services\Git\GitCreatePatchException;
+use App\Services\Git\GitPullException;
+use App\Services\Git\GitRepository;
+use App\Services\Mail\MailService;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;

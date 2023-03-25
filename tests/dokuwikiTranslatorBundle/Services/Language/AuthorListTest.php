@@ -2,8 +2,8 @@
 
 namespace Tests\dokuwikiTranslatorBundle\Services\Language;
 
-use org\dokuwiki\translatorBundle\Services\Language\Author;
-use org\dokuwiki\translatorBundle\Services\Language\AuthorList;
+use App\Services\Language\Author;
+use App\Services\Language\AuthorList;
 use PHPUnit\Framework\TestCase;
 
 class AuthorListTest extends TestCase {

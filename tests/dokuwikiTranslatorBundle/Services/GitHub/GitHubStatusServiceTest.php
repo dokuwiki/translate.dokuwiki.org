@@ -2,7 +2,7 @@
 
 namespace Tests\dokuwikiTranslatorBundle\Services\GitHub;
 
-use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;
+use App\Services\GitHub\GitHubStatusService;
 use PHPUnit\Framework\TestCase;
 
 /**

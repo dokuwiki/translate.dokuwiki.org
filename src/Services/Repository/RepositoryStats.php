@@ -1,5 +1,5 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Services\Repository;
+namespace App\Services\Repository;
 
 
 use Doctrine\ORM\EntityManager;
@@ -12,7 +12,7 @@ use App\Repository\LanguageNameEntityRepository;
 use App\Entity\LanguageStatsEntity;
 use App\Repository\LanguageStatsEntityRepository;
 use App\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Services\Language\LocalText;
+use App\Services\Language\LocalText;
 
 class RepositoryStats {
 

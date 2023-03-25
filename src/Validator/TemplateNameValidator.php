@@ -1,8 +1,8 @@
 <?php
-namespace org\dokuwiki\translatorBundle\Validator;
+namespace App\Validator;
 
 use App\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
+use App\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
