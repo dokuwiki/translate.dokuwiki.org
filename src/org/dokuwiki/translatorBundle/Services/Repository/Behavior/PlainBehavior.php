@@ -44,7 +44,7 @@ class PlainBehavior implements RepositoryBehavior {
             $update->getRepository()->getEmail(),
             'Language Update',
             $patch,
-            'dokuwikiTranslatorBundle:Mail:languageUpdate.txt.twig',
+            'Mail/languageUpdate.txt.twig',
             array('update' => $update)
         );
     }

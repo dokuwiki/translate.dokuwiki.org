@@ -40,7 +40,7 @@ class RouteNotFoundExceptionListener implements EventSubscriberInterface {
         $type = get_class($e);
         if ($e instanceof NotFoundHttpException) {
             $this->logger->info($e->getMessage());
-            $response = new Response($this->twig->render('dokuwikiTranslatorBundle:Error:404.html.twig'), 404);
+            $response = new Response($this->twig->render('Error/404.html.twig'), 404);
             $event->setResponse($response);
             return;
         }

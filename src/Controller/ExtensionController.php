@@ -71,12 +71,12 @@ class ExtensionController extends Controller implements InitializableController 
             $this->addExtension($repository, $api, $mailer);
             $data['repository'] = $repository;
             $data['maxErrorCount'] = $this->container->getParameter('app.maxErrorCount');
-            return $this->render('dokuwikiTranslatorBundle:Extension:added.html.twig', $data);
+            return $this->render('Extension/added.html.twig', $data);
         }
 
         $data['form'] = $form->createView();
 
-        return $this->render('dokuwikiTranslatorBundle:Extension:add.html.twig', $data);
+        return $this->render('Extension/add.html.twig', $data);
     }
 
     /**
@@ -103,7 +103,7 @@ class ExtensionController extends Controller implements InitializableController 
             ->setSubject('Registration')
             ->setTo($repository->getEmail())
             ->setFrom($this->container->getParameter('app.mailerFromAddress'))
-            ->setBody($this->renderView('dokuwikiTranslatorBundle:Mail:extensionAdded.txt.twig', $data));
+            ->setBody($this->renderView('Mail/extensionAdded.txt.twig', $data));
         $mailer->send($message);
     }
 
@@ -165,7 +165,7 @@ class ExtensionController extends Controller implements InitializableController 
         $data['featureAddTranslation'] = $this->container->getParameter('app.featureAddTranslation');
         $data['englishReadonly'] = $request->query->has('englishReadonly');
 
-        return $this->render('dokuwikiTranslatorBundle:Default:show.html.twig', $data);
+        return $this->render('Default/show.html.twig', $data);
     }
 
     /**
@@ -201,7 +201,7 @@ class ExtensionController extends Controller implements InitializableController 
         }
         $data['maxErrorCount'] = $this->container->getParameter('app.maxErrorCount');
         $data['repository'] = $repository;
-        return $this->render('dokuwikiTranslatorBundle:Extension:settings.html.twig', $data);
+        return $this->render('Extension/settings.html.twig', $data);
 
     }
 
@@ -224,7 +224,7 @@ class ExtensionController extends Controller implements InitializableController 
             ->setSubject('Edit ' . $repository->getType() . ' settings in DokuWiki Translation Tool')
             ->setTo($repository->getEmail())
             ->setFrom($this->container->getParameter('app.mailerFromAddress'))
-            ->setBody($this->renderView('dokuwikiTranslatorBundle:Mail:extensionEditUrl.txt.twig', $data));
+            ->setBody($this->renderView('Mail/extensionEditUrl.txt.twig', $data));
         $mailer->send($message);
     }
 
@@ -270,7 +270,7 @@ class ExtensionController extends Controller implements InitializableController 
 
         $data['repository'] = $repository;
         $data['form'] = $form->createView();
-        return $this->render('dokuwikiTranslatorBundle:Extension:edit.html.twig', $data);
+        return $this->render('Extension/edit.html.twig', $data);
     }
 
     /**

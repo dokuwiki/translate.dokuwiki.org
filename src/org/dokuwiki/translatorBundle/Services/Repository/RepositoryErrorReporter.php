@@ -108,7 +108,7 @@ class RepositoryErrorReporter {
      */
     private function determineEmailTemplateTranslation(Exception $e) {
         if ($e instanceof GitHubCreatePullRequestException) {
-            return 'dokuwikiTranslatorBundle:Mail:translationErrorPullRequest.txt.twig';
+            return 'Mail/translationErrorPullRequest.txt.twig';
         }
         return '';
     }
@@ -136,31 +136,31 @@ class RepositoryErrorReporter {
      */
     private function determineEmailTemplateUpdate(Exception $e) {
         if ($e instanceof GitPullException) {
-            return 'dokuwikiTranslatorBundle:Mail:importErrorUpdate.txt.twig';
+            return 'Mail/importErrorUpdate.txt.twig';
         }
 
         if ($e instanceof GitPushException) {
-            return 'dokuwikiTranslatorBundle:Mail:importErrorUpdate.txt.twig';
+            return 'Mail/importErrorUpdate.txt.twig';
         }
 
         if ($e instanceof GitHubServiceException) {
-            return 'dokuwikiTranslatorBundle:Mail:importErrorGitHubUrl.txt.twig';
+            return 'Mail/importErrorGitHubUrl.txt.twig';
         }
 
         if ($e instanceof GitCloneException) {
-            return 'dokuwikiTranslatorBundle:Mail:importErrorClone.txt.twig';
+            return 'Mail/importErrorClone.txt.twig';
         }
 
         if ($e instanceof GitHubForkException) {
-            return 'dokuwikiTranslatorBundle:Mail:importErrorClone.txt.twig';
+            return 'Mail/importErrorClone.txt.twig';
         }
 
         if ($e instanceof NoLanguageFolderException) {
-            return 'dokuwikiTranslatorBundle:Mail:importErrorNoLangFolder.txt.twig';
+            return 'Mail/importErrorNoLangFolder.txt.twig';
         }
 
         if ($e instanceof NoDefaultLanguageException) {
-            return 'dokuwikiTranslatorBundle:Mail:importErrorNoDefaultTranslation.txt.twig';
+            return 'Mail/importErrorNoDefaultTranslation.txt.twig';
         }
 
         if ($e instanceof LanguageParseException) {
@@ -168,7 +168,7 @@ class RepositoryErrorReporter {
             $this->data['lineNumber'] = $e->getLineNumber();
             $this->data['message'] = $e->getMessage();
 
-            return 'dokuwikiTranslatorBundle:Mail:importErrorLanguageParse.txt.twig';
+            return 'Mail/importErrorLanguageParse.txt.twig';
         }
         return '';
     }

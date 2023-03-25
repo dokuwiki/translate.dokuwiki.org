@@ -239,7 +239,7 @@ class TranslationController extends Controller implements InitializableControlle
         $data['openPR'] = $this->getOpenPRListInfo($repositoryEntity, $data['targetLanguage']);
         $data['captcha'] = $this->getCaptchaForm()->createView();
 
-        return $this->render('dokuwikiTranslatorBundle:Translate:translate.html.twig', $data);
+        return $this->render('Translate/translate.html.twig', $data);
     }
 
     private function getCaptchaForm() {
@@ -286,7 +286,7 @@ class TranslationController extends Controller implements InitializableControlle
      * @return Response
      */
     public function thanksAction() {
-        return $this->render('dokuwikiTranslatorBundle:Translate:thanks.html.twig');
+        return $this->render('Translate/thanks.html.twig');
     }
 
     private function getLanguage($request) {
