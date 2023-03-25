@@ -18,7 +18,7 @@ class RepositoryEntityRepository extends  EntityRepository {
     public function getCoreRepository() {
         $query = $this->getEntityManager()->createQuery(
             'SELECT repository
-             FROM dokuwikiTranslatorBundle:RepositoryEntity repository
+             FROM App\Entity\RepositoryEntity repository
              WHERE repository.type = :type');
 
         $query->setParameter('type', RepositoryEntity::$TYPE_CORE);
@@ -52,7 +52,7 @@ class RepositoryEntityRepository extends  EntityRepository {
     public function getCoreRepositoryInformation($language) {
         $query = $this->getEntityManager()->createQuery(
             'SELECT stats.completionPercent, repository.displayName, repository.state, repository.englishReadonly
-             FROM dokuwikiTranslatorBundle:LanguageStatsEntity stats
+             FROM App\Entity\LanguageStatsEntity stats
              JOIN stats.repository repository
              WHERE repository.type = :type
              AND stats.language = :language');
@@ -79,7 +79,7 @@ class RepositoryEntityRepository extends  EntityRepository {
     public function getExtensionRepositoryInformation($language) {
         $query = $this->getEntityManager()->createQuery('
             SELECT stats.completionPercent, repository.name, repository.type, repository.displayName, repository.state, repository.englishReadonly
-            FROM dokuwikiTranslatorBundle:RepositoryEntity repository
+            FROM App\Entity\RepositoryEntity repository
             LEFT OUTER JOIN repository.translations stats
             WITH (stats.language = :language OR stats.language IS NULL)
             WHERE repository.type != :type
@@ -129,7 +129,7 @@ class RepositoryEntityRepository extends  EntityRepository {
     private function getTranslation($type, $name) {
         $query = $this->getEntityManager()->createQuery('
         SELECT repository, translations, lang
-            FROM dokuwikiTranslatorBundle:RepositoryEntity repository
+            FROM App\Entity\RepositoryEntity repository
             LEFT OUTER JOIN repository.translations translations
             LEFT OUTER JOIN translations.language lang
             WHERE repository.type = :type
@@ -189,7 +189,7 @@ class RepositoryEntityRepository extends  EntityRepository {
 
         $query = $this->getEntityManager()->createQuery(
             "SELECT repository
-             FROM dokuwikiTranslatorBundle:RepositoryEntity repository
+             FROM App\Entity\RepositoryEntity repository
              WHERE repository.type = :type
              AND repository.name = :name
              AND repository.activationKey = :key
@@ -213,7 +213,7 @@ class RepositoryEntityRepository extends  EntityRepository {
     public function getRepositoriesToUpdate($maxAge, $maxResults, $maxErrors) {
         $query = $this->getEntityManager()->createQuery(
             'SELECT repository
-             FROM dokuwikiTranslatorBundle:RepositoryEntity repository
+             FROM App\Entity\RepositoryEntity repository
              WHERE repository.lastUpdate < :timeToUpdate
              AND repository.errorCount < :maxErrors
              AND repository.state IN (:active, :initializing)

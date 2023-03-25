@@ -2,9 +2,7 @@
 
 namespace App\Entity;
 
-use App\Entity\LanguageNameEntity;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\RepositoryEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\LanguageStatsEntityRepository")

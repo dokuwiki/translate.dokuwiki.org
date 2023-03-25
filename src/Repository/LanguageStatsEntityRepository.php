@@ -9,7 +9,7 @@ class LanguageStatsEntityRepository extends EntityRepository {
 
     public function clearStats(RepositoryEntity $repository) {
         $query = $this->getEntityManager()->createQuery('
-            DELETE FROM dokuwikiTranslatorBundle:LanguageStatsEntity langStats
+            DELETE FROM App\Entity\LanguageStatsEntity langStats
             WHERE langStats.repository = :repository
         ');
         $query->setParameter('repository', $repository);

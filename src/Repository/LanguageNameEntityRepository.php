@@ -10,7 +10,7 @@ class LanguageNameEntityRepository extends EntityRepository {
 
     /**
      * @param string $code language code
-     * @return \App\Entity\LanguageNameEntity
+     * @return LanguageNameEntity
      *
      * @throws NoResultException
      */
@@ -31,7 +31,7 @@ class LanguageNameEntityRepository extends EntityRepository {
     public function getAvailableLanguages() {
         return $this->getEntityManager()->createQuery('
             SELECT languageName
-            FROM dokuwikiTranslatorBundle:LanguageNameEntity languageName
+            FROM App\Entity\LanguageNameEntity languageName
             ORDER BY languageName.name ASC
         ')->getResult();
     }
