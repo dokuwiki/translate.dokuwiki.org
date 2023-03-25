@@ -40,12 +40,6 @@ services:
         # but if a service is unused, it's removed anyway e.g {Entity,Repository}
         exclude: '../src/org/dokuwiki/translatorBundle/{Entity,Test}'
 
-    # controllers are imported separately to make sure they're public
-    # and have a tag that allows actions to type-hint services
-    org\dokuwiki\translatorBundle\Controller\:
-        resource: '../src/org/dokuwiki/translatorBundle/Controller'
-        public: true
-        tags: ['controller.service_arguments']
 
 #END TEMPORARY, remove after move
 
