@@ -7,8 +7,8 @@
         <link href="{{ asset('css/compiled-main.css') }}" rel="stylesheet" media="all" />
     {% endblock %}
     <meta charset="utf-8">
-    <link rel="shortcut icon" href="{{ asset('bundles/dokuwikitranslator/images/favicon.ico') }}" />
-    <link rel="apple-touch-icon" href="{{ asset('bundles/dokuwikitranslator/images/apple-touch-icon.png') }}" />
+    <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}" />
+    <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}" />
 </head>
 <body>
 
@@ -37,7 +37,7 @@
             </div>
         {% endif %}
         <div class="span8">
-            <img src="{{ asset('bundles/dokuwikitranslator/images/dwloc.png') }}" alt="" id="logo" />
+            <img src="{{ asset('images/dwloc.png') }}" alt="" id="logo" />
             <p>
                 This is the central hub for localization of the
                 <a href="https://dokuwiki.org">DokuWiki</a> Open Source wiki software and its plugins and templates.
@@ -173,8 +173,8 @@
 {{ dokuWikiToolbar() }}
 
 {% block javascripts %}
-    <script src="{{ asset('@dokuwikiTranslatorBundle/Resources/public/js/jquery-1.9.1.min.js') }}"></script>
-    <script src="{{ asset('@dokuwikiTranslatorBundle/Resources/public/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/jquery-1.9.1.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
 {% endblock %}
 </body>
 </html>
