@@ -4,13 +4,11 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "org\\dokuwiki\\translatorBundle\\": "src/org/dokuwiki/translatorBundle",
             "App\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\dokuwikiTranslatorBundle\\": "tests/dokuwikiTranslatorBundle",
             "App\\Tests\\": "tests/"
         }
     },

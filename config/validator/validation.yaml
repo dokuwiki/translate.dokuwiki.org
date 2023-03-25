@@ -13,12 +13,12 @@ App\Entity\RepositoryEntity:
     name:
       - NotBlank: ~
       - Regex: '/^[a-z0-9]+$/'
-      - org\dokuwiki\translatorBundle\Validator\PluginName:
+      - App\Validator\PluginName:
           groups: [plugin]
-      - org\dokuwiki\translatorBundle\Validator\TemplateName:
+      - App\Validator\TemplateName:
           groups: [template]
   constraints:
-    - org\dokuwiki\translatorBundle\Validator\CustomUniqueEntity:
+    - App\Validator\CustomUniqueEntity:
         fields: [name, type]
         #            errorPath: name
         message: "There is already a registered {{ type }} with the name \"{{ name }}\"."

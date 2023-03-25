@@ -39,7 +39,6 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-            - '../src/org/dokuwiki/translatorBundle' #exclude old bundle
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -47,75 +46,61 @@ services:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
-
-
-#TEMPORARY, remove after move
-    # makes classes in src/AppBundle available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
-    org\dokuwiki\translatorBundle\:
-        resource: '../src/org/dokuwiki/translatorBundle/*'
-        # you can exclude directories or files
-        # but if a service is unused, it's removed anyway e.g {Entity,Repository}
-        exclude: '../src/org/dokuwiki/translatorBundle/{Entity,Test}'
-
-#END TEMPORARY, remove after move
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
 
     # explicit commands registration
-    org\dokuwiki\translatorBundle\Command\:
-        resource: '../src/org/dokuwiki/translatorBundle/Command/*'
-        #        resource: '../../src/org/dokuwiki/translatorBundle/Command/*'
+    App\Command\:
+        resource: '../src/Command/*'
         tags: [ 'console.command' ]
 
-    org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager:
+    App\Services\Repository\RepositoryManager:
         arguments:
             $dataFolder: '%app.dataDir%'
             $repositoryAgeToUpdate: '%app.repositoryUpdateAge%'
             $maxRepositoriesToUpdatePerRun: '%app.maxRepositoriesToUpdatePerRun%'
             $maxErrors: '%app.maxErrorCount%'
 
-    org\dokuwiki\translatorBundle\Services\Repository\RepositoryStats:
+    App\Services\Repository\RepositoryStats:
 
-    org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI:
+    App\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI:
         arguments:
             $dataFolder: '%app.dataDir%'
 
-    org\dokuwiki\translatorBundle\Validator\PluginNameValidator:
+    App\Validator\PluginNameValidator:
         calls:
             - [ setApi, [ '@App\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI' ] ]
 
-    org\dokuwiki\translatorBundle\Validator\TemplateNameValidator:
+    App\Validator\TemplateNameValidator:
         calls:
             - [ setApi, [ '@App\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI' ] ]
 
-    org\dokuwiki\translatorBundle\Validator\CustomUniqueEntityValidator:
+    App\Validator\CustomUniqueEntityValidator:
         tags:
             - { name: validator.constraint_validator }
 
     #    listener.before_controller:
-    org\dokuwiki\translatorBundle\EventListener\BeforeControllerListener:
+    App\EventListener\BeforeControllerListener:
         tags:
             - { name: kernel.event_listener, event: 'kernel.controller', method: 'onKernelController' }
 
     #    listener.kernel_exception:
-    org\dokuwiki\translatorBundle\EventListener\RouteNotFoundExceptionListener:
+    App\EventListener\RouteNotFoundExceptionListener:
         tags:
             - { name: kernel.event_listener, event: 'kernel.exception', method: 'onKernelException' }
 
-    org\dokuwiki\translatorBundle\Services\Git\GitService:
+    App\Services\Git\GitService:
         arguments:
             $gitBinary: '%app.gitBinary%'
             $commandTimeout: '%app.commandTimeout%'
 
-    org\dokuwiki\translatorBundle\Services\Mail\MailService:
+    App\Services\Mail\MailService:
         arguments:
             $from: '%app.mailerFromAddress%'
 
-    org\dokuwiki\translatorBundle\Services\GitHub\GitHubService:
+    App\Services\GitHub\GitHubService:
         arguments:
             $gitHubApiToken: '%app.githubApiToken%'
             $dataFolder: '%app.dataDir%'
