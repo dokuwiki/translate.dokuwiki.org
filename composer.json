@@ -32,6 +32,7 @@
         "knplabs/github-api": "^2.7",
         "leafo/lessphp": "dev-master",
         "php-http/guzzle6-adapter": "^1.1",
+        "symfony/apache-pack": "^1.0",
         "symfony/asset": "4.4.*",
         "symfony/console": "^4.0",
         "symfony/flex": "^1.19",
@@ -63,7 +64,7 @@
     },
     "extra": {
         "symfony": {
-            "allow-contrib": false,
+            "allow-contrib": true,
             "require": "4.4.*"
         }
     },
