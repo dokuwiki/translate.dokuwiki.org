@@ -1,9 +1,10 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Controller;
+namespace App\Controller;
 
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use App\Controller\InitializableController;
 use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
 use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageManager;

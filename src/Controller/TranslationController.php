@@ -1,7 +1,8 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Controller;
+namespace App\Controller;
 
+use App\Controller\InitializableController;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;

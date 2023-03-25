@@ -1,3 +1,67 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+
+dokuwiki_translator_homepage:
+  path:  /
+  controller: App\Controller\DefaultController::index
+
+dokuwiki_translator_show_extension:
+  path:  /{type}/{name}
+  controller: App\Controller\ExtensionController::show
+  requirements:
+    type: plugin|template
+
+dokuwiki_translator_extension_add:
+  path:  /{type}
+  controller: App\Controller\ExtensionController::index
+  requirements:
+    type: plugin|template
+
+dokuwiki_translator_extension_activate:
+  path:  /{type}/{name}/activate/{key}
+  controller: App\Controller\ExtensionController::activate
+  requirements:
+    type: plugin|template
+
+dokuwiki_translator_extension_settings:
+  path:  /{type}/{name}/settings
+  controller: App\Controller\ExtensionController::settings
+  requirements:
+    type: plugin|template
+
+dokuwiki_translator_extension_edit:
+  path:  /{type}/{name}/edit/{key}
+  controller: App\Controller\ExtensionController::edit
+  requirements:
+    type: plugin|template
+
+dokuwiki_translate:
+  path:  /translate/dokuwiki
+  controller: App\Controller\TranslationController::translateCore
+
+dokuwiki_translate_extension:
+  path:  /translate/{type}/{name}
+  controller: App\Controller\TranslationController::translateExtension
+  requirements:
+    type: plugin|template
+
+dokuwiki_translate_thanks:
+  path:  /translate/thanks
+  controller: App\Controller\TranslationController::thanks
+
+dokuwiki_translate_save:
+  path:  /translate/save
+  controller: App\Controller\TranslationController::save
+
+dokuwiki_translator_show:
+  path:  /dokuwiki
+  controller: App\Controller\DefaultController::show
+
+# https://symfony.com/doc/4.4/routing.html#redirecting-to-urls-and-routes-directly-from-a-route
+dokuwiki_translator_redirect_old:
+  path: /translate.php
+  controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+  defaults:
+    route: dokuwiki_translator_homepage
+    permanent: true

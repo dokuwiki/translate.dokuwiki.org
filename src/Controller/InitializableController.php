@@ -1,6 +1,6 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Controller;
+namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 

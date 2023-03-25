@@ -2,7 +2,7 @@
 
 namespace org\dokuwiki\translatorBundle\EventListener;
 
-use org\dokuwiki\translatorBundle\Controller\InitializableController;
+use App\Controller\InitializableController;
 use Symfony\Bundle\TwigBundle\Controller\ExceptionController;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 

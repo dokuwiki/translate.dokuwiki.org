@@ -1,7 +1,8 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\Controller;
+namespace App\Controller;
 
+use App\Controller\InitializableController;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
