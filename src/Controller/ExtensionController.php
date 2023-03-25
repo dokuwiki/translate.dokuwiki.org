@@ -70,7 +70,7 @@ class ExtensionController extends Controller implements InitializableController 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->addExtension($repository, $api, $mailer);
             $data['repository'] = $repository;
-            $data['maxErrorCount'] = $this->container->getParameter('maxErrorCount');
+            $data['maxErrorCount'] = $this->container->getParameter('app.maxErrorCount');
             return $this->render('dokuwikiTranslatorBundle:Extension:added.html.twig', $data);
         }
 
@@ -102,7 +102,7 @@ class ExtensionController extends Controller implements InitializableController 
         $message = (new Swift_Message())
             ->setSubject('Registration')
             ->setTo($repository->getEmail())
-            ->setFrom($this->container->getParameter('mailer_from'))
+            ->setFrom($this->container->getParameter('app.mailerFromAddress'))
             ->setBody($this->renderView('dokuwikiTranslatorBundle:Mail:extensionAdded.txt.twig', $data));
         $mailer->send($message);
     }
@@ -161,8 +161,8 @@ class ExtensionController extends Controller implements InitializableController 
 
         $data['currentLanguage'] = $languageManager->getLanguage($request);
         $data['languages'] = $this->languageRepository->getAvailableLanguages();
-        $data['featureImport'] = $this->container->getParameter('featureImport');
-        $data['featureAddTranslationFromDetail'] = $this->container->getParameter('featureAddTranslationFromDetail');
+        $data['featureImportExport'] = $this->container->getParameter('app.featureImportExport');
+        $data['featureAddTranslation'] = $this->container->getParameter('app.featureAddTranslation');
         $data['englishReadonly'] = $request->query->has('englishReadonly');
 
         return $this->render('dokuwikiTranslatorBundle:Default:show.html.twig', $data);
@@ -199,7 +199,7 @@ class ExtensionController extends Controller implements InitializableController 
             }
             $data['form'] = $form->createView();
         }
-        $data['maxErrorCount'] = $this->container->getParameter('maxErrorCount');
+        $data['maxErrorCount'] = $this->container->getParameter('app.maxErrorCount');
         $data['repository'] = $repository;
         return $this->render('dokuwikiTranslatorBundle:Extension:settings.html.twig', $data);
 
@@ -223,7 +223,7 @@ class ExtensionController extends Controller implements InitializableController 
         $message = (new Swift_Message())
             ->setSubject('Edit ' . $repository->getType() . ' settings in DokuWiki Translation Tool')
             ->setTo($repository->getEmail())
-            ->setFrom($this->container->getParameter('mailer_from'))
+            ->setFrom($this->container->getParameter('app.mailerFromAddress'))
             ->setBody($this->renderView('dokuwikiTranslatorBundle:Mail:extensionEditUrl.txt.twig', $data));
         $mailer->send($message);
     }

@@ -4,6 +4,31 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    # Default locale. (there is just english)
+    locale: en
+
+    # make environment variables from .env, .env.local, etc available as parameter
+    # refer to these files for details
+    # eventually env var processors can be applied: https://symfony.com/doc/current/configuration/env_var_processors.html
+
+    app.mailerFromAddress: '%env(MAILER_FROM)%'
+    app.gitBinary: '%env(GIT_BINARY)%'
+    app.dataDir: '%env(DATA_DIR)%'
+    app.repositoryUpdateAge: '%env(REPOSITORY_UPDATE_AGE)%'
+    app.maxRepositoriesToUpdatePerRun: '%env(MAX_REPOSITORIES_TO_UPDATE_PER_RUN)%'
+    app.maxErrorCount: '%env(MAX_ERROR_COUNT)%'
+    app.commandTimeout: '%env(COMMAND_TIMEOUT)%'
+    app.githubApiToken: '%env(GITHUB_API_TOKEN)%'
+    app.githubUrl: '%env(GITHUB_URL)%'
+    app.featureImportExport: '%env(FEATURE_IMPORT_EXPORT_BY_USER)%'
+    app.featureAddTranslation: '%env(FEATURE_ADD_TRANSLATION_BY_USER)%'
+
+
+# MOVE to better place, only for production
+# Uncomment for production - set real hostname and scheme
+#router.request_context.host: translate.dokuwiki.org
+#router.request_context.scheme: http
+
 
 services:
     # default configuration for services in *this* file
@@ -40,7 +65,6 @@ services:
         # but if a service is unused, it's removed anyway e.g {Entity,Repository}
         exclude: '../src/org/dokuwiki/translatorBundle/{Entity,Test}'
 
-
 #END TEMPORARY, remove after move
 
     # add more service definitions when explicit configuration is needed
@@ -54,16 +78,16 @@ services:
 
     org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager:
         arguments:
-            $dataFolder: '%data%'
-            $repositoryAgeToUpdate: '%repositoryUpdateAge%'
-            $maxRepositoriesToUpdatePerRun: '%maxRepositoriesToUpdatePerRun%'
-            $maxErrors: '%maxErrorCount%'
+            $dataFolder: '%app.dataDir%'
+            $repositoryAgeToUpdate: '%app.repositoryUpdateAge%'
+            $maxRepositoriesToUpdatePerRun: '%app.maxRepositoriesToUpdatePerRun%'
+            $maxErrors: '%app.maxErrorCount%'
 
     org\dokuwiki\translatorBundle\Services\Repository\RepositoryStats:
 
     org\dokuwiki\translatorBundle\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI:
         arguments:
-            $dataFolder: '%data%'
+            $dataFolder: '%app.dataDir%'
 
     org\dokuwiki\translatorBundle\Validator\PluginNameValidator:
         calls:
@@ -89,18 +113,18 @@ services:
 
     org\dokuwiki\translatorBundle\Services\Git\GitService:
         arguments:
-            $gitBinary: '%git_bin%'
-            $commandTimeout: '%command_timeout%'
+            $gitBinary: '%app.gitBinary%'
+            $commandTimeout: '%app.commandTimeout%'
 
     org\dokuwiki\translatorBundle\Services\Mail\MailService:
         arguments:
-            $from: '%mailer_from%'
+            $from: '%app.mailerFromAddress%'
 
     org\dokuwiki\translatorBundle\Services\GitHub\GitHubService:
         arguments:
-            $gitHubApiToken: '%git_hub_token%'
-            $dataFolder: '%data%'
-            $gitHubUrl: '%git_hub_url%'
+            $gitHubApiToken: '%app.githubApiToken%'
+            $dataFolder: '%app.dataDir%'
+            $gitHubUrl: '%app.githubUrl%'
 
 
     # example of adding aliases, if one does not exist

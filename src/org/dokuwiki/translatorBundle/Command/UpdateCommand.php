@@ -131,7 +131,7 @@ class UpdateCommand extends ContainerAwareCommand {
     }
 
     private function getLockFilePath() {
-        $path = $this->getContainer()->getParameter('data');
+        $path = $this->getContainer()->getParameter('app.dataDir');
         $path .= '/dokuwiki-importer.lock';
         return $path;
     }

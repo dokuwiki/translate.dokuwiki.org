@@ -77,8 +77,8 @@ class DefaultController extends Controller implements InitializableController {
         $data['repository'] = $this->repositoryRepository->getCoreTranslation();
         $data['currentLanguage'] = $languageManager->getLanguage($request);
         $data['languages'] = $this->languageNameRepository->getAvailableLanguages();
-        $data['featureImport'] = $this->container->getParameter('featureImport');
-        $data['featureAddTranslationFromDetail'] = $this->container->getParameter('featureAddTranslationFromDetail');
+        $data['featureImportExport'] = $this->container->getParameter('app.featureImportExport');
+        $data['featureAddTranslation'] = $this->container->getParameter('app.featureAddTranslation');
         $data['englishReadonly'] = $request->query->has('englishReadonly');
 
         return $this->render('dokuwikiTranslatorBundle:Default:show.html.twig', $data);

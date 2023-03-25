@@ -61,7 +61,7 @@ class SoftResetCommand extends ContainerAwareCommand {
             return;
         }
 
-        $data = $this->getContainer()->getParameter('data');
+        $data = $this->getContainer()->getParameter('app.dataDir');
         $data .= sprintf('/%s/%s/', $type, $name);
         $fs = new Filesystem();
         if (is_dir($data .'tmp')) {
