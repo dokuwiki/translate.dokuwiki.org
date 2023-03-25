@@ -51,7 +51,7 @@ class ExtensionController extends Controller implements InitializableController 
      * @param Swift_Mailer $mailer
      * @return Response
      */
-    public function indexAction(Request $request, $type, DokuWikiRepositoryAPI $api, Swift_Mailer $mailer) {
+    public function index(Request $request, $type, DokuWikiRepositoryAPI $api, Swift_Mailer $mailer) {
 
         $data = array();
 
@@ -121,7 +121,7 @@ class ExtensionController extends Controller implements InitializableController 
      *
      * @throws NonUniqueResultException
      */
-    public function activateAction($type, $name, $key) {
+    public function activate($type, $name, $key) {
 
         try {
             $repository = $this->repositoryRepository->getRepositoryByNameAndActivationKey($type, $name, $key);
@@ -150,7 +150,7 @@ class ExtensionController extends Controller implements InitializableController 
      *
      * @throws NonUniqueResultException
      */
-    public function showAction(Request $request, $type, $name, LanguageManager $languageManager) {
+    public function show(Request $request, $type, $name, LanguageManager $languageManager) {
         $data = array();
 
         try {
@@ -177,7 +177,7 @@ class ExtensionController extends Controller implements InitializableController 
      * @param Swift_Mailer $mailer
      * @return RedirectResponse|Response
      */
-    public function settingsAction(Request $request, $type, $name, Swift_Mailer $mailer) {
+    public function settings(Request $request, $type, $name, Swift_Mailer $mailer) {
         $data = array();
 
         try {
@@ -240,7 +240,7 @@ class ExtensionController extends Controller implements InitializableController 
      *
      * @throws NonUniqueResultException
      */
-    public function editAction(Request $request, $type, $name, $key, RepositoryManager $repositoryManager) {
+    public function edit(Request $request, $type, $name, $key, RepositoryManager $repositoryManager) {
         $data = array();
 
         try {

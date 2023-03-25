@@ -41,7 +41,7 @@ class DefaultController extends Controller implements InitializableController {
      *
      * @throws NonUniqueResultException
      */
-    public function indexAction(Request $request, LanguageManager $languageManager) {
+    public function index(Request $request, LanguageManager $languageManager) {
         $lang = $request->query->get('lang', null);
 
         if (!empty($lang)) {
@@ -73,7 +73,7 @@ class DefaultController extends Controller implements InitializableController {
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function showAction(Request $request, LanguageManager $languageManager) {
+    public function show(Request $request, LanguageManager $languageManager) {
         $data = array();
         $data['repository'] = $this->repositoryRepository->getCoreTranslation();
         $data['currentLanguage'] = $languageManager->getLanguage($request);

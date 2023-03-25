@@ -71,7 +71,7 @@ class TranslationController extends Controller implements InitializableControlle
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function saveAction(Request $request, UserTranslationValidatorFactory $validatorFactory) {
+    public function save(Request $request, UserTranslationValidatorFactory $validatorFactory) {
         if ($request->getMethod() !== 'POST') {
             return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
         }
@@ -161,7 +161,7 @@ class TranslationController extends Controller implements InitializableControlle
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function translateCoreAction(Request $request) {
+    public function translateCore(Request $request) {
         return $this->translate($request, RepositoryEntity::$TYPE_CORE, 'dokuwiki');
     }
 
@@ -173,7 +173,7 @@ class TranslationController extends Controller implements InitializableControlle
      * @param string $name
      * @return RedirectResponse|Response
      */
-    public function translateExtensionAction(Request $request, $type, $name) {
+    public function translateExtension(Request $request, $type, $name) {
         return $this->translate($request, $type, $name);
     }
 
@@ -285,7 +285,7 @@ class TranslationController extends Controller implements InitializableControlle
      *
      * @return Response
      */
-    public function thanksAction() {
+    public function thanks() {
         return $this->render('Translate/thanks.html.twig');
     }
 
