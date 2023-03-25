@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use App\Entity\TranslationUpdateEntity;
-use org\dokuwiki\translatorBundle\EntityRepository\TranslationUpdateEntityRepository;
+use App\Repository\TranslationUpdateEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Repository\Repository;
 use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 use PDOException;

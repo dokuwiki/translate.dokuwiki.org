@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\RepositoryEntity;
 
 /**
- * @ORM\Entity(repositoryClass="org\dokuwiki\translatorBundle\EntityRepository\LanguageStatsEntityRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\LanguageStatsEntityRepository")
  * @ORM\Table(name="languageStats")
  *      indexes={@ORM\Index(name="langName_idx", columns={"language"})}
  * )

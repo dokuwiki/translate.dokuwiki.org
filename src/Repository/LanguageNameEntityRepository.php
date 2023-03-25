@@ -1,6 +1,6 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\EntityRepository;
+namespace App\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;

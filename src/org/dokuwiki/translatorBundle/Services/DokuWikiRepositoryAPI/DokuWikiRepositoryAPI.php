@@ -8,7 +8,7 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use App\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
+use App\Repository\RepositoryEntityRepository;
 use SimpleXMLElement;
 
 class DokuWikiRepositoryAPI {

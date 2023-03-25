@@ -9,9 +9,9 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
-use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
+use App\Repository\LanguageNameEntityRepository;
 use App\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
+use App\Repository\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Language\LanguageManager;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
 use org\dokuwiki\translatorBundle\Services\Language\TranslationPreparer;
@@ -43,7 +43,7 @@ class TranslationController extends Controller implements InitializableControlle
      */
     private $translationPreparer;
     /**
-     * @var RepositoryEntityRepository
+     * @var \App\Repository\RepositoryEntityRepository
      */
     private $repoRepository;
 
@@ -262,7 +262,7 @@ class TranslationController extends Controller implements InitializableControlle
     }
 
     /**
-     * @return LanguageNameEntityRepository
+     * @return \App\Repository\LanguageNameEntityRepository
      */
     private function getLanguageNameEntityRepository() {
         return $this->entityManager->getRepository(LanguageNameEntity::class);

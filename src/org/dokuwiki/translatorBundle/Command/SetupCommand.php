@@ -9,9 +9,9 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use App\Entity\LanguageNameEntity;
-use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
+use App\Repository\LanguageNameEntityRepository;
 use App\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
+use App\Repository\RepositoryEntityRepository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,12 +24,12 @@ class SetupCommand extends ContainerAwareCommand {
     private $entityManager;
 
     /**
-     * @var RepositoryEntityRepository
+     * @var \App\Repository\RepositoryEntityRepository
      */
     private $repositoryRepository;
 
     /**
-     * @var LanguageNameEntityRepository
+     * @var \App\Repository\LanguageNameEntityRepository
      */
     private $languageRepository;
 

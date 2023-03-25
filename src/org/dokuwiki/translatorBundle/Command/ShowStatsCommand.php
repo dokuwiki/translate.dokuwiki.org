@@ -6,7 +6,7 @@ use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Exception;
 use App\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
+use App\Repository\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Repository\RepositoryManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;

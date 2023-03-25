@@ -4,7 +4,7 @@ namespace org\dokuwiki\translatorBundle\Services\Repository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\RepositoryEntity;
-use org\dokuwiki\translatorBundle\EntityRepository\RepositoryEntityRepository;
+use App\Repository\RepositoryEntityRepository;
 use org\dokuwiki\translatorBundle\Services\Git\GitService;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubService;
 use org\dokuwiki\translatorBundle\Services\GitHub\GitHubStatusService;

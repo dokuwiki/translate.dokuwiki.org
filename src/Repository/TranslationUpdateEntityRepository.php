@@ -1,9 +1,9 @@
 <?php
 
-namespace org\dokuwiki\translatorBundle\EntityRepository;
+namespace App\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use org\dokuwiki\translatorBundle\EntityRepository\TranslationUpdateEntity;
+use App\Entity\TranslationUpdateEntity;
 
 class TranslationUpdateEntityRepository extends EntityRepository {
 

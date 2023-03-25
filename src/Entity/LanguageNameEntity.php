@@ -4,7 +4,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\LanguageNameEntityRepository")
  * @ORM\Table(name="languageName")
  */
 class LanguageNameEntity {

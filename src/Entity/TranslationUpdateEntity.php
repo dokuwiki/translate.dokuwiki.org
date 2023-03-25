@@ -1,11 +1,10 @@
 <?php
 namespace App\Entity;
 
-use App\Entity\RepositoryEntity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="org\dokuwiki\translatorBundle\EntityRepository\TranslationUpdateEntityRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\TranslationUpdateEntityRepository")
  * @ORM\Table(name="translationUpdate")
  */
 class TranslationUpdateEntity {

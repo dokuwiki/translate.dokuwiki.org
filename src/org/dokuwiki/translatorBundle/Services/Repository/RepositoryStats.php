@@ -8,9 +8,9 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use App\Entity\LanguageNameEntity;
-use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
+use App\Repository\LanguageNameEntityRepository;
 use App\Entity\LanguageStatsEntity;
-use org\dokuwiki\translatorBundle\EntityRepository\LanguageStatsEntityRepository;
+use App\Repository\LanguageStatsEntityRepository;
 use App\Entity\RepositoryEntity;
 use org\dokuwiki\translatorBundle\Services\Language\LocalText;
 
@@ -27,7 +27,7 @@ class RepositoryStats {
     private $languageStatsRepository;
 
     /**
-     * @var LanguageNameEntityRepository
+     * @var \App\Repository\LanguageNameEntityRepository
      */
     private $languageNameRepository;
 
