@@ -1,3 +1,6 @@
+# old security.yml file, if security is needed, this can be copied in security.yaml
+# security module can be installed with: composer require security
+
 security:
     encoders:
         Symfony\Component\Security\Core\User\User: plaintext

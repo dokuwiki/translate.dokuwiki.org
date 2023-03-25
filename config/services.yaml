@@ -24,11 +24,6 @@ parameters:
     app.featureAddTranslation: '%env(FEATURE_ADD_TRANSLATION_BY_USER)%'
 
 
-# MOVE to better place, only for production
-# Uncomment for production - set real hostname and scheme
-#router.request_context.host: translate.dokuwiki.org
-#router.request_context.scheme: http
-
 
 services:
     # default configuration for services in *this* file
