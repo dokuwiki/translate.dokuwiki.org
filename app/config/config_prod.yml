@@ -6,7 +6,3 @@ imports:
 #        metadata_cache_driver: apc
 #        result_cache_driver: apc
 #        query_cache_driver: apc
-
-
-framework:
-    trusted_hosts: ['.*\.?translate\.dokuwiki\.org$']
