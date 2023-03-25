@@ -28,7 +28,7 @@ class DokuWikiRepositoryAPI {
     function __construct($dataFolder, EntityManagerInterface $entityManager) {
         $this->cachePath = "$dataFolder/dokuwikiRepositoryAPI.ser";
         $this->entityManager = $entityManager;
-        $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
+        $this->repositoryRepository = $entityManager->getRepository(RepositoryEntity::class);
     }
 
     /**

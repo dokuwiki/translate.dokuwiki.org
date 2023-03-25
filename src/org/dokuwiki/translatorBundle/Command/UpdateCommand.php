@@ -147,6 +147,6 @@ class UpdateCommand extends ContainerAwareCommand {
      * @return TranslationUpdateEntityRepository
      */
     private function getTranslationUpdateRepository() {
-        return $this->getEntityManager()->getRepository('dokuwikiTranslatorBundle:TranslationUpdateEntity');
+        return $this->getEntityManager()->getRepository(TranslationUpdateEntity::class);
     }
 }

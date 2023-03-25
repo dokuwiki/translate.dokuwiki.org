@@ -22,7 +22,7 @@ class UpdateLanguagesCommand extends ContainerAwareCommand {
         /** @var RepositoryManager $repoManager */
         $repoManager = $this->getContainer()->get(RepositoryManager::class);
         /** @var RepositoryEntityRepository $repoRepository */
-        $repoRepository = $this->getContainer()->get('doctrine')->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
+        $repoRepository = $this->getContainer()->get('doctrine')->getRepository(RepositoryEntity::class);
 
         /** @var RepositoryEntity[] $repositories */
         $repositories = $repoRepository->findAll();

@@ -33,8 +33,8 @@ class RepositoryStats {
 
     function __construct(EntityManagerInterface $entityManager) {
         $this->entityManager = $entityManager;
-        $this->languageStatsRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageStatsEntity');
-        $this->languageNameRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
+        $this->languageStatsRepository = $entityManager->getRepository(LanguageStatsEntity::class);
+        $this->languageNameRepository = $entityManager->getRepository(LanguageNameEntity::class);
     }
 
     /**

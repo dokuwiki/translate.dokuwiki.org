@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Controller\InitializableController;
+use App\Entity\LanguageNameEntity;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use org\dokuwiki\translatorBundle\EntityRepository\LanguageNameEntityRepository;
@@ -38,8 +38,8 @@ class ExtensionController extends Controller implements InitializableController 
 //    }
     public function initialize(Request $request) {
         $entityManager = $this->getDoctrine()->getManager();
-        $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
-        $this->languageRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
+        $this->repositoryRepository = $entityManager->getRepository(RepositoryEntity::class);
+        $this->languageRepository = $entityManager->getRepository(LanguageNameEntity::class);
     }
 
     /**

@@ -78,7 +78,7 @@ class RepositoryManager {
         $this->repositoryStats = $repositoryStats;
         $this->gitService = $gitService;
         $this->mailService = $mailService;
-        $this->repositoryRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
+        $this->repositoryRepository = $entityManager->getRepository(RepositoryEntity::class);
         $this->gitHubService = $gitHubService;
         $this->logger = $logger;
         $this->maxErrors = $maxErrors;

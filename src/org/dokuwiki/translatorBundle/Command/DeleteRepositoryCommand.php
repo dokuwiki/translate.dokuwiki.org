@@ -3,6 +3,7 @@
 namespace org\dokuwiki\translatorBundle\Command;
 
 
+use App\Entity\LanguageStatsEntity;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
@@ -62,14 +63,14 @@ class DeleteRepositoryCommand extends ContainerAwareCommand {
             return;
         }
         try {
-            $repo = $this->entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity')
+            $repo = $this->entityManager->getRepository(RepositoryEntity::class)
                 ->getRepository($type, $name);
         } catch (NoResultException $e) {
             $output->writeln('nothing found');
             return;
         }
 
-        $this->entityManager->getRepository('dokuwikiTranslatorBundle:LanguageStatsEntity')
+        $this->entityManager->getRepository(LanguageStatsEntity::class)
             ->clearStats($repo);
         $this->entityManager->remove($repo);
         $this->entityManager->flush();

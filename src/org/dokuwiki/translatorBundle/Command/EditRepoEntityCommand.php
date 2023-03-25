@@ -66,7 +66,7 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
         }
         try {
             $repo = $this->entityManager
-                ->getRepository('dokuwikiTranslatorBundle:RepositoryEntity')
+                ->getRepository(RepositoryEntity::class)
                 ->getRepository($type, $name);
         } catch (NoResultException $e) {
             $output->writeln('nothing found');

@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Controller\InitializableController;
+use App\Entity\LanguageNameEntity;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
@@ -53,7 +53,7 @@ class TranslationController extends Controller implements InitializableControlle
         $this->languageManager = $languageManager;
         $this->translationPreparer = $translationPreparer;
         $this->entityManager = $entityManager;
-        $this->repoRepository = $entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
+        $this->repoRepository = $entityManager->getRepository(RepositoryEntity::class);
     }
 
     public function initialize(Request $request) {
@@ -265,7 +265,7 @@ class TranslationController extends Controller implements InitializableControlle
      * @return LanguageNameEntityRepository
      */
     private function getLanguageNameEntityRepository() {
-        return $this->entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
+        return $this->entityManager->getRepository(LanguageNameEntity::class);
     }
 
     /**

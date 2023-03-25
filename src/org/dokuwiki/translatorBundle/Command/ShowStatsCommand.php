@@ -26,7 +26,7 @@ class ShowStatsCommand extends ContainerAwareCommand {
 
     public function __construct(Registry $doctrine, RepositoryManager $repositoryManager) {
 
-        $this->repositoryEntityRepository = $doctrine->getManager()->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
+        $this->repositoryEntityRepository = $doctrine->getManager()->getRepository(RepositoryEntity::class);
         $this->repositoryManager = $repositoryManager;
         parent::__construct();
     }

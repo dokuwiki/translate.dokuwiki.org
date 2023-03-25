@@ -48,7 +48,7 @@ class SoftResetCommand extends ContainerAwareCommand {
             return;
         }
         try {
-            $repo = $this->getEntityManager()->getRepository('dokuwikiTranslatorBundle:RepositoryEntity')
+            $repo = $this->getEntityManager()->getRepository(RepositoryEntity::class)
                 ->getRepository($type, $name);
         } catch (NoResultException $e) {
             $output->writeln('nothing found');

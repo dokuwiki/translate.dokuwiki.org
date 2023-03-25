@@ -60,8 +60,8 @@ class SetupCommand extends ContainerAwareCommand {
      * @throws ORMException
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $this->repositoryRepository = $this->entityManager->getRepository('dokuwikiTranslatorBundle:RepositoryEntity');
-        $this->languageRepository = $this->entityManager->getRepository('dokuwikiTranslatorBundle:LanguageNameEntity');
+        $this->repositoryRepository = $this->entityManager->getRepository(RepositoryEntity::class);
+        $this->languageRepository = $this->entityManager->getRepository(LanguageNameEntity::class);
 
         $this->output = $output;
 
