@@ -68,8 +68,10 @@
     },
     "minimum-stability": "stable",
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
         "phpunit/phpunit": "^8.0",
         "symfony/dotenv": "^4.0",
+        "symfony/maker-bundle": "*",
         "symfony/phpunit-bridge": "^4.0",
         "symfony/stopwatch": "4.4.*",
         "symfony/web-profiler-bundle": "4.4.*",
