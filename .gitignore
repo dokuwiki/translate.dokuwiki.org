@@ -1,18 +1,8 @@
 .idea
 *.iml
-app/bootstrap.php.cache
-web/css/
-web/js/
 composer.lock
 composer.phar
-/var/
-!var/cache/.gitkeep
-!var/logs/.gitkeep
-/app/config/parameters.yml
-/phpunit.xml
-/vendor/
-/web/bundles/
-*~
+
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache
@@ -31,5 +21,11 @@ composer.phar
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
+!var/cache/.gitkeep
+!var/log/.gitkeep
 /vendor/
 ###< symfony/framework-bundle ###
+
+###> symfony/web-server-bundle ###
+/.web-server-pid
+###< symfony/web-server-bundle ###
