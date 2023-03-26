@@ -2,11 +2,16 @@
 
 namespace App\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NoResultException;
 use App\Entity\LanguageNameEntity;
+use Doctrine\Persistence\ManagerRegistry;
 
-class LanguageNameEntityRepository extends EntityRepository {
+class LanguageNameEntityRepository extends ServiceEntityRepository {
+
+    public function __construct(ManagerRegistry $registry) {
+        parent::__construct($registry, LanguageNameEntity::class);
+    }
 
     /**
      * @param string $code language code
