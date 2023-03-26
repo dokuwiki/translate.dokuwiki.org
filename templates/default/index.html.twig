@@ -1,4 +1,4 @@
-{% import 'Template:progressColor.html.twig' as progressbar %}
+{% import 'template/progressColor.html.twig' as progressbar %}
 <!Doctype html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
@@ -134,7 +134,7 @@
             </table>
         </div>
         <div class="span4">
-            {% include '::developer_box.html.twig' %}
+            {% include 'developer_box.html.twig' %}
             <div class="well well-small">
                 <form action="{{ path('dokuwiki_translator_homepage') }}" method="get" class="form-inline">
                     <label for="language">Showing translation status for</label>

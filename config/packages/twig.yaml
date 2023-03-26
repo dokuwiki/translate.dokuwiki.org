@@ -4,4 +4,4 @@ twig:
     strict_variables: '%kernel.debug%'
     exception_controller: null
     form_themes:
-        - 'Template:fields.html.twig'
+        - 'template/fields.html.twig'

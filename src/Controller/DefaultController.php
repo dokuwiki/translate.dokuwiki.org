@@ -60,7 +60,7 @@ class DefaultController extends Controller implements InitializableController {
         $data['activated'] = $request->query->has('activated');
         $data['notActive'] = $request->query->has('notActive');
 
-        return $this->render('Default/index.html.twig', $data);
+        return $this->render('default/index.html.twig', $data);
     }
 
     /**
@@ -82,6 +82,6 @@ class DefaultController extends Controller implements InitializableController {
         $data['featureAddTranslation'] = $this->container->getParameter('app.featureAddTranslation');
         $data['englishReadonly'] = $request->query->has('englishReadonly');
 
-        return $this->render('Default/show.html.twig', $data);
+        return $this->render('default/show.html.twig', $data);
     }
 }

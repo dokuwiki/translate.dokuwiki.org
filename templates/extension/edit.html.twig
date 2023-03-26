@@ -1,4 +1,4 @@
-{% extends 'Default:index.html.twig' %}
+{% extends 'default/index.html.twig' %}
 
 {% block content %}
     <ul class="breadcrumb">
@@ -48,7 +48,7 @@
                 </form>
             </div>
             <div class="span6">
-                {% include 'Template:explanation.html.twig'
+                {% include 'template/explanation.html.twig'
                     with { 'showname': false }
                 %}
             </div>

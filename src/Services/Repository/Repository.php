@@ -172,7 +172,7 @@ abstract class Repository {
         $this->logger->debug('Initializing ' . $this->entity->getType() . ' ' . $this->entity->getName());
         $this->entity->setState(RepositoryEntity::$STATE_ACTIVE);
         $this->mailService->sendEmail($this->entity->getEmail(), 'Your ' . $this->entity->getType() . ' is now active',
-                'Mail/extensionReady.txt.twig', array('repo' => $this->entity));
+                'mail/extensionReady.txt.twig', array('repo' => $this->entity));
     }
 
     /**

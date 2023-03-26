@@ -1,4 +1,4 @@
-{% extends 'Default:index.html.twig' %}
+{% extends 'default/index.html.twig' %}
 
 {% block content %}
     <ul class="breadcrumb">
@@ -32,7 +32,7 @@
 
         <div class="row">
             <div class="span8">
-                {% include 'Template:box.html.twig' %}
+                {% include 'template/box.html.twig' %}
             </div>
         </div>
         {% if not urlSent and repository.state != 'waiting' %}

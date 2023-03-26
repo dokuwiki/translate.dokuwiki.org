@@ -239,7 +239,7 @@ class TranslationController extends Controller implements InitializableControlle
         $data['openPR'] = $this->getOpenPRListInfo($repositoryEntity, $data['targetLanguage']);
         $data['captcha'] = $this->getCaptchaForm()->createView();
 
-        return $this->render('Translate/translate.html.twig', $data);
+        return $this->render('translate/translate.html.twig', $data);
     }
 
     private function getCaptchaForm() {
@@ -286,7 +286,7 @@ class TranslationController extends Controller implements InitializableControlle
      * @return Response
      */
     public function thanks() {
-        return $this->render('Translate/thanks.html.twig');
+        return $this->render('translate/thanks.html.twig');
     }
 
     private function getLanguage($request) {

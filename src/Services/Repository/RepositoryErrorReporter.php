@@ -108,7 +108,7 @@ class RepositoryErrorReporter {
      */
     private function determineEmailTemplateTranslation(Exception $e) {
         if ($e instanceof GitHubCreatePullRequestException) {
-            return 'Mail/translationErrorPullRequest.txt.twig';
+            return 'mail/translationErrorPullRequest.txt.twig';
         }
         return '';
     }
@@ -136,31 +136,31 @@ class RepositoryErrorReporter {
      */
     private function determineEmailTemplateUpdate(Exception $e) {
         if ($e instanceof GitPullException) {
-            return 'Mail/importErrorUpdate.txt.twig';
+            return 'mail/importErrorUpdate.txt.twig';
         }
 
         if ($e instanceof GitPushException) {
-            return 'Mail/importErrorUpdate.txt.twig';
+            return 'mail/importErrorUpdate.txt.twig';
         }
 
         if ($e instanceof GitHubServiceException) {
-            return 'Mail/importErrorGitHubUrl.txt.twig';
+            return 'mail/importErrorGitHubUrl.txt.twig';
         }
 
         if ($e instanceof GitCloneException) {
-            return 'Mail/importErrorClone.txt.twig';
+            return 'mail/importErrorClone.txt.twig';
         }
 
         if ($e instanceof GitHubForkException) {
-            return 'Mail/importErrorClone.txt.twig';
+            return 'mail/importErrorClone.txt.twig';
         }
 
         if ($e instanceof NoLanguageFolderException) {
-            return 'Mail/importErrorNoLangFolder.txt.twig';
+            return 'mail/importErrorNoLangFolder.txt.twig';
         }
 
         if ($e instanceof NoDefaultLanguageException) {
-            return 'Mail/importErrorNoDefaultTranslation.txt.twig';
+            return 'mail/importErrorNoDefaultTranslation.txt.twig';
         }
 
         if ($e instanceof LanguageParseException) {
@@ -168,7 +168,7 @@ class RepositoryErrorReporter {
             $this->data['lineNumber'] = $e->getLineNumber();
             $this->data['message'] = $e->getMessage();
 
-            return 'Mail/importErrorLanguageParse.txt.twig';
+            return 'mail/importErrorLanguageParse.txt.twig';
         }
         return '';
     }
