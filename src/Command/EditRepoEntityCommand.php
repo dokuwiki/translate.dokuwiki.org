@@ -1,20 +1,19 @@
 <?php
+
 namespace App\Command;
 
-
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use App\Entity\RepositoryEntity;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class EditRepoEntityCommand extends ContainerAwareCommand {
-
+class EditRepoEntityCommand extends Command {
     /**
      * @var OutputInterface
      */
@@ -25,14 +24,17 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
      */
     private $entityManager;
 
-    public function __construct(Registry $doctrine) {
-        $this->entityManager = $doctrine->getManager();
+    protected static $defaultName = 'dokuwiki:editRepo';
+
+    public function __construct(EntityManagerInterface $entityManager) {
+        $this->entityManager = $entityManager;
 
         parent::__construct();
     }
 
-    protected function configure() {
-        $this->setName('dokuwiki:editRepo')
+    protected function configure(): void
+    {
+        $this
             ->setDescription('Let edit some properties of repository. Supported: giturl, branch, state, email, englishReadonly')
             ->addArgument('type', InputArgument::REQUIRED, 'plugin, template or core')
             ->addArgument('name', InputArgument::REQUIRED, 'repository name')
@@ -43,13 +45,13 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int
      *
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
-
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
         $this->output = $output;
 
         $name = $input->getArgument('name');
@@ -61,32 +63,36 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
             RepositoryEntity::$TYPE_TEMPLATE
         ];
         if (!in_array($type, $repositoryTypes)) {
-            $output->writeln(sprintf('Type must be %s, %s or %s', RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN, RepositoryEntity::$TYPE_TEMPLATE));
-            return;
+            $output->writeln(sprintf(
+                'Type must be %s, %s or %s',
+                RepositoryEntity::$TYPE_CORE,
+                RepositoryEntity::$TYPE_PLUGIN,
+                RepositoryEntity::$TYPE_TEMPLATE));
+            return 1;
         }
         try {
-            $repo = $this->entityManager
-                ->getRepository(RepositoryEntity::class)
+            $repo = $this->entityManager->getRepository(RepositoryEntity::class)
                 ->getRepository($type, $name);
         } catch (NoResultException $e) {
             $output->writeln('nothing found');
-            return;
+            return 1;
         }
 
         $property = $input->getArgument('property');
         $value = $input->getArgument('value');
-        $this->editRepo($repo, $property, $value);
+        return $this->editRepo($repo, $property, $value);
     }
 
     /**
-     * @param \App\Entity\RepositoryEntity $repo
+     * @param RepositoryEntity $repo
      * @param string $property
      * @param string $value
+     * @return int
      *
-     * @throws OptimisticLockException
      * @throws ORMException
+     * @throws OptimisticLockException
      */
-    protected function editRepo(RepositoryEntity $repo, $property, $value) {
+    protected function editRepo(RepositoryEntity $repo, $property, $value): int {
 
         switch($property) {
             case 'giturl':
@@ -106,7 +112,7 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
                 ];
                 if(!in_array($value, $possibleStates)) {
                     $this->output->writeln('State unknown');
-                    return;
+                    return 1;
                 }
                 $repo->setState($value);
                 break;
@@ -121,11 +127,12 @@ class EditRepoEntityCommand extends ContainerAwareCommand {
 
             default:
                 $this->output->writeln('property unknown');
-                return;
+                return 1;
         }
 
         $this->entityManager->flush($repo);
         $this->output->writeln('done');
+        return 0;
     }
 
 }

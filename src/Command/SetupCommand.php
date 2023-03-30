@@ -2,21 +2,19 @@
 
 namespace App\Command;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use App\Entity\LanguageNameEntity;
-use App\Repository\LanguageNameEntityRepository;
 use App\Entity\RepositoryEntity;
-use App\Repository\RepositoryEntityRepository;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SetupCommand extends ContainerAwareCommand {
+class SetupCommand extends Command {
 
     /**
      * @var EntityManager
@@ -24,49 +22,40 @@ class SetupCommand extends ContainerAwareCommand {
     private $entityManager;
 
     /**
-     * @var \App\Repository\RepositoryEntityRepository
-     */
-    private $repositoryRepository;
-
-    /**
-     * @var \App\Repository\LanguageNameEntityRepository
-     */
-    private $languageRepository;
-
-    /**
      * @var OutputInterface
      */
     private $output;
 
-    public function __construct(Registry $doctrine) {
-        $this->entityManager = $doctrine->getManager();
+    protected static $defaultName = 'dokuwiki:setup';
+
+    public function __construct(EntityManagerInterface $entityManager) {
+        $this->entityManager = $entityManager;
 
         parent::__construct();
     }
 
-    protected function configure() {
-        $this->setName('dokuwiki:setup')
-             ->setDescription('Prepare software for first run');
-
+    protected function configure(): void
+    {
+        $this
+             ->setDescription('Prepare software for first run. If not existing add dokuwiki as core repository and add missing languages');
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int
      *
      * @throws NonUniqueResultException
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        $this->repositoryRepository = $this->entityManager->getRepository(RepositoryEntity::class);
-        $this->languageRepository = $this->entityManager->getRepository(LanguageNameEntity::class);
-
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
         $this->output = $output;
 
         $this->addLanguageNames();
         $this->addDokuWikiRepo();
+        return 0;
     }
 
     /**
@@ -74,9 +63,11 @@ class SetupCommand extends ContainerAwareCommand {
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    private function addDokuWikiRepo() {
+    private function addDokuWikiRepo(): void
+    {
         try {
-            $this->repositoryRepository->getCoreRepository();
+            $this->entityManager->getRepository(RepositoryEntity::class)
+                ->getCoreRepository();
             $this->output->writeln('DokuWiki repository already exists');
 
         } catch(NoResultException $e) {
@@ -107,8 +98,9 @@ class SetupCommand extends ContainerAwareCommand {
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    private function addLanguageNames() {
-        $names = array(
+    private function addLanguageNames(): void
+    {
+        $names = [
             'af' => 'Afrikaans',
             'ar' => 'Arabic',
             'az' => 'Azerbaijani',
@@ -204,17 +196,18 @@ class SetupCommand extends ContainerAwareCommand {
             'vo' => 'Volapuk',
             'zh' => 'Chinese',
             'zh-tw' => 'Chinese Traditional'
-        );
+        ];
 
-        $rtl = array(
+        $rtl = [
             'ar', 'fa', 'he',
-        );
+        ];
 
         $count['existing'] = 0;
         $count['new'] = 0;
         foreach($names as $code => $name) {
             try {
-                $this->languageRepository->getLanguageByCode($code);
+                $this->entityManager->getRepository(LanguageNameEntity::class)
+                    ->getLanguageByCode($code);
 
                 $count['existing']++;
             } catch(NoResultException $e) {

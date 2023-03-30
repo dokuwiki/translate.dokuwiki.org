@@ -2,93 +2,138 @@
 
 namespace App\Command;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use App\Entity\TranslationUpdateEntity;
-use App\Repository\TranslationUpdateEntityRepository;
 use App\Services\Repository\Repository;
 use App\Services\Repository\RepositoryManager;
 use PDOException;
+use Psr\Log\LoggerInterface;
+use Swift_Mailer;
 use Swift_MemorySpool;
+use Swift_Transport;
 use Swift_Transport_SpoolTransport;
 use Swift_TransportException;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
-class UpdateCommand extends ContainerAwareCommand {
+class UpdateCommand extends Command {
 
     /**
      * @var RepositoryManager
      */
     private $repositoryManager;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+    /**
+     * @var ParameterBagInterface
+     */
+    private $parameterBag;
+    /**
+     * @var Swift_Mailer
+     */
+    private $mailer;
+    /**
+     * @var Swift_Transport
+     */
+    private $transport;
 
-    protected function configure() {
-        $this->setName('dokuwiki:updateGit')
+    protected static $defaultName = 'dokuwiki:updateGit';
+
+    public function __construct(EntityManagerInterface $entityManager, RepositoryManager $repositoryManager, ParameterBagInterface $parameterBag, LoggerInterface $logger, Swift_Mailer $mailer, Swift_Transport $transport) {
+        $this->entityManager = $entityManager;
+        $this->repositoryManager = $repositoryManager;
+        $this->parameterBag = $parameterBag;
+        $this->logger = $logger;
+        $this->mailer = $mailer;
+        $this->transport = $transport;
+
+        parent::__construct();
+    }
+    protected function configure(): void
+    {
+        $this
             ->setDescription('Update local git repositories and send pending translations');
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int
      *
-     * @throws OptimisticLockException
-     * @throws Swift_TransportException
+     * @throws LoaderError
      * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws Swift_TransportException
+     * @throws SyntaxError
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         if (!$this->lock()) {
-            $this->getContainer()->get('logger')->error('Updater is already running');
-            return;
+            $this->logger->error('Updater is already running');
+            return 1;
         }
 
-        $this->repositoryManager = $this->getContainer()->get(RepositoryManager::class);
-
         try {
-            $this->runUpdate();
+            $this->runUpdateOfRepositories();
             $this->processPendingTranslations();
         } catch (PDOException $e) {
-            $this->getContainer()->get('logger')->error('Updater had an exception occurring');
+            $this->logger->error('Updater had an exception occurring');
         }
         $this->unlock();
 
-        $transport = $this->getContainer()->get('mailer')->getTransport();
+        $transport = $this->mailer->getTransport();
         if (!$transport instanceof Swift_Transport_SpoolTransport) {
-            return;
+            return 0;
         }
 
         $spool = $transport->getSpool();
         if (!$spool instanceof Swift_MemorySpool) {
-            return;
+            return 0;
         }
 
-        $spool->flushQueue($this->getContainer()->get('swiftmailer.transport.real'));
+        $spool->flushQueue($this->transport);
+        return 0;
     }
 
     /**
-     * Run the
+     * Update local fork and cached language files
      *
-     * @throws OptimisticLockException
      * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
-    private function runUpdate() {
+    private function runUpdateOfRepositories() {
         $repositories = $this->repositoryManager->getRepositoriesToUpdate();
         foreach($repositories as $repository) {
-            /**
-             * @var Repository $repository
-             */
             $repository->update();
         }
     }
 
     /**
-     * @throws OptimisticLockException
+     * @throws LoaderError
      * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     private function processPendingTranslations() {
-        $updates = $this->getTranslationUpdateRepository()->getPendingTranslationUpdates();
+        $updates = $this->entityManager->getRepository(TranslationUpdateEntity::class)
+            ->getPendingTranslationUpdates();
 
         foreach ($updates as $update) {
             /**
@@ -119,7 +164,7 @@ class UpdateCommand extends ContainerAwareCommand {
 
         // link already exists, check if it's stale
         if(is_link($lockFile) && !is_dir($lockFile)) {
-            $this->getContainer()->get('logger')->error('The updater is locked, but its PID is gone, ignoring the lock');
+            $this->logger->error('The updater is locked, but its PID is gone, ignoring the lock');
             $this->unlock();
             return $this->lock();
         }
@@ -131,22 +176,9 @@ class UpdateCommand extends ContainerAwareCommand {
     }
 
     private function getLockFilePath() {
-        $path = $this->getContainer()->getParameter('app.dataDir');
+        $path = $this->parameterBag->get('app.dataDir');
         $path .= '/dokuwiki-importer.lock';
         return $path;
     }
 
-    /**
-     * @return EntityManager
-     */
-    private function getEntityManager() {
-        return $this->getContainer()->get('doctrine')->getManager();
-    }
-
-    /**
-     * @return TranslationUpdateEntityRepository
-     */
-    private function getTranslationUpdateRepository() {
-        return $this->getEntityManager()->getRepository(TranslationUpdateEntity::class);
-    }
 }

@@ -18,7 +18,7 @@ class CustomUniqueEntityValidator extends UniqueEntityValidator {
     }
 
     /**
-     * @param \App\Entity\RepositoryEntity $entity
+     * @param RepositoryEntity $entity
      * @param Constraint       $constraint
      */
     public function validate($entity, Constraint $constraint) {

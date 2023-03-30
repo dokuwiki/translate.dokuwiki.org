@@ -109,7 +109,7 @@ class DokuWikiRepositoryAPI {
      *
      * @param string $type
      * @param string $name
-     * @return bool|\App\Entity\RepositoryEntity
+     * @return bool|RepositoryEntity
      */
     public function getExtensionInfo($type, $name) {
         $this->loadCache();
@@ -124,7 +124,7 @@ class DokuWikiRepositoryAPI {
     /**
      * Updates $entity with cached info from the API
      *
-     * @param \App\Entity\RepositoryEntity $entity
+     * @param RepositoryEntity $entity
      * @return void
      */
     public function mergeExtensionInfo(RepositoryEntity $entity) {
@@ -135,14 +135,14 @@ class DokuWikiRepositoryAPI {
     /**
      * Merges the relevant info from the API into the local entity
      *
-     * @param \App\Entity\RepositoryEntity $left local entity
-     * @param \App\Entity\RepositoryEntity $apiInfo entity with data from API
+     * @param RepositoryEntity $left local entity
+     * @param RepositoryEntity $apiInfo entity with data from API
      * @return void
      */
     private function mergeRepository(RepositoryEntity $left, RepositoryEntity $apiInfo) {
         $left->setAuthor($apiInfo->getAuthor());
         $left->setDescription($apiInfo->getDescription());
-        $left->setType($apiInfo->getType());
+        $left->setType($apiInfo->getType()); //TODO should not be touched from the api?
         $left->setTags($apiInfo->getTags());
         $left->setDisplayName($apiInfo->getDisplayName());
         $left->setPopularity($apiInfo->getPopularity());

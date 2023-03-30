@@ -4,36 +4,47 @@ namespace App\Command;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use App\Entity\RepositoryEntity;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class AddCommand extends ContainerAwareCommand {
-
+class AddCommand extends Command
+{
     /**
      * @var Registry
      */
     private $entityManager;
+    /**
+     * @var ValidatorInterface
+     */
+    private $validator;
 
-    public function __construct(Registry $doctrine) {
+    protected static $defaultName = 'dokuwiki:add';
 
-        $this->entityManager = $doctrine->getManager();
+    public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator)
+    {
+        $this->entityManager = $entityManager;
+        $this->validator = $validator;
+
         parent::__construct();
     }
 
-    protected function configure() {
-        $this->setName('dokuwiki:add')
+    protected function configure(): void
+    {
+        $this
             ->setDescription('Adds a repository')
-            ->addArgument('type', null, 'Repository type: core, plugin or template')
-            ->addArgument('name', null, 'Name of the repository (lower case, no special chars or blanks)')
-            ->addArgument('gitUrl', null, 'public git url')
-            ->addArgument('branch', null, 'default branch')
-            ->addArgument('popularity', null, 'popularity value (used to sort)')
-            ->addArgument('displayName', null, 'name to display')
-            ->addArgument('email', null, 'author email address')
-            ->addArgument('author', null, 'author name')
-            ->addArgument('englishReadonly', null, 'If readonly, English translations can not be submitted in the tool');
-
+            ->addArgument('type', InputArgument::REQUIRED, 'Repository type: core, plugin or template')
+            ->addArgument('name', InputArgument::REQUIRED, 'Name of the repository (lower case, no special chars or blanks, as on dokuwiki.org)')
+            ->addArgument('gitUrl', InputArgument::REQUIRED, 'Public git url')
+            ->addArgument('branch', InputArgument::REQUIRED, 'Default branch')
+            ->addArgument('email', InputArgument::REQUIRED, 'Author email address')
+            ->addArgument('englishReadonly', InputArgument::OPTIONAL, "If readonly, English translations can not be submitted in the tool. (true=readonly)")
+            ->addArgument('displayName', InputArgument::OPTIONAL, 'Template/plugin name to display')
+            ->addArgument('author', InputArgument::OPTIONAL, 'Author name (updated later from dokuwiki.org)')
+            ->addArgument('popularity', InputArgument::OPTIONAL, 'Popularity value (used to sort)  (updated later from dokuwiki.org)');
     }
 
     /**
@@ -41,14 +52,19 @@ class AddCommand extends ContainerAwareCommand {
      *
      * @param InputInterface $input  An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
-     * @return void null or 0 if everything went fine, or an error code
+     * @return int 0 if everything went fine, or an error code
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
         $type = $input->getArgument('type');
-        $repositoryTypes = array(RepositoryEntity::$TYPE_CORE, RepositoryEntity::$TYPE_PLUGIN, RepositoryEntity::$TYPE_TEMPLATE);
+        $repositoryTypes = [
+            RepositoryEntity::$TYPE_CORE,
+            RepositoryEntity::$TYPE_PLUGIN,
+            RepositoryEntity::$TYPE_TEMPLATE
+        ];
         if (!in_array($type, $repositoryTypes)) {
-            $output->writeln('Unknown type');
-            return;
+            $output->writeln("Unknown type. Use 'core', 'plugin' or 'template'");
+            return 1;
         }
 
         $repo = new RepositoryEntity();
@@ -67,8 +83,16 @@ class AddCommand extends ContainerAwareCommand {
         $repo->setTags('');
         $repo->setEnglishReadonly($input->getArgument('englishReadonly') == 'true');
 
+        $errors = $this->validator->validate($repo);
+        if(count($errors) > 0) {
+            $errorsString = (string) $errors;
+            $output->writeln($errorsString);
+            return 1;
+        }
+
         $this->entityManager->persist($repo);
         $this->entityManager->flush();
 
+        return 0;
     }
 }

@@ -42,7 +42,7 @@ abstract class Repository {
     private $git = null;
 
     /**
-     * @var \App\Entity\RepositoryEntity Database representation
+     * @var RepositoryEntity Database representation
      */
     protected $entity;
 
@@ -171,8 +171,11 @@ abstract class Repository {
     private function initialized() {
         $this->logger->debug('Initializing ' . $this->entity->getType() . ' ' . $this->entity->getName());
         $this->entity->setState(RepositoryEntity::$STATE_ACTIVE);
-        $this->mailService->sendEmail($this->entity->getEmail(), 'Your ' . $this->entity->getType() . ' is now active',
-                'mail/extensionReady.txt.twig', array('repo' => $this->entity));
+        $this->mailService->sendEmail(
+            $this->entity->getEmail(),
+            'Your ' . $this->entity->getType() . ' is now active',
+            'mail/extensionReady.txt.twig', array('repo' => $this->entity)
+        );
     }
 
     /**
