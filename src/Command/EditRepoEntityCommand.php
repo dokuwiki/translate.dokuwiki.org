@@ -8,6 +8,7 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use App\Entity\RepositoryEntity;
+use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,7 +40,7 @@ class EditRepoEntityCommand extends Command {
             ->addArgument('type', InputArgument::REQUIRED, 'plugin, template or core')
             ->addArgument('name', InputArgument::REQUIRED, 'repository name')
             ->addArgument('property', InputArgument::REQUIRED, 'property name')
-            ->addArgument('value', InputArgument::REQUIRED, 'string or true/false');
+            ->addArgument('value', InputArgument::OPTIONAL, 'string or true/false, if no value given current value is shown');
     }
 
     /**
@@ -80,7 +81,12 @@ class EditRepoEntityCommand extends Command {
 
         $property = $input->getArgument('property');
         $value = $input->getArgument('value');
-        return $this->editRepo($repo, $property, $value);
+
+        if(isset($value)) {
+            return $this->editRepo($repo, $property, $value);
+        } else {
+            return $this->showValue($repo, $property);
+        }
     }
 
     /**
@@ -132,6 +138,38 @@ class EditRepoEntityCommand extends Command {
 
         $this->entityManager->flush($repo);
         $this->output->writeln('done');
+        return 0;
+    }
+
+    protected function showValue(RepositoryEntity $repo, $property): int
+    {
+        switch($property) {
+            case 'giturl':
+                $value = $repo->getUrl();
+                break;
+
+            case 'branch':
+                $value = $repo->getBranch();
+                break;
+
+            case 'state':
+                $value = $repo->getState();
+                break;
+
+            case 'englishReadonly':
+                $value = $repo->getEnglishReadonly() ? 'true' : 'false';
+                break;
+
+            case 'email':
+                $value = $repo->getEmail();
+                break;
+
+            default:
+                $this->output->writeln('property unknown');
+                return 1;
+        }
+
+        $this->output->writeln(sprintf('No value given. The current value is: %s', $value));
         return 0;
     }
 
