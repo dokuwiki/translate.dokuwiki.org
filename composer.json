@@ -4,6 +4,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
+            "org\\dokuwiki\\translatorBundle\\": "src/org/dokuwiki/translatorBundle",
             "App\\": "src/"
         }
     },
