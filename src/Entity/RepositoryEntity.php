@@ -102,7 +102,7 @@ class RepositoryEntity {
     protected $state;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
      * @var string
      */
     protected $errorMsg = '';
