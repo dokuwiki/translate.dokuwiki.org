@@ -72,7 +72,7 @@ class SetupCommand extends Command {
 
         } catch(NoResultException $e) {
             $repository = new RepositoryEntity();
-            $repository->setUrl('git://github.com/dokuwiki/dokuwiki.git');
+            $repository->setUrl('https://github.com/dokuwiki/dokuwiki.git');
             $repository->setBranch('master');
             $repository->setLastUpdate(0);
             $repository->setName('dokuwiki');
