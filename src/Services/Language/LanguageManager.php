@@ -19,7 +19,7 @@ class LanguageManager {
      */
     public static function readLanguages($langFolder, $prefix = '') {
         if (!is_dir($langFolder)) {
-            throw new NoLanguageFolderException("$langFolder is not a directory");
+            throw new NoLanguageFolderException("$langFolder/ is not a directory");
         }
 
         if (!is_dir("$langFolder/en/")) {
@@ -65,14 +65,14 @@ class LanguageManager {
             $extension = substr($file, -4);
 
             if ($extension === '.php') {
-                $translation = LanguageFileParser::parseLangPHP("$languageFolder/$file");
-                $language[$prefix . $file] =
+                $translation = LanguageFileParser::parseLangPHP("$languageFolder/$file", $prefix);
+                $language["$prefix/$file"] =
                         new LocalText($translation->getLang(), LocalText::$TYPE_ARRAY, $translation->getAuthor(), $translation->getHeader());
                 continue;
             }
 
             if ($extension === '.txt') {
-                $language[$prefix . $file] = new LocalText(file_get_contents("$languageFolder/$file"), LocalText::$TYPE_MARKUP);
+                $language["$prefix/$file"] = new LocalText(file_get_contents("$languageFolder/$file"), LocalText::$TYPE_MARKUP);
             }
 
         }

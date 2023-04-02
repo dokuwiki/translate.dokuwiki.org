@@ -64,7 +64,7 @@ class RepositoryErrorReporter {
             $file = 'in file: ' . $this->data['fileName'] . '(' . $this->data['lineNumber'] . ')';
         }
         $this->logger->error(sprintf(
-            'error during repository update (%s: %s) %s',
+            'Error during repository update (%s: %s) %s',
             get_class($e),
             $e->getMessage(),
             $file
@@ -72,14 +72,13 @@ class RepositoryErrorReporter {
         $this->logger->debug($e->getTraceAsString());
         if ($template !== '' && $repo->isFunctional()) {
             $repo->getEntity()->setErrorCount($repo->getEntity()->getErrorCount() + 1);
-
             $this->emailService->sendEmail(
                 $repo->getEntity()->getEmail(),
                 'Error during import of ' . $repo->getEntity()->getDisplayName(),
                 $template,
                 $this->data
             );
-            return $this->emailService->getLastMessage();
+            return (string) $this->emailService->getLastMessage();
         } else {
             return 'Unknown error:' .get_class($e);
         }
@@ -101,19 +100,6 @@ class RepositoryErrorReporter {
     }
 
     /**
-     * Returns an email template for exceptions that needs attention of extension author
-     *
-     * @param Exception $e
-     * @return string template referrer
-     */
-    private function determineEmailTemplateTranslation(Exception $e) {
-        if ($e instanceof GitHubCreatePullRequestException) {
-            return 'mail/translationErrorPullRequest.txt.twig';
-        }
-        return '';
-    }
-
-    /**
      * Handle errors during creation/update of local repository fork
      *
      * @param Exception $e
@@ -126,6 +112,18 @@ class RepositoryErrorReporter {
      */
     public function handleUpdateError(Exception $e, Repository $repo) {
         return $this->handleError($e, $repo, true);
+    }
+    /**
+     * Returns an email template for exceptions that needs attention of extension author
+     *
+     * @param Exception $e
+     * @return string template referrer
+     */
+    private function determineEmailTemplateTranslation(Exception $e) {
+        if ($e instanceof GitHubCreatePullRequestException) {
+            return 'mail/translationErrorPullRequest.txt.twig';
+        }
+        return '';
     }
 
     /**
@@ -164,7 +162,7 @@ class RepositoryErrorReporter {
         }
 
         if ($e instanceof LanguageParseException) {
-            $this->data['fileName'] = basename(dirname($e->getFileName())) . '/' . basename($e->getFileName());
+            $this->data['fileName'] = $e->getFileName();
             $this->data['lineNumber'] = $e->getLineNumber();
             $this->data['message'] = $e->getMessage();
 

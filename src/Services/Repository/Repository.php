@@ -120,6 +120,7 @@ abstract class Repository {
             }
         } catch (Exception $e) {
             $reporter = new RepositoryErrorReporter($this->mailService, $this->logger);
+
             $msg = $reporter->handleUpdateError($e, $this);
             $this->entity->setErrorMsg($msg);
         }
@@ -273,7 +274,6 @@ abstract class Repository {
         $translations = array();
         foreach ($languageFolders as $languageFolder) {
             $languageFolder = rtrim($languageFolder, '/');
-            $languageFolder .= '/';
 
             $translated = LanguageManager::readLanguages($this->buildBasePath() . "repository/$languageFolder", $languageFolder);
             $translations = array_merge_recursive($translations, $translated);

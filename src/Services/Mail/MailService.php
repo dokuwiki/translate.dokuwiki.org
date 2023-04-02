@@ -145,7 +145,7 @@ class MailService {
     }
 
     /**
-     * @return string
+     * @return Swift_Message
      */
     public function getLastMessage() {
         return $this->lastMessage;

@@ -35,6 +35,11 @@ class LanguageFileParser {
     protected $file = '';
 
     /**
+     * @var string part of path before the language folder
+     */
+    protected $prefix;
+
+    /**
      * @var string Stores trimmed ending of content
      */
     protected $trimmedEnding;
@@ -45,6 +50,10 @@ class LanguageFileParser {
     public static $MODE_LANG = 'lang';
     public static $MODE_PHP_END = 'php end';
     public static $MODE_PHP_UNKNOWN = 'php unknown';
+
+    public function __construct($prefix) {
+        $this->prefix = $prefix;
+    }
 
     /**
      * Load content from file
@@ -77,8 +86,8 @@ class LanguageFileParser {
      * @throws LanguageFileDoesNotExistException
      * @throws LanguageParseException
      */
-    public static function parseLangPHP($file) {
-        $parser = new LanguageFileParser();
+    public static function parseLangPHP($file, $prefix) {
+        $parser = new LanguageFileParser($prefix);
         $parser->loadFile($file);
         return $parser->parse();
     }
@@ -465,7 +474,7 @@ class LanguageFileParser {
         $remaining = explode("\n", $remaining);
         $remainingLines = count($remaining) - 1;
         $line = $this->totalLineNumbers - $remainingLines +1;
-
-        return new LanguageParseException($message, $line, $this->file);
+        $file = $this->prefix . '/' . basename(dirname($this->file)) . '/' . basename($this->file);
+        return new LanguageParseException($message, $line, $file);
     }
 }
