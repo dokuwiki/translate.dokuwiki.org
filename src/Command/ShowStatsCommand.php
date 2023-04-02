@@ -37,7 +37,7 @@ class ShowStatsCommand extends Command {
     protected function configure(): void {
         $this
             ->setDescription('Show some statistics for maintenance')
-            ->addArgument('type', InputArgument::OPTIONAL, 'template, plugin or core')
+            ->addArgument('type', InputArgument::OPTIONAL, 'template, plugin or core. Or onlyerrors for filtering.')
             ->addArgument('name', InputArgument::OPTIONAL, 'repository name');
     }
 
@@ -74,7 +74,6 @@ class ShowStatsCommand extends Command {
         }
 
         // header
-        $output->writeln('found ' . count($repositories) . ' repositories');
         $dashLine = str_repeat('-', 9-1) . ' '
             . str_repeat('-', 15-1) . ' '
             . str_repeat('-', 35-1) . ' '
@@ -94,10 +93,26 @@ class ShowStatsCommand extends Command {
         );
         $output->writeln($dashLine);
 
-        $count = count($repositories);
+        $countTotal = count($repositories);
+        $countWithErrors = 0;
         foreach ($repositories as $repoEntity) {
+            if($type == 'onlyerrors' && $repoEntity->getErrorCount() == 0) {
+                continue;
+            }
+
+            //line text color
+            $fgOpenTag = $fgCloseTag = '';
+            if($repoEntity->getErrorCount() >= 3){
+                $fgOpenTag = '<fg=red>';
+                $fgCloseTag = '</>';
+            } elseif($repoEntity->getErrorCount() > 0) {
+                $fgOpenTag = '<fg=yellow>';
+                $fgCloseTag = '</>';
+            }
+
+            $countWithErrors++;
             try {
-                $output->write(sprintf('%-9s', $repoEntity->getType() . ' '));
+                $output->write($fgOpenTag. sprintf('%-9s', $repoEntity->getType() . ' '));
                 $output->write(sprintf('%-15s', $repoEntity->getName() . ' '));
                 $output->write(sprintf('%-35s', substr($repoEntity->getDisplayName() . ' ', 0, 34)));
                 $output->write(sprintf('%-18s', $repoEntity->getState()));
@@ -106,7 +121,7 @@ class ShowStatsCommand extends Command {
                 $output->write($date->format('Y-m-d H:i:s') . ' ');
                 $output->write(sprintf('%-4s', $repoEntity->getErrorCount() . ' '));
                 $errorMsg = str_replace("\n", "\n   ", $repoEntity->getErrorMsg());
-                if($count > 1) {
+                if($countTotal > 1) {
                     $errorMsg = strlen($errorMsg) > 50 ? substr($errorMsg,0,50) . ' (more..) ': $errorMsg;
                 } else {
                     $errorMsg = "see below\n   " . $errorMsg;
@@ -120,11 +135,15 @@ class ShowStatsCommand extends Command {
                 }
                 //TODO at check if locked
 
-                $output->writeln('');
+                $output->writeln($fgCloseTag);
             } catch (Exception $e) {
                 $output->writeln('error ' . $e->getMessage());
             }
         }
+        $output->writeln(
+            'found ' . $countTotal . ' repositories'
+            . ($type == 'onlyerrors' && $countWithErrors > 0 ? ', '. $countWithErrors .' with errors' : '')
+        );
         return 0;
     }
 }
