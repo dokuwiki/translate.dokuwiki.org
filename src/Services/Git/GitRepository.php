@@ -229,7 +229,7 @@ class GitRepository {
         if (file_exists($this->path)) {
             $process = new Process($command, $this->path);
         } else {
-            $process = new Process($command); // TODO fix check if working dir exists
+            return new ProgrammCallResult(1, '', 'folder with git repository does not exist', $command);
         }
         $process->setTimeout($this->commandTimeout);
         $process->start();
