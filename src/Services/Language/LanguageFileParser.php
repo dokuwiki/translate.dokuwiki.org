@@ -113,7 +113,7 @@ class LanguageFileParser {
                     throw $this->createException("Nothing allowed behind ?>");
                 }
             } else {
-                throw $this->createException("No code execution allowed. ");
+                throw $this->createException("No code execution allowed.");
             }
         }
 
@@ -195,9 +195,8 @@ class LanguageFileParser {
         }
         $this->shortContentBy(1);
 
-        $pos = null;
         $offset = 0;
-        do {
+        while (true) {
             $pos = strpos($this->content, $stringDelimiter, $offset);
             if ($pos === false) {
                 throw $this->createException('String has no ending delimiter.');
@@ -206,12 +205,13 @@ class LanguageFileParser {
                 break;
             }
 
+            //escaped string delimiter
             if ($this->content[$pos-1] === '\\') {
                 $offset = $pos+1;
                 continue;
             }
             break;
-        } while ($pos !== false);
+        }
 
         $string = substr($this->content, 0, $pos);
         $string = $this->escapeString($string, $stringDelimiter);
@@ -257,7 +257,7 @@ class LanguageFileParser {
             }
 
             $line .= "\n";
-            if(preg_match('/\* @author:?[ ]+<(.*?)>\n/i', $line, $matches)) {
+            if(preg_match('/\* @author:? +<(.*?)>\n/i', $line, $matches)) {
                 $this->author->add(new Author('', trim($matches[1])));
                 continue;
             }elseif(preg_match('/\* @author:? (.+?)(?: <(.*?)>)?\n/i', $line, $matches)) {
