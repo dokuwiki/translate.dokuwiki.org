@@ -86,7 +86,7 @@ class LanguageManager {
      * @return string
      */
     public function getLanguage(Request $request) {
-        $language = $request->query->get('lang', null);
+        $language = $request->query->get('lang');
         if ($language !== null) {
             $request->getSession()->set('language', $language);
             return $language;

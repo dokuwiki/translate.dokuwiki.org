@@ -27,7 +27,7 @@ class RepositoryStats {
     private $languageStatsRepository;
 
     /**
-     * @var \App\Repository\LanguageNameEntityRepository
+     * @var LanguageNameEntityRepository
      */
     private $languageNameRepository;
 
@@ -40,7 +40,7 @@ class RepositoryStats {
     /**
      * Clear all language statistics of this repository
      *
-     * @param \App\Entity\RepositoryEntity $entity
+     * @param RepositoryEntity $entity
      */
     public function clearStats(RepositoryEntity $entity) {
         $this->languageStatsRepository->clearStats($entity);
@@ -50,7 +50,7 @@ class RepositoryStats {
      * Create new language statistics for this repository
      *
      * @param LocalText[] $translations combined array with all translations
-     * @param \App\Entity\RepositoryEntity $repository Repository the translation belongs to
+     * @param RepositoryEntity $repository Repository the translation belongs to
      *
      * @throws OptimisticLockException|ORMException
      */

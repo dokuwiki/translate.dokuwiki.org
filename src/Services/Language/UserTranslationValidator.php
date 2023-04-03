@@ -80,7 +80,6 @@ class UserTranslationValidator {
     public function validate() {
         $newTranslation = array();
 
-        /** @var LocalText $translation */
         foreach ($this->defaultTranslation as $path => $translation) {
             if (!isset($this->userTranslation[$path])) {
                 continue;
@@ -150,7 +149,6 @@ class UserTranslationValidator {
             $authors->add(new Author($this->author, $this->authorEmail));
         }
         if (isset($this->previousTranslation[$path])) {
-            /** @var LocalText $prevTranslation */
             $prevTranslation = $this->previousTranslation[$path];
             $prevAuthors = $prevTranslation->getAuthors()->getAll();
             foreach ($prevAuthors as $author) {
@@ -178,7 +176,6 @@ class UserTranslationValidator {
             return $this->userTranslation[$path][$key] !== '';
         }
 
-        /** @var LocalText $previous */
         $previous = $this->previousTranslation[$path];
         $previousText = $previous->getContent();
 
@@ -204,7 +201,6 @@ class UserTranslationValidator {
             return $this->userTranslation[$path][$key][$jsKey] !== '';
         }
 
-        /** @var LocalText $previous */
         $previous = $this->previousTranslation[$path];
         $previousText = $previous->getContent();
 
@@ -237,7 +233,5 @@ class UserTranslationValidator {
     public function getErrors() {
         return $this->errors;
     }
-
-
 
 }

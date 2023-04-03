@@ -29,7 +29,7 @@ class PlainBehavior implements RepositoryBehavior {
      * No possibility available to open pull request to remote repository, therefore a patch is sent by email
      *
      * @param GitRepository $tempGit
-     * @param \App\Entity\TranslationUpdateEntity $update
+     * @param TranslationUpdateEntity $update
      * @param GitRepository $originalGit
      *
      * @throws GitCreatePatchException
@@ -52,7 +52,7 @@ class PlainBehavior implements RepositoryBehavior {
     /**
      * Return url of 'origin' repository, which is the original repository given
      *
-     * @param \App\Entity\RepositoryEntity $repository
+     * @param RepositoryEntity $repository
      * @return string
      */
     public function createOriginURL(RepositoryEntity $repository) {
@@ -79,8 +79,8 @@ class PlainBehavior implements RepositoryBehavior {
     /**
      * Get information about the open pull requests i.e. url and count
      *
-     * @param \App\Entity\RepositoryEntity $repository
-     * @param \App\Entity\LanguageNameEntity $language
+     * @param RepositoryEntity $repository
+     * @param LanguageNameEntity $language
      * @return array
      */
     public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language) {

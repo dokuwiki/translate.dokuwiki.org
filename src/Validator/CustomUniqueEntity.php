@@ -9,7 +9,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class CustomUniqueEntity extends UniqueEntity {
 
     public function validatedBy() {
-        return \get_class($this).'Validator';
+        return get_class($this).'Validator';
     }
 
 }

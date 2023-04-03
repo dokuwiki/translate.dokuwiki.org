@@ -55,8 +55,8 @@ interface RepositoryBehavior {
     /**
      * Get information about the open pull requests i.e. url and count
      *
-     * @param \App\Entity\RepositoryEntity $repository
-     * @param \App\Entity\LanguageNameEntity $language
+     * @param RepositoryEntity $repository
+     * @param LanguageNameEntity $language
      * @return array
      */
     public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language);

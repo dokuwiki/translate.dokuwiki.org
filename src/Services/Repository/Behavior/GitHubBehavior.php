@@ -109,7 +109,7 @@ class GitHubBehavior implements RepositoryBehavior {
      * Get information about the open pull requests i.e. url and count
      *
      * @param RepositoryEntity $repository
-     * @param \App\Entity\LanguageNameEntity $language
+     * @param LanguageNameEntity $language
      * @return array
      *
      * @throws GitHubServiceException
