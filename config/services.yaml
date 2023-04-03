@@ -81,11 +81,6 @@ services:
         tags:
             - { name: validator.constraint_validator }
 
-    #    listener.before_controller:
-    App\EventListener\BeforeControllerListener:
-        tags:
-            - { name: kernel.event_listener, event: 'kernel.controller', method: 'onKernelController' }
-
     #    listener.kernel_exception:
     App\EventListener\RouteNotFoundExceptionListener:
         tags:

@@ -18,13 +18,13 @@ use App\Services\Language\TranslationPreparer;
 use App\Services\Language\UserTranslationValidator;
 use App\Services\Language\UserTranslationValidatorFactory;
 use App\Services\Repository\RepositoryManager;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class TranslationController extends Controller implements InitializableController {
+class TranslationController extends AbstractController {
 
     /**
      * @var EntityManager
@@ -43,21 +43,16 @@ class TranslationController extends Controller implements InitializableControlle
      */
     private $translationPreparer;
     /**
-     * @var \App\Repository\RepositoryEntityRepository
+     * @var RepositoryEntityRepository
      */
     private $repoRepository;
 
     public function __construct(RepositoryManager $repositoryManager, LanguageManager $languageManager, TranslationPreparer $translationPreparer, EntityManagerInterface $entityManager) {
-
         $this->repositoryManager = $repositoryManager;
         $this->languageManager = $languageManager;
         $this->translationPreparer = $translationPreparer;
         $this->entityManager = $entityManager;
         $this->repoRepository = $entityManager->getRepository(RepositoryEntity::class);
-    }
-
-    public function initialize(Request $request) {
-//        $this->entityManager = $this->getDoctrine()->getManager();
     }
 
     /**
@@ -82,7 +77,7 @@ class TranslationController extends Controller implements InitializableControlle
         }
 
         $data = array();
-        $data['translation'] = $request->request->get('translation', null);
+        $data['translation'] = $request->request->get('translation');
         $data['repositoryName'] = $request->request->get('repositoryName', '');
         $data['repositoryType'] = $request->request->get('repositoryType', '');
         if (
@@ -112,23 +107,19 @@ class TranslationController extends Controller implements InitializableControlle
         $validator = $this->getUserTranslationValidator($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email'], $validatorFactory);
         $newTranslation = $validator->validate();
         $errors = $validator->getErrors();
+
+        $userInput = array();
+        $userInput['translation'] = $data['translation'];
+        $userInput['errors'] = $errors;
+        $userInput['author'] = $data['name'];
+        $userInput['authorMail'] = $data['email'];
         if (!empty($errors)) {
-            $userInput = array();
-            $userInput['translation'] = $data['translation'];
-            $userInput['errors'] = $errors;
-            $userInput['author'] = $data['name'];
-            $userInput['authorMail'] = $data['email'];
-            return $this->translate($request, $data['repositoryType'], $data['repositoryName'], $userInput);
+             return $this->translate($request, $data['repositoryType'], $data['repositoryName'], $userInput);
         }
 
         $form = $this->getCaptchaForm();
         $form->handleRequest($request);
         if (!($form->isSubmitted() && $form->isValid())) {
-            $userInput = array();
-            $userInput['translation'] = $data['translation'];
-            $userInput['errors'] = $errors;
-            $userInput['author'] = $data['name'];
-            $userInput['authorMail'] = $data['email'];
             return $this->translate($request, $data['repositoryType'], $data['repositoryName'], $userInput);
         }
 
@@ -262,7 +253,7 @@ class TranslationController extends Controller implements InitializableControlle
     }
 
     /**
-     * @return \App\Repository\LanguageNameEntityRepository
+     * @return LanguageNameEntityRepository
      */
     private function getLanguageNameEntityRepository() {
         return $this->entityManager->getRepository(LanguageNameEntity::class);

@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\LanguageNameEntity;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use App\Repository\LanguageNameEntityRepository;
@@ -15,12 +14,12 @@ use App\Services\Language\LanguageManager;
 use App\Services\Repository\RepositoryManager;
 use Swift_Mailer;
 use Swift_Message;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ExtensionController extends Controller implements InitializableController {
+class ExtensionController extends AbstractController {
 
     /**
      * @var RepositoryEntityRepository
@@ -32,14 +31,9 @@ class ExtensionController extends Controller implements InitializableController 
      */
     private $languageRepository;
 
-//    public function __construct(RepositoryEntityRepository $repositoryRepository, LanguageNameEntityRepository $languageRepository) {
-//        $this->repositoryRepository = $repositoryRepository;
-//        $this->languageRepository = $languageRepository;
-//    }
-    public function initialize(Request $request) {
-        $entityManager = $this->getDoctrine()->getManager();
-        $this->repositoryRepository = $entityManager->getRepository(RepositoryEntity::class);
-        $this->languageRepository = $entityManager->getRepository(LanguageNameEntity::class);
+    public function __construct(RepositoryEntityRepository $repositoryRepository, LanguageNameEntityRepository $languageRepository) {
+        $this->repositoryRepository = $repositoryRepository;
+        $this->languageRepository = $languageRepository;
     }
 
     /**
@@ -70,7 +64,7 @@ class ExtensionController extends Controller implements InitializableController 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->addExtension($repository, $api, $mailer);
             $data['repository'] = $repository;
-            $data['maxErrorCount'] = $this->container->getParameter('app.maxErrorCount');
+            $data['maxErrorCount'] = $this->getParameter('app.maxErrorCount');
             return $this->render('extension/added.html.twig', $data);
         }
 
@@ -102,7 +96,7 @@ class ExtensionController extends Controller implements InitializableController 
         $message = (new Swift_Message())
             ->setSubject('Registration')
             ->setTo($repository->getEmail())
-            ->setFrom($this->container->getParameter('app.mailerFromAddress'))
+            ->setFrom($this->getParameter('app.mailerFromAddress'))
             ->setBody($this->renderView('mail/extensionAdded.txt.twig', $data));
         $mailer->send($message);
     }
@@ -161,8 +155,8 @@ class ExtensionController extends Controller implements InitializableController 
 
         $data['currentLanguage'] = $languageManager->getLanguage($request);
         $data['languages'] = $this->languageRepository->getAvailableLanguages();
-        $data['featureImportExport'] = $this->container->getParameter('app.featureImportExport');
-        $data['featureAddTranslation'] = $this->container->getParameter('app.featureAddTranslation');
+        $data['featureImportExport'] = $this->getParameter('app.featureImportExport');
+        $data['featureAddTranslation'] = $this->getParameter('app.featureAddTranslation');
         $data['englishReadonly'] = $request->query->has('englishReadonly');
 
         return $this->render('default/show.html.twig', $data);
@@ -199,7 +193,7 @@ class ExtensionController extends Controller implements InitializableController 
             }
             $data['form'] = $form->createView();
         }
-        $data['maxErrorCount'] = $this->container->getParameter('app.maxErrorCount');
+        $data['maxErrorCount'] = $this->getParameter('app.maxErrorCount');
         $data['repository'] = $repository;
         return $this->render('extension/settings.html.twig', $data);
 
@@ -223,7 +217,7 @@ class ExtensionController extends Controller implements InitializableController 
         $message = (new Swift_Message())
             ->setSubject('Edit ' . $repository->getType() . ' settings in DokuWiki Translation Tool')
             ->setTo($repository->getEmail())
-            ->setFrom($this->container->getParameter('app.mailerFromAddress'))
+            ->setFrom($this->getParameter('app.mailerFromAddress'))
             ->setBody($this->renderView('mail/extensionEditUrl.txt.twig', $data));
         $mailer->send($message);
     }
