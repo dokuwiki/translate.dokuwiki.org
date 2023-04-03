@@ -1,7 +1,7 @@
 <?php
 namespace App\Validator;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\RepositoryEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\Validator\Constraint;
@@ -11,9 +11,9 @@ class CustomUniqueEntityValidator extends UniqueEntityValidator {
     /**
      * Type-hinted for auto wiring of service
      *
-     * @param Registry $registry
+     * @param ManagerRegistry $registry
      */
-    public function __construct(Registry $registry) {
+    public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry);
     }
 
