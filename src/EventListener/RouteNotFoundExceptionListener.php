@@ -36,7 +36,7 @@ class RouteNotFoundExceptionListener implements EventSubscriberInterface {
             return;
         }
 
-        $e = $event->getException();
+        $e = $event->getThrowable();
         $type = get_class($e);
         if ($e instanceof NotFoundHttpException) {
             $this->logger->info($e->getMessage());
