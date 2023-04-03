@@ -24,20 +24,16 @@
             {% set label = name|humanize %}
         {% endif %}
         {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' control-label')|trim}) %}
-        <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}</label>
+        <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label }}</label>
     {% endapply %}
 {% endblock form_label %}
 
 {% block form_errors %}
     {% apply spaceless %}
         {% if errors|length > 0 %}
-            <span class="help-inline">
+            <span class="help-inline more">
                     {% for error in errors %}
-                        {{
-                            error.messagePluralization is null
-                            ? error.messageTemplate|trans(error.messageParameters, 'validators')
-                            : error.messageTemplate|transchoice(error.messagePluralization, error.messageParameters, 'validators')
-                            }}
+                        {{ error.message }}
                     {% endfor %}
             </span>
         {% endif %}
