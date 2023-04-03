@@ -205,13 +205,12 @@ class GitRepository {
      */
     private function run() {
         $arguments = func_get_args();
-        $command = array($this->gitService->getGitBinary());
+        $command = [$this->gitService->getGitBinary()];
 
         foreach ($arguments as $argument) {
-            $command[] = escapeshellarg($argument);
+            $command[] = $argument;
         }
 
-        $command = implode(' ', $command);
         $result = $this->runCommand($command);
 
         if ($result->getExitCode()) {
@@ -222,14 +221,16 @@ class GitRepository {
     }
 
     /**
-     * @param string $command
+     * @param array $command
      * @return ProgrammCallResult
      */
     private function runCommand($command) {
         if (file_exists($this->path)) {
             $process = new Process($command, $this->path);
+        } elseif (file_exists(dirname($this->path))) {
+            $process = new Process($command, dirname($this->path));
         } else {
-            return new ProgrammCallResult(1, '', 'folder with git repository does not exist', $command);
+            return new ProgrammCallResult(1, '', 'Folder with git repository does not exist', $command);
         }
         $process->setTimeout($this->commandTimeout);
         $process->start();

@@ -19,7 +19,7 @@ class ProgrammCallResult {
         $this->exitCode = $exitCode;
         $this->output = $output;
         $this->error = $error;
-        $this->command = $command;
+        $this->command = implode(' ', $command);
     }
 
     public function getExitCode() {
