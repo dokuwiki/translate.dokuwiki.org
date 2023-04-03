@@ -109,10 +109,13 @@ class DokuWikiRepositoryAPI {
      *
      * @param string $type
      * @param string $name
-     * @return bool|RepositoryEntity
+     * @return false|RepositoryEntity
      */
     public function getExtensionInfo($type, $name) {
-        $this->loadCache();
+        if(!$this->loadCache()) {
+            return false;
+        }
+
         $name = strtolower($name);
         if (!isset($this->cache[$type . ':'. $name])) {
             return false;
