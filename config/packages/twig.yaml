@@ -3,5 +3,6 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     exception_controller: null
+    auto_reload: '%kernel.debug%'
     form_themes:
         - 'template/fields.html.twig'
