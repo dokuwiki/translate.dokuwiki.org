@@ -11,6 +11,7 @@ class LanguageFileParserTestDummy extends LanguageFileParser {
 
 
     function __construct() {
+        parent::__construct('prefixpath');
         $this->author = new AuthorList();
     }
 

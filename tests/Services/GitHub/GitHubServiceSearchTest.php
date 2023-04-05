@@ -1,6 +1,7 @@
 <?php
 namespace App\Tests\Services\GitHub;
 
+use App\Services\GitHub\GitHubService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class GitHubServiceSearchTest extends KernelTestCase {
@@ -33,9 +34,11 @@ class GitHubServiceSearchTest extends KernelTestCase {
     public function testGitHubSearch($url, $languageCode, $expectedUrl, $number) {
         self::bootKernel();
 
-        $api = static::$kernel->getContainer()->get('git_hub_service');
+        $container = self::$container;
 
-        $info = $api->getOpenPRListInfo($url, $languageCode);
+        $github = $container->get(GitHubService::class);
+
+        $info = $github->getOpenPRListInfo($url, $languageCode);
         $this->assertEquals($expectedUrl, $info['listURL']);
         $this->assertEquals($number, $info['count']);
     }
