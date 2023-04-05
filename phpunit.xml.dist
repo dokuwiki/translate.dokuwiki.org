@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- http://www.phpunit.de/manual/current/en/appendixes.configuration.html -->
-<phpunit
-    backupGlobals               = "false"
-    backupStaticAttributes      = "false"
-    colors                      = "true"
-    convertErrorsToExceptions   = "true"
-    convertNoticesToExceptions  = "true"
-    convertWarningsToExceptions = "true"
-    processIsolation            = "false"
-    stopOnFailure               = "false"
-    syntaxCheck                 = "false"
-    bootstrap                   = "app/autoload.php" >
+<!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         backupGlobals="false"
+         colors="true"
+         bootstrap="tests/bootstrap.php"
+         convertDeprecationsToExceptions="false"
+>
+    <php>
+        <ini name="display_errors" value="1" />
+        <ini name="error_reporting" value="-1" />
+        <server name="APP_ENV" value="test" force="true" />
+        <server name="SHELL_VERBOSITY" value="-1" />
+        <server name="SYMFONY_PHPUNIT_REMOVE" value="" />
+        <server name="SYMFONY_PHPUNIT_VERSION" value="9.5" />
+    </php>
 
     <testsuites>
         <testsuite name="Project Test Suite">
@@ -19,34 +23,20 @@
         </testsuite>
     </testsuites>
 
-    <php>
-        <env name="KERNEL_CLASS" value="App\Kernel" />
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </coverage>
 
-        <!-- ###+ doctrine/doctrine-bundle ### -->
-        <!-- Format described at https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html#connecting-using-a-url -->
-        <!-- IMPORTANT: You MUST configure your server version, either here or in config/packages/doctrine.yaml -->
-        <!--  -->
-        <!-- DATABASE_URL="sqlite:///%kernel.project_dir%/var/data.db" -->
-        <!-- DATABASE_URL="mysql://app:!ChangeMe!@127.0.0.1:3306/db_name?serverVersion=8" -->
-        <env name="DATABASE_URL" value="postgresql://app:!ChangeMe!@127.0.0.1:5432/db_name?serverVersion=15&amp;charset=utf8"/>
-        <!-- ###- doctrine/doctrine-bundle ### -->
+    <listeners>
+        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
+    </listeners>
 
-        <!-- ###+ knplabs/github-api ### -->
-        <env name="GITHUB_AUTH_METHOD" value="http_password"/>
-        <env name="GITHUB_USERNAME" value="username"/>
-        <env name="GITHUB_SECRET" value="password_or_token"/>
-        <!-- ###- knplabs/github-api ### -->
-    </php>
-
-    <filter>
-        <whitelist>
-            <directory>src</directory>
-            <exclude>
-                <directory>src/*Bundle/Resources</directory>
-                <directory>src/*/*Bundle/Resources</directory>
-                <directory>src/*/Bundle/*Bundle/Resources</directory>
-            </exclude>
-        </whitelist>
-    </filter>
-
+    <!-- Run `composer require symfony/panther` before enabling this extension -->
+    <!--
+    <extensions>
+        <extension class="Symfony\Component\Panther\ServerExtension" />
+    </extensions>
+    -->
 </phpunit>
