@@ -10,46 +10,74 @@ Development documentation available at https://github.com/dokufreaks/dokuwiki-tr
 
 Deployment: https://www.dokuwiki.org/teams:translate-tool
 
+
 Configuration
 -----
 
-Copy app/config/parameters.yml.dist to app/config/parameters.yml and setup the configuration.
+Copy .env to .env.local and setup the configuration.
 The development version of the translation tool will create forks and perform pull requests to github.com. 
 To prevent these temporary repositories mix with your normal repositories, you have to setup a second github account for testing purposes.
 Ensure you have a proper ssh key to your github test account configured (no passphrase).
 
-http://sampreshan.svashishtha.com/2012/05/20/quicktip-github-multiple-accounts-access-with-ssh/
-
-For your default GitHub account you can use the `Host github.com`, while using e.g. `Host translationtesting.github.com` 
-for your test account. This last host should be configured in the parameters.yml of your local translation tool.
+See for the details: https://github.com/dokufreaks/dokuwiki-translation/wiki/Git-interaction
 
 Production setup
 ----------------
+TODO - NOT TESTED
 
-    composer install
-    php app/console cache:clear --env=prod
-    php app/console assetic:dump --env=prod
-    php app/console doctrine:database:create
-    php app/console doctrine:schema:update --force
-    php app/console dokuwiki:setup
+    composer update
+    bin/console doctrine:migrations:migrate
+    #if changed language objects
+    bin/console dokuwiki:updateLanguages
 
-Point the document root to the web/ folder. The document index is app.php.
+Point the document root to the public/ folder. The document index is index.php.
 
 Development setup
 -----------------
+TODO - NOT TESTED
+
+If new:
 
     composer install --dev
-    php app/console cache:clear
-    php app/console assetic:dump --env=dev
-    php app/console doctrine:database:create
-    php app/console doctrine:schema:update --force
-    php app/console dokuwiki:setup
+    #not sure what to do if new setup, NOT TESTED
+    #php app/console doctrine:database:create
+    #php app/console doctrine:schema:update --force
+    bin/console doctrine:migrations:migrate
+    bin/console dokuwiki:setup
 
-The website is available at web/app_dev.php
+or existing:
 
-To run the Unittests you need to have PHPUnit installed and the application configured. Run the tests with:
+    composer update --dev
+    bin/console doctrine:migrations:migrate
 
-    vendor/bin/phpunit -c app
+The website is available at public/
+or using symfony server: ....TODO
+
+To create migrations, edit after creation to ensure proper handling existing data:
+
+    bin/console doctrine:schema:diff
+
+See for details: https://github.com/dokufreaks/dokuwiki-translation/wiki/Maintenance-development-notes
+
+
+To run the Unittests you need to have PHPUnit installed (I expect that it is already done via composer) and the application configured. Run the tests with:
+
+    bin/phpunit
+
+From Intellij IDEA/PHPStorm:
+
+Configure PHPUnit
+  * Open File | Settings | Languages & Frameworks | PHP | Test Frameworks
+  * Click the top-left "+" to add a test framework
+  * When using Composer (you should)
+  * Choose "Use Composer autoloader"
+  * Set "Path to script" to /path/to/yourprojectdirectory/vendor/autoload.php
+  * If not present, add KERNEL_CLASS='App\Kernel' to your .env.test file
+  * Add .env.test.local with copy of .env.local. Copy all setting but the framework settings not.
+  * Open previous settings (File | Settings | Languages & Frameworks | PHP | Test Frameworks)
+  * Check "Default configuration file"
+  * Set path to /path/to/yourprojectdirectory/phpunit.xml.dist
+
 
 CronJobs
 --------
@@ -57,28 +85,40 @@ You need to setup two cronjobs, the commands are:
 
 To update plugin information from the DokuWiki plugin repository. This command should run at least once per day.
 
-    php app/console dokuwiki:updateDwApi
+    bin/console dokuwiki:updateDwApi
 
-Keep track of plugin updates and process new translations. This command should run about every 5min.
+Keep track of plugin updates and process new translations. This command should run about every 5 min.
 
-    php app/console dokuwiki:updateGit
+    bin/console dokuwiki:updateGit
 
 Admin commands
 -----------------------
-The following Symfony commands are additionally availiable via commandline.
+The following Symfony commands are additionally available via commandline.
 
 Add a repository:
 
-    php app/console dokuwiki:add
+    bin/console dokuwiki:add <type> <name> <gitUrl> <branch> <email> [<englishReadonly>] [<displayName>] [<author>] [<popularity>]
 
 Delete a repository:
 
-    php app/console dokuwiki:deleteRepo
+    bin/console dokuwiki:deleteRepo <type> <name>
 
-Reset the local information and git repository of a plugin:
+Edit an existing repository, show or set value for: giturl, branch, state, email, englishReadonly
 
-    php app/console dokuwiki:softReset
-    
+    bin/console dokuwiki:editRepo <type> <name> <property> [<value>]
+
+Show some info about the repositories:
+
+    bin/console dokuwiki:showStats <type> <name>
+
+Reset lock, tmp folder, error count and last updated of a core/plugin/template:
+
+    bin/console dokuwiki:softReset <type> <name>
+
+Updates all language information from local repository. Refreshes the cached translation objects
+
+    bin/console dokuwiki:updateLanguages
+
 General Symfony commands
 -----------------------
 Some useful command for listing and help
