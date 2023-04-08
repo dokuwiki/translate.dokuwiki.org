@@ -43,6 +43,7 @@
         "symfony/swiftmailer-bundle": "^3.1",
         "symfony/twig-bundle": "4.4.*",
         "symfony/validator": "4.4.*",
+        "symfony/webpack-encore-bundle": "^1.16",
         "symfony/yaml": "*",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
