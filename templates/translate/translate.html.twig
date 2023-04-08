@@ -1,5 +1,8 @@
 {% extends 'default/index.html.twig' %}
 
+{% block stylesheets %}
+    {{ encore_entry_link_tags('translate') }}
+{% endblock %}
 {% block content %}
     <ul class="breadcrumb">
         <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a> <span class="divider">/</span></li>
@@ -162,9 +165,7 @@
 
 {% endblock %}
 
-{% block javascript %}
-    {{ parent() }}
-
-    <link href="{{ asset('js/translationWarnings.js') }}" rel="stylesheet" />
-    <link href="{{ asset('js/jquery.autosize-min.js') }}" rel="stylesheet" />
+{% block javascripts %}
+{#    {{ parent() }} #}
+    {{ encore_entry_script_tags('translate') }}
 {% endblock %}

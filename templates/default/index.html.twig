@@ -4,7 +4,8 @@
 <head>
     <title>{% block title %}DokuWiki Localization{% endblock %}</title>
     {% block stylesheets %}
-        <link href="{{ asset('css/compiled-main.css') }}" rel="stylesheet" media="all" />
+{#        <link href="{{ asset('css/compiled-main.css') }}" rel="stylesheet" media="all" />#}
+        {{ encore_entry_link_tags('app') }}
     {% endblock %}
     <meta charset="utf-8">
     <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}" />
@@ -173,8 +174,9 @@
 {{ dokuWikiToolbar() }}
 
 {% block javascripts %}
-    <script src="{{ asset('js/jquery-1.9.1.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+{#    <script src="{{ asset('js/jquery-1.9.1.min.js') }}"></script>#}
+{#    <script src="{{ asset('js/bootstrap.min.js') }}"></script>#}
+    {{ encore_entry_script_tags('app') }}
 {% endblock %}
 </body>
 </html>
