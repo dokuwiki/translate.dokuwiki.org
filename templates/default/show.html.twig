@@ -8,7 +8,7 @@
     </ul>
     <div class="container">
         <div class="row">
-            <div class="span12">
+            <div class="col-md-12">
                 <div class="page-header">
                     <h1>{{ repository.displayName|capitalize }}</h1>
                 </div>
@@ -18,7 +18,7 @@
 
         <div class="row">
             {% if englishReadonly %}
-                <div class="span12">
+                <div class="col-md-12">
                     <div class="alert alert-danger">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                         The English translation is marked as read-only. Improvements cannot be submitted via this tool.
@@ -32,18 +32,18 @@
                 </div>
             {% endif %}
 
-            <div class="span8">
+            <div class="col-md-8">
                 <p>
                     This page shows the translation progress of {{ repository.displayName|capitalize }}.
                     English is the master language which has always 100% progress.
                     Please help by adding translations.
                 </p>
             </div>
-            <div class="span4">
+            <div class="col-md-4">
                 <div class="well well-small">
                     <form action="{% if repository.type == 'core' %}{{  path("dokuwiki_translate") }}{% else %}{{ path("dokuwiki_translate_extension", {"type": repository.type, "name":repository.name }) }}{% endif %}" method="get" class="form-inline">
                         <label for="language">Show the translatable strings for</label>
-                        <select id="language" name="lang">
+                        <select id="language" name="lang" class="form-control">
                             {% for language in languages %}
                                 <option value="{{ language.code }}"
                                         {% if language.code == currentLanguage %} selected="selected"{% endif %}>
@@ -51,15 +51,15 @@
                                 </option>
                             {% endfor %}
                         </select>
-                        <input type="submit" value="Go" class="btn btn-primary" />
+                        <button type="submit" class="btn btn-primary" >Go</button>
                     </form>
                 </div>
             </div>
 
-            <div class="span12">
+            <div class="col-md-12">
                 <div class="row">
                     {% if featureAddTranslation %}
-                        <div class="span4">
+                        <div class="col-md-4">
                             <form class="well">
                                 <fieldset>
                                     <legend>Add a new Language</legend>
@@ -70,35 +70,35 @@
                                         <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" target="_blank">
                                             Two letter language code</a>
                                     </label>
-                                    <input type="text" placeholder="en" id="new-language" />
-                                    <input type="submit" value="Add" class="btn btn-primary" />
+                                    <input type="text" placeholder="en" id="new-language" class="form-control" />
+                                    <button type="submit" class="btn btn-primary">Add</button>
                                 </fieldset>
                             </form>
                         </div>
                     {% endif %}
                     {% if featureImportExport %}
-                        <div class="span4">
+                        <div class="col-md-4">
                             <form class="well">
                                 <fieldset>
                                     <legend>Export translation</legend>
                                     <label for="export-language">Language</label>
-                                    <select id="export-language"><option>English</option></select>
+                                    <select id="export-language" class="form-control"><option>English</option></select>
                                     <label for="export-format" class="control-label">Format</label>
-                                    <select id="export-format"><option>json</option></select>
-                                    <input type="submit" value="Download" class="btn btn-primary" />
+                                    <select id="export-format" class="form-control"><option>json</option></select>
+                                    <button type="submit" value="Download" class="btn btn-primary">Download</button>
                                 </fieldset>
                             </form>
                         </div>
-                        <div class="span4">
+                        <div class="col-md-4">
                             <form class="well">
                                 <fieldset>
                                     <legend>Import translation</legend>
                                     <label for="import-language">Language</label>
-                                    <select id="import-language"><option>English</option></select>
+                                    <select id="import-language" class="form-control"><option>English</option></select>
                                     <label for="import-format">Format</label>
-                                    <select id="import-format"><option>json</option></select>
+                                    <select id="import-format" class="form-control"><option>json</option></select>
                                     <input type="file" />
-                                    <input type="submit" value="Translate" class="btn btn-primary" />
+                                    <button type="submit" class="btn btn-primary" >Translate</button>
                                 </fieldset>
                             </form>
                         </div>
@@ -120,8 +120,8 @@
                         <td>{{ translation.language.code }}</td>
                         <td>{{ translation.language.name }}</td>
                         <td class="translation-progress">
-                            <div class="progress progress-striped {{ progressbar.color(translation.completionPercent) }}">
-                                <div class="bar" style="width: {{ translation.completionPercent }}%"></div>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped {{ progressbar.color(translation.completionPercent) }}" style="width: {{ translation.completionPercent }}%"></div>
                             </div>
                         </td>
                         <td class="translation-progress-text">
@@ -149,13 +149,13 @@
                     </tbody>
                 </table>
             </div>
-            <div class="span8">
+            <div class="col-md-8">
                 <p>
-                    <span class="label label-info">Note</span>
+                    <span class="label label-default label-info">Note</span>
                     These statistics were last updated at {{ repository.lastupdate|date("m/d/Y") }}</p>
             </div>
             {% if repository.type != 'core'%}
-            <div class="span4 text-right">
+            <div class="col-md-4 text-right">
                 <p>
                     <a href="{{ path("dokuwiki_translator_extension_settings", {"type": repository.type, "name":repository.name }) }}">show settings</a> for {{ repository.displayName|capitalize }}
             </div>

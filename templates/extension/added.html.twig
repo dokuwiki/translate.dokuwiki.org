@@ -7,14 +7,14 @@
     </ul>
     <div class="container">
         <div class="row">
-            <div class="span12">
+            <div class="col-md-12">
                 <div class="page-header">
                     <h1>{{ repository.type|capitalize }} Added</h1>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="span8">
+            <div class="col-md-8">
                 <p>
                     Your {{ repository.type }} has been added, but needs to be activated first.
                 </p>
@@ -23,7 +23,7 @@
                     After confirming your submission, your {{ repository.type }} will be available for translation.
                 </p>
             </div>
-            <div class="span4">
+            <div class="col-md-4">
                 {% include 'template/box.html.twig' %}
             </div>
 

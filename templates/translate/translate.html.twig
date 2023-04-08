@@ -19,7 +19,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="span12">
+            <div class="col-md-12">
                 <div class="page-header">
                     <h1>Translate {{ repository.displayName }}</h1>
                 </div>
@@ -70,26 +70,26 @@
                                 <strong>Important</strong>: To be properly credited in the language files, give your name and email address here.
                             </p>
 
-                            <div class="control-group{% if "author" in errors|keys %} error{% endif %}">
-                                <label class="control-label" for="author">Name</label>
-                                <div class="controls">
-                                    <input name="name" type="text" id="author" placeholder="Your name" value="{{ author }}" />
+                            <div class="form-group{% if "author" in errors|keys %} has-error{% endif %}">
+                                <label class="col-sm-3 control-label" for="author">Name</label>
+                                <div class="col-sm-9">
+                                    <input name="name" type="text" id="author" placeholder="Your name" value="{{ author }}" class="form-control" />
 
                                     {% if "author" in errors|keys %}
-                                        <span class="help-inline">
+                                        <span class="help-block">
                                             {{ errors.author }}
                                         </span>
                                     {% endif %}
                                 </div>
                             </div>
 
-                            <div class="control-group{% if "email" in errors|keys %} error{% endif %}">
-                                <label class="control-label" for="email">E-mail</label>
-                                <div class="controls">
+                            <div class="form-group{% if "email" in errors|keys %} has-error{% endif %}">
+                                <label class="col-sm-3 control-label" for="email">E-mail</label>
+                                <div class="col-sm-9">
                                     <input name="email" type="email" id="email" placeholder="you@example.com"
-                                           value="{{ authorMail }}"/>
+                                           value="{{ authorMail }}" class="form-control" />
                                     {% if "email" in errors|keys %}
-                                        <span class="help-inline">
+                                        <span class="help-block">
                                             {{ errors.email }}
                                         </span>
                                     {% endif %}
@@ -128,6 +128,7 @@
                                                 {% else %}
                                                     rows="3"
                                                 {% endif %}
+                                                 class="form-control"
                                                 >{{ translation.target }}</textarea>
                                         {% if translation.type == 'markup' %}
                                             <span class="help-block">
@@ -147,15 +148,19 @@
                         <div class="pagination pagination-centered"></div>
 
                         <p id="pagination__note">
-                            <span class="label label-info">Info</span>
+                            <span class="label label-default label-info">Info</span>
                             You don't need to hit the &ldquo;Submit Translation&rdquo; button before using the pagination.
                         </p>
 
-                        <div class="form-actions">
-                            <input name="action[save]" id="save__button" type="submit"
-                                   value="Submit Translation" class="btn btn-primary"
-                                   title="This will save your translation and send a patch to the {{ repository.type }} author" />
-                            <input name="action[cancel]" type="submit" class="btn btn-link" value="Abort translation - this will discard all changes" />
+                        <div class="form-group">
+                            <button name="action[save]" id="save__button" type="submit"
+                                   class="btn btn-primary"
+                                   title="This will save your translation and send a patch to the {{ repository.type }} author">
+                                Submit Translation
+                            </button>
+                            <button name="action[cancel]" type="submit" class="btn btn-link">
+                                Abort translation - this will discard all changes
+                            </button>
                         </div>
                     </form>
             </div>

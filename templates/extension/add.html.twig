@@ -1,5 +1,8 @@
 {% extends 'default/index.html.twig' %}
 
+{% form_theme form 'form/bootstrap_3_horizontal_smallcolumn.html.twig' %}
+
+
 {% block content %}
     <ul class="breadcrumb">
         <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a> <span class="divider">/</span></li>
@@ -7,14 +10,14 @@
     </ul>
     <div class="container">
         <div class="row">
-            <div class="span12">
+            <div class="col-md-12">
                 <div class="page-header">
                     <h1>{{ form.vars.data.type|capitalize }} Translation</h1>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="span6">
+            <div class="col-md-6">
                 <p>
                     The DokuWiki translation tool allows you to add your DokuWiki
                     {{ form.vars.data.type }} to be translated by end users.
@@ -35,16 +38,16 @@
                 <form action="{{ path('dokuwiki_translator_extension_add', {'type': form.vars.data.type}) }}" class="form-horizontal" method="post">
                     {{ form_widget(form) }}
 
-                    <div class="controls">
-                        <input type="submit" class="btn btn-primary" value="Add my {{ form.vars.data.type }}!"/>
-                        <a href="{{ path('dokuwiki_translator_homepage') }}" class="btn">
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Add my {{ form.vars.data.type }}!</button>
+                        <a href="{{ path('dokuwiki_translator_homepage') }}" class="btn btn-default">
                             Abort
                         </a>
                     </div>
                 </form>
             </div>
 
-            <div class="span6">
+            <div class="col-md-6">
                 {% include 'template/explanation.html.twig'
                     with { 'showname': true }
                 %}

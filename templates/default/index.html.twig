@@ -16,13 +16,13 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="span12">
+        <div class="col-md-12">
             <div class="page-header">
                 <h1>DokuWiki Localization</h1>
             </div>
         </div>
         {% if activated %}
-        <div class="span12">
+        <div class="col-md-12">
                 <div class="alert alert-success">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                     Your extension has been activated. It'll take some time until it's imported and ready to translate.
@@ -30,14 +30,14 @@
         </div>
         {% endif %}
         {% if notActive %}
-            <div class="span12">
+            <div class="col-md-12">
                 <div class="alert alert-danger">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                     Requested extension is not active.
                 </div>
             </div>
         {% endif %}
-        <div class="span8">
+        <div class="col-md-8">
             <img src="{{ asset('images/dwloc.png') }}" alt="" id="logo" />
             <p>
                 This is the central hub for localization of the
@@ -77,8 +77,8 @@
                         <a href="{{ path("dokuwiki_translator_show") }}">{{ coreRepository.displayName }}</a>
                     </td>
                     <td class="translation-progress">
-                        <div class="progress progress-striped progress-info">
-                            <div class="bar" style="width: {{ coreRepository.completionPercent }}%"></div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-info" role="progressbar" style="width: {{ coreRepository.completionPercent }}%" aria-valuenow="{{ coreRepository.completionPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </td>
                     <td class="translation-progress-text">
@@ -105,8 +105,8 @@
                         <a href="{{ path("dokuwiki_translator_show_extension", {'type': repository.type, 'name': repository.name}) }}">{{ repository.displayName }}</a>
                     </td>
                     <td class="translation-progress">
-                        <div class="progress progress-striped {{ progressbar.color(repository.completionPercent) }}">
-                            <div class="bar" style="width: {{ repository.completionPercent }}%"></div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped {{ progressbar.color(repository.completionPercent) }}" role="progressbar" style="width: {{ repository.completionPercent }}%" aria-valuenow="{{ repository.completionPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </td>
                     <td class="translation-progress-text">
@@ -134,12 +134,12 @@
                 </tbody>
             </table>
         </div>
-        <div class="span4">
+        <div class="col-md-4">
             {% include 'developer_box.html.twig' %}
             <div class="well well-small">
                 <form action="{{ path('dokuwiki_translator_homepage') }}" method="get" class="form-inline">
                     <label for="language">Showing translation status for</label>
-                    <select id="language" name="lang">
+                    <select id="language" name="lang" class="form-control">
                         {% for language in languages %}
                             <option value="{{ language.code }}"
                                 {% if language.code == currentLanguage %} selected="selected"{% endif %}>
@@ -147,7 +147,7 @@
                             </option>
                         {% endfor %}
                     </select>
-                    <input type="submit" value="Go" class="btn btn-primary" />
+                    <button type="submit" class="btn btn-primary">Go</button>
                 </form>
 
 {#
@@ -158,14 +158,14 @@
                             two letter iso code</a>:
                     </label>
 
-                    <input id="new__translation" type="text" class="input-mini" placeholder="en" name="lang" />
-                    <input type="submit" value="Add language" class="btn btn-primary" />
+                    <input id="new__translation" type="text" class="form-control" placeholder="en" name="lang" />
+                    <button type="submit" class="btn btn-primary" >Add language</button>
                 </form>
 #}
             </div>
         </div>
-        <div class="span12">
-            <span class="label label-info">Note</span> This tool is currently in BETA.
+        <div class="col-md-12">
+            <span class="label label-default label-info">Note</span> This tool is currently in BETA.
         </div>
     </div>
 </div>
