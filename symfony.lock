@@ -12,22 +12,20 @@
         ]
     },
     "doctrine/doctrine-bundle": {
-        "version": "1.12",
+        "version": "2.3",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "1.12",
-            "ref": "11962ad3f13015bd463235f5adffe8f70b848a42"
+            "version": "2.3",
+            "ref": "117acb189cca1d761fd50fa47dceecff1ad9d266"
         },
         "files": [
             "config/packages/doctrine.yaml",
             "config/packages/prod/doctrine.yaml",
+            "config/packages/test/doctrine.yaml",
             "src/Entity/.gitignore",
             "src/Repository/.gitignore"
         ]
-    },
-    "doctrine/doctrine-cache-bundle": {
-        "version": "1.4.0"
     },
     "doctrine/doctrine-fixtures-bundle": {
         "version": "3.4",
