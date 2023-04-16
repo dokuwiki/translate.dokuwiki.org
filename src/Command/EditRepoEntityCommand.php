@@ -134,8 +134,8 @@ class EditRepoEntityCommand extends Command {
                 $this->output->writeln('property unknown');
                 return 1;
         }
-
-        $this->entityManager->flush($repo);
+        $this->entityManager->persist($repo);
+        $this->entityManager->flush();
         $this->output->writeln('done');
         return 0;
     }

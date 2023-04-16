@@ -86,7 +86,7 @@ class GitHubService {
      */
     public function createPullRequest($patchBranch, $branch, $languageCode, $url, $patchUrl) {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
-        list($repoName, $ignored) = $this->getUsernameAndRepositoryFromURL($patchUrl);
+        list($repoName,) = $this->getUsernameAndRepositoryFromURL($patchUrl);
 
         try {
             $this->client->api('pull_request')->create($user, $repository, array(

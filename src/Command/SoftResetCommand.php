@@ -118,7 +118,8 @@ class SoftResetCommand extends Command {
         $repo->setErrorCount(0);
         $repo->setLastUpdate(0);
 
-        $this->entityManager->flush($repo);
+        $this->entityManager->persist($repo);
+        $this->entityManager->flush();
         $this->output->write('Repository state, error count and update date reset. ');
     }
 

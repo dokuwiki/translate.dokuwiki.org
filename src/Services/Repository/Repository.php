@@ -124,7 +124,8 @@ abstract class Repository {
             $msg = $reporter->handleUpdateError($e, $this);
             $this->entity->setErrorMsg($msg);
         }
-        $this->entityManager->flush($this->entity);
+        $this->entityManager->persist($this->entity);
+        $this->entityManager->flush();
         $this->unlock();
     }
 
