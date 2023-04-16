@@ -22,6 +22,7 @@ class UpdateLanguagesCommand extends Command {
     private $repositoryEntityRepository;
 
     protected static $defaultName = 'dokuwiki:updateLanguages';
+    protected static $defaultDescription = 'Updates all language information from local repository. Refreshes the cached translation objects';
 
     public function __construct(RepositoryManager $repositoryManager, RepositoryEntityRepository $repositoryEntityRepository)
     {
@@ -33,8 +34,6 @@ class UpdateLanguagesCommand extends Command {
 
     protected function configure(): void
     {
-        $this
-            ->setDescription('Updates all language information from local repository. Refreshes the cached translation objects');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -56,6 +55,6 @@ class UpdateLanguagesCommand extends Command {
                 $output->writeln('error ' . $e->getMessage());
             }
         }
-        return 0;
+        return Command::SUCCESS;
     }
 }

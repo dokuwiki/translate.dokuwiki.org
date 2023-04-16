@@ -27,6 +27,7 @@ class SetupCommand extends Command {
     private $output;
 
     protected static $defaultName = 'dokuwiki:setup';
+    protected static $defaultDescription = 'Prepare software for first run. If not existing add dokuwiki as core repository and add missing languages';
 
     public function __construct(EntityManagerInterface $entityManager) {
         $this->entityManager = $entityManager;
@@ -36,8 +37,6 @@ class SetupCommand extends Command {
 
     protected function configure(): void
     {
-        $this
-             ->setDescription('Prepare software for first run. If not existing add dokuwiki as core repository and add missing languages');
     }
 
     /**
@@ -55,7 +54,7 @@ class SetupCommand extends Command {
 
         $this->addLanguageNames();
         $this->addDokuWikiRepo();
-        return 0;
+        return Command::SUCCESS;
     }
 
     /**

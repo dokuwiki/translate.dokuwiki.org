@@ -5,7 +5,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Exception;
-use Monolog\Logger;
 use App\Entity\LanguageNameEntity;
 use App\Entity\RepositoryEntity;
 use App\Entity\TranslationUpdateEntity;
@@ -26,6 +25,7 @@ use App\Services\Language\NoDefaultLanguageException;
 use App\Services\Language\NoLanguageFolderException;
 use App\Services\Mail\MailService;
 use App\Services\Repository\Behavior\RepositoryBehavior;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -67,7 +67,7 @@ abstract class Repository {
     private $behavior;
 
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     private $logger;
 
@@ -86,11 +86,11 @@ abstract class Repository {
      * @param RepositoryStats       $repositoryStats
      * @param GitService            $gitService
      * @param RepositoryBehavior    $behavior
-     * @param Logger                $logger
+     * @param LoggerInterface       $logger
      * @param MailService           $mailService
      */
     public function __construct($dataFolder, EntityManager $entityManager, $entity, RepositoryStats $repositoryStats,
-                                GitService $gitService, RepositoryBehavior $behavior, Logger $logger, MailService $mailService) {
+                                GitService $gitService, RepositoryBehavior $behavior,  LoggerInterface $logger, MailService $mailService) {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
         $this->entity = $entity;

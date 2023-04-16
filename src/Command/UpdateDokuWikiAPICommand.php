@@ -15,6 +15,7 @@ class UpdateDokuWikiAPICommand extends Command {
     private $api;
 
     protected static $defaultName = 'dokuwiki:updateDwApi';
+    protected static $defaultDescription = 'Update cache from dokuwiki api';
 
     public function __construct(DokuWikiRepositoryAPI $dokuWikiRepositoryAPI) {
         $this->api = $dokuWikiRepositoryAPI;
@@ -24,8 +25,6 @@ class UpdateDokuWikiAPICommand extends Command {
 
     protected function configure(): void
     {
-        $this
-            ->setDescription('Update cache from dokuwiki api');
     }
 
     /**
@@ -35,9 +34,9 @@ class UpdateDokuWikiAPICommand extends Command {
     {
         if (!$this->api->updateCache()) {
             $output->writeln('Update failed');
-            return 1;
+            return Command::FAILURE;
         }
-        return 0;
+        return Command::SUCCESS;
     }
 
 }

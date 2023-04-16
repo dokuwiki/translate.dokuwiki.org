@@ -68,12 +68,12 @@ class TranslationController extends AbstractController {
      */
     public function save(Request $request, UserTranslationValidatorFactory $validatorFactory) {
         if ($request->getMethod() !== 'POST') {
-            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+            return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
 
         $action = $request->request->get('action', array());
         if (!isset($action['save'])) {
-            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+            return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
 
         $data = array();
@@ -85,7 +85,7 @@ class TranslationController extends AbstractController {
                 $data['repositoryName'] === '' ||
                 $data['repositoryType'] === ''
             ) {
-            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+            return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
 
         $data['name'] = $request->request->get('name', '');
@@ -101,7 +101,7 @@ class TranslationController extends AbstractController {
             $param['type'] = $data['repositoryType'];
             $param['name'] = $data['repositoryName'];
             $param['englishReadonly'] = true;
-            return $this->redirect($this->generateUrl('dokuwiki_translator_show_extension', $param));
+            return $this->redirectToRoute('dokuwiki_translator_show_extension', $param);
         }
 
         $validator = $this->getUserTranslationValidator($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email'], $validatorFactory);
@@ -126,9 +126,9 @@ class TranslationController extends AbstractController {
         $repository->addTranslationUpdate($newTranslation, $data['name'], $data['email'], $language);
 
         // forward to queue status
-        $response = $this->redirect($this->generateUrl('dokuwiki_translate_thanks'));
-        $response->headers->setCookie(new Cookie('author', $data['name']));
-        $response->headers->setCookie(new Cookie('authorMail', $data['email']));
+        $response = $this->redirectToRoute('dokuwiki_translate_thanks');
+        $response->headers->setCookie(Cookie::create('author', $data['name']));
+        $response->headers->setCookie(Cookie::create('authorMail', $data['email']));
         return $response;
     }
 
@@ -185,12 +185,12 @@ class TranslationController extends AbstractController {
         try {
             $repositoryEntity = $this->repoRepository->getRepository($type, $name);
         } catch (NoResultException $e) {
-            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+            return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
 
         if ($repositoryEntity->getState() !== RepositoryEntity::$STATE_ACTIVE) {
             $data['notActive'] = true;
-            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage', $data));
+            return $this->redirectToRoute('dokuwiki_translator_homepage', $data);
         }
 
         $data['repository'] = $repositoryEntity;
@@ -212,18 +212,18 @@ class TranslationController extends AbstractController {
         try {
             $data['targetLanguage'] = $this->getLanguageNameEntityRepository()->getLanguageByCode($language);
         } catch (NoResultException $e) {
-            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+            return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
 
         if($repositoryEntity->getEnglishReadonly() && $data['targetLanguage']->getCode() == 'en') {
             $param['englishReadonly'] = true;
 
             if($type === RepositoryEntity::$TYPE_CORE) {
-                return $this->redirect($this->generateUrl('dokuwiki_translator_show', $param));
+                return $this->redirectToRoute('dokuwiki_translator_show', $param);
             } else {
                 $param['type'] = $type;
                 $param['name'] = $name;
-                return $this->redirect($this->generateUrl('dokuwiki_translator_show_extension', $param));
+                return $this->redirectToRoute('dokuwiki_translator_show_extension', $param);
             }
         }
 

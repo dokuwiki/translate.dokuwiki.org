@@ -23,6 +23,7 @@ class AddCommand extends Command
     private $validator;
 
     protected static $defaultName = 'dokuwiki:add';
+    protected static $defaultDescription = 'Adds a repository';
 
     public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator)
     {
@@ -34,9 +35,7 @@ class AddCommand extends Command
 
     protected function configure(): void
     {
-        $this
-            ->setDescription('Adds a repository')
-            ->addArgument('type', InputArgument::REQUIRED, 'Repository type: core, plugin or template')
+        $this->addArgument('type', InputArgument::REQUIRED, 'Repository type: core, plugin or template')
             ->addArgument('name', InputArgument::REQUIRED, 'Name of the repository (lower case, no special chars or blanks, as on dokuwiki.org)')
             ->addArgument('gitUrl', InputArgument::REQUIRED, 'Public git url')
             ->addArgument('branch', InputArgument::REQUIRED, 'Default branch')
@@ -64,7 +63,7 @@ class AddCommand extends Command
         ];
         if (!in_array($type, $repositoryTypes)) {
             $output->writeln("Unknown type. Use 'core', 'plugin' or 'template'");
-            return 1;
+            return Command::FAILURE;
         }
 
         $repo = new RepositoryEntity();
@@ -87,12 +86,12 @@ class AddCommand extends Command
         if(count($errors) > 0) {
             $errorsString = (string) $errors;
             $output->writeln($errorsString);
-            return 1;
+            return Command::FAILURE;
         }
 
         $this->entityManager->persist($repo);
         $this->entityManager->flush();
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

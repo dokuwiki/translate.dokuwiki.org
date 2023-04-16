@@ -127,9 +127,9 @@ class ExtensionController extends AbstractController {
 
             $data['activated'] = true;
 
-            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage', $data));
+            return $this->redirectToRoute('dokuwiki_translator_homepage', $data);
         } catch (NoResultException $ignored) {
-            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+            return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
     }
 
@@ -150,7 +150,7 @@ class ExtensionController extends AbstractController {
         try {
             $data['repository'] = $this->repositoryRepository->getExtensionTranslation($type, $name);
         } catch (NoResultException $e) {
-            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+            return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
 
         $data['currentLanguage'] = $languageManager->getLanguage($request);
@@ -177,7 +177,7 @@ class ExtensionController extends AbstractController {
         try {
             $repository = $this->repositoryRepository->getRepository($type, $name);
         } catch (NoResultException $e) {
-            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+            return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
 
         $data['urlSent'] = false;
@@ -240,7 +240,7 @@ class ExtensionController extends AbstractController {
         try {
             $repository = $this->repositoryRepository->getRepositoryByNameAndEditKey($type, $name, $key);
         } catch (NoResultException $e) {
-            return $this->redirect($this->generateUrl('dokuwiki_translator_homepage'));
+            return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
 
         $originalValues = array(
@@ -259,7 +259,7 @@ class ExtensionController extends AbstractController {
 
             $param['type'] = $type;
             $param['name'] = $name;
-            return $this->redirect($this->generateUrl('dokuwiki_translator_extension_settings', $param));
+            return $this->redirectToRoute('dokuwiki_translator_extension_settings', $param);
         }
 
         $data['repository'] = $repository;

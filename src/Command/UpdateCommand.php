@@ -51,6 +51,7 @@ class UpdateCommand extends Command {
     private $transport;
 
     protected static $defaultName = 'dokuwiki:updateGit';
+    protected static $defaultDescription = 'Update local git repositories and send pending translations';
 
     public function __construct(EntityManagerInterface $entityManager, RepositoryManager $repositoryManager, ParameterBagInterface $parameterBag, LoggerInterface $logger, Swift_Mailer $mailer, Swift_Transport $transport) {
         $this->entityManager = $entityManager;
@@ -64,8 +65,6 @@ class UpdateCommand extends Command {
     }
     protected function configure(): void
     {
-        $this
-            ->setDescription('Update local git repositories and send pending translations');
     }
 
     /**
@@ -83,7 +82,7 @@ class UpdateCommand extends Command {
     protected function execute(InputInterface $input, OutputInterface $output): int {
         if (!$this->lock()) {
             $this->logger->error('Updater is already running');
-            return 1;
+            return Command::FAILURE;
         }
 
         try {
@@ -96,16 +95,16 @@ class UpdateCommand extends Command {
 
         $transport = $this->mailer->getTransport();
         if (!$transport instanceof Swift_Transport_SpoolTransport) {
-            return 0;
+            return Command::SUCCESS;
         }
 
         $spool = $transport->getSpool();
         if (!$spool instanceof Swift_MemorySpool) {
-            return 0;
+            return Command::SUCCESS;
         }
 
         $spool->flushQueue($this->transport);
-        return 0;
+        return Command::SUCCESS;
     }
 
     /**

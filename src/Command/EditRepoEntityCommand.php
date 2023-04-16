@@ -25,6 +25,7 @@ class EditRepoEntityCommand extends Command {
     private $entityManager;
 
     protected static $defaultName = 'dokuwiki:editRepo';
+    protected static $defaultDescription = 'Let edit some properties of repository. Supported: giturl, branch, state, email, englishReadonly';
 
     public function __construct(EntityManagerInterface $entityManager) {
         $this->entityManager = $entityManager;
@@ -34,9 +35,7 @@ class EditRepoEntityCommand extends Command {
 
     protected function configure(): void
     {
-        $this
-            ->setDescription('Let edit some properties of repository. Supported: giturl, branch, state, email, englishReadonly')
-            ->addArgument('type', InputArgument::REQUIRED, 'plugin, template or core')
+        $this->addArgument('type', InputArgument::REQUIRED, 'plugin, template or core')
             ->addArgument('name', InputArgument::REQUIRED, 'repository name')
             ->addArgument('property', InputArgument::REQUIRED, 'property name')
             ->addArgument('value', InputArgument::OPTIONAL, 'string or true/false, if no value given current value is shown');
@@ -68,14 +67,14 @@ class EditRepoEntityCommand extends Command {
                 RepositoryEntity::$TYPE_CORE,
                 RepositoryEntity::$TYPE_PLUGIN,
                 RepositoryEntity::$TYPE_TEMPLATE));
-            return 1;
+            return Command::FAILURE;
         }
         try {
             $repo = $this->entityManager->getRepository(RepositoryEntity::class)
                 ->getRepository($type, $name);
         } catch (NoResultException $e) {
             $output->writeln('nothing found');
-            return 1;
+            return Command::FAILURE;
         }
 
         $property = $input->getArgument('property');

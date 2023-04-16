@@ -1,7 +1,6 @@
 <?php
 namespace App\Services\Mail;
 
-use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Swift_Attachment;
 use Swift_Mailer;
@@ -29,7 +28,7 @@ class MailService {
     private $from;
 
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     private $logger;
 
@@ -44,7 +43,7 @@ class MailService {
      * @param Swift_Mailer $mailer
      * @param Environment $twig
      * @param $from
-     * @param Logger $logger
+     * @param LoggerInterface $logger
      */
     function __construct(Swift_Mailer $mailer, Environment $twig, $from, LoggerInterface $logger) {
         $this->mailer = $mailer;

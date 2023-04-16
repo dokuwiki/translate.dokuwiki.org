@@ -26,6 +26,7 @@ class ShowStatsCommand extends Command {
     private $repositoryEntityRepository;
 
     protected static $defaultName = 'dokuwiki:showStats';
+    protected static $defaultDescription = 'Show some statistics for maintenance';
 
     public function __construct(RepositoryEntityRepository $repositoryEntityRepository, RepositoryManager $repositoryManager) {
         $this->repositoryEntityRepository = $repositoryEntityRepository;
@@ -35,9 +36,7 @@ class ShowStatsCommand extends Command {
     }
 
     protected function configure(): void {
-        $this
-            ->setDescription('Show some statistics for maintenance')
-            ->addArgument('type', InputArgument::OPTIONAL, 'template, plugin or core. Or onlyerrors for filtering.')
+        $this->addArgument('type', InputArgument::OPTIONAL, 'template, plugin or core. Or onlyerrors for filtering.')
             ->addArgument('name', InputArgument::OPTIONAL, 'repository name');
     }
 
@@ -59,13 +58,13 @@ class ShowStatsCommand extends Command {
                     RepositoryEntity::$TYPE_PLUGIN,
                     RepositoryEntity::$TYPE_TEMPLATE
                 ));
-                return 1;
+                return Command::FAILURE;
             }
             try {
                 $repo = $this->repositoryEntityRepository->getRepository($type, $name);
             } catch (NoResultException $e) {
                 $output->writeln('nothing found');
-                return 1;
+                return Command::FAILURE;
             }
             $repositories[] = $repo;
         } else {
@@ -144,6 +143,6 @@ class ShowStatsCommand extends Command {
             'found ' . $countTotal . ' repositories'
             . ($type == 'onlyerrors' && $countWithErrors > 0 ? ', '. $countWithErrors .' with errors' : '')
         );
-        return 0;
+        return Command::SUCCESS;
     }
 }

@@ -30,6 +30,7 @@ class SoftResetCommand extends Command {
      */
     private $parameterBag;
     protected static $defaultName = 'dokuwiki:softReset';
+    protected static $defaultDescription = 'Reset lock, tmp folder, error count and last updated';
 
     public function __construct(EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag) {
         $this->entityManager = $entityManager;
@@ -40,9 +41,7 @@ class SoftResetCommand extends Command {
 
     protected function configure(): void
     {
-        $this
-            ->setDescription('Reset lock, tmp folder, error count and last updated')
-            ->addArgument('type', InputArgument::REQUIRED, 'plugin, template or core')
+        $this->addArgument('type', InputArgument::REQUIRED, 'plugin, template or core')
             ->addArgument('name', InputArgument::REQUIRED, 'repository name');
     }
 
@@ -72,20 +71,20 @@ class SoftResetCommand extends Command {
                 RepositoryEntity::$TYPE_PLUGIN,
                 RepositoryEntity::$TYPE_TEMPLATE
             ));
-            return 1;
+            return Command::FAILURE;
         }
         try {
             $repo = $this->entityManager->getRepository(RepositoryEntity::class)
                 ->getRepository($type, $name);
         } catch (NoResultException $e) {
             $output->writeln('nothing found');
-            return 1;
+            return Command::FAILURE;
         }
         try {
             $this->resetRepo($repo);
         }catch (OptimisticLockException $e) {
             $output->writeln('database locked');
-            return 1;
+            return Command::FAILURE;
         }
 
         $directory = $this->parameterBag->get('app.dataDir');
@@ -104,7 +103,7 @@ class SoftResetCommand extends Command {
             $this->output->write('Lock removed. ');
         }
         $this->output->writeln('done');
-        return 0;
+        return Command::SUCCESS;
     }
 
     /**

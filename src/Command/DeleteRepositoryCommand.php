@@ -28,6 +28,7 @@ class DeleteRepositoryCommand extends Command
     private $parameterBag;
 
     protected static $defaultName = 'dokuwiki:deleteRepo';
+    protected static $defaultDescription = 'Delete a repository';
 
     public function __construct(EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag) {
         $this->entityManager = $entityManager;
@@ -38,9 +39,7 @@ class DeleteRepositoryCommand extends Command
 
     protected function configure(): void
     {
-        $this
-            ->setDescription('Delete a repository')
-            ->addArgument('type', InputArgument::REQUIRED, 'template, plugin or core')
+        $this->addArgument('type', InputArgument::REQUIRED, 'template, plugin or core')
             ->addArgument('name', InputArgument::REQUIRED, 'repository name');
     }
 
@@ -69,14 +68,14 @@ class DeleteRepositoryCommand extends Command
                 RepositoryEntity::$TYPE_PLUGIN,
                 RepositoryEntity::$TYPE_TEMPLATE
             ));
-            return 1;
+            return Command::FAILURE;
         }
         try {
             $repo = $this->entityManager->getRepository(RepositoryEntity::class)
                 ->getRepository($type, $name);
         } catch (NoResultException $e) {
             $output->writeln('nothing found');
-            return 1;
+            return Command::FAILURE;
         }
 
         $this->entityManager->getRepository(LanguageStatsEntity::class)
@@ -94,7 +93,7 @@ class DeleteRepositoryCommand extends Command
             $fs->remove($directory);
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 
 }

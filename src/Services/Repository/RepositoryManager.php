@@ -13,7 +13,6 @@ use App\Services\Repository\Behavior\GitHubBehavior;
 use App\Services\Repository\Behavior\PlainBehavior;
 use App\Services\Repository\Behavior\RepositoryBehavior;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Monolog\Logger;
 
 class RepositoryManager {
 
@@ -58,7 +57,7 @@ class RepositoryManager {
     private $gitHubStatus;
 
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     private $logger;
 

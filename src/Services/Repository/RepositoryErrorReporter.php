@@ -3,7 +3,6 @@
 namespace App\Services\Repository;
 
 use Exception;
-use Monolog\Logger;
 use App\Services\Git\GitCloneException;
 use App\Services\Git\GitPullException;
 use App\Services\Git\GitPushException;
@@ -14,6 +13,7 @@ use App\Services\Language\LanguageParseException;
 use App\Services\Language\NoDefaultLanguageException;
 use App\Services\Language\NoLanguageFolderException;
 use App\Services\Mail\MailService;
+use Psr\Log\LoggerInterface;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -26,13 +26,13 @@ class RepositoryErrorReporter {
     private $emailService;
 
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     private $logger;
 
     private $data;
 
-    function __construct(MailService $emailService, Logger $logger) {
+    function __construct(MailService $emailService, LoggerInterface $logger) {
         $this->emailService = $emailService;
         $this->logger = $logger;
     }
