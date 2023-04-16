@@ -6,3 +6,8 @@
 parameters:
     router.request_context.host: translate.dokuwiki.org
     router.request_context.scheme: http
+
+    #TODO should be replaced in config/routig.yaml  by??
+#    framework:
+#        router:
+             #default_uri: http://localhost
