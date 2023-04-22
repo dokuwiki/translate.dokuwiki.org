@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use App\Repository\LanguageNameEntityRepository;
@@ -32,9 +34,15 @@ class ExtensionController extends AbstractController {
      */
     private $languageRepository;
 
-    public function __construct(RepositoryEntityRepository $repositoryRepository, LanguageNameEntityRepository $languageRepository) {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    public function __construct(RepositoryEntityRepository $repositoryRepository, LanguageNameEntityRepository $languageRepository, EntityManagerInterface $entityManager) {
         $this->repositoryRepository = $repositoryRepository;
         $this->languageRepository = $languageRepository;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -90,9 +98,9 @@ class ExtensionController extends AbstractController {
         $repository->setLastUpdate(0);
         $repository->setState(RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);
         $repository->setActivationKey($this->generateActivationKey($repository));
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($repository);
-        $entityManager->flush();
+
+        $this->entityManager->persist($repository);
+        $this->entityManager->flush();
 
         $email = (new TemplatedEmail())
             ->subject('Registration')
@@ -117,6 +125,7 @@ class ExtensionController extends AbstractController {
      * @return RedirectResponse
      *
      * @throws NonUniqueResultException
+     * @throws ORMException
      */
     public function activate($type, $name, $key) {
 
@@ -125,8 +134,7 @@ class ExtensionController extends AbstractController {
 
             $repository->setState(RepositoryEntity::$STATE_INITIALIZING);
             $repository->setActivationKey('');
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->flush();
+            $this->entityManager->flush();
 
             $data['activated'] = true;
 
@@ -214,8 +222,7 @@ class ExtensionController extends AbstractController {
      */
     private function createAndSentEditKey(RepositoryEntity $repository, MailerInterface $mailer) {
         $repository->setActivationKey($this->generateActivationKey($repository));
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->flush();
+        $this->entityManager->flush();
 
         $email = (new TemplatedEmail())
             ->subject('Edit ' . $repository->getType() . ' settings in DokuWiki Translation Tool')
@@ -282,8 +289,7 @@ class ExtensionController extends AbstractController {
     private function updateExtension(RepositoryEntity $repositoryEntity, $originalValues, RepositoryManager $repositoryManager) {
         $repositoryEntity->setLastUpdate(0);
         $repositoryEntity->setActivationKey('');
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->flush();
+        $this->entityManager->flush();
 
         $changed = $originalValues['branch'] !== $repositoryEntity->getBranch()
                 || $originalValues['url'] !== $repositoryEntity->getUrl();
