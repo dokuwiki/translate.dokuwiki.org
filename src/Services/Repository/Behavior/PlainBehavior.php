@@ -9,9 +9,7 @@ use App\Services\Git\GitCreatePatchException;
 use App\Services\Git\GitPullException;
 use App\Services\Git\GitRepository;
 use App\Services\Mail\MailService;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class PlainBehavior implements RepositoryBehavior {
 
@@ -33,9 +31,7 @@ class PlainBehavior implements RepositoryBehavior {
      * @param GitRepository $originalGit
      *
      * @throws GitCreatePatchException
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws TransportExceptionInterface
      */
     public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) {
         $patch = $tempGit->createPatch();
@@ -45,7 +41,7 @@ class PlainBehavior implements RepositoryBehavior {
             'Language Update',
             $patch,
             'mail/languageUpdate.txt.twig',
-            array('update' => $update)
+            ['update' => $update]
         );
     }
 

@@ -27,9 +27,7 @@ use App\Services\Mail\MailService;
 use App\Services\Repository\Behavior\RepositoryBehavior;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 abstract class Repository {
 
@@ -104,11 +102,9 @@ abstract class Repository {
     /**
      * Create or update the local repository fork and update cached language files
      *
-     * @throws LoaderError
      * @throws ORMException
      * @throws OptimisticLockException
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws TransportExceptionInterface
      */
     public function update() {
         try {
@@ -166,9 +162,7 @@ abstract class Repository {
     /**
      * If initialization succeeded, sent notification to plugin author
      *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws TransportExceptionInterface
      */
     private function initialized() {
         $this->logger->debug('Initializing ' . $this->entity->getType() . ' ' . $this->entity->getName());
@@ -418,11 +412,9 @@ abstract class Repository {
      *
      * @param TranslationUpdateEntity $update
      *
-     * @throws LoaderError
      * @throws ORMException
      * @throws OptimisticLockException
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws TransportExceptionInterface
      */
     public function createAndSendPatch(TranslationUpdateEntity $update) {
         $tmpDir = $this->buildTempPath($update->getId());

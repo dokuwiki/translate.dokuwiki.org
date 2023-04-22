@@ -10,18 +10,11 @@ use App\Services\Repository\Repository;
 use App\Services\Repository\RepositoryManager;
 use PDOException;
 use Psr\Log\LoggerInterface;
-use Swift_Mailer;
-use Swift_MemorySpool;
-use Swift_Transport;
-use Swift_Transport_SpoolTransport;
-use Swift_TransportException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class UpdateCommand extends Command {
 
@@ -41,28 +34,19 @@ class UpdateCommand extends Command {
      * @var ParameterBagInterface
      */
     private $parameterBag;
-    /**
-     * @var Swift_Mailer
-     */
-    private $mailer;
-    /**
-     * @var Swift_Transport
-     */
-    private $transport;
 
     protected static $defaultName = 'dokuwiki:updateGit';
     protected static $defaultDescription = 'Update local git repositories and send pending translations';
 
-    public function __construct(EntityManagerInterface $entityManager, RepositoryManager $repositoryManager, ParameterBagInterface $parameterBag, LoggerInterface $logger, Swift_Mailer $mailer, Swift_Transport $transport) {
+    public function __construct(EntityManagerInterface $entityManager, RepositoryManager $repositoryManager, ParameterBagInterface $parameterBag, LoggerInterface $logger) {
         $this->entityManager = $entityManager;
         $this->repositoryManager = $repositoryManager;
         $this->parameterBag = $parameterBag;
         $this->logger = $logger;
-        $this->mailer = $mailer;
-        $this->transport = $transport;
 
         parent::__construct();
     }
+
     protected function configure(): void
     {
     }
@@ -72,12 +56,9 @@ class UpdateCommand extends Command {
      * @param OutputInterface $output
      * @return int
      *
-     * @throws LoaderError
      * @throws ORMException
      * @throws OptimisticLockException
-     * @throws RuntimeError
-     * @throws Swift_TransportException
-     * @throws SyntaxError
+     * @throws TransportExceptionInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output): int {
         if (!$this->lock()) {
@@ -92,18 +73,6 @@ class UpdateCommand extends Command {
             $this->logger->error('Updater had an exception occurring');
         }
         $this->unlock();
-
-        $transport = $this->mailer->getTransport();
-        if (!$transport instanceof Swift_Transport_SpoolTransport) {
-            return Command::SUCCESS;
-        }
-
-        $spool = $transport->getSpool();
-        if (!$spool instanceof Swift_MemorySpool) {
-            return Command::SUCCESS;
-        }
-
-        $spool->flushQueue($this->transport);
         return Command::SUCCESS;
     }
 
@@ -112,9 +81,7 @@ class UpdateCommand extends Command {
      *
      * @throws ORMException
      * @throws OptimisticLockException
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws TransportExceptionInterface
      */
     private function runUpdateOfRepositories() {
         $repositories = $this->repositoryManager->getRepositoriesToUpdate();
@@ -124,11 +91,9 @@ class UpdateCommand extends Command {
     }
 
     /**
-     * @throws LoaderError
      * @throws ORMException
      * @throws OptimisticLockException
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws TransportExceptionInterface
      */
     private function processPendingTranslations() {
         $updates = $this->entityManager->getRepository(TranslationUpdateEntity::class)

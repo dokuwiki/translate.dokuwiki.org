@@ -79,10 +79,6 @@ services:
             $gitBinary: '%app.gitBinary%'
             $commandTimeout: '%app.commandTimeout%'
 
-    App\Services\Mail\MailService:
-        arguments:
-            $from: '%app.mailerFromAddress%'
-
     App\Services\GitHub\GitHubService:
         arguments:
             $gitHubApiToken: '%app.githubApiToken%'

@@ -2,53 +2,36 @@
 namespace App\Services\Mail;
 
 use Psr\Log\LoggerInterface;
-use Swift_Attachment;
-use Swift_Mailer;
-use Swift_Message;
-use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 class MailService {
 
     /**
-     * @var Swift_Mailer
+     * @var MailerInterface
      */
     private $mailer;
-
-    /**
-     * @var Environment
-     */
-    private $template;
-
-    /**
-     * @var String
-     */
-    private $from;
 
     /**
      * @var LoggerInterface
      */
     private $logger;
 
-    /*
-     * @var \Swift_Message
+    /**
+     * @var Email
      */
     private $lastMessage;
 
     /**
      * MailService constructor.
      *
-     * @param Swift_Mailer $mailer
-     * @param Environment $twig
-     * @param $from
+     * @param MailerInterface $mailer
      * @param LoggerInterface $logger
      */
-    function __construct(Swift_Mailer $mailer, Environment $twig, $from, LoggerInterface $logger) {
+    function __construct(MailerInterface $mailer, LoggerInterface $logger) {
         $this->mailer = $mailer;
-        $this->template = $twig;
-        $this->from = $from;
         $this->logger = $logger;
     }
 
@@ -61,15 +44,13 @@ class MailService {
      * @param string $template The template name
      * @param array $data data for the template placeholders
      *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws TransportExceptionInterface
      */
-    public function sendEmail($to, $subject, $template, $data = array()) {
+    public function sendEmail($to, $subject, $template, $data = []) {
         if ($to === '') return;
-        $message = $this->createMessage($to, $subject, $template, $data);
+        $email = $this->createEmail($to, $subject, $template, $data);
 
-        $this->send($message);
+        $this->send($email);
     }
 
     /**
@@ -81,25 +62,22 @@ class MailService {
      * @param string $template The template name
      * @param array $data data for the template placeholders
      *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws TransportExceptionInterface
      */
-    public function sendPatchEmail($to, $subject, $patch, $template, $data = array()) {
-        $message = $this->createMessage($to, $subject, $template, $data);
-
-        $attachment = new Swift_Attachment($patch, 'language.patch', 'text/plain');
-        $message->attach($attachment);
-
-        $this->send($message);
+    public function sendPatchEmail($to, $subject, $patch, $template, $data = []) {
+        $email = $this->createEmail($to, $subject, $template, $data);
+        $email->attach($patch, 'language.patch', 'text/plain');
+        $this->send($email);
     }
 
     /**
      * Send the message
      *
-     * @param Swift_Message $message
+     * @param Email $message
+     *
+     * @throws TransportExceptionInterface
      */
-    private function send(Swift_Message $message) {
+    private function send(Email $message) {
         $this->logMail($message);
         $this->mailer->send($message);
     }
@@ -111,18 +89,14 @@ class MailService {
      * @param string $subject Subject of the mail
      * @param string $template The template name
      * @param array $data data for the template placeholders
-     * @return Swift_Message
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @return Email
      */
-    private function createMessage($to, $subject, $template, $data = array()) {
-        $message = (new Swift_Message())
-            ->setTo($to)
-            ->setSubject($subject)
-            ->setFrom($this->from)
-            ->setBody($this->template->render($template, $data));
+    private function createEmail($to, $subject, $template, $data = []) {
+        $message = (new TemplatedEmail())
+            ->to($to)
+            ->subject($subject)
+            ->textTemplate($template)
+            ->context($data);
         $this->lastMessage = $message;
         return $message;
     }
@@ -130,11 +104,11 @@ class MailService {
     /**
      * Create log line for the sent mail
      *
-     * @param Swift_Message $message
+     * @param Email $message
      */
-    private function logMail(Swift_Message $message) {
+    private function logMail(Email $message) {
 
-        $context = array();
+        $context = [];
         $context['to'] = $message->getTo();
         $context['subject'] = $message->getSubject();
         $context['text'] = $message->getBody();
@@ -144,7 +118,7 @@ class MailService {
     }
 
     /**
-     * @return Swift_Message
+     * @return Email
      */
     public function getLastMessage() {
         return $this->lastMessage;

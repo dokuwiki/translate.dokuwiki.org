@@ -14,9 +14,7 @@ use App\Services\Language\NoDefaultLanguageException;
 use App\Services\Language\NoLanguageFolderException;
 use App\Services\Mail\MailService;
 use Psr\Log\LoggerInterface;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class RepositoryErrorReporter {
 
@@ -45,12 +43,10 @@ class RepositoryErrorReporter {
      * @param bool $update true if repository fork update, false if sending submitted translation
      * @return string
      *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws TransportExceptionInterface
      */
     private function handleError(Exception $e, Repository $repo, $update) {
-        $this->data = array();
+        $this->data = [];
         $this->data['repo'] =  $repo->getEntity();
         $this->data['exception'] = $e;
         if ($update) {
@@ -78,7 +74,7 @@ class RepositoryErrorReporter {
                 $template,
                 $this->data
             );
-            return (string) $this->emailService->getLastMessage();
+            return $this->emailService->getLastMessage()->getBody()->toString();
         } else {
             return 'Unknown error:' .get_class($e);
         }
@@ -91,9 +87,7 @@ class RepositoryErrorReporter {
      * @param Repository $repo
      * @return string
      *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws TransportExceptionInterface
      */
     public function handleTranslationError(Exception $e, Repository $repo) {
         return $this->handleError($e, $repo, false);
@@ -106,9 +100,7 @@ class RepositoryErrorReporter {
      * @param Repository $repo
      * @return string
      *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws TransportExceptionInterface
      */
     public function handleUpdateError(Exception $e, Repository $repo) {
         return $this->handleError($e, $repo, true);

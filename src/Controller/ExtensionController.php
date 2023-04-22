@@ -12,12 +12,13 @@ use App\Form\RepositoryRequestEditType;
 use App\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
 use App\Services\Language\LanguageManager;
 use App\Services\Repository\RepositoryManager;
-use Swift_Mailer;
-use Swift_Message;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
 
 class ExtensionController extends AbstractController {
 
@@ -42,10 +43,12 @@ class ExtensionController extends AbstractController {
      * @param Request $request
      * @param string $type
      * @param DokuWikiRepositoryAPI $api
-     * @param Swift_Mailer $mailer
+     * @param MailerInterface $mailer
      * @return Response
+     *
+     * @throws TransportExceptionInterface
      */
-    public function index(Request $request, $type, DokuWikiRepositoryAPI $api, Swift_Mailer $mailer) {
+    public function index(Request $request, $type, DokuWikiRepositoryAPI $api, MailerInterface $mailer) {
 
         $data = array();
 
@@ -78,9 +81,11 @@ class ExtensionController extends AbstractController {
      *
      * @param RepositoryEntity $repository
      * @param DokuWikiRepositoryAPI $api
-     * @param Swift_Mailer $mailer
+     * @param MailerInterface $mailer
+     *
+     * @throws TransportExceptionInterface
      */
-    private function addExtension(RepositoryEntity $repository, DokuWikiRepositoryAPI $api, Swift_Mailer $mailer) {
+    private function addExtension(RepositoryEntity $repository, DokuWikiRepositoryAPI $api, MailerInterface $mailer) {
         $api->mergeExtensionInfo($repository);
         $repository->setLastUpdate(0);
         $repository->setState(RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);
@@ -89,16 +94,14 @@ class ExtensionController extends AbstractController {
         $entityManager->persist($repository);
         $entityManager->flush();
 
-        // FIXME replace with mail service
-        $data = array(
-            'repository' => $repository,
-        );
-        $message = (new Swift_Message())
-            ->setSubject('Registration')
-            ->setTo($repository->getEmail())
-            ->setFrom($this->getParameter('app.mailerFromAddress'))
-            ->setBody($this->renderView('mail/extensionAdded.txt.twig', $data));
-        $mailer->send($message);
+        $email = (new TemplatedEmail())
+            ->subject('Registration')
+            ->to($repository->getEmail())
+            ->textTemplate('mail/extensionAdded.txt.twig')
+            ->context([
+                'repository' => $repository
+            ]);
+        $mailer->send($email);
     }
 
     private function generateActivationKey(RepositoryEntity $repository) {
@@ -168,10 +171,12 @@ class ExtensionController extends AbstractController {
      * @param Request $request
      * @param string $type
      * @param string $name
-     * @param Swift_Mailer $mailer
+     * @param MailerInterface $mailer
      * @return RedirectResponse|Response
+     *
+     * @throws TransportExceptionInterface
      */
-    public function settings(Request $request, $type, $name, Swift_Mailer $mailer) {
+    public function settings(Request $request, $type, $name, MailerInterface $mailer) {
         $data = array();
 
         try {
@@ -203,23 +208,23 @@ class ExtensionController extends AbstractController {
      * Store edit key and sent one-time edit url
      *
      * @param RepositoryEntity $repository
-     * @param Swift_Mailer $mailer
+     * @param MailerInterface $mailer
+     *
+     * @throws TransportExceptionInterface
      */
-    private function createAndSentEditKey(RepositoryEntity $repository, Swift_Mailer $mailer) {
+    private function createAndSentEditKey(RepositoryEntity $repository, MailerInterface $mailer) {
         $repository->setActivationKey($this->generateActivationKey($repository));
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->flush();
 
-        // FIXME replace with mail service
-        $data = array(
-            'repository' => $repository,
-        );
-        $message = (new Swift_Message())
-            ->setSubject('Edit ' . $repository->getType() . ' settings in DokuWiki Translation Tool')
-            ->setTo($repository->getEmail())
-            ->setFrom($this->getParameter('app.mailerFromAddress'))
-            ->setBody($this->renderView('mail/extensionEditUrl.txt.twig', $data));
-        $mailer->send($message);
+        $email = (new TemplatedEmail())
+            ->subject('Edit ' . $repository->getType() . ' settings in DokuWiki Translation Tool')
+            ->to($repository->getEmail())
+            ->textTemplate('mail/extensionEditUrl.txt.twig')
+            ->context([
+                'repository' => $repository
+            ]);
+        $mailer->send($email);
     }
 
     /**
