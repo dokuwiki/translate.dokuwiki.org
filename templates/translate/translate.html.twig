@@ -4,18 +4,17 @@
     {{ encore_entry_link_tags('translate') }}
 {% endblock %}
 {% block content %}
-    <ul class="breadcrumb">
-        <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a> <span class="divider">/</span></li>
+    <ol class="breadcrumb">
+        <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a></li>
         <li>
             {% if repository.type == 'core' %}
                 <a href="{{ path("dokuwiki_translator_show") }} ">{{ repository.displayName|capitalize }}</a>
             {% else %}
                 <a href="{{ path("dokuwiki_translator_show_extension", {'type': repository.type, 'name': repository.name}) }} ">{{ repository.displayName|capitalize }}</a>
             {% endif %}
-            <span class="divider">/</span>
         </li>
         <li class="active">Translate</li>
-    </ul>
+    </ol>
 
     <div class="container">
         <div class="row">
