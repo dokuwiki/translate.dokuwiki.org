@@ -4,7 +4,7 @@ namespace App\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use App\Entity\TranslationUpdateEntity;
 use App\Services\Repository\Repository;
 use App\Services\Repository\RepositoryManager;

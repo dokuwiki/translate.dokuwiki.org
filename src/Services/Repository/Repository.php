@@ -3,7 +3,7 @@ namespace App\Services\Repository;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Exception;
 use App\Entity\LanguageNameEntity;
 use App\Entity\RepositoryEntity;

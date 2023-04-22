@@ -1,7 +1,7 @@
 <?php
 namespace App\Command;
 
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use App\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
