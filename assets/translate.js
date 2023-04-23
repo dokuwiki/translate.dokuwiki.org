@@ -336,7 +336,7 @@ $(function() {
             }
         }
 
-        let leftSpaces = originalTranslation.find('span').length;
+        let leftSpaces = originalTranslation.find('span.highlight-whitespace').length;
         regex = new RegExp(
             "([ \t]+)\n",
             "g"

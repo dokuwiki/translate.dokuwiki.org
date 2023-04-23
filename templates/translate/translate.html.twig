@@ -103,6 +103,12 @@
 
                         </div>
 
+                        {% if repository.type == 'core' %}
+                            {% set codesearchUrlParam = 'project=dokuwiki&path=-inc%2Flang+-lib%2Fplugins%2Flang+-lib%2Ftpl%2Fdokuwiki%2Flang' %}
+                        {% else %}
+                            {% set codesearchUrlParam = 'project=' ~ repository.type ~ '&path=' ~ repository.type ~ '%2F' ~ repository.name ~ '+-' ~ repository.type ~ '%2F' ~ repository.name ~ '%2Flang' %}
+                        {% endif %}
+
                         <table class="table table-striped table-hover table-translate-markup"
                                {% if targetLanguage.rtl %}dir="rtl"{% endif %}>
                             <thead>
@@ -118,7 +124,13 @@
                                         {% if translation.target is empty %}
                                             class="translation-missing"
                                         {% endif %}>
-                                    <td dir="ltr" class="translation-original">{{ translation.default|highlight_whitespace }}</td>
+                                    <td dir="ltr" class="translation-original">{{ translation.default|highlight_whitespace }}<a
+                                                href="https://codesearch.dokuwiki.org/search?full={{ translation.searchkey|escape('url') }}&{{ codesearchUrlParam }}"
+                                                class="btn btn-default btn-xs search-key-in-source" target="_blank"
+                                                title="Search in source code for the key '{{ translation.searchkey|escape }}' of this localizable string"
+                                        >
+                                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                        </a></td>
                                     <td>
                                         <textarea
                                                 name="{{ translation.key }}"

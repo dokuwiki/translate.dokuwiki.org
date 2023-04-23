@@ -21,12 +21,15 @@ img#logo {
 }
 /* darker color when having warning popovers, default lighter warning color is used for the empty fields */
 .table > tbody > tr.warning-msg > td {
-    background-color: #ffec87a6;
+    background-color: #ffeeaf;
 }
 .table-hover > tbody > tr.warning-msg:hover > td {
-    background-color: #ffda71;
+    background-color: #ffe790;
 }
 
+.table-hover > tbody > tr:hover > td > a.search-key-in-source {
+    display: inline-block;
+}
 .table-translate-array,
 .table-translate-markup{
     tr {
@@ -39,6 +42,13 @@ img#logo {
             span.highlight-whitespace {
                 cursor: help;
                 background-color: @state-danger-text;
+            }
+            position: relative;
+            .search-key-in-source {
+                position: absolute;
+                right: 8px;
+                bottom: 8px;
+                display: none;
             }
         }
     }

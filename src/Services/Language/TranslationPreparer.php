@@ -81,6 +81,7 @@ class TranslationPreparer {
     private function createEntry($path, $key = null, $jsKey = null) {
         $entry = array();
         $entry['key'] = $this->createEntryKey($path, $key, $jsKey);
+        $entry['searchkey'] = $this->createSearchKey($path, $key, $jsKey);
         $entry['default'] = $this->createEntryGetTranslation($this->defaultTranslation, $path, $key, $jsKey);
         $entry['target'] = $this->createEntryGetTranslation($this->targetTranslation, $path, $key, $jsKey);
         $entry['type'] = ($key === null) ? LocalText::$TYPE_MARKUP : LocalText::$TYPE_ARRAY;
@@ -109,6 +110,24 @@ class TranslationPreparer {
 
         $entryKey .= sprintf('[%s]', $jsKey);
         return $entryKey;
+    }
+
+    /**
+     * Composes the smallest unique key of the localized string, that can be used for a search at codesearch.dokuwiki.org
+     *
+     * @param string $path path to its language file (without language code)
+     * @param string|null $key for LocalText::$TYPE_ARRAY, the key of the language string
+     * @param string|null $jsKey js key of language string
+     * @return string
+     */
+    function createSearchKey($path, $key = null, $jsKey = null) {
+        if ($key === null) {
+            $path = explode('/', $path); // e.g. lang/<filename>.txt or inc/lang/<filename>.txt, etc
+            $filename = end($path);
+            return substr($filename, 0, -4); //remove .txt
+        }
+        if ($jsKey === null) return $key;
+        return $jsKey;
     }
 
     /**
