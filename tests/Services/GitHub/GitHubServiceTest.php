@@ -11,19 +11,19 @@ class GitHubServiceTest extends TestCase {
     function testGetUsernameAndRepositoryFromURLWithHTTP() {
         $api = new GitHubService('', '', '', false);
 
-        $result = $api->getUsernameAndRepositoryFromURL('https://github.com/splitbrain/dokuwiki.git');
-        $this->assertEquals(array('splitbrain', 'dokuwiki'), $result);
+        $result = $api->getUsernameAndRepositoryFromURL('https://github.com/dokuwiki/dokuwiki.git');
+        $this->assertEquals(['dokuwiki', 'dokuwiki'], $result);
         $result = $api->getUsernameAndRepositoryFromURL('https://github.com/dom-mel/dokuwiki.git');
-        $this->assertEquals(array('dom-mel', 'dokuwiki'), $result);
+        $this->assertEquals(['dom-mel', 'dokuwiki'], $result);
     }
 
     public function dataProvider_getUsernameAndRepositoryFromURL() {
         return [
-            ['git@github.com:splitbrain/dokuwiki.git',      ['splitbrain', 'dokuwiki']],
+            ['git@github.com:dokuwiki/dokuwiki.git',      ['dokuwiki', 'dokuwiki']],
             ['git@github.com:dom-mel/dokuwiki.git',         ['dom-mel', 'dokuwiki']],
-            ['git@sub.github.com:splitbrain/dokuwiki.git',  ['splitbrain', 'dokuwiki']],
+            ['git@sub.github.com:dokuwiki/dokuwiki.git',  ['dokuwiki', 'dokuwiki']],
             ['git@sub.github.com:dom-mel/dokuwiki.git',     ['dom-mel', 'dokuwiki']],
-            ['git://github.com/splitbrain/dokuwiki.git',    ['splitbrain', 'dokuwiki']],
+            ['git://github.com/dokuwiki/dokuwiki.git',    ['dokuwiki', 'dokuwiki']],
             ['git://github.com/dom-mel/dokuwiki.git',       ['dom-mel', 'dokuwiki']],
         ];
     }
@@ -65,7 +65,7 @@ class GitHubServiceTest extends TestCase {
         $api = new GitHubService('', '', '', false);
 
         $this->expectException(GitHubServiceException::class);
-        $api->getUsernameAndRepositoryFromURL('Wrong:splitbrain/dokuwiki.git');
+        $api->getUsernameAndRepositoryFromURL('Wrong:dokuwiki/dokuwiki.git');
     }
 
     function testGetUsernameAndRepositoryFromURLWithErrorNoGitExtension() {
