@@ -9,10 +9,10 @@ composer.phar
 ###< phpunit/phpunit ###
 
 ###> symfony/phpunit-bridge ###
-.phpunit
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+/bin/.phpunit
 
 ###> symfony/framework-bundle ###
 /.env.local
