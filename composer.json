@@ -21,12 +21,12 @@
         "ext-pdo": "*",
         "ext-simplexml": "*",
         "cache/filesystem-adapter": "^1.0",
-        "doctrine/annotations": "^1.0",
+        "doctrine/annotations": "^2.0",
         "doctrine/common": "^3.0",
         "doctrine/doctrine-bundle": "^2.1",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.6",
-        "doctrine/persistence": "^2.2",
+        "doctrine/persistence": "^3.0",
         "gregwar/captcha-bundle": "*",
         "http-interop/http-factory-guzzle": "^1.1",
         "knplabs/github-api": "^2.7",
@@ -48,8 +48,8 @@
         "symfony/validator": "5.4.*",
         "symfony/webpack-encore-bundle": "^1.16",
         "symfony/yaml": "5.4.*",
-        "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/extra-bundle": "^3.0",
+        "twig/twig": "^3.0"
     },
     "scripts": {
         "auto-scripts": {
