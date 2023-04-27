@@ -200,13 +200,21 @@ class TranslationController extends AbstractController {
 
 
         $cookies = $request->cookies;
-        if (isset($userInput['author'])) $data['author'] = $userInput['author'];
-        elseif ($cookies->has('author')) $data['author'] = $cookies->get('author');
-        else $data['author'] =  '';
+        if (isset($userInput['author'])) {
+            $data['author'] = $userInput['author'];
+        } elseif ($cookies->has('author')) {
+            $data['author'] = $cookies->get('author');
+        } else {
+            $data['author'] =  '';
+        }
 
-        if (isset($userInput['authorMail'])) $data['authorMail'] = $userInput['authorMail'];
-        elseif ($cookies->has('authorMail')) $data['authorMail'] = $cookies->get('authorMail');
-        else $data['authorMail'] = '';
+        if (isset($userInput['authorMail'])) {
+            $data['authorMail'] = $userInput['authorMail'];
+        } elseif ($cookies->has('authorMail')) {
+            $data['authorMail'] = $cookies->get('authorMail');
+        } else {
+            $data['authorMail'] = '';
+        }
 
 
         try {
