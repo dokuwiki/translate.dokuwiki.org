@@ -71,13 +71,13 @@ class TranslationController extends AbstractController {
             return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
 
-        $action = $request->request->get('action', array());
+        $action = $request->request->all('action');
         if (!isset($action['save'])) {
             return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
 
-        $data = array();
-        $data['translation'] = $request->request->get('translation');
+        $data = [];
+        $data['translation'] = $request->request->all('translation');
         $data['repositoryName'] = $request->request->get('repositoryName', '');
         $data['repositoryType'] = $request->request->get('repositoryType', '');
         if (
