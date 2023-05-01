@@ -6,7 +6,7 @@ use Exception;
 class GitCommandException extends Exception {
     public $result;
 
-    function __construct(ProgrammCallResult $result) {
+    function __construct(ProgramCallResult $result) {
         $this->result = $result;
 
         $msg = "Command: " . $this->result->getCommand() . "\n";

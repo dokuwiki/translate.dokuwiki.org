@@ -33,7 +33,7 @@ class GitRepository {
      * @param string $source
      * @param string $destination
      * @param int $retries
-     * @return ProgrammCallResult
+     * @return ProgramCallResult
      *
      * @throws GitCloneException
      */
@@ -85,7 +85,7 @@ class GitRepository {
     /**
      * @param string $name
      * @param string $path
-     * @return ProgrammCallResult
+     * @return ProgramCallResult
      *
      * @throws GitAddException
      */
@@ -100,7 +100,7 @@ class GitRepository {
     /**
      * @param string $message
      * @param string $author
-     * @return ProgrammCallResult
+     * @return ProgramCallResult
      *
      * @throws GitCommitException
      */
@@ -129,7 +129,7 @@ class GitRepository {
 
     /**
      * @param string $file path
-     * @return ProgrammCallResult
+     * @return ProgramCallResult
      *
      * @throws GitCommandException
      */
@@ -140,7 +140,7 @@ class GitRepository {
     /**
      * @param string $origin
      * @param string $branch
-     * @return ProgrammCallResult
+     * @return ProgramCallResult
      *
      * @throws GitPushException
      */
@@ -171,7 +171,7 @@ class GitRepository {
 
     /**
      * @param string $name branch name
-     * @return ProgrammCallResult
+     * @return ProgramCallResult
      *
      * @throws GitBranchException
      */
@@ -185,7 +185,7 @@ class GitRepository {
 
     /**
      * @param string $name branch name
-     * @return ProgrammCallResult
+     * @return ProgramCallResult
      *
      * @throws GitCheckoutException
      */
@@ -199,7 +199,7 @@ class GitRepository {
 
     /**
      * @param string ... the arguments that will be arguments of the command
-     * @return ProgrammCallResult
+     * @return ProgramCallResult
      *
      * @throws GitCommandException
      */
@@ -222,7 +222,7 @@ class GitRepository {
 
     /**
      * @param array $command
-     * @return ProgrammCallResult
+     * @return ProgramCallResult
      */
     private function runCommand($command) {
         if (file_exists($this->path)) {
@@ -230,7 +230,7 @@ class GitRepository {
         } elseif (file_exists(dirname($this->path))) {
             $process = new Process($command, dirname($this->path));
         } else {
-            return new ProgrammCallResult(1, '', 'Folder with git repository does not exist', $command);
+            return new ProgramCallResult(1, '', 'Folder with git repository does not exist', $command);
         }
         $process->setTimeout($this->commandTimeout);
         $process->start();
@@ -239,7 +239,7 @@ class GitRepository {
             usleep(1000000);
         }
 
-        return new ProgrammCallResult(
+        return new ProgramCallResult(
             $process->getExitCode(),
             $process->getOutput(),
             $process->getErrorOutput(),

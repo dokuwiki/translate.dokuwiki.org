@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Git;
 
-class ProgrammCallResult {
+class ProgramCallResult {
 
     /** @var string */
     private $output;
