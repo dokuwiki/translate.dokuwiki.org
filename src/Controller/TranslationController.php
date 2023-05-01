@@ -81,7 +81,7 @@ class TranslationController extends AbstractController {
         $data['repositoryName'] = $request->request->get('repositoryName', '');
         $data['repositoryType'] = $request->request->get('repositoryType', '');
         if (
-                $data['translation'] === null ||
+                empty($data['translation']) ||
                 $data['repositoryName'] === '' ||
                 $data['repositoryType'] === ''
             ) {
