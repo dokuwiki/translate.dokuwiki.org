@@ -2,6 +2,8 @@
 
 namespace App\Services\Git;
 
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+
 class GitService {
 
     private $gitBinary;
@@ -9,13 +11,12 @@ class GitService {
 
     /**
      * GitService constructor.
-     *
-     * @param string $gitBinary path to the git executable
-     * @param int $commandTimeout max time a git command can run in sec
      */
-    public function __construct($gitBinary, $commandTimeout) {
-        $this->gitBinary = $gitBinary;
-        $this->commandTimeout = $commandTimeout;
+    public function __construct(ParameterBagInterface $params) {
+        //path to the git executable
+        $this->gitBinary = $params->get('app.gitBinary');
+        //max time a git command can run in sec
+        $this->commandTimeout = $params->get('app.commandTimeout');
     }
 
     /**

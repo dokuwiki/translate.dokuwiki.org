@@ -74,11 +74,6 @@ services:
         tags:
             - { name: validator.constraint_validator }
 
-    App\Services\Git\GitService:
-        arguments:
-            $gitBinary: '%app.gitBinary%'
-            $commandTimeout: '%app.commandTimeout%'
-
     App\Services\GitHub\GitHubService:
         arguments:
             $gitHubApiToken: '%app.githubApiToken%'
