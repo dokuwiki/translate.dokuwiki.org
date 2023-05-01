@@ -7,7 +7,7 @@ use Twig\TwigFilter;
 
 class HighlightWhitespaceExtension extends AbstractExtension {
 
-    public function getFilters() {
+    public function getFilters() : array {
         return [
             new TwigFilter(
                 'highlight_whitespace',

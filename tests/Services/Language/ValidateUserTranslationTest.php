@@ -7,6 +7,8 @@ use App\Services\Language\AuthorList;
 use App\Services\Language\LocalText;
 use App\Services\Language\UserTranslationValidator;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
 
 class ValidateUserTranslationTest extends TestCase {
@@ -390,11 +392,11 @@ class ValidateUserTranslationTest extends TestCase {
 
 class ValidatorDummy extends RecursiveValidator {
 
-    function __construct() {}
-
-    public function validate($value, $constraints = null, $groups = null, $deep = false) {
-        return array();
+    public function __construct() {
     }
 
+    public function validate($value, $constraints = null, $groups = null, $deep = false) : ConstraintViolationListInterface {
+        return new ConstraintViolationList([]);
+    }
 
 }
