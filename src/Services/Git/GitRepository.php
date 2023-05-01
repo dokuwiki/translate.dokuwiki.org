@@ -198,13 +198,12 @@ class GitRepository {
     }
 
     /**
-     * @param string ... the arguments that will be arguments of the command
+     * @param string $arguments,... the arguments that will be arguments of the command
      * @return ProgramCallResult
      *
      * @throws GitCommandException
      */
-    private function run() {
-        $arguments = func_get_args();
+    private function run(...$arguments) {
         $command = [$this->gitService->getGitBinary()];
 
         foreach ($arguments as $argument) {
