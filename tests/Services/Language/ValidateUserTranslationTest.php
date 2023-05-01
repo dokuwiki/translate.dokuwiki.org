@@ -260,7 +260,7 @@ class ValidateUserTranslationTest extends TestCase {
         $this->assertEquals($expected, $result);
     }
 
-    function testValidateTranslationArrayKeepheader() {
+    function testValidateTranslationArrayKeepHeader() {
         $defaultTranslation = array(
             'path' => new LocalText(array('key' => 'value'), LocalText::$TYPE_ARRAY, null, " * old header1\n * @licence GPL")
         );

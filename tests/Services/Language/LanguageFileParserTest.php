@@ -212,7 +212,7 @@ class LanguageFileParserTest extends TestCase {
     }
 
     /**
-     * handle multiple loosy defined author tags
+     * handle multiple loose defined author tags
      */
     function testAuthorWithoutEmail() {
         $parser = new LanguageFileParserTestDummy();
@@ -228,9 +228,9 @@ class LanguageFileParserTest extends TestCase {
     }
 
     /**
-     * handle multiple loosy defined author tags
+     * handle multiple loose defined author tags
      */
-    function testAuthorOnlyemailinbrackets() {
+    function testAuthorOnlyEmailInBrackets() {
         $parser = new LanguageFileParserTestDummy();
         $parser->setAuthor(new AuthorList());
         $parser->setContent("some text\n * @var string some text\n   * @author   <onlybrackets@example.com>\n*/ text");
@@ -244,9 +244,9 @@ class LanguageFileParserTest extends TestCase {
     }
 
     /**
-     * handle multiple loosy defined author tags
+     * handle multiple loose defined author tags
      */
-    function testAuthorWithoutnameMultiple() {
+    function testAuthorWithoutNameMultiple() {
         $parser = new LanguageFileParserTestDummy();
         $parser->setAuthor(new AuthorList());
         $parser->setContent("some text\n * @var string some text\n   * @author onlyemail@example.com\n* @author    Only Name\n* @author <onlybrackets@example.com>\n*/ text");
