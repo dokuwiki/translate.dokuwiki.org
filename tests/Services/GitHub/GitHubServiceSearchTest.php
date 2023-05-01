@@ -33,9 +33,7 @@ class GitHubServiceSearchTest extends KernelTestCase {
      */
     public function testGitHubSearch($url, $languageCode, $expectedUrl, $number) {
         self::bootKernel();
-
-        $container = self::$container;
-
+        $container = static::getContainer();
         $github = $container->get(GitHubService::class);
 
         $info = $github->getOpenPRListInfo($url, $languageCode);

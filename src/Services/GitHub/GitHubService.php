@@ -4,16 +4,24 @@ namespace App\Services\GitHub;
 
 use Cache\Adapter\Filesystem\FilesystemCachePool;
 use Exception;
+use Github\AuthMethod;
 use Github\Client;
 use Github\Exception\MissingArgumentException;
 use Github\Exception\RuntimeException;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
+use Symfony\Component\HttpClient\HttplugClient;
+
 
 class GitHubService {
 
-    private $token;
+    /**
+     * @var Client
+     */
     private $client;
+    /**
+     * @var string
+     */
     private $gitHubUrl;
 
     function __construct($gitHubApiToken, $dataFolder, $gitHubUrl, $autoStartup = true) {
@@ -21,7 +29,6 @@ class GitHubService {
         if (!$autoStartup) {
             return;
         }
-        $this->token = $gitHubApiToken;
 
         $filesystemAdapter = new Local($dataFolder); // folders are relative to folder set here
         $filesystem        = new Filesystem($filesystemAdapter);
@@ -30,11 +37,11 @@ class GitHubService {
         $pool->setFolder('githubcache');
 
         $this->client = Client::createWithHttpClient(
-            new \Http\Adapter\Guzzle6\Client()
+            new HttplugClient()
         );
 
         $this->client->addCache($pool);
-        $this->client->authenticate($gitHubApiToken, null, Client::AUTH_ACCESS_TOKEN);
+        $this->client->authenticate($gitHubApiToken, null, AuthMethod::ACCESS_TOKEN);
     }
 
     /**
@@ -69,7 +76,9 @@ class GitHubService {
     }
 
     public function gitHubUrlHack($url) {
-        if ($this->gitHubUrl === 'github.com') return $url;
+        if ($this->gitHubUrl === 'github.com') {
+            return $url;
+        }
         return str_replace('github.com', $this->gitHubUrl, $url);
     }
 
@@ -119,13 +128,15 @@ class GitHubService {
 
         try {
             $q = 'Translation update ('.$languageCode.') in:title repo:'.$user.'/'.$repository.' type:pr state:open';
-            $results = $this->client->api('search')->issues($q, $sort = 'updated', $order = 'desc');
+            $results = $this->client->api('search')->issues($q);
 
             $info = [
                 'listURL' => 'https://github.com/'.$user.'/'.$repository.'/pulls?q=is%3Apr+is%3Aopen+Translation+update+%28'.$languageCode.'%29',
                 'count' => (int) $results['total_count']
             ];
         } catch (Exception $e) {
+            // skip intentionally
+            // throw new GitHubServiceException($e->getMessage());
         }
 
         return $info;
