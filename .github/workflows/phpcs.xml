@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<ruleset name="DokuWiki Coding Standard Standard" namespace="DokuWiki\CS\Standard">
+    <description>Coding Standard used for Translate Tool for DokuWiki</description>
+
+    <!-- default config -->
+    <arg name="colors"/>
+    <arg value="sp"/>
+    <arg name="extensions" value="php"/>
+
+    <ini name="memory_limit" value="-1"/>
+
+    <!-- where to look -->
+    <file>../../src</file>
+    
+
+    <!-- skip these completely -->
+    <exclude-pattern>*/lang/*/lang.php</exclude-pattern>
+    <exclude-pattern>*/lang/*/settings.php</exclude-pattern>
+    <exclude-pattern>*/_test/*</exclude-pattern>
+
+    <!-- 3rd party libs, these should be moved to composer some day -->
+    <exclude-pattern>*/inc/DifferenceEngine.php</exclude-pattern>
+    <exclude-pattern>*/inc/IXR_Library.php</exclude-pattern>
+    <exclude-pattern>*/inc/JSON.php</exclude-pattern>
+    <exclude-pattern>*/inc/JpegMeta.php</exclude-pattern>
+    <exclude-pattern>*/lib/plugins/authad/adLDAP</exclude-pattern>
+
+    <!-- deprecated files to be removed soon -->
+    <exclude-pattern>*/inc/cli.php</exclude-pattern>
+    <exclude-pattern>*/inc/parser/*</exclude-pattern>
+
+    <!-- rules on top of PSR-12 -->
+    <rule ref="PSR12">
+        <!-- This rule breaks the single line guard pattern that we prefer to keep using -- >
+        <exclude name="Generic.ControlStructures.InlineControlStructure.NotAllowed"/>
+
+        <!-- we have lots of legacy classes without name spaces -- >
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/> -->
+    </rule>
+
+    
+
+    
+</ruleset>
