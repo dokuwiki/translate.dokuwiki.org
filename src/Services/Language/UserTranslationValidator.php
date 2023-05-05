@@ -143,6 +143,10 @@ class UserTranslationValidator {
             }
         }
 
+        if(!$translationChanged) {
+            $this->errors['translation'] = 'No changes were made in the translation.';
+        }
+
         $authors = new AuthorList();
         $header = '';
         if ($translationChanged && !empty($this->author)) {

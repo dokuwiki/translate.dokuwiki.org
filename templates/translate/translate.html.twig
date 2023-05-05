@@ -3,6 +3,7 @@
 {% block stylesheets %}
     {{ encore_entry_link_tags('translate') }}
 {% endblock %}
+
 {% block content %}
     <ol class="breadcrumb">
         <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a></li>
@@ -102,6 +103,14 @@
                         <div class="row translation-filter">
 
                         </div>
+
+                        {% if "translation" in errors|keys %}
+                            <div class="form-group has-error">
+                                <span class="help-block">
+                                    <strong>Translations:</strong> {{ errors.translation }}
+                                </span>
+                            </div>
+                        {% endif %}
 
                         {% if repository.type == 'core' %}
                             {% set codesearchUrlParam = 'project=dokuwiki&path=-inc%2Flang+-lib%2Fplugins%2Flang+-lib%2Ftpl%2Fdokuwiki%2Flang' %}
