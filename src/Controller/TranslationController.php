@@ -117,10 +117,11 @@ class TranslationController extends AbstractController {
              return $this->translate($request, $data['repositoryType'], $data['repositoryName'], $userInput);
         }
 
-        $form = $this->getCaptchaForm();
-        $form->handleRequest($request);
-        if (!($form->isSubmitted() && $form->isValid())) {
-            return $this->translate($request, $data['repositoryType'], $data['repositoryName'], $userInput);
+        // check only captcha if no other errors
+        $captchaForm = $this->getCaptchaForm();
+        $captchaForm->handleRequest($request);
+        if (!($captchaForm->isSubmitted() && $captchaForm->isValid())) {
+            return $this->translate($request, $data['repositoryType'], $data['repositoryName'], $userInput, $captchaForm);
         }
 
         $repository->addTranslationUpdate($newTranslation, $data['name'], $data['email'], $language);
@@ -180,7 +181,7 @@ class TranslationController extends AbstractController {
      *                  - (string) authorMail
      * @return RedirectResponse|Response
      */
-    private function translate(Request $request, $type, $name, array $userInput = array()) {
+    private function translate(Request $request, $type, $name, array $userInput = array(), $captchaForm = null) {
         $language = $this->getLanguage($request);
         try {
             $repositoryEntity = $this->repoRepository->getRepository($type, $name);
@@ -236,7 +237,9 @@ class TranslationController extends AbstractController {
         }
 
         $data['openPR'] = $this->getOpenPRListInfo($repositoryEntity, $data['targetLanguage']);
-        $data['captcha'] = $this->getCaptchaForm()->createView();
+
+        $captchaForm = $captchaForm ?? $this->getCaptchaForm();
+        $data['captcha'] = $captchaForm->createView();
 
         return $this->render('translate/translate.html.twig', $data);
     }
