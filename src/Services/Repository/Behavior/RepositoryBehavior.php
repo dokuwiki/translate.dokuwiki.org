@@ -5,9 +5,18 @@ namespace App\Services\Repository\Behavior;
 use App\Entity\LanguageNameEntity;
 use App\Entity\RepositoryEntity;
 use App\Entity\TranslationUpdateEntity;
+use App\Services\Git\GitAddException;
+use App\Services\Git\GitBranchException;
+use App\Services\Git\GitCheckoutException;
+use App\Services\Git\GitCreatePatchException;
+use App\Services\Git\GitNoRemoteException;
+use App\Services\Git\GitPushException;
 use App\Services\Git\GitRepository;
+use App\Services\GitHub\GitHubCreatePullRequestException;
 use App\Services\GitHub\GitHubForkException;
 use App\Services\GitHub\GitHubServiceException;
+use Github\Exception\MissingArgumentException;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 interface RepositoryBehavior {
 
@@ -19,6 +28,20 @@ interface RepositoryBehavior {
      * @param TranslationUpdateEntity $update
      * @param GitRepository $originalGit
      * @return mixed
+     *
+     * Plain:
+     * @throws GitCreatePatchException
+     * @throws TransportExceptionInterface
+     *
+     * Github:
+     * @throws GitHubCreatePullRequestException
+     * @throws GitHubServiceException
+     * @throws GitAddException
+     * @throws GitBranchException
+     * @throws GitCheckoutException
+     * @throws GitNoRemoteException
+     * @throws GitPushException
+     * @throws MissingArgumentException
      */
     public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit);
 

@@ -1,6 +1,13 @@
 <?php
 namespace App\Services\Repository;
 
+use App\Services\Git\GitAddException;
+use App\Services\Git\GitBranchException;
+use App\Services\Git\GitCheckoutException;
+use App\Services\Git\GitCreatePatchException;
+use App\Services\Git\GitNoRemoteException;
+use App\Services\Git\GitPushException;
+use App\Services\GitHub\GitHubCreatePullRequestException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
@@ -25,6 +32,7 @@ use App\Services\Language\NoDefaultLanguageException;
 use App\Services\Language\NoLanguageFolderException;
 use App\Services\Mail\MailService;
 use App\Services\Repository\Behavior\RepositoryBehavior;
+use Github\Exception\MissingArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -420,14 +428,22 @@ abstract class Repository {
         $tmpDir = $this->buildTempPath($update->getId());
         try {
             $this->createAndSendPatchWithException($update, $tmpDir);
+            $update->setState(TranslationUpdateEntity::$STATE_SENT);
         } catch (Exception $e) {
+            // mail for:
+            //   GitHubCreatePullRequestException
+            // only logged:
+            //   GitCloneException  GitCommandException  GitCommitException  GitException  GitHubServiceException
+            //   NoLanguageFileWrittenException  TransportExceptionInterface  GitAddException  GitBranchException
+            //   GitCheckoutException GitCreatePatchException  GitNoRemoteException
+            //   GitPushException  MissingArgumentException
             $reporter = new RepositoryErrorReporter($this->mailService, $this->logger);
             $msg = $reporter->handleTranslationError($e, $this);
-            $this->entity->setErrorMsg($msg);
+            $update->setErrorMsg($msg);
+            $update->setState(TranslationUpdateEntity::$STATE_FAILED);
         }
         $this->rrmdir($tmpDir);
-        $this->entityManager->remove($update);
-        $this->entityManager->flush();
+        $this->entityManager->flush(); //stores changes in RepositoryEntities and TranslationUpdateEntities.
     }
 
     /**
@@ -440,7 +456,17 @@ abstract class Repository {
      * @throws GitCommandException
      * @throws GitCommitException
      * @throws GitException
+     * @throws GitHubServiceException
      * @throws NoLanguageFileWrittenException
+     * @throws TransportExceptionInterface
+     * @throws GitHubCreatePullRequestException
+     * @throws GitAddException
+     * @throws GitBranchException
+     * @throws GitCheckoutException
+     * @throws GitCreatePatchException
+     * @throws GitNoRemoteException
+     * @throws GitPushException
+     * @throws MissingArgumentException
      */
     private function createAndSendPatchWithException(TranslationUpdateEntity $update, $tmpDir) {
         $this->logger->debug('send patch ' . $this->getType() . ' ' . $this->getName() . ' langupdate' . $update->getId());
@@ -519,7 +545,7 @@ abstract class Repository {
         /** @var LocalText[] $translations */
         $translations = unserialize(file_get_contents($this->getUpdatePath($update->getId())));
 
-        $changes = false;
+        $languageFileWritten = false;
         foreach ($translations as $path => $translation) {
             $path = $folder . $path;
             $langFolder = dirname($path) . '/' . $update->getLanguage() . '/';
@@ -538,9 +564,9 @@ abstract class Repository {
             }
             file_put_contents($file, $content);
             $git->add($file);
-            $changes = true;
+            $languageFileWritten = true;
         }
-        if (!$changes) throw new NoLanguageFileWrittenException();
+        if (!$languageFileWritten) throw new NoLanguageFileWrittenException();
     }
 
     /**

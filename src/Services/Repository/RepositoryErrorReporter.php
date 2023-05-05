@@ -59,12 +59,13 @@ class RepositoryErrorReporter {
         if(isset($this->data['fileName'])) {
             $file = 'in file: ' . $this->data['fileName'] . '(' . $this->data['lineNumber'] . ')';
         }
-        $this->logger->error(sprintf(
-            'Error during repository update (%s: %s) %s',
+        $shortMessage = sprintf(
+            'Error during ' . ( $update ? 'repository' : 'translation') . ' update (%s: %s) %s',
             get_class($e),
             $e->getMessage(),
             $file
-        ));
+        );
+        $this->logger->error($shortMessage);
         $this->logger->debug($e->getTraceAsString());
         if ($template !== '' && $repo->isFunctional()) {
             $repo->getEntity()->setErrorCount($repo->getEntity()->getErrorCount() + 1);
@@ -74,10 +75,12 @@ class RepositoryErrorReporter {
                 $template,
                 $this->data
             );
-            return $this->emailService->getLastMessage()->getBody()->toString();
+            $errorMsg = $this->emailService->getLastMessage()->getBody()->toString();
         } else {
-            return 'Unknown error:' .get_class($e);
+            $errorMsg = 'Unknown error:' .get_class($e);
         }
+        $repo->getEntity()->setErrorMsg($errorMsg);
+        return $shortMessage;
     }
 
     /**

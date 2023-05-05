@@ -10,7 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 class TranslationUpdateEntity {
 
     public static $STATE_UNDONE = 'undone';
-    public static $STATE_DOING = 'doing';
+    public static $STATE_SENT = 'send';
+    public static $STATE_FAILED = 'failed';
 
     /**
      * @ORM\Id
@@ -49,6 +50,12 @@ class TranslationUpdateEntity {
      * @var string
      */
     protected $state;
+
+    /**
+     * @ORM\Column(type="text")
+     * @var string
+     */
+    protected $errorMsg = '';
 
     /**
      * @ORM\Column(type="string", length=100)
@@ -154,5 +161,20 @@ class TranslationUpdateEntity {
         return $this->language;
     }
 
+    /**
+     * @param string $errorMsg
+     */
+    public function setErrorMsg(string $errorMsg): void
+    {
+        $this->errorMsg = $errorMsg;
+    }
+
+    /**
+     * @return string
+     */
+    public function getErrorMsg(): string
+    {
+        return $this->errorMsg;
+    }
 
 }
