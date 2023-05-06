@@ -4,7 +4,7 @@ namespace App\Services\GitHub;
 
 class GitHubStatusService {
 
-    private $status = null;
+    private ?bool $status = null;
 
     /**
      * Check if GitHub is functional

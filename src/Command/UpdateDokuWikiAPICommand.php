@@ -9,10 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateDokuWikiAPICommand extends Command {
 
-    /**
-     * @var DokuWikiRepositoryAPI
-     */
-    private $api;
+    private DokuWikiRepositoryAPI $api;
 
     protected static $defaultName = 'dokuwiki:updateDwApi';
     protected static $defaultDescription = 'Update cache from dokuwiki api';

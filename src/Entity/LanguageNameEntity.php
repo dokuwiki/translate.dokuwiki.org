@@ -12,21 +12,21 @@ class LanguageNameEntity {
     /**
      * @ORM\Id
      * @ORM\Column(type="string", length=50)
-     * @var string
+     * @var string|null
      */
-    protected $code;
+    protected ?string $code;
 
     /**
      * @ORM\Column(type="string", length=150)
-     * @var string
+     * @var string|null
      */
-    protected $name;
+    protected ?string $name;
 
     /**
      * @ORM\Column(type="boolean")
      * @var boolean
      */
-    protected $rtl = false;
+    protected bool $rtl = false;
 
     public function setCode($code) {
         $this->code = $code;

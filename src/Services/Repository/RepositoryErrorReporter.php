@@ -18,17 +18,9 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class RepositoryErrorReporter {
 
-    /**
-     * @var MailService
-     */
-    private $emailService;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    private $data;
+    private MailService $emailService;
+    private LoggerInterface $logger;
+    private array $data;
 
     function __construct(MailService $emailService, LoggerInterface $logger) {
         $this->emailService = $emailService;

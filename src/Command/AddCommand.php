@@ -2,9 +2,11 @@
 
 namespace App\Command;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use App\Entity\RepositoryEntity;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,13 +16,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class AddCommand extends Command
 {
     /**
-     * @var Registry
+     * @var EntityManager
      */
-    private $entityManager;
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
+    private EntityManagerInterface $entityManager;
+    private ValidatorInterface $validator;
 
     protected static $defaultName = 'dokuwiki:add';
     protected static $defaultDescription = 'Adds a repository';
@@ -49,9 +48,12 @@ class AddCommand extends Command
     /**
      * Executes the current command.
      *
-     * @param InputInterface $input  An InputInterface instance
+     * @param InputInterface $input An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      * @return int 0 if everything went fine, or an error code
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

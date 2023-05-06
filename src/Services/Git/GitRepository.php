@@ -9,17 +9,16 @@ class GitRepository {
     public const PULL_CHANGED = 'changed';
     public const PULL_UNCHANGED = 'unchanged';
 
-    private $gitService;
-    private $path;
-    /** @var int|float|null */
-    private $commandTimeout;
+    private GitService $gitService;
+    private string $path;
+    private ?float $commandTimeout;
 
     /**
      * GitRepository constructor.
      *
      * @param GitService $gitService
      * @param string $path folder containing git repository
-     * @param int $commandTimeout max time a git command can run in sec
+     * @param float $commandTimeout max time a git command can run in sec
      */
     public function __construct(GitService $gitService, $path, $commandTimeout) {
         $this->gitService = $gitService;

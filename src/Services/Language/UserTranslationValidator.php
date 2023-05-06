@@ -8,24 +8,22 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserTranslationValidator {
 
     /** @var LocalText[]  */
-    private $defaultTranslation;
+    private array $defaultTranslation;
     /** @var LocalText[]  */
-    private $previousTranslation;
-    /** @var LocalText[]  */
-    private $userTranslation;
-    /** @var string  */
-    private $author;
-    /** @var string  */
-    private $authorEmail;
+    private array $previousTranslation;
+    /** @var array */
+    private array $userTranslation;
+    private string $author;
+    private string $authorEmail;
 
     /**
      * @var ValidatorInterface
      */
-    private $validator;
+    private ValidatorInterface $validator;
     /**
      * @var string[]
      */
-    private $errors = array();
+    private array $errors = [];
 
     /**
      * UserTranslationValidator constructor.
@@ -37,7 +35,7 @@ class UserTranslationValidator {
      * @param string $authorEmail
      * @param ValidatorInterface $validator
      */
-    function __construct($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail, ValidatorInterface $validator) {
+    function __construct(array $defaultTranslation, array $previousTranslation, array $userTranslation, $author, $authorEmail, ValidatorInterface $validator) {
         $this->defaultTranslation = $defaultTranslation;
         $this->userTranslation = $userTranslation;
         $this->previousTranslation = $previousTranslation;

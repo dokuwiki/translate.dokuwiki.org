@@ -9,6 +9,7 @@ use App\Services\Git\GitNoRemoteException;
 use App\Services\Git\GitPushException;
 use App\Services\GitHub\GitHubCreatePullRequestException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
 use Exception;
@@ -39,63 +40,34 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 abstract class Repository {
 
-    private $dataFolder;
-    private $basePath = null;
-
-    /**
-     * @var GitRepository
-     */
-    private $git = null;
-
-    /**
-     * @var RepositoryEntity Database representation
-     */
-    protected $entity;
-
+    private string $dataFolder;
+    private ?string $basePath = null;
+    private ?GitRepository $git = null;
+    protected RepositoryEntity $entity;
     /**
      * @var EntityManager
      */
-    protected $entityManager;
-
-    /**
-     * @var RepositoryStats
-     */
-    protected $repositoryStats;
-
-    /**
-     * @var GitService
-     */
-    private $gitService;
-
-    /**
-     * @var RepositoryBehavior
-     */
-    private $behavior;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var MailService
-     */
-    private $mailService;
+    protected EntityManagerInterface $entityManager;
+    protected RepositoryStats $repositoryStats;
+    private GitService $gitService;
+    private RepositoryBehavior $behavior;
+    private LoggerInterface $logger;
+    private MailService $mailService;
 
 
     /**
      * Repository constructor.
      *
-     * @param string                $dataFolder
-     * @param EntityManager         $entityManager
-     * @param RepositoryEntity      $entity
-     * @param RepositoryStats       $repositoryStats
-     * @param GitService            $gitService
-     * @param RepositoryBehavior    $behavior
-     * @param LoggerInterface       $logger
-     * @param MailService           $mailService
+     * @param string                 $dataFolder
+     * @param EntityManagerInterface $entityManager
+     * @param RepositoryEntity       $entity
+     * @param RepositoryStats        $repositoryStats
+     * @param GitService             $gitService
+     * @param RepositoryBehavior     $behavior
+     * @param LoggerInterface        $logger
+     * @param MailService            $mailService
      */
-    public function __construct($dataFolder, EntityManager $entityManager, $entity, RepositoryStats $repositoryStats,
+    public function __construct($dataFolder, EntityManagerInterface $entityManager, RepositoryEntity $entity, RepositoryStats $repositoryStats,
                                 GitService $gitService, RepositoryBehavior $behavior,  LoggerInterface $logger, MailService $mailService) {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;

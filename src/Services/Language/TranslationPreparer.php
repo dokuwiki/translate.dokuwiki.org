@@ -6,38 +6,37 @@ class TranslationPreparer {
     /**
      * @var LocalText[] languages files for default language (=en)
      */
-    private $defaultTranslation;
+    private array $defaultTranslation;
 
     /**
      * @var array|LocalText[] languages files just provided by a translator or last version of language files
      */
-    private $targetTranslation;
+    private array $targetTranslation;
 
     /**
      * @var array[] array with entries for each language string, which is not yet translated
      */
-    private $missingTranslations;
+    private array $missingTranslations;
 
     /**
      * @var array[] array with entries for each language string, which is already translated
      */
-    private $availableTranslations;
+    private array $availableTranslations;
 
     /**
      * Returns for all strings in the default translation, data entries for the translation form
      * Sorted in translatable and, next, already translated strings
      *
-     * @param array $defaultTranslation
-     * @param array $targetTranslation
+     * @param LocalText[] $defaultTranslation
+     * @param array|LocalText[] $targetTranslation
      * @return array
      */
     public function prepare(array $defaultTranslation, array $targetTranslation) {
         $this->defaultTranslation = $defaultTranslation;
         $this->targetTranslation = $targetTranslation;
-        $this->missingTranslations = array();
-        $this->availableTranslations = array();
+        $this->missingTranslations = [];
+        $this->availableTranslations = [];
 
-        /** @var LocalText $translation */
         foreach ($this->defaultTranslation as $path => $translation) {
 
             if ($translation instanceof LocalText) { //TODO defaultTranslation could be only LocalText[], only user translation should provide raw arrays??

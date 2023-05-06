@@ -21,11 +21,8 @@ class DeleteRepositoryCommand extends Command
     /**
      * @var EntityManager
      */
-    private $entityManager;
-    /**
-     * @var ParameterBagInterface
-     */
-    private $parameterBag;
+    private EntityManagerInterface $entityManager;
+    private ParameterBagInterface $parameterBag;
 
     protected static $defaultName = 'dokuwiki:deleteRepo';
     protected static $defaultDescription = 'Delete a repository';

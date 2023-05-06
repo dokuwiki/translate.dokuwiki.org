@@ -19,6 +19,7 @@ use App\Services\Language\UserTranslationValidator;
 use App\Services\Language\UserTranslationValidatorFactory;
 use App\Services\Repository\RepositoryManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,23 +30,11 @@ class TranslationController extends AbstractController {
     /**
      * @var EntityManager
      */
-    private $entityManager;
-    /**
-     * @var RepositoryManager
-     */
-    private $repositoryManager;
-    /**
-     * @var LanguageManager
-     */
-    private $languageManager;
-    /**
-     * @var TranslationPreparer
-     */
-    private $translationPreparer;
-    /**
-     * @var RepositoryEntityRepository
-     */
-    private $repoRepository;
+    private EntityManagerInterface $entityManager;
+    private RepositoryManager $repositoryManager;
+    private LanguageManager $languageManager;
+    private TranslationPreparer $translationPreparer;
+    private RepositoryEntityRepository $repoRepository;
 
     public function __construct(RepositoryManager $repositoryManager, LanguageManager $languageManager, TranslationPreparer $translationPreparer, EntityManagerInterface $entityManager) {
         $this->repositoryManager = $repositoryManager;
@@ -108,7 +97,7 @@ class TranslationController extends AbstractController {
         $newTranslation = $validator->validate();
         $errors = $validator->getErrors();
 
-        $userInput = array();
+        $userInput = [];
         $userInput['translation'] = $data['translation'];
         $userInput['errors'] = $errors;
         $userInput['author'] = $data['name'];
@@ -179,6 +168,7 @@ class TranslationController extends AbstractController {
      *                  - (array)  errors
      *                  - (string) author
      *                  - (string) authorMail
+     * @param FormInterface|null $captchaForm
      * @return RedirectResponse|Response
      */
     private function translate(Request $request, $type, $name, array $userInput = array(), $captchaForm = null) {

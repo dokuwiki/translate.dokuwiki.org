@@ -7,42 +7,34 @@ class LanguageFileParser {
     /**
      * @var string content of language file
      */
-    protected $content;
-
-    /**
-     * @var string
-     */
-    protected $header;
-
-    /**
-     * @var AuthorList
-     */
-    protected $author;
+    protected string $content;
+    protected string $header = '';
+    protected AuthorList $author;
 
     /**
      * @var array associated array with per key the language string
      */
-    protected $lang;
+    protected array $lang;
 
     /**
      * @var int Total number of lines of language file
      */
-    protected $totalLineNumbers;
+    protected int $totalLineNumbers;
 
     /**
      * @var string Path to language file
      */
-    protected $file = '';
+    protected string $file = '';
 
     /**
      * @var string part of path before the language folder
      */
-    protected $prefix;
+    protected string $prefix;
 
     /**
      * @var string Stores trimmed ending of content
      */
-    protected $trimmedEnding;
+    protected string $trimmedEnding = '';
 
     public const MODE_PHP = 'php';
     public const MODE_COMMENT_SINGLE_LINE = 'comment single line';
@@ -73,7 +65,7 @@ class LanguageFileParser {
 
         $content = rtrim($content);
         $position = strlen($content);
-        $this->trimmedEnding = substr($this->content, $position);
+        $this->trimmedEnding = substr($content, $position);
         $this->content = ltrim($content);
     }
 
@@ -101,7 +93,7 @@ class LanguageFileParser {
      */
     public function parse() {
         $this->author = new AuthorList();
-        $this->lang = array();
+        $this->lang = [];
         $this->header = '';
 
         $this->goToStart();

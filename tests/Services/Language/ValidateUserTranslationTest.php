@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Validator\RecursiveValidator;
 
 class ValidateUserTranslationTest extends TestCase {
 
-    private $validator;
+    private ValidatorDummy $validator;
 
     function setUp(): void {
         $this->validator = new ValidatorDummy();

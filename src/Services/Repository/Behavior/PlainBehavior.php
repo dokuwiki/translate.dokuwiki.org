@@ -13,10 +13,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class PlainBehavior implements RepositoryBehavior {
 
-    /**
-     * @var MailService
-     */
-    private $mailService;
+    private MailService $mailService;
 
     public function __construct($mailService) {
         $this->mailService = $mailService;

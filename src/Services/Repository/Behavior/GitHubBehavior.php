@@ -21,15 +21,8 @@ use App\Services\GitHub\GitHubStatusService;
 
 class GitHubBehavior implements RepositoryBehavior {
 
-    /**
-     * @var GitHubService
-     */
-    private $api;
-
-    /**
-     * @var GitHubStatusService
-     */
-    private $gitHubService;
+    private GitHubService $api;
+    private GitHubStatusService $gitHubService;
 
     public function __construct(GitHubService $api, GitHubStatusService $gitHubStatus) {
         $this->api = $api;

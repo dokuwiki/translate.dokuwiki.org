@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
@@ -18,22 +19,13 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class UpdateCommand extends Command {
 
+    private RepositoryManager $repositoryManager;
+    private LoggerInterface $logger;
     /**
-     * @var RepositoryManager
+     * @var EntityManager
      */
-    private $repositoryManager;
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-    /**
-     * @var ParameterBagInterface
-     */
-    private $parameterBag;
+    private EntityManagerInterface $entityManager;
+    private ParameterBagInterface $parameterBag;
 
     protected static $defaultName = 'dokuwiki:updateGit';
     protected static $defaultDescription = 'Update local git repositories and send pending translations';

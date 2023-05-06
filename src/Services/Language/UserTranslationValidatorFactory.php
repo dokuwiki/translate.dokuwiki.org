@@ -6,13 +6,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserTranslationValidatorFactory {
 
-    private $validator;
+    private ValidatorInterface $validator;
 
     public function __construct(ValidatorInterface $validator) {
         $this->validator = $validator;
     }
 
-    public function getInstance($defaultTranslation, $previousTranslation, array $userTranslation, $author, $authorEmail) {
+    public function getInstance(array $defaultTranslation, array $previousTranslation, array $userTranslation, $author, $authorEmail) {
         return new UserTranslationValidator($defaultTranslation, $previousTranslation, $userTranslation, $author, $authorEmail, $this->validator);
     }
 

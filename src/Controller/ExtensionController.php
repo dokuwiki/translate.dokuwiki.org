@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Services\Mail\MailService;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
@@ -15,6 +16,7 @@ use App\Form\RepositoryRequestEditType;
 use App\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI;
 use App\Services\Language\LanguageManager;
 use App\Services\Repository\RepositoryManager;
+use Doctrine\ORM\OptimisticLockException;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -25,20 +27,13 @@ use Symfony\Component\Mailer\MailerInterface;
 
 class ExtensionController extends AbstractController {
 
-    /**
-     * @var RepositoryEntityRepository
-     */
-    private $repositoryRepository;
+    private RepositoryEntityRepository $repositoryRepository;
+    private LanguageNameEntityRepository $languageRepository;
 
     /**
-     * @var  LanguageNameEntityRepository
+     * @var EntityManager
      */
-    private $languageRepository;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(RepositoryEntityRepository $repositoryRepository, LanguageNameEntityRepository $languageRepository, EntityManagerInterface $entityManager) {
         $this->repositoryRepository = $repositoryRepository;
@@ -55,6 +50,8 @@ class ExtensionController extends AbstractController {
      * @param MailService $mailer
      * @return Response
      *
+     * @throws ORMException
+     * @throws OptimisticLockException
      * @throws TransportExceptionInterface
      */
     public function index(Request $request, $type, DokuWikiRepositoryAPI $api, MailService $mailer) {
@@ -93,7 +90,9 @@ class ExtensionController extends AbstractController {
      * @param DokuWikiRepositoryAPI $api
      * @param MailService $mailer
      *
+     * @throws ORMException
      * @throws TransportExceptionInterface
+     * @throws OptimisticLockException
      */
     private function addExtension(RepositoryEntity $repository, DokuWikiRepositoryAPI $api, MailService $mailer) {
         $api->mergeExtensionInfo($repository);
@@ -184,6 +183,8 @@ class ExtensionController extends AbstractController {
      * @param MailerInterface $mailer
      * @return RedirectResponse|Response
      *
+     * @throws ORMException
+     * @throws OptimisticLockException
      * @throws TransportExceptionInterface
      */
     public function settings(Request $request, $type, $name, MailerInterface $mailer) {
@@ -220,6 +221,8 @@ class ExtensionController extends AbstractController {
      * @param RepositoryEntity $repository
      * @param MailerInterface $mailer
      *
+     * @throws ORMException
+     * @throws OptimisticLockException
      * @throws TransportExceptionInterface
      */
     private function createAndSentEditKey(RepositoryEntity $repository, MailerInterface $mailer) {
@@ -247,6 +250,8 @@ class ExtensionController extends AbstractController {
      * @return RedirectResponse|Response
      *
      * @throws NonUniqueResultException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function edit(Request $request, $type, $name, $key, RepositoryManager $repositoryManager) {
         $data = array();
@@ -287,6 +292,9 @@ class ExtensionController extends AbstractController {
      * @param RepositoryEntity $repositoryEntity
      * @param array $originalValues
      * @param RepositoryManager $repositoryManager
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     private function updateExtension(RepositoryEntity $repositoryEntity, $originalValues, RepositoryManager $repositoryManager) {
         $repositoryEntity->setLastUpdate(0);

@@ -4,15 +4,9 @@ namespace App\Services\Language;
 
 class Author {
 
-    /**
-     * @var string
-     */
-    private $name;
 
-    /**
-     * @var string
-     */
-    private $email;
+    private string $name;
+    private string $email;
 
     public function __construct($name, $email) {
         $this->email = $email;

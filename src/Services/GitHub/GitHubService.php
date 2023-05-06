@@ -15,14 +15,8 @@ use Symfony\Component\HttpClient\HttplugClient;
 
 class GitHubService {
 
-    /**
-     * @var Client
-     */
-    private $client;
-    /**
-     * @var string
-     */
-    private $gitHubUrl;
+    private Client $client;
+    private string $gitHubUrl;
 
     function __construct($gitHubApiToken, $dataFolder, $gitHubUrl, $autoStartup = true) {
         $this->gitHubUrl = $gitHubUrl;

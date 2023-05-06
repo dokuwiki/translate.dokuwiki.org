@@ -12,14 +12,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateLanguagesCommand extends Command {
 
-    /**
-     * @var RepositoryManager
-     */
-    private $repositoryManager;
-    /**
-     * @var RepositoryEntityRepository
-     */
-    private $repositoryEntityRepository;
+    private RepositoryManager $repositoryManager;
+    private RepositoryEntityRepository $repositoryEntityRepository;
 
     protected static $defaultName = 'dokuwiki:updateLanguages';
     protected static $defaultDescription = 'Updates all language information from local repository. Refreshes the cached translation objects';

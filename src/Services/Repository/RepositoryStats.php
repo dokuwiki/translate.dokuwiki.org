@@ -4,32 +4,24 @@ namespace App\Services\Repository;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\NoResultException;
 use App\Entity\LanguageNameEntity;
 use App\Repository\LanguageNameEntityRepository;
 use App\Entity\LanguageStatsEntity;
 use App\Repository\LanguageStatsEntityRepository;
 use App\Entity\RepositoryEntity;
 use App\Services\Language\LocalText;
+use Doctrine\ORM\OptimisticLockException;
 
 class RepositoryStats {
 
     /**
      * @var EntityManager
      */
-    private $entityManager;
-
-    /**
-     * @var LanguageStatsEntityRepository
-     */
-    private $languageStatsRepository;
-
-    /**
-     * @var LanguageNameEntityRepository
-     */
-    private $languageNameRepository;
+    private EntityManagerInterface $entityManager;
+    private LanguageStatsEntityRepository $languageStatsRepository;
+    private LanguageNameEntityRepository $languageNameRepository;
 
     function __construct(EntityManagerInterface $entityManager) {
         $this->entityManager = $entityManager;
@@ -52,10 +44,11 @@ class RepositoryStats {
      * @param LocalText[] $translations combined array with all translations
      * @param RepositoryEntity $repository Repository the translation belongs to
      *
-     * @throws OptimisticLockException|ORMException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function createStats($translations, RepositoryEntity $repository) {
-        $scores = array();
+        $scores = [];
         if (!isset($translations['en'])) {
             echo 'none created ';
             return;
@@ -85,8 +78,8 @@ class RepositoryStats {
      * Search for LanguageNameEntity, if not existing it is created
      *
      * @param string $languageCode
-     * @return LanguageNameEntity
      *
+     * @return LanguageNameEntity
      * @throws ORMException
      */
     private function getLanguageEntityByCode($languageCode) {

@@ -19,12 +19,8 @@ class SetupCommand extends Command {
     /**
      * @var EntityManager
      */
-    private $entityManager;
-
-    /**
-     * @var OutputInterface
-     */
-    private $output;
+    private EntityManagerInterface $entityManager;
+    private OutputInterface $output;
 
     protected static $defaultName = 'dokuwiki:setup';
     protected static $defaultDescription = 'Prepare software for first run. If not existing add dokuwiki as core repository and add missing languages';

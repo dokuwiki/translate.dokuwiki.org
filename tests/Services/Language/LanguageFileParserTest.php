@@ -17,6 +17,9 @@ class LanguageFileParserTestDummy extends LanguageFileParser {
 
     public function setContent($content) {
         $this->content = $content;
+
+        $lines = explode("\n", $content);
+        $this->totalLineNumbers = count($lines) - 1;
     }
 
     public function getContent() {

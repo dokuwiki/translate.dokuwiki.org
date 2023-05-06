@@ -13,7 +13,7 @@ class LocalText {
     /**
      * @var string see {@see LocalText::TYPE_ARRAY} and {@see LocalText::TYPE_MARKUP}
      */
-    private $type;
+    private string $type;
 
     /**
      * @var array|string
@@ -28,7 +28,7 @@ class LocalText {
     /**
      * @var string
      */
-    private $header;
+    private string $header;
 
     /**
      * @param array|string $content translated text, on markup its string everything else array
@@ -40,7 +40,9 @@ class LocalText {
     function __construct($content, $type, AuthorList $authors = null, $header = '') {
         $this->content = $content;
         $this->type = $type;
-        if ($authors === null) $authors = new AuthorList();
+        if ($authors === null) {
+            $authors = new AuthorList();
+        }
         $this->authors = $authors;
         $this->header = $header;
     }

@@ -2,6 +2,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -25,110 +26,110 @@ class RepositoryEntity {
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @var int
+     * @var int|null
      */
-    protected $id;
+    protected ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=300)
-     * @var string
+     * @var string|null
      */
-    protected $url;
+    protected ?string $url;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @var string
+     * @var string|null
      */
-    protected $branch;
+    protected ?string $branch;
 
     /**
      * @ORM\Column(type="integer")
-     * @var int
+     * @var int|null
      */
-    protected $lastUpdate;
+    protected ?int $lastUpdate;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @var string
+     * @var string|null
      */
-    protected $name;
+    protected ?string $name;
 
     /**
      * @ORM\Column(type="integer")
-     * @var int
+     * @var int|null
      */
-    protected $popularity;
+    protected ?int $popularity;
 
     /**
      * @ORM\Column(type="string", length=200)
-     * @var string
+     * @var string|null
      */
-    protected $displayName;
+    protected ?string $displayName;
 
     /**
      * @ORM\Column(type="string", length=355)
-     * @var string
+     * @var string|null
      */
-    protected $email;
+    protected ?string $email;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @var string
+     * @var string|null
      */
-    protected $author;
+    protected ?string $author;
 
     /**
      * @ORM\Column(type="string", length=500)
-     * @var string
+     * @var string|null
      */
-    protected $description;
+    protected ?string $description;
 
     /**
      * @ORM\Column(type="string", length=200)
-     * @var string
+     * @var string|null
      */
-    protected $tags;
+    protected ?string $tags;
 
     /**
      * @ORM\Column(type="string", length=50)
-     * @var string
+     * @var string|null
      */
-    protected $type;
+    protected ?string $type;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @var string
+     * @var string|null
      */
-    protected $state;
+    protected ?string $state;
 
     /**
      * @ORM\Column(type="text")
-     * @var string
+     * @var string|null
      */
-    protected $errorMsg = '';
+    protected ?string $errorMsg = '';
 
     /**
      * @ORM\Column(type="integer")
-     * @var int
+     * @var int|null
      */
-    protected $errorCount = 0;
+    protected ?int $errorCount = 0;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @var string
+     * @var string|null
      */
-    protected $activationKey = '';
+    protected ?string $activationKey = '';
 
     /**
      * @ORM\OneToMany(targetEntity="LanguageStatsEntity", mappedBy="repository")
      */
-    protected $translations;
+    protected Collection $translations;
 
     /**
      * @ORM\Column(type="boolean")
      * @var boolean
      */
-    protected $englishReadonly = false;
+    protected bool $englishReadonly = false;
 
     function __construct() {
         $this->translations = new ArrayCollection();

@@ -4,7 +4,8 @@ namespace App\Services\Git;
 use Exception;
 
 class GitCommandException extends Exception {
-    public $result;
+
+    public ProgramCallResult $result;
 
     function __construct(ProgramCallResult $result) {
         $this->result = $result;

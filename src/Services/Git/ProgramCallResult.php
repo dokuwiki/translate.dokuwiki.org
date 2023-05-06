@@ -3,19 +3,12 @@ namespace App\Services\Git;
 
 class ProgramCallResult {
 
-    /** @var string */
-    private $output;
+    private string $output;
+    private ?int $exitCode;
+    private string $error;
+    private string $command;
 
-    /** @var int|null */
-    private $exitCode;
-
-    /** @var string */
-    private $error;
-
-    /** @var string */
-    private $command;
-
-    function __construct($exitCode, $output, $error, $command) {
+    function __construct($exitCode, $output, $error, array $command) {
         $this->exitCode = $exitCode;
         $this->output = $output;
         $this->error = $error;

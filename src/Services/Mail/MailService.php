@@ -9,19 +9,8 @@ use Symfony\Component\Mime\Address;
 
 class MailService {
 
-    /**
-     * @var MailerInterface
-     */
     private MailerInterface $mailer;
-
-    /**
-     * @var LoggerInterface
-     */
     private LoggerInterface $logger;
-
-    /**
-     * @var String
-     */
     private String $lastMessage;
 
     /**

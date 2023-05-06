@@ -17,51 +17,51 @@ class TranslationUpdateEntity {
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @var int
+     * @var int|null
      */
-    protected $id;
+    protected ?int $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="RepositoryEntity")
      * @var RepositoryEntity
      */
-    protected $repository;
+    protected RepositoryEntity $repository;
 
     /**
      * @ORM\Column(type="string", length=300)
-     * @var string
+     * @var string|null
      */
-    protected $author;
+    protected ?string $author;
 
     /**
      * @ORM\Column(type="string", length=300)
-     * @var string
+     * @var string|null
      */
-    protected $email;
+    protected ?string $email;
 
     /**
      * @ORM\Column(type="integer")
-     * @var int
+     * @var int|null
      */
-    protected $updated;
+    protected ?int $updated;
 
     /**
      * @ORM\Column(type="string", length=300)
-     * @var string
+     * @var string|null
      */
-    protected $state;
+    protected ?string $state;
 
     /**
      * @ORM\Column(type="text")
-     * @var string
+     * @var string|null
      */
-    protected $errorMsg = '';
+    protected ?string $errorMsg = '';
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @var string
+     * @var string|null
      */
-    protected $language;
+    protected ?string $language;
 
     /**
      * @param string $author

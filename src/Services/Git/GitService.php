@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class GitService {
 
     private $gitBinary;
-    private $commandTimeout;
+    private float $commandTimeout;
 
     /**
      * GitService constructor.
@@ -16,7 +16,7 @@ class GitService {
         //path to the git executable
         $this->gitBinary = $params->get('app.gitBinary');
         //max time a git command can run in sec
-        $this->commandTimeout = $params->get('app.commandTimeout');
+        $this->commandTimeout = (float) $params->get('app.commandTimeout');
     }
 
     /**

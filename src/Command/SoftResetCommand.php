@@ -17,18 +17,13 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class SoftResetCommand extends Command {
 
-    /**
-     * @var OutputInterface
-     */
-    private $output;
+    private OutputInterface $output;
     /**
      * @var EntityManager
      */
-    private $entityManager;
-    /**
-     * @var ParameterBagInterface
-     */
-    private $parameterBag;
+    private EntityManagerInterface $entityManager;
+    private ParameterBagInterface $parameterBag;
+
     protected static $defaultName = 'dokuwiki:softReset';
     protected static $defaultDescription = 'Reset lock, tmp folder, error count and last updated';
 

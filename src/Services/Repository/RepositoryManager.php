@@ -17,53 +17,23 @@ use Psr\Log\LoggerInterface;
 class RepositoryManager {
 
     /**
-     * @var string Path to the data folder. configured in Resources/config/services.yml
+     * @var string Path to the data folder. Configured in .env/.env.local/etc files
      */
-    private $dataFolder;
-
+    private string $dataFolder;
     /**
-     * @var EntityManager The Symfony entity manager
+     * @var EntityManager
      */
-    private $entityManager;
-
-    /**
-     * @var RepositoryStats
-     */
-    private $repositoryStats;
-
-    /**
-     * @var GitService
-     */
-    private $gitService;
-
-    /**
-     * @var MailService
-     */
-    private $mailService;
-
-    /**
-     * @var RepositoryEntityRepository
-     */
-    private $repositoryRepository;
-
-    /**
-     * @var GitHubService
-     */
-    private $gitHubService;
-
-    /**
-     * @var GitHubStatusService
-     */
-    private $gitHubStatus;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    private $maxErrors;
-    private $repositoryAgeToUpdate;
-    private $maxRepositoriesToUpdatePerRun;
+    private EntityManagerInterface $entityManager;
+    private RepositoryStats $repositoryStats;
+    private GitService $gitService;
+    private MailService $mailService;
+    private RepositoryEntityRepository $repositoryRepository;
+    private GitHubService $gitHubService;
+    private GitHubStatusService $gitHubStatus;
+    private LoggerInterface $logger;
+    private int $maxErrors;
+    private int $repositoryAgeToUpdate;
+    private int $maxRepositoriesToUpdatePerRun;
 
     function __construct($dataFolder, EntityManagerInterface $entityManager, $repositoryAgeToUpdate,
                 $maxRepositoriesToUpdatePerRun, RepositoryStats $repositoryStats,

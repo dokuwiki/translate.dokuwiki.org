@@ -15,15 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ShowStatsCommand extends Command {
 
-    /**
-     * @var RepositoryManager
-     */
-    private $repositoryManager;
-
-    /**
-     * @var RepositoryEntityRepository
-     */
-    private $repositoryEntityRepository;
+    private RepositoryManager $repositoryManager;
+    private RepositoryEntityRepository $repositoryEntityRepository;
 
     protected static $defaultName = 'dokuwiki:showStats';
     protected static $defaultDescription = 'Show some statistics for maintenance';

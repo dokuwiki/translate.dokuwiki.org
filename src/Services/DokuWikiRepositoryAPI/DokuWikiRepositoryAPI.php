@@ -13,17 +13,15 @@ use SimpleXMLElement;
 
 class DokuWikiRepositoryAPI {
 
-    private $cachePath;
-    private $cache = null;
+    private string $cachePath;
+
+    /** @var RepositoryEntity[]|null  */
+    private ?array $cache = null;
     /**
      * @var EntityManager
      */
-    private $entityManager;
-
-    /**
-     * @var RepositoryEntityRepository
-     */
-    private $repositoryRepository;
+    private EntityManagerInterface $entityManager;
+    private RepositoryEntityRepository $repositoryRepository;
 
     function __construct($dataFolder, EntityManagerInterface $entityManager) {
         $this->cachePath = "$dataFolder/dokuwikiRepositoryAPI.ser";
@@ -163,7 +161,7 @@ class DokuWikiRepositoryAPI {
 
         $fileContent = file_get_contents($this->cachePath);
         if ($fileContent === false) {
-            $this->cache = array();
+            $this->cache = [];
             return false;
         }
         $this->cache = unserialize($fileContent);

@@ -5,7 +5,7 @@ namespace App\Services\Language;
 class AuthorList {
 
     /** @var Author[] */
-    private $authors = array();
+    private array $authors = [];
 
     /**
      * Adds an author, keeps first addition if equal

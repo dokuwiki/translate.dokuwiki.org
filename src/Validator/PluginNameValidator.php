@@ -8,10 +8,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class PluginNameValidator extends ConstraintValidator {
 
-    /**
-     * @var DokuWikiRepositoryAPI
-     */
-    private $api;
+    private DokuWikiRepositoryAPI $api;
 
     function setApi(DokuWikiRepositoryAPI $api) {
         $this->api = $api;

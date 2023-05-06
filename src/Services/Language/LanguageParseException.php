@@ -5,8 +5,8 @@ use Exception;
 
 class LanguageParseException extends Exception {
 
-    private $lineNumber;
-    private $fileName;
+    private int $lineNumber;
+    private string $fileName;
 
     /**
      * @param string $message

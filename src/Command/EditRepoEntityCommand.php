@@ -14,15 +14,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class EditRepoEntityCommand extends Command {
-    /**
-     * @var OutputInterface
-     */
-    private $output;
+    private OutputInterface $output;
 
     /**
      * @var EntityManager
      */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     protected static $defaultName = 'dokuwiki:editRepo';
     protected static $defaultDescription = 'Let edit some properties of repository. Supported: giturl, branch, state, email, englishReadonly';

@@ -210,9 +210,9 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
     /**
      * Get the repositories
      *
-     * @param $maxAge
-     * @param $maxResults
-     * @param $maxErrors
+     * @param int $maxAge in seconds
+     * @param int $maxResults
+     * @param int $maxErrors
      * @return RepositoryEntity[]
      */
     public function getRepositoriesToUpdate($maxAge, $maxResults, $maxErrors) {
