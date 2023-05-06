@@ -5,24 +5,24 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Address;
 
 class MailService {
 
     /**
      * @var MailerInterface
      */
-    private $mailer;
+    private MailerInterface $mailer;
 
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
-     * @var Email
+     * @var String
      */
-    private $lastMessage;
+    private String $lastMessage;
 
     /**
      * MailService constructor.
@@ -73,13 +73,13 @@ class MailService {
     /**
      * Send the message
      *
-     * @param Email $message
+     * @param TemplatedEmail $message
      *
      * @throws TransportExceptionInterface
      */
-    private function send(Email $message) {
-        $this->logMail($message);
+    private function send(TemplatedEmail $message) {
         $this->mailer->send($message);
+        $this->logMail($message); //TODO move to Listener/subscriber? on MessageEvent
     }
 
     /**
@@ -89,7 +89,7 @@ class MailService {
      * @param string $subject Subject of the mail
      * @param string $template The template name
      * @param array $data data for the template placeholders
-     * @return Email
+     * @return TemplatedEmail
      */
     private function createEmail($to, $subject, $template, $data = []) {
         $message = (new TemplatedEmail())
@@ -97,28 +97,28 @@ class MailService {
             ->subject($subject)
             ->textTemplate($template)
             ->context($data);
-        $this->lastMessage = $message;
+        $this->lastMessage = "To: $to; Subject: $subject; template: $template, data: " . json_encode($data);
         return $message;
     }
 
     /**
      * Create log line for the sent mail
      *
-     * @param Email $message
+     * @param TemplatedEmail $message
      */
-    private function logMail(Email $message) {
-
+    private function logMail(TemplatedEmail $message) {
         $context = [];
-        $context['to'] = $message->getTo();
+        $context['to'] = implode(', ', array_map(function (Address $address) {
+            return $address->getAddress();
+        }, $message->getTo()));
         $context['subject'] = $message->getSubject();
-        $context['text'] = $message->getBody();
+        $context['text'] = $message->getTextTemplate();
 
         $this->logger->debug('Sending mail "{subject}"', $context);
-
     }
 
     /**
-     * @return Email
+     * @return String
      */
     public function getLastMessage() {
         return $this->lastMessage;

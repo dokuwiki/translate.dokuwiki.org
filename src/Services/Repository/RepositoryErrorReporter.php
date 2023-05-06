@@ -75,7 +75,7 @@ class RepositoryErrorReporter {
                 $template,
                 $this->data
             );
-            $errorMsg = $this->emailService->getLastMessage()->getBody()->toString();
+            $errorMsg = $this->emailService->getLastMessage();
         } else {
             $errorMsg = 'Unknown error:' .get_class($e);
         }

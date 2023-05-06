@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Services\Mail\MailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
@@ -51,12 +52,12 @@ class ExtensionController extends AbstractController {
      * @param Request $request
      * @param string $type
      * @param DokuWikiRepositoryAPI $api
-     * @param MailerInterface $mailer
+     * @param MailService $mailer
      * @return Response
      *
      * @throws TransportExceptionInterface
      */
-    public function index(Request $request, $type, DokuWikiRepositoryAPI $api, MailerInterface $mailer) {
+    public function index(Request $request, $type, DokuWikiRepositoryAPI $api, MailService $mailer) {
 
         $data = array();
 
@@ -65,6 +66,7 @@ class ExtensionController extends AbstractController {
         $repository->setUrl('');
         $repository->setBranch('master');
         $repository->setType($type);
+        $repository->setEnglishReadonly(true);
 
         $options['type'] = $type;
         $options['validation_groups'] = array('Default', $type);
@@ -89,11 +91,11 @@ class ExtensionController extends AbstractController {
      *
      * @param RepositoryEntity $repository
      * @param DokuWikiRepositoryAPI $api
-     * @param MailerInterface $mailer
+     * @param MailService $mailer
      *
      * @throws TransportExceptionInterface
      */
-    private function addExtension(RepositoryEntity $repository, DokuWikiRepositoryAPI $api, MailerInterface $mailer) {
+    private function addExtension(RepositoryEntity $repository, DokuWikiRepositoryAPI $api, MailService $mailer) {
         $api->mergeExtensionInfo($repository);
         $repository->setLastUpdate(0);
         $repository->setState(RepositoryEntity::STATE_WAITING_FOR_APPROVAL);
@@ -102,14 +104,14 @@ class ExtensionController extends AbstractController {
         $this->entityManager->persist($repository);
         $this->entityManager->flush();
 
-        $email = (new TemplatedEmail())
-            ->subject('Registration')
-            ->to($repository->getEmail())
-            ->textTemplate('mail/extensionAdded.txt.twig')
-            ->context([
+        $mailer->sendEmail(
+            $repository->getEmail(),
+            'Registration',
+            'mail/extensionAdded.txt.twig',
+            [
                 'repository' => $repository
-            ]);
-        $mailer->send($email);
+            ]
+        );
     }
 
     private function generateActivationKey(RepositoryEntity $repository) {
