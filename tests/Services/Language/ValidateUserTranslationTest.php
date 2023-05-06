@@ -21,10 +21,10 @@ class ValidateUserTranslationTest extends TestCase {
 
     function testValidateTranslationMarkup() {
         $defaultTranslation = array(
-            'path' => new LocalText('default text', LocalText::$TYPE_MARKUP)
+            'path' => new LocalText('default text', LocalText::TYPE_MARKUP)
         );
         $previousTranslation = array(
-            'path' => new LocalText('translated text', LocalText::$TYPE_MARKUP)
+            'path' => new LocalText('translated text', LocalText::TYPE_MARKUP)
         );
 
         $userTranslation = array(
@@ -35,7 +35,7 @@ class ValidateUserTranslationTest extends TestCase {
         $authorEmail = 'author@example.com';
 
         $expected = array(
-            'path' => new LocalText('new translated text', LocalText::$TYPE_MARKUP)
+            'path' => new LocalText('new translated text', LocalText::TYPE_MARKUP)
         );
 
         $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
@@ -48,7 +48,7 @@ class ValidateUserTranslationTest extends TestCase {
     function testValidateTranslationMarkupEmptyDefault() {
         $defaultTranslation = array();
         $previousTranslation = array(
-            'path' => new LocalText('translated text', LocalText::$TYPE_MARKUP)
+            'path' => new LocalText('translated text', LocalText::TYPE_MARKUP)
         );
 
         $userTranslation = array(
@@ -69,10 +69,10 @@ class ValidateUserTranslationTest extends TestCase {
 
     function testValidateTranslationMarkupNoUserTranslation() {
         $defaultTranslation = array(
-            'path' => new LocalText('default text', LocalText::$TYPE_MARKUP)
+            'path' => new LocalText('default text', LocalText::TYPE_MARKUP)
         );
         $previousTranslation = array(
-            'path' => new LocalText('translated text', LocalText::$TYPE_MARKUP)
+            'path' => new LocalText('translated text', LocalText::TYPE_MARKUP)
         );
 
         $userTranslation = array();
@@ -92,11 +92,11 @@ class ValidateUserTranslationTest extends TestCase {
     function testValidateTranslationArray() {
         $defaultTranslation = array(
             'path' => new LocalText(
-                array('key' => 'value', 'js' => array('key' => 'value')), LocalText::$TYPE_ARRAY)
+                array('key' => 'value', 'js' => array('key' => 'value')), LocalText::TYPE_ARRAY)
         );
         $previousTranslation = array(
             'path' => new LocalText(
-                array('key' => 'translated value', 'js' => array('key' => 'translated value')), LocalText::$TYPE_ARRAY)
+                array('key' => 'translated value', 'js' => array('key' => 'translated value')), LocalText::TYPE_ARRAY)
         );
 
         $userTranslation = array(
@@ -110,7 +110,7 @@ class ValidateUserTranslationTest extends TestCase {
         $expectedAuthor->add(new Author('author', 'author@example.com'));
         $expected = array(
             'path' => new LocalText(
-                array('key' => 'new translated value', 'js' => array('key' => 'value')), LocalText::$TYPE_ARRAY,
+                array('key' => 'new translated value', 'js' => array('key' => 'value')), LocalText::TYPE_ARRAY,
                 $expectedAuthor)
         );
 
@@ -125,7 +125,7 @@ class ValidateUserTranslationTest extends TestCase {
         $defaultTranslation = array();
         $previousTranslation = array(
             'path' => new LocalText(
-                array('key' => 'translated value', 'js' => array('key' => 'value')), LocalText::$TYPE_ARRAY)
+                array('key' => 'translated value', 'js' => array('key' => 'value')), LocalText::TYPE_ARRAY)
         );
 
         $userTranslation = array(
@@ -146,10 +146,10 @@ class ValidateUserTranslationTest extends TestCase {
 
     function testValidateTranslationArrayNoUserTranslation() {
         $defaultTranslation = array(
-            'path' => new LocalText(array('key' => 'value', 'js' => array('key' => 'value')), LocalText::$TYPE_ARRAY)
+            'path' => new LocalText(array('key' => 'value', 'js' => array('key' => 'value')), LocalText::TYPE_ARRAY)
         );
         $previousTranslation = array(
-            'path' => new LocalText(array('key' => 'translated value', 'js' => array('key' => 'value')), LocalText::$TYPE_ARRAY)
+            'path' => new LocalText(array('key' => 'translated value', 'js' => array('key' => 'value')), LocalText::TYPE_ARRAY)
         );
 
         $userTranslation = array();
@@ -168,11 +168,11 @@ class ValidateUserTranslationTest extends TestCase {
 
     function testValidateTranslationArrayAuthor() {
         $defaultTranslation = array(
-            'path' => new LocalText(array('key' => 'value'), LocalText::$TYPE_ARRAY)
+            'path' => new LocalText(array('key' => 'value'), LocalText::TYPE_ARRAY)
         );
         $previousTranslation = array(
             'path' => new LocalText(
-                array('key' => 'translated value'), LocalText::$TYPE_ARRAY)
+                array('key' => 'translated value'), LocalText::TYPE_ARRAY)
         );
 
         $userTranslation = array(
@@ -185,7 +185,7 @@ class ValidateUserTranslationTest extends TestCase {
         $expectedAuthor = new AuthorList();
         $expectedAuthor->add(new Author('author', 'e@ma.il'));
         $expected = array(
-            'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $expectedAuthor)
+            'path' => new LocalText(array('key' => 'new translated value'), LocalText::TYPE_ARRAY, $expectedAuthor)
         );
 
         $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
@@ -197,13 +197,13 @@ class ValidateUserTranslationTest extends TestCase {
 
     function testValidateTranslationArrayKeepAuthors() {
         $defaultTranslation = array(
-            'path' => new LocalText(array('key' => 'value'), LocalText::$TYPE_ARRAY)
+            'path' => new LocalText(array('key' => 'value'), LocalText::TYPE_ARRAY)
         );
         $prevAuthors = new AuthorList();
         $prevAuthors->add(new Author('other', 'some'));
         $previousTranslation = array(
             'path' => new LocalText(
-                array('key' => 'translated value'), LocalText::$TYPE_ARRAY, $prevAuthors)
+                array('key' => 'translated value'), LocalText::TYPE_ARRAY, $prevAuthors)
         );
 
         $userTranslation = array(
@@ -217,7 +217,7 @@ class ValidateUserTranslationTest extends TestCase {
         $expectedAuthors->add(new Author('author', 'e@ma.il'));
         $expectedAuthors->add(new Author('other', 'some'));
         $expected = array(
-            'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $expectedAuthors)
+            'path' => new LocalText(array('key' => 'new translated value'), LocalText::TYPE_ARRAY, $expectedAuthors)
         );
 
         $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
@@ -229,14 +229,14 @@ class ValidateUserTranslationTest extends TestCase {
 
     function testValidateTranslationArrayKeepAuthorsRenamed() {
         $defaultTranslation = array(
-            'path' => new LocalText(array('key' => 'value'), LocalText::$TYPE_ARRAY)
+            'path' => new LocalText(array('key' => 'value'), LocalText::TYPE_ARRAY)
         );
         $prevAuthors = new AuthorList();
         $prevAuthors->add(new Author('other', 'some'));
         $prevAuthors->add(new Author('author old name', 'e@ma.il'));
         $previousTranslation = array(
             'path' => new LocalText(
-                array('key' => 'translated value'), LocalText::$TYPE_ARRAY, $prevAuthors)
+                array('key' => 'translated value'), LocalText::TYPE_ARRAY, $prevAuthors)
         );
 
         $userTranslation = array(
@@ -250,7 +250,7 @@ class ValidateUserTranslationTest extends TestCase {
         $expectedAuthors->add(new Author('author new name', 'e@ma.il'));
         $expectedAuthors->add(new Author('other', 'some'));
         $expected = array(
-            'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $expectedAuthors)
+            'path' => new LocalText(array('key' => 'new translated value'), LocalText::TYPE_ARRAY, $expectedAuthors)
         );
 
         $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
@@ -262,13 +262,13 @@ class ValidateUserTranslationTest extends TestCase {
 
     function testValidateTranslationArrayKeepHeader() {
         $defaultTranslation = array(
-            'path' => new LocalText(array('key' => 'value'), LocalText::$TYPE_ARRAY, null, " * old header1\n * @licence GPL")
+            'path' => new LocalText(array('key' => 'value'), LocalText::TYPE_ARRAY, null, " * old header1\n * @licence GPL")
         );
         $prevAuthors = new AuthorList();
         $prevAuthors->add(new Author('other', 'some'));
         $previousTranslation = array(
             'path' => new LocalText(
-                array('key' => 'translated value'), LocalText::$TYPE_ARRAY, $prevAuthors, " * old header2\n * @licence GPL")
+                array('key' => 'translated value'), LocalText::TYPE_ARRAY, $prevAuthors, " * old header2\n * @licence GPL")
         );
 
         $userTranslation = array(
@@ -282,7 +282,7 @@ class ValidateUserTranslationTest extends TestCase {
         $expectedAuthors->add(new Author('author', 'e@ma.il'));
         $expectedAuthors->add(new Author('other', 'some'));
         $expected = array(
-            'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $expectedAuthors, " * old header2\n * @licence GPL")
+            'path' => new LocalText(array('key' => 'new translated value'), LocalText::TYPE_ARRAY, $expectedAuthors, " * old header2\n * @licence GPL")
         );
 
         $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
@@ -295,11 +295,11 @@ class ValidateUserTranslationTest extends TestCase {
         $authors = new AuthorList();
         $authors->add(new Author('other', 'some'));
         $defaultTranslation = array(
-            'path' => new LocalText(array('key' => 'value'), LocalText::$TYPE_ARRAY, $authors)
+            'path' => new LocalText(array('key' => 'value'), LocalText::TYPE_ARRAY, $authors)
         );
         $previousTranslation = array(
             'path' => new LocalText(
-                array('key' => 'translated value'), LocalText::$TYPE_ARRAY)
+                array('key' => 'translated value'), LocalText::TYPE_ARRAY)
         );
 
         $userTranslation = array(
@@ -312,7 +312,7 @@ class ValidateUserTranslationTest extends TestCase {
         $expectedAuthors = new AuthorList();
         $expectedAuthors->add(new Author('author', 'e@ma.il'));
         $expected = array(
-            'path' => new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $expectedAuthors)
+            'path' => new LocalText(array('key' => 'new translated value'), LocalText::TYPE_ARRAY, $expectedAuthors)
         );
 
         $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
@@ -324,11 +324,11 @@ class ValidateUserTranslationTest extends TestCase {
 
     function testValidateTranslationArrayDoNotSetAuthorIfTranslationNotChanged() {
         $defaultTranslation = array(
-            'path' => new LocalText(array('key' => 'value'), LocalText::$TYPE_ARRAY)
+            'path' => new LocalText(array('key' => 'value'), LocalText::TYPE_ARRAY)
         );
         $previousTranslation = array(
             'path' => new LocalText(
-                array('key' => 'translated value'), LocalText::$TYPE_ARRAY)
+                array('key' => 'translated value'), LocalText::TYPE_ARRAY)
         );
 
         $userTranslation = array(
@@ -339,7 +339,7 @@ class ValidateUserTranslationTest extends TestCase {
         $authorEmail = 'e@ma.il';
 
         $expected = array(
-            'path' => new LocalText(array('key' => 'translated value'), LocalText::$TYPE_ARRAY)
+            'path' => new LocalText(array('key' => 'translated value'), LocalText::TYPE_ARRAY)
         );
 
         $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,
@@ -351,11 +351,11 @@ class ValidateUserTranslationTest extends TestCase {
 
     function testValidateTranslationArrayDoNotSetAuthorIfTranslationNotChangedInJsArray() {
         $defaultTranslation = array(
-            'path' => new LocalText(array('key' => 'value', 'js' => array('some', 'other')), LocalText::$TYPE_ARRAY)
+            'path' => new LocalText(array('key' => 'value', 'js' => array('some', 'other')), LocalText::TYPE_ARRAY)
         );
         $previousTranslation = array(
             'path' => new LocalText(
-                array('key' => 'translated value', 'js' => array('some', 'translated other')), LocalText::$TYPE_ARRAY)
+                array('key' => 'translated value', 'js' => array('some', 'translated other')), LocalText::TYPE_ARRAY)
         );
 
         $userTranslation = array(
@@ -366,7 +366,7 @@ class ValidateUserTranslationTest extends TestCase {
         $authorEmail = 'e@ma.il';
 
         $expected = array(
-            'path' => new LocalText(array('key' => 'translated value', 'js' => array('some', 'translated other')), LocalText::$TYPE_ARRAY)
+            'path' => new LocalText(array('key' => 'translated value', 'js' => array('some', 'translated other')), LocalText::TYPE_ARRAY)
         );
 
         $validator = new UserTranslationValidator($defaultTranslation, $previousTranslation,

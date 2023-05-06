@@ -154,7 +154,7 @@ class TranslationController extends AbstractController {
      * @return RedirectResponse|Response
      */
     public function translateCore(Request $request) {
-        return $this->translate($request, RepositoryEntity::$TYPE_CORE, 'dokuwiki');
+        return $this->translate($request, RepositoryEntity::TYPE_CORE, 'dokuwiki');
     }
 
     /**
@@ -189,7 +189,7 @@ class TranslationController extends AbstractController {
             return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
 
-        if ($repositoryEntity->getState() !== RepositoryEntity::$STATE_ACTIVE) {
+        if ($repositoryEntity->getState() !== RepositoryEntity::STATE_ACTIVE) {
             $data['notActive'] = true;
             return $this->redirectToRoute('dokuwiki_translator_homepage', $data);
         }
@@ -227,7 +227,7 @@ class TranslationController extends AbstractController {
         if($repositoryEntity->getEnglishReadonly() && $data['targetLanguage']->getCode() == 'en') {
             $param['englishReadonly'] = true;
 
-            if($type === RepositoryEntity::$TYPE_CORE) {
+            if($type === RepositoryEntity::TYPE_CORE) {
                 return $this->redirectToRoute('dokuwiki_translator_show', $param);
             } else {
                 $param['type'] = $type;

@@ -44,11 +44,11 @@ class TranslationPreparer {
                 $type = $translation->getType();
                 $arrayMode = false;
             } else {
-                $type = is_array($translation) ? LocalText::$TYPE_ARRAY : LocalText::$TYPE_MARKUP;
+                $type = is_array($translation) ? LocalText::TYPE_ARRAY : LocalText::TYPE_MARKUP;
                 $arrayMode = true;
             }
 
-            if ($type !== LocalText::$TYPE_ARRAY) {
+            if ($type !== LocalText::TYPE_ARRAY) {
                 $this->createEntry($path);
                 continue;
             }
@@ -84,7 +84,7 @@ class TranslationPreparer {
         $entry['searchkey'] = $this->createSearchKey($path, $key, $jsKey);
         $entry['default'] = $this->createEntryGetTranslation($this->defaultTranslation, $path, $key, $jsKey);
         $entry['target'] = $this->createEntryGetTranslation($this->targetTranslation, $path, $key, $jsKey);
-        $entry['type'] = ($key === null) ? LocalText::$TYPE_MARKUP : LocalText::$TYPE_ARRAY;
+        $entry['type'] = ($key === null) ? LocalText::TYPE_MARKUP : LocalText::TYPE_ARRAY;
 
         if ($entry['target'] === '') {
             $this->missingTranslations[] = $entry;
@@ -97,7 +97,7 @@ class TranslationPreparer {
      * Composes the key of the language string
      *
      * @param string $path path to its language file (without language code)
-     * @param string|null $key for LocalText::$TYPE_ARRAY, the key of the language string
+     * @param string|null $key for LocalText::TYPE_ARRAY, the key of the language string
      * @param string|null $jsKey js key of language string
      * @return string
      */
@@ -116,7 +116,7 @@ class TranslationPreparer {
      * Composes the smallest unique key of the localized string, that can be used for a search at codesearch.dokuwiki.org
      *
      * @param string $path path to its language file (without language code)
-     * @param string|null $key for LocalText::$TYPE_ARRAY, the key of the language string
+     * @param string|null $key for LocalText::TYPE_ARRAY, the key of the language string
      * @param string|null $jsKey js key of language string
      * @return string
      */
@@ -135,7 +135,7 @@ class TranslationPreparer {
      *
      * @param array|LocalText[] $translation user translation or default translation
      * @param string $path path of language file
-     * @param string|null $key for LocalText::$TYPE_ARRAY, the key of the language string
+     * @param string|null $key for LocalText::TYPE_ARRAY, the key of the language string
      * @param string|null $jsKey js key of language string
      * @return string
      */

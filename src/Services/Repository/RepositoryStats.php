@@ -122,7 +122,7 @@ class RepositoryStats {
      * @return int
      */
     private function getTranslationValue($languageFile) {
-        if ($languageFile->getType() == LocalText::$TYPE_MARKUP) {
+        if ($languageFile->getType() == LocalText::TYPE_MARKUP) {
             return 1;
         }
         return count($languageFile->getContent());

@@ -19,7 +19,7 @@ class PluginNameValidator extends ConstraintValidator {
 
     public function validate($value, Constraint $constraint) {
 
-        if ($this->api->getExtensionInfo(RepositoryEntity::$TYPE_PLUGIN, $value) === false) {
+        if ($this->api->getExtensionInfo(RepositoryEntity::TYPE_PLUGIN, $value) === false) {
             $this->context->addViolation($constraint->message, array('%string%' => $value));
         }
     }

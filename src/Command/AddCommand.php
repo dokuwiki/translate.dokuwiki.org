@@ -57,9 +57,9 @@ class AddCommand extends Command
     {
         $type = $input->getArgument('type');
         $repositoryTypes = [
-            RepositoryEntity::$TYPE_CORE,
-            RepositoryEntity::$TYPE_PLUGIN,
-            RepositoryEntity::$TYPE_TEMPLATE
+            RepositoryEntity::TYPE_CORE,
+            RepositoryEntity::TYPE_PLUGIN,
+            RepositoryEntity::TYPE_TEMPLATE
         ];
         if (!in_array($type, $repositoryTypes)) {
             $output->writeln("Unknown type. Use 'core', 'plugin' or 'template'");
@@ -76,7 +76,7 @@ class AddCommand extends Command
         $repo->setEmail($input->getArgument('email'));
         $repo->setAuthor($input->getArgument('author'));
         $repo->setType($type);
-        $repo->setState(RepositoryEntity::$STATE_INITIALIZING);
+        $repo->setState(RepositoryEntity::STATE_INITIALIZING);
         $repo->setErrorCount(0);
         $repo->setDescription('');
         $repo->setTags('');

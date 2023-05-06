@@ -12,14 +12,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class RepositoryEntity {
 
-    public static $STATE_WAITING_FOR_APPROVAL = 'waiting';
-    public static $STATE_INITIALIZING = 'initialProcessing';
-    public static $STATE_ACTIVE = 'active';
-    public static $STATE_ERROR = 'error';
+    public const STATE_WAITING_FOR_APPROVAL = 'waiting';
+    public const STATE_INITIALIZING = 'initialProcessing';
+    public const STATE_ACTIVE = 'active';
+    public const STATE_ERROR = 'error';
 
-    public static $TYPE_CORE   = 'core';
-    public static $TYPE_PLUGIN = 'plugin';
-    public static $TYPE_TEMPLATE = 'template';
+    public const TYPE_CORE   = 'core';
+    public const TYPE_PLUGIN = 'plugin';
+    public const TYPE_TEMPLATE = 'template';
 
     /**
      * @ORM\Id

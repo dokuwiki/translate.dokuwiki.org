@@ -29,7 +29,7 @@ CONTENT;
         $author = new AuthorList();
         $author->add(new Author('author', 'e@ma.il'));
         $header = " * @license    GPL 2 (https://www.gnu.org/licenses/gpl.html)\n";
-        $translation = new LocalText(array('js' => array('key' => 'value')), LocalText::$TYPE_ARRAY, $author, $header);
+        $translation = new LocalText(array('js' => array('key' => 'value')), LocalText::TYPE_ARRAY, $author, $header);
         $result = $translation->render();
         $this->assertEquals($expected, $result);
     }
@@ -51,7 +51,7 @@ CONTENT;
         $author = new AuthorList();
         $author->add(new Author('author', 'e@ma.il'));
         $header = " * @license    GPL 2 (https://www.gnu.org/licenses/gpl.html)\n";
-        $translation = new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $author, $header);
+        $translation = new LocalText(array('key' => 'new translated value'), LocalText::TYPE_ARRAY, $author, $header);
         $result = $translation->render();
         $this->assertEquals($expected, $result);
     }
@@ -73,7 +73,7 @@ CONTENT;
         $author = new AuthorList();
         $author->add(new Author('author', 'e@ma.il'));
         $header = " *\n * @license    GPL 3 (https://www.gnu.org/licenses/gpl.html)\n *\n";
-        $translation = new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $author, $header);
+        $translation = new LocalText(array('key' => 'new translated value'), LocalText::TYPE_ARRAY, $author, $header);
         $result = $translation->render();
         $this->assertEquals($expected, $result);
     }
@@ -97,7 +97,7 @@ CONTENT;
         $author = new AuthorList();
         $author->add(new Author('author', 'e@ma.il'));
         $header = " *\n * no licence tag\n *\n";
-        $translation = new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $author, $header);
+        $translation = new LocalText(array('key' => 'new translated value'), LocalText::TYPE_ARRAY, $author, $header);
         $result = $translation->render();
         $this->assertEquals($expected, $result);
     }
@@ -108,7 +108,7 @@ CONTENT;
         $author = new AuthorList();
         $author->add(new Author('author', 'e@ma.il'));
         $header = " * @license    GPL 2 (https://www.gnu.org/licenses/gpl.html)\n *\n";
-        $translation = new LocalText(array(), LocalText::$TYPE_ARRAY, $author, $header);
+        $translation = new LocalText(array(), LocalText::TYPE_ARRAY, $author, $header);
         $translation->render();
     }
 
@@ -138,7 +138,7 @@ CONTENT;
         $author->add(new Author('author2', ''));
         $author->add(new Author('author3', ''));
         $header = " *\n * german language file\n *\n * @license    GPL 4 (https://www.gnu.org/licenses/gpl.html)\n *\n *\n * @package DokuWiki\\lang\\de\\settings\n";
-        $translation = new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $author, $header);
+        $translation = new LocalText(array('key' => 'new translated value'), LocalText::TYPE_ARRAY, $author, $header);
         $result = $translation->render();
         $this->assertEquals($expected, $result);
     }
@@ -169,7 +169,7 @@ CONTENT;
         $author->add(new Author('', 'e1@ma.il'));
         $author->add(new Author('', 'e2@ma.il'));
         $header = " *\n * german language file\n *\n * @license    GPL 4 (https://www.gnu.org/licenses/gpl.html)\n *\n *\n * @package DokuWiki\\lang\\de\\settings\n";
-        $translation = new LocalText(array('key' => 'new translated value'), LocalText::$TYPE_ARRAY, $author, $header);
+        $translation = new LocalText(array('key' => 'new translated value'), LocalText::TYPE_ARRAY, $author, $header);
         $result = $translation->render();
         $this->assertEquals($expected, $result);
     }

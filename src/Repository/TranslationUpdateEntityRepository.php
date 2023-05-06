@@ -22,7 +22,7 @@ class TranslationUpdateEntityRepository extends ServiceEntityRepository {
              JOIN job.repository repository
              WHERE job.state = :state'
         );
-        $query->setParameter('state', TranslationUpdateEntity::$STATE_UNDONE);
+        $query->setParameter('state', TranslationUpdateEntity::STATE_UNDONE);
         return $query->getResult();
     }
 

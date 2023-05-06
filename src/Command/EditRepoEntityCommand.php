@@ -57,16 +57,16 @@ class EditRepoEntityCommand extends Command {
         $type = $input->getArgument('type');
 
         $repositoryTypes = [
-            RepositoryEntity::$TYPE_CORE,
-            RepositoryEntity::$TYPE_PLUGIN,
-            RepositoryEntity::$TYPE_TEMPLATE
+            RepositoryEntity::TYPE_CORE,
+            RepositoryEntity::TYPE_PLUGIN,
+            RepositoryEntity::TYPE_TEMPLATE
         ];
         if (!in_array($type, $repositoryTypes)) {
             $output->writeln(sprintf(
                 'Type must be %s, %s or %s',
-                RepositoryEntity::$TYPE_CORE,
-                RepositoryEntity::$TYPE_PLUGIN,
-                RepositoryEntity::$TYPE_TEMPLATE));
+                RepositoryEntity::TYPE_CORE,
+                RepositoryEntity::TYPE_PLUGIN,
+                RepositoryEntity::TYPE_TEMPLATE));
             return Command::FAILURE;
         }
         try {
@@ -109,10 +109,10 @@ class EditRepoEntityCommand extends Command {
 
             case 'state':
                 $possibleStates = [
-                    RepositoryEntity::$STATE_ACTIVE,
-                    RepositoryEntity::$STATE_ERROR,
-                    RepositoryEntity::$STATE_INITIALIZING,
-                    RepositoryEntity::$STATE_WAITING_FOR_APPROVAL
+                    RepositoryEntity::STATE_ACTIVE,
+                    RepositoryEntity::STATE_ERROR,
+                    RepositoryEntity::STATE_INITIALIZING,
+                    RepositoryEntity::STATE_WAITING_FOR_APPROVAL
                 ];
                 if(!in_array($value, $possibleStates)) {
                     $this->output->writeln('State unknown');

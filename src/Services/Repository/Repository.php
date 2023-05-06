@@ -119,7 +119,7 @@ abstract class Repository {
             $this->updateWithException();
             $this->entity->setLastUpdate(time());
             $this->entity->setErrorCount(0);
-            if ($this->entity->getState() === RepositoryEntity::$STATE_INITIALIZING) {
+            if ($this->entity->getState() === RepositoryEntity::STATE_INITIALIZING) {
                 $this->initialized();
             }
         } catch (Exception $e) {
@@ -174,11 +174,12 @@ abstract class Repository {
      */
     private function initialized() {
         $this->logger->debug('Initializing ' . $this->entity->getType() . ' ' . $this->entity->getName());
-        $this->entity->setState(RepositoryEntity::$STATE_ACTIVE);
+        $this->entity->setState(RepositoryEntity::STATE_ACTIVE);
         $this->mailService->sendEmail(
             $this->entity->getEmail(),
             'Your ' . $this->entity->getType() . ' is now active',
-            'mail/extensionReady.txt.twig', array('repo' => $this->entity)
+            'mail/extensionReady.txt.twig',
+            ['repo' => $this->entity]
         );
     }
 
@@ -388,7 +389,7 @@ abstract class Repository {
         $translationUpdate->setEmail($email);
         $translationUpdate->setRepository($this->entity);
         $translationUpdate->setUpdated(time());
-        $translationUpdate->setState(TranslationUpdateEntity::$STATE_UNDONE);
+        $translationUpdate->setState(TranslationUpdateEntity::STATE_UNDONE);
         $translationUpdate->setLanguage($language);
 
         $this->entityManager->persist($translationUpdate);
@@ -428,7 +429,7 @@ abstract class Repository {
         $tmpDir = $this->buildTempPath($update->getId());
         try {
             $this->createAndSendPatchWithException($update, $tmpDir);
-            $update->setState(TranslationUpdateEntity::$STATE_SENT);
+            $update->setState(TranslationUpdateEntity::STATE_SENT);
         } catch (Exception $e) {
             // mail for:
             //   GitHubCreatePullRequestException
@@ -440,7 +441,7 @@ abstract class Repository {
             $reporter = new RepositoryErrorReporter($this->mailService, $this->logger);
             $msg = $reporter->handleTranslationError($e, $this);
             $update->setErrorMsg($msg);
-            $update->setState(TranslationUpdateEntity::$STATE_FAILED);
+            $update->setState(TranslationUpdateEntity::STATE_FAILED);
         }
         $this->rrmdir($tmpDir);
         $this->entityManager->flush(); //stores changes in RepositoryEntities and TranslationUpdateEntities.

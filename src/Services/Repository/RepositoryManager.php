@@ -117,11 +117,11 @@ class RepositoryManager {
     public function getRepository(RepositoryEntity $repository) {
         $behavior = $this->getRepositoryBehavior($repository);
 
-        if ($repository->getType() === RepositoryEntity::$TYPE_PLUGIN) {
+        if ($repository->getType() === RepositoryEntity::TYPE_PLUGIN) {
             return new PluginRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats,
                     $this->gitService, $behavior, $this->logger, $this->mailService);
         }
-        if ($repository->getType() === RepositoryEntity::$TYPE_TEMPLATE) {
+        if ($repository->getType() === RepositoryEntity::TYPE_TEMPLATE) {
             return new TemplateRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats,
                                         $this->gitService, $behavior, $this->logger, $this->mailService);
         }

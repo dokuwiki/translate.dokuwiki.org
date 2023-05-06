@@ -47,10 +47,10 @@ class DokuWikiRepositoryAPI {
         foreach ($content->plugin as $extension) {
             $repository = new RepositoryEntity();
             if(substr($extension->id, 0, 9) == 'template:') {
-                $type = RepositoryEntity::$TYPE_TEMPLATE;
+                $type = RepositoryEntity::TYPE_TEMPLATE;
                 $name = substr($extension->id, 9);
             } else {
-                $type = RepositoryEntity::$TYPE_PLUGIN;
+                $type = RepositoryEntity::TYPE_PLUGIN;
                 $name = $extension->id;
             }
             $repository->setName(strtolower(strval($name)));

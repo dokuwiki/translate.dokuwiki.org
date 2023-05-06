@@ -6,8 +6,8 @@ use Symfony\Component\Process\Process;
 
 class GitRepository {
 
-    public static $PULL_CHANGED = 'changed';
-    public static $PULL_UNCHANGED = 'unchanged';
+    public const PULL_CHANGED = 'changed';
+    public const PULL_UNCHANGED = 'unchanged';
 
     private $gitService;
     private $path;
@@ -77,9 +77,9 @@ class GitRepository {
 
         // empty result -> new, contains already up2date -> unchanged, else updated
         if (strstr($result->getOutput(), 'Already up-to-date') !== false) {
-            return GitRepository::$PULL_UNCHANGED;
+            return GitRepository::PULL_UNCHANGED;
         }
-        return GitRepository::$PULL_CHANGED;
+        return GitRepository::PULL_CHANGED;
     }
 
     /**

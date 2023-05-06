@@ -90,7 +90,7 @@ class GitHubBehavior implements RepositoryBehavior {
      * @throws GitPushException
      */
     public function pull(GitRepository $git, RepositoryEntity $repository) {
-        $changed = $git->pull($repository->getUrl(), $repository->getBranch()) === GitRepository::$PULL_CHANGED;
+        $changed = $git->pull($repository->getUrl(), $repository->getBranch()) === GitRepository::PULL_CHANGED;
         $git->push('origin', $repository->getBranch());
         return $changed;
     }

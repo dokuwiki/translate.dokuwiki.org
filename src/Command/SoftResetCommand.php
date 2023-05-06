@@ -60,16 +60,16 @@ class SoftResetCommand extends Command {
         $type = $input->getArgument('type');
 
         $repositoryTypes = [
-            RepositoryEntity::$TYPE_CORE,
-            RepositoryEntity::$TYPE_PLUGIN,
-            RepositoryEntity::$TYPE_TEMPLATE
+            RepositoryEntity::TYPE_CORE,
+            RepositoryEntity::TYPE_PLUGIN,
+            RepositoryEntity::TYPE_TEMPLATE
         ];
         if (!in_array($type, $repositoryTypes)) {
             $output->writeln(sprintf(
                 'Type must be %s, %s or %s',
-                RepositoryEntity::$TYPE_CORE,
-                RepositoryEntity::$TYPE_PLUGIN,
-                RepositoryEntity::$TYPE_TEMPLATE
+                RepositoryEntity::TYPE_CORE,
+                RepositoryEntity::TYPE_PLUGIN,
+                RepositoryEntity::TYPE_TEMPLATE
             ));
             return Command::FAILURE;
         }
@@ -113,7 +113,7 @@ class SoftResetCommand extends Command {
      * @throws OptimisticLockException
      */
     protected function resetRepo(RepositoryEntity $repo) {
-        $repo->setState(RepositoryEntity::$STATE_ACTIVE);
+        $repo->setState(RepositoryEntity::STATE_ACTIVE);
         $repo->setErrorCount(0);
         $repo->setLastUpdate(0);
 

@@ -24,8 +24,8 @@ class RepositoryRequestEditType extends AbstractType {
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(
             array(
-                'type' => RepositoryEntity::$TYPE_PLUGIN,
-                'validation_groups' => array(RepositoryEntity::$TYPE_PLUGIN)
+                'type' => RepositoryEntity::TYPE_PLUGIN,
+                'validation_groups' => array(RepositoryEntity::TYPE_PLUGIN)
             )
         );
     }

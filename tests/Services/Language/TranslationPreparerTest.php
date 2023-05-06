@@ -9,8 +9,8 @@ use PHPUnit\Framework\TestCase;
 class TranslationPreparerTest extends TestCase {
 
     public function testPrepareMarkup() {
-        $default = ['path.txt' => new LocalText('original', LocalText::$TYPE_MARKUP)];
-        $translation = ['path.txt' => new LocalText('translated', LocalText::$TYPE_MARKUP)];
+        $default = ['path.txt' => new LocalText('original', LocalText::TYPE_MARKUP)];
+        $translation = ['path.txt' => new LocalText('translated', LocalText::TYPE_MARKUP)];
 
         $expected = [
             [
@@ -18,7 +18,7 @@ class TranslationPreparerTest extends TestCase {
                 'searchkey' => 'path',
                 'default' => 'original',
                 'target' => 'translated',
-                'type' => LocalText::$TYPE_MARKUP
+                'type' => LocalText::TYPE_MARKUP
             ]
         ];
 
@@ -29,7 +29,7 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareMarkupEmptyTarget() {
-        $default = ['path.txt' => new LocalText('original', LocalText::$TYPE_MARKUP)];
+        $default = ['path.txt' => new LocalText('original', LocalText::TYPE_MARKUP)];
         $translation = [];
 
         $expected = [
@@ -38,7 +38,7 @@ class TranslationPreparerTest extends TestCase {
                 'searchkey' => 'path',
                 'default' => 'original',
                 'target' => '',
-                'type' => LocalText::$TYPE_MARKUP
+                'type' => LocalText::TYPE_MARKUP
             ]
         ];
 
@@ -50,7 +50,7 @@ class TranslationPreparerTest extends TestCase {
 
     public function testPrepareMarkupEmptyDefault() {
         $default = [];
-        $translation = ['path' => new LocalText('translated', LocalText::$TYPE_MARKUP)];
+        $translation = ['path' => new LocalText('translated', LocalText::TYPE_MARKUP)];
 
         $expected = [];
 
@@ -61,8 +61,8 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareArray() {
-        $default = ['path' => new LocalText(['key' => 'value'], LocalText::$TYPE_ARRAY)];
-        $translation = ['path' => new LocalText(['key' => 'translated value'], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText(['key' => 'value'], LocalText::TYPE_ARRAY)];
+        $translation = ['path' => new LocalText(['key' => 'translated value'], LocalText::TYPE_ARRAY)];
 
         $expected = [
             [
@@ -70,7 +70,7 @@ class TranslationPreparerTest extends TestCase {
                 'searchkey' => 'key',
                 'default' => 'value',
                 'target' => 'translated value',
-                'type' => LocalText::$TYPE_ARRAY
+                'type' => LocalText::TYPE_ARRAY
             ]
         ];
 
@@ -81,7 +81,7 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareArrayEmptyTarget() {
-        $default = ['path' => new LocalText(['key' => 'value'], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText(['key' => 'value'], LocalText::TYPE_ARRAY)];
         $translation = [];
 
         $expected = [
@@ -90,7 +90,7 @@ class TranslationPreparerTest extends TestCase {
                 'searchkey' => 'key',
                 'default' => 'value',
                 'target' => '',
-                'type' => LocalText::$TYPE_ARRAY
+                'type' => LocalText::TYPE_ARRAY
             ]
         ];
 
@@ -101,7 +101,7 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareArrayEmptyTarget2() {
-        $default = ['path' => new LocalText(['key' => 'value'], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText(['key' => 'value'], LocalText::TYPE_ARRAY)];
         $translation = [];
 
         $expected = [
@@ -110,7 +110,7 @@ class TranslationPreparerTest extends TestCase {
                 'searchkey' => 'key',
                 'default' => 'value',
                 'target' => '',
-                'type' => LocalText::$TYPE_ARRAY
+                'type' => LocalText::TYPE_ARRAY
             ]
         ];
 
@@ -121,8 +121,8 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareArrayEmptyDefault() {
-        $default = ['path' => new LocalText([], LocalText::$TYPE_ARRAY)];
-        $translation = ['path' => new LocalText(['key' => 'translated value'], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText([], LocalText::TYPE_ARRAY)];
+        $translation = ['path' => new LocalText(['key' => 'translated value'], LocalText::TYPE_ARRAY)];
 
         $expected = [];
 
@@ -133,8 +133,8 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareArrayJs() {
-        $default = ['path' => new LocalText(['js' => ['key' => 'value']], LocalText::$TYPE_ARRAY)];
-        $translation = ['path' => new LocalText(['js' => ['key' => 'translated value']], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText(['js' => ['key' => 'value']], LocalText::TYPE_ARRAY)];
+        $translation = ['path' => new LocalText(['js' => ['key' => 'translated value']], LocalText::TYPE_ARRAY)];
 
         $expected = [
             [
@@ -142,7 +142,7 @@ class TranslationPreparerTest extends TestCase {
                 'searchkey' => 'key',
                 'default' => 'value',
                 'target' => 'translated value',
-                'type' => LocalText::$TYPE_ARRAY
+                'type' => LocalText::TYPE_ARRAY
             ]
         ];
 
@@ -153,8 +153,8 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareArrayJsEmpty1() {
-        $default = ['path' => new LocalText(['js' => ['key' => 'value']], LocalText::$TYPE_ARRAY)];
-        $translation = ['path' => new LocalText(['js' => []], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText(['js' => ['key' => 'value']], LocalText::TYPE_ARRAY)];
+        $translation = ['path' => new LocalText(['js' => []], LocalText::TYPE_ARRAY)];
 
         $expected = [
             [
@@ -162,7 +162,7 @@ class TranslationPreparerTest extends TestCase {
                 'searchkey' => 'key',
                 'default' => 'value',
                 'target' => '',
-                'type' => LocalText::$TYPE_ARRAY
+                'type' => LocalText::TYPE_ARRAY
             ]
         ];
 
@@ -173,8 +173,8 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareArrayJsEmpty2() {
-        $default = ['path' => new LocalText(['js' => ['key' => 'value']], LocalText::$TYPE_ARRAY)];
-        $translation = ['path' => new LocalText([], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText(['js' => ['key' => 'value']], LocalText::TYPE_ARRAY)];
+        $translation = ['path' => new LocalText([], LocalText::TYPE_ARRAY)];
 
         $expected = [
             [
@@ -182,7 +182,7 @@ class TranslationPreparerTest extends TestCase {
                 'searchkey' => 'key',
                 'default' => 'value',
                 'target' => '',
-                'type' => LocalText::$TYPE_ARRAY
+                'type' => LocalText::TYPE_ARRAY
             ]
         ];
 
@@ -193,7 +193,7 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareArrayJsEmpty3() {
-        $default = ['path' => new LocalText(['js' => ['key' => 'value']], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText(['js' => ['key' => 'value']], LocalText::TYPE_ARRAY)];
         $translation = [];
 
         $expected = [
@@ -202,7 +202,7 @@ class TranslationPreparerTest extends TestCase {
                 'searchkey' => 'key',
                 'default' => 'value',
                 'target' => '',
-                'type' => LocalText::$TYPE_ARRAY
+                'type' => LocalText::TYPE_ARRAY
             ]
         ];
 
@@ -213,8 +213,8 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareArrayJsEmptyDefault() {
-        $default = ['path' => new LocalText(['js' => []], LocalText::$TYPE_ARRAY)];
-        $translation = ['path' => new LocalText(['js' => ['key' => 'translated value']], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText(['js' => []], LocalText::TYPE_ARRAY)];
+        $translation = ['path' => new LocalText(['js' => ['key' => 'translated value']], LocalText::TYPE_ARRAY)];
 
         $expected = [];
 
@@ -226,7 +226,7 @@ class TranslationPreparerTest extends TestCase {
 
 
     public function testPrepareUserMarkup() {
-        $default = ['path.txt' => new LocalText('original', LocalText::$TYPE_MARKUP)];
+        $default = ['path.txt' => new LocalText('original', LocalText::TYPE_MARKUP)];
         $translation = ['path.txt' => 'translated'];
 
         $expected = [
@@ -235,7 +235,7 @@ class TranslationPreparerTest extends TestCase {
                 'searchkey' => 'path',
                 'default' => 'original',
                 'target' => 'translated',
-                'type' => LocalText::$TYPE_MARKUP
+                'type' => LocalText::TYPE_MARKUP
             ]
         ];
 
@@ -258,7 +258,7 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareUserArray() {
-        $default = ['path' => new LocalText(['key' => 'value'], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText(['key' => 'value'], LocalText::TYPE_ARRAY)];
         $translation = ['path' => ['key' => 'translated value']];
 
         $expected = [
@@ -267,7 +267,7 @@ class TranslationPreparerTest extends TestCase {
                 'searchkey' => 'key',
                 'default' => 'value',
                 'target' => 'translated value',
-                'type' => LocalText::$TYPE_ARRAY
+                'type' => LocalText::TYPE_ARRAY
             ]
         ];
 
@@ -278,7 +278,7 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareUserArrayEmptyDefault() {
-        $default = ['path' => new LocalText([], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText([], LocalText::TYPE_ARRAY)];
         $translation = ['path' => ['key' => 'translated value']];
 
         $expected = [];
@@ -290,7 +290,7 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareUserArrayJs() {
-        $default = ['path' => new LocalText(['js' => ['key' => 'value']], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText(['js' => ['key' => 'value']], LocalText::TYPE_ARRAY)];
         $translation = ['path' => ['js' => ['key' => 'translated value']]];
 
         $expected = [
@@ -299,7 +299,7 @@ class TranslationPreparerTest extends TestCase {
                 'searchkey' => 'key',
                 'default' => 'value',
                 'target' => 'translated value',
-                'type' => LocalText::$TYPE_ARRAY
+                'type' => LocalText::TYPE_ARRAY
             ]
         ];
 
@@ -310,7 +310,7 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareUserArrayJsEmpty1() {
-        $default = ['path' => new LocalText(['js' => ['key' => 'value']], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText(['js' => ['key' => 'value']], LocalText::TYPE_ARRAY)];
         $translation = ['path' => ['js' => []]];
 
         $expected = [
@@ -319,7 +319,7 @@ class TranslationPreparerTest extends TestCase {
                 'searchkey' => 'key',
                 'default' => 'value',
                 'target' => '',
-                'type' => LocalText::$TYPE_ARRAY
+                'type' => LocalText::TYPE_ARRAY
             ]
         ];
 
@@ -330,7 +330,7 @@ class TranslationPreparerTest extends TestCase {
     }
 
     public function testPrepareUserArrayJsEmptyDefault() {
-        $default = ['path' => new LocalText(['js' => []], LocalText::$TYPE_ARRAY)];
+        $default = ['path' => new LocalText(['js' => []], LocalText::TYPE_ARRAY)];
         $translation = ['path' => ['js' => ['key' => 'translated value']]];
 
         $expected = [];
@@ -358,15 +358,15 @@ class TranslationPreparerTest extends TestCase {
     function testCreateEntryGetTranslation() {
         $translationController = new TranslationPreparer();
 
-        $localText = ['path' => new LocalText('stuff', LocalText::$TYPE_MARKUP)];
+        $localText = ['path' => new LocalText('stuff', LocalText::TYPE_MARKUP)];
         $result = $translationController->createEntryGetTranslation($localText, 'path');
         $this->assertEquals('stuff', $result);
 
-        $localText = ['path' => new LocalText(['key' => 'stuff'], LocalText::$TYPE_ARRAY)];
+        $localText = ['path' => new LocalText(['key' => 'stuff'], LocalText::TYPE_ARRAY)];
         $result = $translationController->createEntryGetTranslation($localText, 'path', 'key');
         $this->assertEquals('stuff', $result);
 
-        $localText = ['path' => new LocalText(['key' => ['jskey' => 'stuff']], LocalText::$TYPE_ARRAY)];
+        $localText = ['path' => new LocalText(['key' => ['jskey' => 'stuff']], LocalText::TYPE_ARRAY)];
         $result = $translationController->createEntryGetTranslation($localText, 'path', 'key', 'jskey');
         $this->assertEquals('stuff', $result);
     }

@@ -26,7 +26,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
              FROM App\Entity\RepositoryEntity repository
              WHERE repository.type = :type');
 
-        $query->setParameter('type', RepositoryEntity::$TYPE_CORE);
+        $query->setParameter('type', RepositoryEntity::TYPE_CORE);
 
         return $query->getSingleResult();
     }
@@ -62,7 +62,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
              WHERE repository.type = :type
              AND stats.language = :language');
 
-        $query->setParameter('type', RepositoryEntity::$TYPE_CORE);
+        $query->setParameter('type', RepositoryEntity::TYPE_CORE);
         $query->setParameter('language', $language);
 
         try {
@@ -71,7 +71,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
             return array(
                 'completionPercent' => 0,
                 'displayName' => 'DokuWiki',
-                'state' => RepositoryEntity::$STATE_ACTIVE,
+                'state' => RepositoryEntity::STATE_ACTIVE,
                 'englishReadonly' => true
             );
         }
@@ -93,9 +93,9 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
             '
         );
 
-        $query->setParameter('type', RepositoryEntity::$TYPE_CORE);
-        $query->setParameter('stateActive', RepositoryEntity::$STATE_ACTIVE);
-        $query->setParameter('stateInit', RepositoryEntity::$STATE_INITIALIZING);
+        $query->setParameter('type', RepositoryEntity::TYPE_CORE);
+        $query->setParameter('stateActive', RepositoryEntity::STATE_ACTIVE);
+        $query->setParameter('stateInit', RepositoryEntity::STATE_INITIALIZING);
         $query->setParameter('language', $language);
 
         return $query->getResult();
@@ -108,7 +108,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @throws NoResultException        If the query returned no result.
      */
     public function getCoreTranslation() {
-        return $this->getTranslation(RepositoryEntity::$TYPE_CORE, 'dokuwiki');
+        return $this->getTranslation(RepositoryEntity::TYPE_CORE, 'dokuwiki');
     }
 
     /**
@@ -203,7 +203,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
         $query->setParameter('type', $type);
         $query->setParameter('name', $name);
         $query->setParameter('key', $key);
-        $query->setParameter('state', RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);
+        $query->setParameter('state', RepositoryEntity::STATE_WAITING_FOR_APPROVAL);
         return $query->getSingleResult();
     }
 
@@ -227,8 +227,8 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
 
         $query->setParameter('timeToUpdate', time() - $maxAge);
         $query->setParameter('maxErrors', $maxErrors);
-        $query->setParameter('active', RepositoryEntity::$STATE_ACTIVE);
-        $query->setParameter('initializing', RepositoryEntity::$STATE_INITIALIZING);
+        $query->setParameter('active', RepositoryEntity::STATE_ACTIVE);
+        $query->setParameter('initializing', RepositoryEntity::STATE_INITIALIZING);
 
         $query->setMaxResults($maxResults);
         return $query->getResult();

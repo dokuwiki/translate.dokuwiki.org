@@ -47,16 +47,16 @@ class ShowStatsCommand extends Command {
 
         if(isset($name) && isset($type)) {
             $repositoryTypes = [
-                RepositoryEntity::$TYPE_CORE,
-                RepositoryEntity::$TYPE_PLUGIN,
-                RepositoryEntity::$TYPE_TEMPLATE
+                RepositoryEntity::TYPE_CORE,
+                RepositoryEntity::TYPE_PLUGIN,
+                RepositoryEntity::TYPE_TEMPLATE
             ];
             if (!in_array($type, $repositoryTypes)) {
                 $output->writeln(sprintf(
                     'Type must be %s, %s or %s',
-                    RepositoryEntity::$TYPE_CORE,
-                    RepositoryEntity::$TYPE_PLUGIN,
-                    RepositoryEntity::$TYPE_TEMPLATE
+                    RepositoryEntity::TYPE_CORE,
+                    RepositoryEntity::TYPE_PLUGIN,
+                    RepositoryEntity::TYPE_TEMPLATE
                 ));
                 return Command::FAILURE;
             }

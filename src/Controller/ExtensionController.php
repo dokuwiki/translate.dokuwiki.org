@@ -96,7 +96,7 @@ class ExtensionController extends AbstractController {
     private function addExtension(RepositoryEntity $repository, DokuWikiRepositoryAPI $api, MailerInterface $mailer) {
         $api->mergeExtensionInfo($repository);
         $repository->setLastUpdate(0);
-        $repository->setState(RepositoryEntity::$STATE_WAITING_FOR_APPROVAL);
+        $repository->setState(RepositoryEntity::STATE_WAITING_FOR_APPROVAL);
         $repository->setActivationKey($this->generateActivationKey($repository));
 
         $this->entityManager->persist($repository);
@@ -132,7 +132,7 @@ class ExtensionController extends AbstractController {
         try {
             $repository = $this->repositoryRepository->getRepositoryByNameAndActivationKey($type, $name, $key);
 
-            $repository->setState(RepositoryEntity::$STATE_INITIALIZING);
+            $repository->setState(RepositoryEntity::STATE_INITIALIZING);
             $repository->setActivationKey('');
             $this->entityManager->flush();
 
@@ -194,7 +194,7 @@ class ExtensionController extends AbstractController {
         }
 
         $data['urlSent'] = false;
-        if($repository->getState() !== RepositoryEntity::$STATE_WAITING_FOR_APPROVAL) {
+        if($repository->getState() !== RepositoryEntity::STATE_WAITING_FOR_APPROVAL) {
             $options['type'] = $type;
             $options['validation_groups'] = array('Default', $type);
             $form = $this->createForm(RepositoryRequestEditType::class, $repository, $options);

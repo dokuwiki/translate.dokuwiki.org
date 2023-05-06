@@ -78,11 +78,11 @@ class SetupCommand extends Command {
             $repository->setAuthor('');
             $repository->setDescription('');
             $repository->setTags('');
-            $repository->setType(RepositoryEntity::$TYPE_CORE);
+            $repository->setType(RepositoryEntity::TYPE_CORE);
             $repository->setEmail('');
             $repository->setPopularity(0);
             $repository->setDisplayName('DokuWiki');
-            $repository->setState(RepositoryEntity::$STATE_ACTIVE);
+            $repository->setState(RepositoryEntity::STATE_ACTIVE);
             $repository->setErrorMsg('');
             $repository->setErrorCount(0);
             $repository->setActivationKey('');

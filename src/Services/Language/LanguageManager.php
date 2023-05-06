@@ -67,12 +67,12 @@ class LanguageManager {
             if ($extension === '.php') {
                 $translation = LanguageFileParser::parseLangPHP("$languageFolder/$file", $prefix);
                 $language["$prefix/$file"] =
-                        new LocalText($translation->getLang(), LocalText::$TYPE_ARRAY, $translation->getAuthor(), $translation->getHeader());
+                        new LocalText($translation->getLang(), LocalText::TYPE_ARRAY, $translation->getAuthor(), $translation->getHeader());
                 continue;
             }
 
             if ($extension === '.txt') {
-                $language["$prefix/$file"] = new LocalText(file_get_contents("$languageFolder/$file"), LocalText::$TYPE_MARKUP);
+                $language["$prefix/$file"] = new LocalText(file_get_contents("$languageFolder/$file"), LocalText::TYPE_MARKUP);
             }
 
         }

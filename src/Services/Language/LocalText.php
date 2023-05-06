@@ -7,11 +7,11 @@ namespace App\Services\Language;
  */
 class LocalText {
 
-    public static $TYPE_ARRAY = 'array';
-    public static $TYPE_MARKUP = 'markup';
+    public const TYPE_ARRAY = 'array';
+    public const TYPE_MARKUP = 'markup';
 
     /**
-     * @var string see {@see LocalText::$TYPE_ARRAY} and {@see LocalText::$TYPE_MARKUP}
+     * @var string see {@see LocalText::TYPE_ARRAY} and {@see LocalText::TYPE_MARKUP}
      */
     private $type;
 
@@ -32,7 +32,7 @@ class LocalText {
 
     /**
      * @param array|string $content translated text, on markup its string everything else array
-     * @param string $type see {@see LocalText::$TYPE_ARRAY} and {@see LocalText::$TYPE_MARKUP}
+     * @param string $type see {@see LocalText::TYPE_ARRAY} and {@see LocalText::TYPE_MARKUP}
      * @param AuthorList|null $authors List of authors. Key set are the author names, values may the email addresses.
      *                            Always empty on markup mode.
      * @param string $header the other lines than the list of authors
@@ -89,7 +89,7 @@ class LocalText {
      * @throws LanguageFileIsEmptyException
      */
     public function render() {
-        if ($this->type === LocalText::$TYPE_MARKUP) {
+        if ($this->type === LocalText::TYPE_MARKUP) {
             return $this->getContent();
         }
 

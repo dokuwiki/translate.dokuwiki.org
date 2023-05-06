@@ -85,7 +85,7 @@ class UserTranslationValidator {
                 continue;
             }
 
-            if ($translation->getType() !== LocalText::$TYPE_ARRAY) {
+            if ($translation->getType() !== LocalText::TYPE_ARRAY) {
                 $newTranslation[$path] = $this->validateMarkup($path);
                 continue;
             }
@@ -103,7 +103,7 @@ class UserTranslationValidator {
      */
     private function validateMarkup($path) {
         $text = $this->fixLineEndings($this->userTranslation[$path]);
-        return new LocalText($text, LocalText::$TYPE_MARKUP);
+        return new LocalText($text, LocalText::TYPE_MARKUP);
     }
 
     /**
@@ -162,7 +162,7 @@ class UserTranslationValidator {
             $header = $prevTranslation->getHeader();
         }
 
-        return new LocalText($newContent, LocalText::$TYPE_ARRAY, $authors, $header);
+        return new LocalText($newContent, LocalText::TYPE_ARRAY, $authors, $header);
     }
 
     /**

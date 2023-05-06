@@ -44,12 +44,12 @@ class LanguageFileParser {
      */
     protected $trimmedEnding;
 
-    public static $MODE_PHP = 'php';
-    public static $MODE_COMMENT_SINGLE_LINE = 'comment single line';
-    public static $MODE_COMMENT_MULTI_LINE = 'comment multi line';
-    public static $MODE_LANG = 'lang';
-    public static $MODE_PHP_END = 'php end';
-    public static $MODE_PHP_UNKNOWN = 'php unknown';
+    public const MODE_PHP = 'php';
+    public const MODE_COMMENT_SINGLE_LINE = 'comment single line';
+    public const MODE_COMMENT_MULTI_LINE = 'comment multi line';
+    public const MODE_LANG = 'lang';
+    public const MODE_PHP_END = 'php end';
+    public const MODE_PHP_UNKNOWN = 'php unknown';
 
     public function __construct($prefix) {
         $this->prefix = $prefix;
@@ -106,17 +106,17 @@ class LanguageFileParser {
 
         $this->goToStart();
 
-        $mode = LanguageFileParser::$MODE_PHP;
+        $mode = LanguageFileParser::MODE_PHP;
         while (strlen($this->content) !== 0) {
-            if ($mode === LanguageFileParser::$MODE_PHP) {
+            if ($mode === LanguageFileParser::MODE_PHP) {
                 $mode = $this->determineNextMode();
-            } elseif ($mode === LanguageFileParser::$MODE_COMMENT_MULTI_LINE) {
+            } elseif ($mode === LanguageFileParser::MODE_COMMENT_MULTI_LINE) {
                 $mode = $this->processMultiLineComment();
-            } elseif ($mode === LanguageFileParser::$MODE_COMMENT_SINGLE_LINE) {
+            } elseif ($mode === LanguageFileParser::MODE_COMMENT_SINGLE_LINE) {
                 $mode = $this->processSingleLineComment();
-            } elseif ($mode === LanguageFileParser::$MODE_LANG) {
+            } elseif ($mode === LanguageFileParser::MODE_LANG) {
                 $mode = $this->processLang();
-            } elseif ($mode === LanguageFileParser::$MODE_PHP_END) {
+            } elseif ($mode === LanguageFileParser::MODE_PHP_END) {
                 $this->content = trim($this->content);
                 if (!empty($this->content)) {
                     throw $this->createException("Nothing allowed behind ?>");
@@ -132,7 +132,7 @@ class LanguageFileParser {
     /**
      * Process a content line starting with $lang[
      *
-     * @return string LanguageFileParser::$MODE_PHP
+     * @return string LanguageFileParser::MODE_PHP
      *
      * @throws LanguageParseException
      */
@@ -166,7 +166,7 @@ class LanguageFileParser {
         } else {
             $this->lang[$key] = $value;
         }
-        return LanguageFileParser::$MODE_PHP;
+        return LanguageFileParser::MODE_PHP;
     }
 
     /**
@@ -237,11 +237,11 @@ class LanguageFileParser {
         $endOfLine = strpos($this->content, "\n");
         if ($endOfLine === false) {
             $this->content = '';
-            return LanguageFileParser::$MODE_PHP;
+            return LanguageFileParser::MODE_PHP;
         }
         $this->content = substr($this->content, $endOfLine+1);
 
-        return LanguageFileParser::$MODE_PHP;
+        return LanguageFileParser::MODE_PHP;
     }
 
     /**
@@ -308,7 +308,7 @@ class LanguageFileParser {
         }
 
         $this->content = substr($this->content, $end + 2);
-        return LanguageFileParser::$MODE_PHP;
+        return LanguageFileParser::MODE_PHP;
     }
 
     /**
@@ -320,11 +320,11 @@ class LanguageFileParser {
         $this->content = ltrim($this->content);
 
         $modes = array(
-            '/*' => LanguageFileParser::$MODE_COMMENT_MULTI_LINE,
-            '//' => LanguageFileParser::$MODE_COMMENT_SINGLE_LINE,
-            '#' => LanguageFileParser::$MODE_COMMENT_SINGLE_LINE,
-            '$lang[' => LanguageFileParser::$MODE_LANG,
-            '?>' => LanguageFileParser::$MODE_PHP_END
+            '/*' => LanguageFileParser::MODE_COMMENT_MULTI_LINE,
+            '//' => LanguageFileParser::MODE_COMMENT_SINGLE_LINE,
+            '#' => LanguageFileParser::MODE_COMMENT_SINGLE_LINE,
+            '$lang[' => LanguageFileParser::MODE_LANG,
+            '?>' => LanguageFileParser::MODE_PHP_END
         );
 
         foreach ($modes as $startsWith => $result) {
@@ -334,7 +334,7 @@ class LanguageFileParser {
             }
         }
 
-        return LanguageFileParser::$MODE_PHP_UNKNOWN;
+        return LanguageFileParser::MODE_PHP_UNKNOWN;
     }
 
     /**

@@ -9,9 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class TranslationUpdateEntity {
 
-    public static $STATE_UNDONE = 'undone';
-    public static $STATE_SENT = 'send';
-    public static $STATE_FAILED = 'failed';
+    public const STATE_UNDONE = 'undone';
+    public const STATE_SENT = 'send';
+    public const STATE_FAILED = 'failed';
 
     /**
      * @ORM\Id

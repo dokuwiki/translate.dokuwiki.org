@@ -65,7 +65,7 @@ class PlainBehavior implements RepositoryBehavior {
      * @throws GitPullException
      */
     public function pull(GitRepository $git, RepositoryEntity $repository) {
-        return $git->pull('origin', $repository->getBranch()) === GitRepository::$PULL_CHANGED;
+        return $git->pull('origin', $repository->getBranch()) === GitRepository::PULL_CHANGED;
     }
 
     public function isFunctional() {
