@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\LanguageStatsEntity;
+use App\Entity\TranslationUpdateEntity;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
@@ -77,6 +78,11 @@ class DeleteRepositoryCommand extends Command
 
         $this->entityManager->getRepository(LanguageStatsEntity::class)
             ->clearStats($repo);
+
+        //the directory deleted below contains also the corresponding /updates/<id>.update files
+        $this->entityManager->getRepository(TranslationUpdateEntity::class)
+            ->clearUpdates($repo);
+
         $this->entityManager->remove($repo);
         $this->entityManager->flush();
         $directory = $this->parameterBag->get('app.dataDir');

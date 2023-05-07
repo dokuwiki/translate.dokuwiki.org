@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\RepositoryEntity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use App\Entity\TranslationUpdateEntity;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,6 +25,16 @@ class TranslationUpdateEntityRepository extends ServiceEntityRepository {
         );
         $query->setParameter('state', TranslationUpdateEntity::STATE_UNDONE);
         return $query->getResult();
+    }
+
+    public function clearUpdates(RepositoryEntity $repository)
+    {
+        $query = $this->getEntityManager()->createQuery(/** @lang DQL */'
+            DELETE FROM App\Entity\TranslationUpdateEntity updates
+            WHERE updates.repository = :repository
+        ');
+        $query->setParameter('repository', $repository);
+        $query->execute();
     }
 
 }
