@@ -1,6 +1,6 @@
 {
-    "name": "symfony/framework-standard-edition",
-    "description": "The \"Symfony Standard Edition\" distribution",
+    "name": "dokuwiki/translationtool",
+    "description": "Translation Tool for DokuWiki and its plugins and templates",
     "license": "MIT",
     "autoload": {
         "psr-4": {
@@ -14,7 +14,7 @@
         }
     },
     "require": {
-        "php": "^7.2.5",
+        "php": "^7.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
