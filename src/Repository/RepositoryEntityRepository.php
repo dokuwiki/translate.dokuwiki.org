@@ -190,8 +190,8 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @throws NoResultException        If the query returned no result.
      */
     private function getRepositoryByNameAndKey($type, $name, $key, $isActivation = true) {
-        $qb = $this->createQueryBuilder('r')
-            ->where('r.type = :type')
+        $qb = $this->createQueryBuilder('repository')
+            ->where('repository.type = :type')
             ->andWhere('repository.name = :name')
             ->andWhere('repository.activationKey = :key')
 
