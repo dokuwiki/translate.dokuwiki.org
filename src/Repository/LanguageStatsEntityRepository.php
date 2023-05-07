@@ -14,7 +14,7 @@ class LanguageStatsEntityRepository extends ServiceEntityRepository {
     }
 
     public function clearStats(RepositoryEntity $repository) {
-        $query = $this->getEntityManager()->createQuery('
+        $query = $this->getEntityManager()->createQuery(/** @lang DQL */'
             DELETE FROM App\Entity\LanguageStatsEntity langStats
             WHERE langStats.repository = :repository
         ');

@@ -21,7 +21,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @throws NoResultException        If the query returned no result.
      */
     public function getCoreRepository() {
-        $query = $this->getEntityManager()->createQuery(
+        $query = $this->getEntityManager()->createQuery(/** @lang DQL */
             'SELECT repository
              FROM App\Entity\RepositoryEntity repository
              WHERE repository.type = :type');
@@ -55,7 +55,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @throws NonUniqueResultException If the query result is not unique.
      */
     public function getCoreRepositoryInformation($language) {
-        $query = $this->getEntityManager()->createQuery(
+        $query = $this->getEntityManager()->createQuery(/** @lang DQL */
             'SELECT stats.completionPercent, repository.displayName, repository.state, repository.englishReadonly
              FROM App\Entity\LanguageStatsEntity stats
              JOIN stats.repository repository
@@ -68,12 +68,12 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
         try {
             return $query->getSingleResult();
         } catch (NoResultException $e) {
-            return array(
+            return [
                 'completionPercent' => 0,
                 'displayName' => 'DokuWiki',
                 'state' => RepositoryEntity::STATE_ACTIVE,
                 'englishReadonly' => true
-            );
+            ];
         }
     }
 
@@ -82,7 +82,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @return array
      */
     public function getExtensionRepositoryInformation($language) {
-        $query = $this->getEntityManager()->createQuery('
+        $query = $this->getEntityManager()->createQuery(/** @lang DQL */'
             SELECT stats.completionPercent, repository.name, repository.type, repository.displayName, repository.state, repository.englishReadonly
             FROM App\Entity\RepositoryEntity repository
             LEFT OUTER JOIN repository.translations stats
@@ -132,7 +132,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @throws NoResultException        If the query returned no result.
      */
     private function getTranslation($type, $name) {
-        $query = $this->getEntityManager()->createQuery('
+        $query = $this->getEntityManager()->createQuery(/** @lang DQL */'
         SELECT repository, translations, lang
             FROM App\Entity\RepositoryEntity repository
             LEFT OUTER JOIN repository.translations translations
@@ -178,32 +178,36 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
     }
 
     /**
-     * Returns repository for matching edit or activation key
+     * Returns repository for matching edit or activation key if in the correct state
      *
      * @param string $type
      * @param string $name
      * @param string $key
-     * @param bool $activation
+     * @param bool $isActivation
      * @return mixed
      *
      * @throws NonUniqueResultException If the query result is not unique.
      * @throws NoResultException        If the query returned no result.
      */
-    private function getRepositoryByNameAndKey($type, $name, $key, $activation = true) {
-        $operator = ($activation ? '=' : '<>');
+    private function getRepositoryByNameAndKey($type, $name, $key, $isActivation = true) {
+        $qb = $this->createQueryBuilder('r')
+            ->where('r.type = :type')
+            ->andWhere('repository.name = :name')
+            ->andWhere('repository.activationKey = :key')
 
-        $query = $this->getEntityManager()->createQuery(
-            "SELECT repository
-             FROM App\Entity\RepositoryEntity repository
-             WHERE repository.type = :type
-             AND repository.name = :name
-             AND repository.activationKey = :key
-             AND repository.state $operator :state "
-        );
-        $query->setParameter('type', $type);
-        $query->setParameter('name', $name);
-        $query->setParameter('key', $key);
-        $query->setParameter('state', RepositoryEntity::STATE_WAITING_FOR_APPROVAL);
+            ->setParameter('type', $type)
+            ->setParameter('name', $name)
+            ->setParameter('key', $key)
+            ->setParameter('state', RepositoryEntity::STATE_WAITING_FOR_APPROVAL);
+
+        //activation key & waiting, or edit key & not waiting
+        if($isActivation) {
+            $qb->andWhere('repository.state = :state');
+        } else {
+            $qb->andWhere('repository.state <> :state');
+        }
+
+        $query = $qb->getQuery();
         return $query->getSingleResult();
     }
 
@@ -216,7 +220,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @return RepositoryEntity[]
      */
     public function getRepositoriesToUpdate($maxAge, $maxResults, $maxErrors) {
-        $query = $this->getEntityManager()->createQuery(
+        $query = $this->getEntityManager()->createQuery(/** @lang DQL */
             'SELECT repository
              FROM App\Entity\RepositoryEntity repository
              WHERE repository.lastUpdate < :timeToUpdate

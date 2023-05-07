@@ -34,7 +34,7 @@ class LanguageNameEntityRepository extends ServiceEntityRepository {
      * @return array
      */
     public function getAvailableLanguages() {
-        return $this->getEntityManager()->createQuery('
+        return $this->getEntityManager()->createQuery(/** @lang DQL */'
             SELECT languageName
             FROM App\Entity\LanguageNameEntity languageName
             ORDER BY languageName.name ASC

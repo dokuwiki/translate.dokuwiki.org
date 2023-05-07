@@ -16,7 +16,7 @@ class TranslationUpdateEntityRepository extends ServiceEntityRepository {
      * @return TranslationUpdateEntity[]
      */
     public function getPendingTranslationUpdates() {
-        $query = $this->getEntityManager()->createQuery(
+        $query = $this->getEntityManager()->createQuery(/** @lang DQL */
             'SELECT job
              FROM App\Entity\TranslationUpdateEntity job
              JOIN job.repository repository
