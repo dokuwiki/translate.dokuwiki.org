@@ -52,6 +52,11 @@ class PlainBehavior implements RepositoryBehavior {
         return $repository->getUrl();
     }
 
+    public function removeRemoteFork(GitRepository $git): void
+    {
+        //no fork to delete
+    }
+
     /**
      * Update repository from remote
      *

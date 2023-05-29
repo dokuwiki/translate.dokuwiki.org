@@ -552,6 +552,19 @@ abstract class Repository {
     }
 
     /**
+     * TODO combine with deleteCloneDirectory??
+     * @return void
+     *
+     * @throws GitException
+     */
+    public function removeFork() {
+        $this->openRepository();
+        if ($this->git) {
+            $this->behavior->removeRemoteFork($this->git);
+        }
+    }
+
+    /**
      * Check if folder with git repository checkout exists
      *
      * @return bool

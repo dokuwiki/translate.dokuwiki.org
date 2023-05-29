@@ -73,6 +73,16 @@ class GitHubBehavior implements RepositoryBehavior {
     }
 
     /**
+     * @throws GitHubServiceException
+     * @throws GitNoRemoteException
+     */
+    public function removeRemoteFork(GitRepository $git) : void
+    {
+        $remoteUrl = $git->getRemoteUrl();
+        $this->api->deleteFork($remoteUrl);
+    }
+
+    /**
      * Update from original and push to fork of translate tool
      *
      * @param GitRepository $git

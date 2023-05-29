@@ -4,6 +4,8 @@ namespace App\Command;
 
 use App\Entity\LanguageStatsEntity;
 use App\Entity\TranslationUpdateEntity;
+use App\Services\Git\GitException;
+use App\Services\Repository\RepositoryManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
@@ -27,10 +29,12 @@ class DeleteRepositoryCommand extends Command
 
     protected static $defaultName = 'dokuwiki:deleteRepo';
     protected static $defaultDescription = 'Delete a repository';
+    private RepositoryManager $repositoryManager;
 
-    public function __construct(EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag) {
+    public function __construct(EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag, RepositoryManager $repositoryManager) {
         $this->entityManager = $entityManager;
         $this->parameterBag = $parameterBag;
+        $this->repositoryManager = $repositoryManager;
 
         parent::__construct();
     }
@@ -48,6 +52,7 @@ class DeleteRepositoryCommand extends Command
      *
      * @throws OptimisticLockException
      * @throws ORMException
+     * @throws GitException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -82,6 +87,8 @@ class DeleteRepositoryCommand extends Command
         //the directory deleted below contains also the corresponding /updates/<id>.update files
         $this->entityManager->getRepository(TranslationUpdateEntity::class)
             ->clearUpdates($repo);
+
+        $this->repositoryManager->getRepository($repo)->removeFork();
 
         $this->entityManager->remove($repo);
         $this->entityManager->flush();

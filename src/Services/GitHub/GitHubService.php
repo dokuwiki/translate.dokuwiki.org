@@ -56,6 +56,20 @@ class GitHubService {
     }
 
     /**
+     * @param string $remoteUrl
+     *
+     * @throws GitHubServiceException
+     */
+    public function deleteFork(string $remoteUrl) {
+         [$user, $repository] = $this->getUsernameAndRepositoryFromURL($remoteUrl);
+        try {
+            $result = $this->client->api('repo')->remove($user, $repository);
+        } catch (RuntimeException $e) {
+            throw new GitHubServiceException($e->getMessage()." $user/$repository", 0, $e);
+        }
+    }
+
+    /**
      * @param $url
      * @return array
      *

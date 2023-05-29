@@ -59,6 +59,11 @@ interface RepositoryBehavior {
     public function createOriginURL(RepositoryEntity $repository);
 
     /**
+     * @param GitRepository $git
+     */
+    public function removeRemoteFork(GitRepository $git) : void;
+
+    /**
      * Update repository from remote
      *
      * @param GitRepository $git

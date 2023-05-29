@@ -111,6 +111,24 @@ class GitLabService
         return str_replace('gitlab.com', $this->gitLabUrl, $url);
     }
 
+    /**
+     * @param string $remoteUrl
+     *
+     * @throws GitLabServiceException
+     */
+    public function deleteFork(string $remoteUrl) : void
+    {
+         [$user, $repository] = $this->getUsernameAndRepositoryFromURL($remoteUrl);
+        try {
+            $this->client->projects()->remove("$user/$repository");
+
+            $fs = new \Symfony\Component\Filesystem\Filesystem();
+            $fs->remove($this->projectIdFolder);
+        } catch (RuntimeException $e) {
+            throw new GitLabServiceException($e->getMessage()." $user/$repository", 0, $e);
+        }
+    }
+
 
     /**
      * @param string $patchBranch name of branch with language update
