@@ -172,6 +172,7 @@ abstract class Repository {
         }
 
         //no repository exists yet
+        $this->logger->debug('No existing repo, (if applicable fork) and clone. ' . $this->entity->getUrl());
         try {
             $remote = $this->behavior->createOriginURL($this->entity);
             $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getCloneDirectoryPath());
@@ -442,7 +443,7 @@ abstract class Repository {
      * @throws MissingArgumentException
      */
     private function createAndSendPatchWithException(TranslationUpdateEntity $update, $tmpDir) {
-        $this->logger->debug('send patch ' . $this->getType() . ' ' . $this->getName() . ' langupdate' . $update->getId());
+        $this->logger->debug('send patch ' . $this->getType() . ' ' . $this->getName() . ' language update ' . $update->getId());
         $this->openRepository();
 
         // clone the local temporary git repository
