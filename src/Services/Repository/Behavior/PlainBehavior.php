@@ -79,7 +79,8 @@ class PlainBehavior implements RepositoryBehavior {
     public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language) {
         return array(
             'count' => 0,
-            'listURL' => ''
         );
+            'listURL' => '',
+            'title' => ''
     }
 }

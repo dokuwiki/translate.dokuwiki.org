@@ -55,7 +55,7 @@
                             are <b>{{ openPR.count }} translations</b>
                         {% endif %}
                         not merged for the {{ targetLanguage.name }} translation of the {{ repository.displayName }}.
-                        You can find open submissions at: <a href="{{ openPR.listURL }}">GitHub</a>.
+                        You can find open submissions at: <a href="{{ openPR.listURL }}">{{ openPR.title }}</a>.
                     </div>
                 {% endif %}
 

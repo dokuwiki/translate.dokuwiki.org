@@ -1,0 +1,6 @@
+zeichen32_git_lab_api:
+  clients:
+    firstclient:
+      token: yourtoken
+      url: https://gitlab.org/api/v4/
+      auth_method: http_token

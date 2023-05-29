@@ -113,10 +113,11 @@ class GitHubService {
      * @throws GitHubServiceException
      */
     public function getOpenPRListInfo($url, $languageCode) {
-        list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
+        [$user, $repository] = $this->getUsernameAndRepositoryFromURL($url);
 
         $info = [
             'listURL' => '',
+            'title' => '',
             'count' => 0
         ];
 
@@ -126,6 +127,7 @@ class GitHubService {
 
             $info = [
                 'listURL' => 'https://github.com/'.$user.'/'.$repository.'/pulls?q=is%3Apr+is%3Aopen+Translation+update+%28'.$languageCode.'%29',
+                'title' => 'GitHub',
                 'count' => (int) $results['total_count']
             ];
         } catch (Exception $e) {

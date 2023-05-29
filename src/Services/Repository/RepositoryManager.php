@@ -1,6 +1,9 @@
 <?php
 namespace App\Services\Repository;
 
+use App\Services\GitLab\GitLabService;
+use App\Services\GitLab\GitLabStatusService;
+use App\Services\Repository\Behavior\GitLabBehavior;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\RepositoryEntity;
@@ -20,13 +23,13 @@ class RepositoryManager {
      * @var string Path to the data folder. Configured in .env/.env.local/etc files
      */
     private string $dataFolder;
+    private RepositoryStats $repositoryStats;
+    private GitService $gitService;
+    private MailService $mailService;
     /**
      * @var EntityManager
      */
     private EntityManagerInterface $entityManager;
-    private RepositoryStats $repositoryStats;
-    private GitService $gitService;
-    private MailService $mailService;
     private RepositoryEntityRepository $repositoryRepository;
     private GitHubService $gitHubService;
     private GitHubStatusService $gitHubStatus;
@@ -34,24 +37,31 @@ class RepositoryManager {
     private int $maxErrors;
     private int $repositoryAgeToUpdate;
     private int $maxRepositoriesToUpdatePerRun;
+    private GitLabService $gitLabService;
+    private GitLabStatusService $gitLabStatus;
 
-    function __construct($dataFolder, EntityManagerInterface $entityManager, $repositoryAgeToUpdate,
-                $maxRepositoriesToUpdatePerRun, RepositoryStats $repositoryStats,
-                GitService $gitService, MailService $mailService, GitHubService $gitHubService,
-                LoggerInterface $logger, $maxErrors, GitHubStatusService $gitHubStatus) {
+
+    function __construct($dataFolder, $repositoryAgeToUpdate, $maxErrors, $maxRepositoriesToUpdatePerRun,
+                         EntityManagerInterface $entityManager, RepositoryStats $repositoryStats,
+                         GitService $gitService, MailService $mailService, LoggerInterface $logger,
+                         GitHubService $gitHubService, GitHubStatusService $gitHubStatus,
+                         GitLabService $gitLabService, GitLabStatusService $gitLabStatus
+                ) {
 
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
         $this->repositoryAgeToUpdate = $repositoryAgeToUpdate;
+        $this->maxErrors = $maxErrors;
         $this->maxRepositoriesToUpdatePerRun = $maxRepositoriesToUpdatePerRun;
         $this->repositoryStats = $repositoryStats;
         $this->gitService = $gitService;
         $this->mailService = $mailService;
-        $this->repositoryRepository = $entityManager->getRepository(RepositoryEntity::class);
-        $this->gitHubService = $gitHubService;
+        $this->repositoryRepository = $entityManager->getRepository(RepositoryEntity::class);;
         $this->logger = $logger;
-        $this->maxErrors = $maxErrors;
+        $this->gitHubService = $gitHubService;
         $this->gitHubStatus = $gitHubStatus;
+        $this->gitLabService = $gitLabService;
+        $this->gitLabStatus = $gitLabStatus;
     }
 
     /**
@@ -109,6 +119,12 @@ class RepositoryManager {
         $url = $repository->getUrl();
         if (preg_match('/^(git:\/\/|https:\/\/|git@)github\.com/i', $url)) {
             return new GitHubBehavior($this->gitHubService, $this->gitHubStatus);
+        }
+        if (preg_match('/^(git:\/\/|https:\/\/|git@)gitlab\.com/i', $url)) {
+            //build manually as Repository is not yet available..
+            $repoFolder = $this->dataFolder . '/gitlab_projectids/' . $repository->getType() . '/' . $repository->getName() . '/';
+            $this->gitLabService->setProjectIdFolder($repoFolder);
+            return new GitLabBehavior($this->gitLabService, $this->gitLabStatus);
         }
         return new PlainBehavior($this->mailService);
     }

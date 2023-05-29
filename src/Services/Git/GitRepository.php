@@ -161,7 +161,7 @@ class GitRepository {
         if (!file_exists($config)) throw new GitNoRemoteException('Repo has no config', $this->path);
 
         $content = file_get_contents($config);
-        if (!preg_match('/url = (git@\S*.?github.com\S*)/i', $content, $matches)) {
+        if (!preg_match('/url = (git@\S*.?(?:github|gitlab).com\S*)/i', $content, $matches)) {
             throw new GitNoRemoteException('Repo has no remote configured', $this->path);
         }
 

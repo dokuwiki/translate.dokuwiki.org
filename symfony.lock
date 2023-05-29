@@ -291,5 +291,8 @@
     },
     "twig/extra-bundle": {
         "version": "v3.5.1"
+    },
+    "zeichen32/gitlabapibundle": {
+        "version": "v6.0.2"
     }
 }

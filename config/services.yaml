@@ -18,6 +18,8 @@ parameters:
     app.commandTimeout: '%env(COMMAND_TIMEOUT)%'
     app.githubApiToken: '%env(GITHUB_API_TOKEN)%'
     app.githubUrl: '%env(GITHUB_URL)%'
+    app.gitlabApiToken: '%env(GITLAB_API_TOKEN)%'
+    app.gitlabUrl: '%env(GITLAB_URL)%'
     app.featureImportExport: '%env(FEATURE_IMPORT_EXPORT_BY_USER)%'
     app.featureAddTranslation: '%env(FEATURE_ADD_TRANSLATION_BY_USER)%'
 
@@ -80,6 +82,11 @@ services:
             $dataFolder: '%app.dataDir%'
             $gitHubUrl: '%app.githubUrl%'
 
+    App\Services\GitLab\GitLabService:
+        arguments:
+            $gitLabApiToken: '%app.gitlabApiToken%'
+            $dataFolder: '%app.dataDir%'
+            $gitLabUrl: '%app.gitlabUrl%'
 
     # example of adding aliases, if one does not exist
     # Symfony\Component\Security\Guard\GuardAuthenticatorHandler: '@security.authentication.guard_handler'
