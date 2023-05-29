@@ -27,7 +27,6 @@ interface RepositoryBehavior {
      * @param GitRepository $tempGit
      * @param TranslationUpdateEntity $update
      * @param GitRepository $originalGit
-     * @return mixed
      *
      * Plain:
      * @throws GitCreatePatchException
@@ -43,7 +42,7 @@ interface RepositoryBehavior {
      * @throws GitPushException
      * @throws MissingArgumentException
      */
-    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit);
+    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) : void;
 
     /**
      * Return url of 'origin' repository
@@ -56,7 +55,7 @@ interface RepositoryBehavior {
      * @throws GitHubForkException
      * @throws GitHubServiceException
      */
-    public function createOriginURL(RepositoryEntity $repository);
+    public function createOriginURL(RepositoryEntity $repository) : string;
 
     /**
      * @param GitRepository $git
@@ -70,15 +69,15 @@ interface RepositoryBehavior {
      * @param RepositoryEntity $repository
      * @return bool true if the repository is changed
      */
-    public function pull(GitRepository $git, RepositoryEntity $repository);
+    public function pull(GitRepository $git, RepositoryEntity $repository) : bool;
 
 
     /**
      * Check if remote repository is functional
      *
-     * @return mixed
+     * @return bool
      */
-    public function isFunctional();
+    public function isFunctional() : bool;
 
     /**
      * Get information about the open pull requests i.e. url and count
@@ -87,5 +86,5 @@ interface RepositoryBehavior {
      * @param LanguageNameEntity $language
      * @return array
      */
-    public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language);
+    public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language) : array;
 }

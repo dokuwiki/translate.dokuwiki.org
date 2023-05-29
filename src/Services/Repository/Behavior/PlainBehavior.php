@@ -30,7 +30,8 @@ class PlainBehavior implements RepositoryBehavior {
      * @throws GitCreatePatchException
      * @throws TransportExceptionInterface
      */
-    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) {
+    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit): void
+    {
         $patch = $tempGit->createPatch();
 
         $this->mailService->sendPatchEmail(
@@ -48,7 +49,8 @@ class PlainBehavior implements RepositoryBehavior {
      * @param RepositoryEntity $repository
      * @return string
      */
-    public function createOriginURL(RepositoryEntity $repository) {
+    public function createOriginURL(RepositoryEntity $repository): string
+    {
         return $repository->getUrl();
     }
 
@@ -66,11 +68,13 @@ class PlainBehavior implements RepositoryBehavior {
      *
      * @throws GitPullException
      */
-    public function pull(GitRepository $git, RepositoryEntity $repository) {
+    public function pull(GitRepository $git, RepositoryEntity $repository): bool
+    {
         return $git->pull('origin', $repository->getBranch()) === GitRepository::PULL_CHANGED;
     }
 
-    public function isFunctional() {
+    public function isFunctional(): bool
+    {
         return true;
     }
 
@@ -81,11 +85,12 @@ class PlainBehavior implements RepositoryBehavior {
      * @param LanguageNameEntity $language
      * @return array
      */
-    public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language) {
-        return array(
+    public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language): array
+    {
+        return [
             'count' => 0,
-        );
             'listURL' => '',
             'title' => ''
+        ];
     }
 }

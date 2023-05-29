@@ -22,11 +22,11 @@ use App\Services\GitHub\GitHubStatusService;
 class GitHubBehavior implements RepositoryBehavior {
 
     private GitHubService $api;
-    private GitHubStatusService $gitHubService;
+    private GitHubStatusService $gitHubStatus;
 
     public function __construct(GitHubService $api, GitHubStatusService $gitHubStatus) {
         $this->api = $api;
-        $this->gitHubService = $gitHubStatus;
+        $this->gitHubStatus = $gitHubStatus;
     }
 
     /**
@@ -34,7 +34,7 @@ class GitHubBehavior implements RepositoryBehavior {
      *
      * @param GitRepository $tempGit temporary local git repository
      * @param TranslationUpdateEntity $update
-     * @param GitRepository $originalGit
+     * @param GitRepository $originalGit  the forked (or otherwise original) repository
      *
      * @throws GitHubCreatePullRequestException
      * @throws GitHubServiceException
@@ -45,7 +45,8 @@ class GitHubBehavior implements RepositoryBehavior {
      * @throws GitPushException
      * @throws MissingArgumentException
      */
-    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) {
+    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit): void
+    {
 
         $remoteUrl = $originalGit->getRemoteUrl();
         $tempGit->remoteAdd('github', $remoteUrl);
@@ -68,7 +69,8 @@ class GitHubBehavior implements RepositoryBehavior {
      * @throws GitHubForkException
      * @throws GitHubServiceException
      */
-    public function createOriginURL(RepositoryEntity $repository) {
+    public function createOriginURL(RepositoryEntity $repository): string
+    {
         return $this->api->createFork($repository->getUrl());
     }
 
@@ -92,7 +94,8 @@ class GitHubBehavior implements RepositoryBehavior {
      * @throws GitPullException
      * @throws GitPushException
      */
-    public function pull(GitRepository $git, RepositoryEntity $repository) {
+    public function pull(GitRepository $git, RepositoryEntity $repository): bool
+    {
         $changed = $git->pull($repository->getUrl(), $repository->getBranch()) === GitRepository::PULL_CHANGED;
         $git->push('origin', $repository->getBranch());
         return $changed;
@@ -104,8 +107,9 @@ class GitHubBehavior implements RepositoryBehavior {
      *
      * @return bool
      */
-    public function isFunctional() {
-        return $this->gitHubService->isFunctional();
+    public function isFunctional(): bool
+    {
+        return $this->gitHubStatus->isFunctional();
     }
 
     /**
@@ -117,7 +121,9 @@ class GitHubBehavior implements RepositoryBehavior {
      *
      * @throws GitHubServiceException
      */
-    public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language) {
+    public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language): array
+    {
         return $this->api->getOpenPRListInfo($repository->getUrl(), $language->getCode());
     }
+
 }
