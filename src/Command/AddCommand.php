@@ -39,10 +39,10 @@ class AddCommand extends Command
             ->addArgument('gitUrl', InputArgument::REQUIRED, 'Public git url')
             ->addArgument('branch', InputArgument::REQUIRED, 'Default branch')
             ->addArgument('email', InputArgument::REQUIRED, 'Author email address')
-            ->addArgument('englishReadonly', InputArgument::OPTIONAL, "If readonly, English translations can not be submitted in the tool. (true=readonly)")
+            ->addArgument('englishReadonly', InputArgument::OPTIONAL, "If readonly, English translations can not be submitted in the tool. (true=readonly)", 'true')
             ->addArgument('displayName', InputArgument::OPTIONAL, 'Template/plugin name to display')
-            ->addArgument('author', InputArgument::OPTIONAL, 'Author name (updated later from dokuwiki.org)')
-            ->addArgument('popularity', InputArgument::OPTIONAL, 'Popularity value (used to sort)  (updated later from dokuwiki.org)');
+            ->addArgument('author', InputArgument::OPTIONAL, 'Author name (updated later from dokuwiki.org)', '')
+            ->addArgument('popularity', InputArgument::OPTIONAL, 'Popularity value (used to sort)  (updated later from dokuwiki.org)', 0);
     }
 
     /**
@@ -74,7 +74,7 @@ class AddCommand extends Command
         $repo->setBranch($input->getArgument('branch'));
         $repo->setName($input->getArgument('name'));
         $repo->setPopularity($input->getArgument('popularity'));
-        $repo->setDisplayName($input->getArgument('displayName'));
+        $repo->setDisplayName($input->getArgument('displayName') ?? $input->getArgument('name'));
         $repo->setEmail($input->getArgument('email'));
         $repo->setAuthor($input->getArgument('author'));
         $repo->setType($type);
