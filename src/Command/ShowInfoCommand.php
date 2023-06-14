@@ -13,13 +13,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ShowStatsCommand extends Command {
+class ShowInfoCommand extends Command {
 
     private RepositoryManager $repositoryManager;
     private RepositoryEntityRepository $repositoryEntityRepository;
 
-    protected static $defaultName = 'dokuwiki:showStats';
-    protected static $defaultDescription = 'Show some statistics for maintenance';
+    protected static $defaultName = 'dokuwiki:showInfo';
+    protected static $defaultDescription = 'Show status for maintenance for all or a specific repo, or basic info for all';
 
     public function __construct(RepositoryEntityRepository $repositoryEntityRepository, RepositoryManager $repositoryManager) {
         $this->repositoryEntityRepository = $repositoryEntityRepository;
@@ -29,7 +29,7 @@ class ShowStatsCommand extends Command {
     }
 
     protected function configure(): void {
-        $this->addArgument('type', InputArgument::OPTIONAL, 'template, plugin or core. Or onlyerrors for filtering.')
+        $this->addArgument('type', InputArgument::OPTIONAL, '<info>template</info>, <info>plugin</info> or <info>core</info>. Or <info>onlyerrors</info> for filtering or <info>basicinfo</info> for urls/branch/email listing.')
             ->addArgument('name', InputArgument::OPTIONAL, 'repository name');
     }
 
@@ -65,14 +65,31 @@ class ShowStatsCommand extends Command {
             $repositories = $this->repositoryEntityRepository->findAll();
         }
 
+        if($type == 'basicinfo') {
+            $this->showBasicInfo($output, $repositories);
+        } else {
+            $this->showStatusInfo($output, $repositories, $type);
+        }
+
+        return Command::SUCCESS;
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param RepositoryEntity[] $repositories
+     * @param $type
+     * @return void
+     */
+    private function showStatusInfo(OutputInterface $output, array $repositories, $type): void
+    {
         // header
-        $dashLine = str_repeat('-', 9-1) . ' '
-            . str_repeat('-', 15-1) . ' '
-            . str_repeat('-', 35-1) . ' '
-            . str_repeat('-', 18-1) . ' '
-            . str_repeat('-', 20-1) . ' '
-            . str_repeat('-', 4-1) . ' '
-            . str_repeat('-', 15-1);
+        $dashLine = str_repeat('-', 9 - 1) . ' '
+            . str_repeat('-', 15 - 1) . ' '
+            . str_repeat('-', 35 - 1) . ' '
+            . str_repeat('-', 18 - 1) . ' '
+            . str_repeat('-', 20 - 1) . ' '
+            . str_repeat('-', 4 - 1) . ' '
+            . str_repeat('-', 15 - 1);
         $output->writeln($dashLine);
         $output->writeln(
             sprintf('%-9s', 'Type ')
@@ -88,23 +105,23 @@ class ShowStatsCommand extends Command {
         $countTotal = count($repositories);
         $countWithErrors = 0;
         foreach ($repositories as $repoEntity) {
-            if($type == 'onlyerrors' && $repoEntity->getErrorCount() == 0) {
+            if ($type == 'onlyerrors' && $repoEntity->getErrorCount() == 0) {
                 continue;
             }
 
             //line text color
             $fgOpenTag = $fgCloseTag = '';
-            if($repoEntity->getErrorCount() >= 3){
+            if ($repoEntity->getErrorCount() >= 3) {
                 $fgOpenTag = '<fg=red>';
                 $fgCloseTag = '</>';
-            } elseif($repoEntity->getErrorCount() > 0) {
+            } elseif ($repoEntity->getErrorCount() > 0) {
                 $fgOpenTag = '<fg=yellow>';
                 $fgCloseTag = '</>';
             }
 
             $countWithErrors++;
             try {
-                $output->write($fgOpenTag. sprintf('%-9s', $repoEntity->getType() . ' '));
+                $output->write($fgOpenTag . sprintf('%-9s', $repoEntity->getType() . ' '));
                 $output->write(sprintf('%-15s', $repoEntity->getName() . ' '));
                 $output->write(sprintf('%-35s', substr($repoEntity->getDisplayName() . ' ', 0, 34)));
                 $output->write(sprintf('%-18s', $repoEntity->getState()));
@@ -113,8 +130,8 @@ class ShowStatsCommand extends Command {
                 $output->write($date->format('Y-m-d H:i:s') . ' ');
                 $output->write(sprintf('%-4s', $repoEntity->getErrorCount() . ' '));
                 $errorMsg = str_replace("\n", "\n   ", $repoEntity->getErrorMsg());
-                if($countTotal > 1) {
-                    $errorMsg = strlen($errorMsg) > 50 ? substr($errorMsg,0,50) . ' (more..) ': $errorMsg;
+                if ($countTotal > 1) {
+                    $errorMsg = strlen($errorMsg) > 50 ? substr($errorMsg, 0, 50) . ' (more..) ' : $errorMsg;
                 } else {
                     $errorMsg = "see below\n   " . $errorMsg;
                 }
@@ -132,10 +149,53 @@ class ShowStatsCommand extends Command {
                 $output->writeln('error ' . $e->getMessage());
             }
         }
+        $output->writeln('');
         $output->writeln(
             'found ' . $countTotal . ' repositories'
-            . ($type == 'onlyerrors' && $countWithErrors > 0 ? ', '. $countWithErrors .' with errors' : '')
+            . ($type == 'onlyerrors' && $countWithErrors > 0 ? ', ' . $countWithErrors . ' with errors' : '')
         );
-        return Command::SUCCESS;
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param RepositoryEntity[] $repositories
+     * @return void
+     */
+    private function showBasicInfo(OutputInterface $output, array $repositories)
+    {
+        // header
+        $dashLine = str_repeat('-', 35 - 1) . ' '
+            . str_repeat('-', 9 - 1) . ' '
+            . str_repeat('-', 15 - 1) . ' '
+            . str_repeat('-', 65 - 1) . ' '
+            . str_repeat('-', 10 - 1) . ' '
+            . str_repeat('-', 25 - 1) . ' '
+            . str_repeat('-', 17 - 1);
+        $output->writeln($dashLine);
+        $output->writeln(
+            sprintf('%-35s', 'Display name ')
+            . sprintf('%-9s', 'Type ')
+            . sprintf('%-15s', 'Name ')
+            . sprintf('%-65s', 'GitUrl ')
+            . sprintf('%-10s', 'Branch')
+            . sprintf('%-25s', 'Email')
+            . sprintf('%-17s', 'English Readonly')
+        );
+        $output->writeln($dashLine);
+
+        $countTotal = count($repositories);
+        foreach ($repositories as $repoEntity) {
+            $output->write(sprintf('%-35s', substr($repoEntity->getDisplayName() . ' ', 0, 34)));
+            $output->write(sprintf('%-9s', $repoEntity->getType() . ' '));
+            $output->write(sprintf('%-15s', $repoEntity->getName() . ' '));
+            $output->write(sprintf('%-65s', $repoEntity->getUrl() . ' '));
+            $output->write(sprintf('%-10s', $repoEntity->getBranch() . ' '));
+            $output->write(sprintf('%-25s', $repoEntity->getEmail() . ' '));
+            $output->writeln(sprintf('%-6s', $repoEntity->getEnglishReadonly() ? 'true' : 'false' ));
+        }
+        $output->writeln('');
+        $output->writeln(
+            'found ' . $countTotal . ' repositories'
+        );
     }
 }

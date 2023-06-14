@@ -36,7 +36,7 @@ class SoftResetCommand extends Command {
 
     protected function configure(): void
     {
-        $this->addArgument('type', InputArgument::REQUIRED, 'plugin, template or core')
+        $this->addArgument('type', InputArgument::REQUIRED, '<info>template</info>, <info>plugin</info> or <info>core</info>')
             ->addArgument('name', InputArgument::REQUIRED, 'repository name');
     }
 

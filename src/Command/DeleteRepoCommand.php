@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
-class DeleteRepositoryCommand extends Command
+class DeleteRepoCommand extends Command
 {
     /**
      * @var EntityManager
@@ -41,7 +41,7 @@ class DeleteRepositoryCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('type', InputArgument::REQUIRED, 'template, plugin or core')
+        $this->addArgument('type', InputArgument::REQUIRED, '<info>template</info>, <info>plugin</info> or <info>core</info>')
             ->addArgument('name', InputArgument::REQUIRED, 'repository name');
     }
 
@@ -98,7 +98,7 @@ class DeleteRepositoryCommand extends Command
         $fs = new Filesystem();
         if (is_dir($directory)) {
             // some files are write-protected by git - this removes write protection
-            $fs->chmod($directory, 0777, 0000, true);
+           // $fs->chmod($directory, 0777, 0000, true);
             // https://bugs.php.net/bug.php?id=52176
             $fs->remove($directory);
         }

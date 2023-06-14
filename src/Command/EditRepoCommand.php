@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class EditRepoEntityCommand extends Command {
+class EditRepoCommand extends Command {
     private OutputInterface $output;
 
     /**
@@ -22,7 +22,7 @@ class EditRepoEntityCommand extends Command {
     private EntityManagerInterface $entityManager;
 
     protected static $defaultName = 'dokuwiki:editRepo';
-    protected static $defaultDescription = 'Let edit some properties of repository. Supported: giturl, branch, state, email, englishReadonly';
+    protected static $defaultDescription = 'Let edit some properties of repository. Supported: <info>giturl</info>, <info>branch</info>, <info>state</info>, <info>email</info>, <info>englishReadonly</info>';
 
     public function __construct(EntityManagerInterface $entityManager) {
         $this->entityManager = $entityManager;
@@ -32,7 +32,7 @@ class EditRepoEntityCommand extends Command {
 
     protected function configure(): void
     {
-        $this->addArgument('type', InputArgument::REQUIRED, 'plugin, template or core')
+        $this->addArgument('type', InputArgument::REQUIRED, '<info>template</info>, <info>plugin</info> or <info>core</info>')
             ->addArgument('name', InputArgument::REQUIRED, 'repository name')
             ->addArgument('property', InputArgument::REQUIRED, 'property name')
             ->addArgument('value', InputArgument::OPTIONAL, 'string or true/false, if no value given current value is shown');

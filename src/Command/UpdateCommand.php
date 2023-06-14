@@ -28,7 +28,7 @@ class UpdateCommand extends Command {
     private ParameterBagInterface $parameterBag;
 
     protected static $defaultName = 'dokuwiki:updateGit';
-    protected static $defaultDescription = 'Update local git repositories and send pending translations';
+    protected static $defaultDescription = 'Update local git repositories (and eventually the fork) and send pending translations';
 
     public function __construct(EntityManagerInterface $entityManager, RepositoryManager $repositoryManager, ParameterBagInterface $parameterBag, LoggerInterface $logger) {
         $this->entityManager = $entityManager;

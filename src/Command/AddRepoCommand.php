@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class AddCommand extends Command
+class AddRepoCommand extends Command
 {
     /**
      * @var EntityManager
@@ -21,7 +21,7 @@ class AddCommand extends Command
     private EntityManagerInterface $entityManager;
     private ValidatorInterface $validator;
 
-    protected static $defaultName = 'dokuwiki:add';
+    protected static $defaultName = 'dokuwiki:addRepo';
     protected static $defaultDescription = 'Adds a repository';
 
     public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator)
@@ -34,12 +34,12 @@ class AddCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('type', InputArgument::REQUIRED, 'Repository type: core, plugin or template')
+        $this->addArgument('type', InputArgument::REQUIRED, 'Repository type: <info>core</info>, <info>plugin</info> or <info>template</info>')
             ->addArgument('name', InputArgument::REQUIRED, 'Name of the repository (lower case, no special chars or blanks, as on dokuwiki.org)')
             ->addArgument('gitUrl', InputArgument::REQUIRED, 'Public git url')
             ->addArgument('branch', InputArgument::REQUIRED, 'Default branch')
             ->addArgument('email', InputArgument::REQUIRED, 'Author email address')
-            ->addArgument('englishReadonly', InputArgument::OPTIONAL, "If readonly, English translations can not be submitted in the tool. (true=readonly)", 'true')
+            ->addArgument('englishReadonly', InputArgument::OPTIONAL, "If readonly, English translations can not be submitted in the tool. (<info>true</info>=readonly)", 'true')
             ->addArgument('displayName', InputArgument::OPTIONAL, 'Template/plugin name to display')
             ->addArgument('author', InputArgument::OPTIONAL, 'Author name (updated later from dokuwiki.org)', '')
             ->addArgument('popularity', InputArgument::OPTIONAL, 'Popularity value (used to sort)  (updated later from dokuwiki.org)', 0);
