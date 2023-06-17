@@ -65,7 +65,7 @@ class AddRepoCommand extends Command
         ];
         if (!in_array($type, $repositoryTypes)) {
             $output->writeln("Unknown type. Use 'core', 'plugin' or 'template'");
-            return Command::FAILURE;
+            return Command::INVALID;
         }
 
         $repo = new RepositoryEntity();

@@ -64,7 +64,7 @@ class EditRepoCommand extends Command {
                 RepositoryEntity::TYPE_CORE,
                 RepositoryEntity::TYPE_PLUGIN,
                 RepositoryEntity::TYPE_TEMPLATE));
-            return Command::FAILURE;
+            return Command::INVALID;
         }
         try {
             $repo = $this->entityManager->getRepository(RepositoryEntity::class)
@@ -113,7 +113,7 @@ class EditRepoCommand extends Command {
                 ];
                 if(!in_array($value, $possibleStates)) {
                     $this->output->writeln('State unknown');
-                    return 1;
+                    return Command::INVALID;
                 }
                 $repo->setState($value);
                 break;
@@ -128,12 +128,12 @@ class EditRepoCommand extends Command {
 
             default:
                 $this->output->writeln('property unknown');
-                return 1;
+                return Command::INVALID;
         }
         $this->entityManager->persist($repo);
         $this->entityManager->flush();
         $this->output->writeln('done');
-        return 0;
+        return Command::SUCCESS;
     }
 
     protected function showValue(RepositoryEntity $repo, $property): int
@@ -161,11 +161,11 @@ class EditRepoCommand extends Command {
 
             default:
                 $this->output->writeln('property unknown');
-                return 1;
+                return Command::INVALID;
         }
 
         $this->output->writeln(sprintf('No value given. The current value is: %s', $value));
-        return 0;
+        return Command::SUCCESS;
     }
 
 }

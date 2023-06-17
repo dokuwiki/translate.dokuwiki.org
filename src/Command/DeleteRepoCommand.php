@@ -71,7 +71,7 @@ class DeleteRepoCommand extends Command
                 RepositoryEntity::TYPE_PLUGIN,
                 RepositoryEntity::TYPE_TEMPLATE
             ));
-            return Command::FAILURE;
+            return Command::INVALID;
         }
         try {
             $repo = $this->entityManager->getRepository(RepositoryEntity::class)
