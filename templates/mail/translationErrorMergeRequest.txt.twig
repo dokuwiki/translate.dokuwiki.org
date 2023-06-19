@@ -1,0 +1,6 @@
+{% extends 'mail/main.txt.twig' %}
+
+{% block content %}
+there was an error creating a merge request for your {{ repository.displayName }}.
+Please ensure that your GitLab repository is still existing and accessible.
+{% endblock %}

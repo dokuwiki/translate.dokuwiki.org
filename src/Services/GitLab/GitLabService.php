@@ -118,7 +118,7 @@ class GitLabService
      */
     public function deleteFork(string $remoteUrl) : void
     {
-         [$user, $repository] = $this->getUsernameAndRepositoryFromURL($remoteUrl);
+        [$user, $repository] = $this->getUsernameAndRepositoryFromURL($remoteUrl);
         try {
             $this->client->projects()->remove("$user/$repository");
 
@@ -137,7 +137,7 @@ class GitLabService
      * @param string $url remote url
      * @param string $patchUrl remote url
      *
-     * @throws GitLabCreatePullRequestException
+     * @throws GitLabCreateMergeRequestException
      * @throws GitLabServiceException
      */
     public function createPullRequest(string $patchBranch, string $branch, string $languageCode, string $url, string $patchUrl) : void
@@ -158,7 +158,7 @@ class GitLabService
                 ]
             );
         } catch (RuntimeException $e) {
-            throw new GitLabCreatePullRequestException($e->getMessage() . " $userUpstream/$repositoryUpstream", 0, $e);
+            throw new GitLabCreateMergeRequestException($e->getMessage() . " $userUpstream/$repositoryUpstream", 0, $e);
         }
     }
 

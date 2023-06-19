@@ -12,7 +12,7 @@ use App\Services\Git\GitNoRemoteException;
 use App\Services\Git\GitPullException;
 use App\Services\Git\GitPushException;
 use App\Services\Git\GitRepository;
-use App\Services\GitLab\GitLabCreatePullRequestException;
+use App\Services\GitLab\GitLabCreateMergeRequestException;
 use App\Services\GitLab\GitLabForkException;
 use App\Services\GitLab\GitLabService;
 use App\Services\GitLab\GitLabServiceException;
@@ -36,7 +36,7 @@ class GitLabBehavior implements RepositoryBehavior
      * @param TranslationUpdateEntity $update
      * @param GitRepository $originalGit the forked (or otherwise original) repository
      *
-     * @throws GitLabCreatePullRequestException
+     * @throws GitLabCreateMergeRequestException
      * @throws GitLabServiceException
      * @throws GitAddException
      * @throws GitBranchException

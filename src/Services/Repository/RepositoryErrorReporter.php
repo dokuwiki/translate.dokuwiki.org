@@ -2,6 +2,9 @@
 
 namespace App\Services\Repository;
 
+use App\Services\GitLab\GitLabCreateMergeRequestException;
+use App\Services\GitLab\GitLabForkException;
+use App\Services\GitLab\GitLabServiceException;
 use Exception;
 use App\Services\Git\GitCloneException;
 use App\Services\Git\GitPullException;
@@ -61,6 +64,7 @@ class RepositoryErrorReporter {
         $this->logger->debug($e->getTraceAsString());
         if ($template !== '' && $repo->isFunctional()) {
             $repo->getEntity()->setErrorCount($repo->getEntity()->getErrorCount() + 1);
+
             $this->emailService->sendEmail(
                 $repo->getEntity()->getEmail(),
                 'Error during import of ' . $repo->getEntity()->getDisplayName(),
@@ -110,6 +114,9 @@ class RepositoryErrorReporter {
         if ($e instanceof GitHubCreatePullRequestException) {
             return 'mail/translationErrorPullRequest.txt.twig';
         }
+        if ($e instanceof GitLabCreateMergeRequestException) {
+            return 'mail/translationErrorMergeRequest.txt.twig';
+        }
         return '';
     }
 
@@ -132,11 +139,19 @@ class RepositoryErrorReporter {
             return 'mail/importErrorGitHubUrl.txt.twig';
         }
 
+        if ($e instanceof GitLabServiceException) {
+            return 'mail/importErrorGitLabUrl.txt.twig';
+        }
+
         if ($e instanceof GitCloneException) {
             return 'mail/importErrorClone.txt.twig';
         }
 
         if ($e instanceof GitHubForkException) {
+            return 'mail/importErrorClone.txt.twig';
+        }
+
+        if ($e instanceof GitLabForkException) {
             return 'mail/importErrorClone.txt.twig';
         }
 

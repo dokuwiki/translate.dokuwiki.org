@@ -1,0 +1,9 @@
+{% extends 'mail/main.txt.twig' %}
+
+{% block content %}
+the initial import of your {{ repository.displayName }} failed.
+I wasn't able to clone from the given Repository.
+Please ensure that the given URL is the GitLab clone URL of your repository.
+
+The git URL was {{ repository.url }}
+{% endblock %}
