@@ -31,6 +31,22 @@
                     </div>
                 </div>
             {% endif %}
+            {% if repository.errorCount >= maxErrorCount %}
+                <div class="col-md-12">
+                    <div class="alert alert-danger">
+                        The submission of submitted translations is paused, because {{ maxErrorCount|format_number(style='spellout')}}
+                        times errors occurred during updating of the source code or processing of the submitted
+                        translations for
+                        {% if repository.type == 'core' %}
+                            DokuWiki.
+                        {% else %}
+                            this {{ repository.type }}.
+                            See further the <a href="{{ path("dokuwiki_translator_extension_settings", {"type": repository.type, "name":repository.name }) }}">settings</a>
+                            page.
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
 
             <div class="col-md-8">
                 <p>
@@ -130,9 +146,9 @@
                         <td class="translation-update">
                             {% if repository.state == 'active' %}
                                 {% if repository.englishReadonly and translation.language.code == 'en' %}
-                                    <span title="Improvements cannot be submitted via this tool. Please use the issue tracker or an pull request for proposing your changes.">
+                                    <abbr title="Improvements cannot be submitted via this tool. Please use the issue tracker or an pull request for proposing your changes.">
                                         read-only
-                                    </span>
+                                    </abbr>
                                 {% else %}
                                     {% if repository.type == 'core' %}
                                         <a href="{{ path("dokuwiki_translate", {"lang":translation.language.code }) }}">update</a>
@@ -152,12 +168,19 @@
             <div class="col-md-8">
                 <p>
                     <span class="label label-default label-info">Note</span>
-                    These statistics were last updated at {{ repository.lastupdate|date("m/d/Y") }}</p>
+                    These statistics were last updated at
+                    {% if repository.lastUpdate == 0 %}
+                        <em>unknown</em>
+                    {% else %}
+                        {{ repository.lastupdate|date("m/d/Y") }}
+                    {% endif %}
+                </p>
             </div>
             {% if repository.type != 'core'%}
             <div class="col-md-4 text-right">
                 <p>
                     <a href="{{ path("dokuwiki_translator_extension_settings", {"type": repository.type, "name":repository.name }) }}">show settings</a> for {{ repository.displayName|capitalize }}
+                </p>
             </div>
             {% endif %}
         </div>

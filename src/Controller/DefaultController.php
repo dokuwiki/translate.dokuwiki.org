@@ -43,6 +43,7 @@ class DefaultController extends AbstractController {
         $data['languages'] = $langNameEntityRepo->getAvailableLanguages();
         $data['activated'] = $request->query->has('activated');
         $data['notActive'] = $request->query->has('notActive');
+        $data['maxErrorCount'] = $this->getParameter('app.maxErrorCount');
 
         return $this->render('default/index.html.twig', $data);
     }
@@ -60,13 +61,14 @@ class DefaultController extends AbstractController {
      * @throws NonUniqueResultException
      */
     public function show(Request $request, LanguageManager $languageManager, RepositoryEntityRepository $repoEntityRepo, LanguageNameEntityRepository $langNameEntityRepo) {
-        $data = array();
+        $data = [];
         $data['repository'] = $repoEntityRepo->getCoreTranslation();
         $data['currentLanguage'] = $languageManager->getLanguage($request);
         $data['languages'] = $langNameEntityRepo->getAvailableLanguages();
         $data['featureImportExport'] = $this->getParameter('app.featureImportExport');
         $data['featureAddTranslation'] = $this->getParameter('app.featureAddTranslation');
         $data['englishReadonly'] = $request->query->has('englishReadonly');
+        $data['maxErrorCount'] = $this->getParameter('app.maxErrorCount');
 
         return $this->render('default/show.html.twig', $data);
     }

@@ -77,9 +77,14 @@
         <td>
             {{ repository.errorCount }}
             {% if repository.errorCount >= maxErrorCount %}
-                <br /><span style="color:#dd514c">Translation submissions to the git repository are paused because
-                of {{ maxErrorCount }} or more errors. Check your email for the error messages or get in contact via forum,
-                mailing list or <a href="https://github.com/dokufreaks/dokuwiki-translation">issue tracker</a>.</span>
+                <br />
+                <div class="alert alert-danger">
+                    The submission of submitted translations is paused, because
+                    {{ maxErrorCount|format_number(style='spellout')}} times errors occurred during updating of the
+                    source code or processing of the submitted translations. The {{ repository.type }} author could
+                    check the sent email for the error messages, check the above settings or get in contact via forum,
+                    mailing list or <a href="https://github.com/dokufreaks/dokuwiki-translation">issue tracker</a>.
+                </div>
             {% endif %}
         </td>
     </tr>

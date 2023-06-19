@@ -188,6 +188,7 @@ class TranslationController extends AbstractController {
         $userTranslation = $userInput['translation'] ?? [];
         $data['translations'] = $this->prepareLanguages($language, $repositoryEntity, $userTranslation);
         $data['errors'] = $userInput['errors'] ?? [];
+        $data['maxErrorCount'] = $this->getParameter('app.maxErrorCount');
 
 
         $cookies = $request->cookies;

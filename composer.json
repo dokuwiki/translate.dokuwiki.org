@@ -51,6 +51,7 @@
         "symfony/webpack-encore-bundle": "^1.16",
         "symfony/yaml": "5.4.*",
         "twig/extra-bundle": "^3.0",
+        "twig/intl-extra": "^3.6",
         "twig/twig": "^3.0",
         "zeichen32/gitlabapibundle": "^6.0"
     },

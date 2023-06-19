@@ -58,6 +58,20 @@
                         You can find open submissions at: <a href="{{ openPR.listURL }}">{{ openPR.title }}</a>.
                     </div>
                 {% endif %}
+                {% if repository.errorCount >= maxErrorCount %}
+                    <div class="alert alert-danger">
+                        The submission of submitted translations is paused, because {{ maxErrorCount|format_number(style='spellout')}}
+                        times errors occurred during updating of the source code or processing of the submitted
+                        translations for
+                        {% if repository.type == 'core' %}
+                            DokuWiki.
+                        {% else %}
+                            this {{ repository.type }}.
+                            See further the <a href="{{ path("dokuwiki_translator_extension_settings", {"type": repository.type, "name":repository.name }) }}">settings</a>
+                            page.
+                        {% endif %}
+                    </div>
+                {% endif %}
 
                 <h2>{{ targetLanguage.name }} translation</h2>
 

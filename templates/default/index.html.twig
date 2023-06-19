@@ -23,10 +23,10 @@
         </div>
         {% if activated %}
         <div class="col-md-12">
-                <div class="alert alert-success">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    Your extension has been activated. It'll take some time until it's imported and ready to translate.
-                </div>
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                Your extension has been activated. It'll take some time until it's imported and ready to translate.
+            </div>
         </div>
         {% endif %}
         {% if notActive %}
@@ -87,11 +87,13 @@
                     <td class="translation-update">
                         {% if coreRepository.state == 'active' %}
                             {% if coreRepository.englishReadonly and currentLanguage == 'en' %}
-                                <span title="Improvements cannot be submitted via this tool. Please use the issue tracker or an pull request for proposing your changes.">
+                                <attr title="Improvements cannot be submitted via this tool. Please use the issue
+                                tracker or an pull request for proposing your changes.">
                                     read-only
-                                </span>
+                                </attr>
                             {% else %}
-                                <a href="{{ path("dokuwiki_translate") }}">update</a>
+                                <a {% if coreRepository.errorCount >= maxErrorCount %}class="text-danger"{% endif %}
+                                   href="{{ path("dokuwiki_translate") }}">update</a>
                             {% endif %}
                         {% else %}
                             processing
@@ -102,11 +104,15 @@
                 {% for repository in repositories %}
                         <tr>
                     <td class="name">
-                        <a href="{{ path("dokuwiki_translator_show_extension", {'type': repository.type, 'name': repository.name}) }}">{{ repository.displayName }}</a>
+                        <a href="{{ path("dokuwiki_translator_show_extension", {'type': repository.type, 'name': repository.name}) }}">
+                            {{ repository.displayName }}
+                        </a>
                     </td>
                     <td class="translation-progress">
                         <div class="progress">
-                            <div class="progress-bar progress-bar-striped {{ progressbar.color(repository.completionPercent) }}" role="progressbar" style="width: {{ repository.completionPercent }}%" aria-valuenow="{{ repository.completionPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar progress-bar-striped {{ progressbar.color(repository.completionPercent) }}"
+                                 role="progressbar" style="width: {{ repository.completionPercent }}%" aria-valuenow="{{ repository.completionPercent }}"
+                                 aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </td>
                     <td class="translation-progress-text">
@@ -119,11 +125,15 @@
                     <td class="translation-update">
                         {% if repository.state == 'active' %}
                             {% if repository.englishReadonly and currentLanguage == 'en' %}
-                                <span title="Improvements cannot be submitted via this tool. Please use the issue tracker or an pull request for proposing your changes.">
+                                <attr title="Improvements cannot be submitted via this tool. Please use the issue
+                                tracker or an pull request for proposing your changes.">
                                     read-only
-                                </span>
+                                </attr>
                             {% else %}
-                                <a href="{{ path("dokuwiki_translate_extension", {'type': repository.type, "name": repository.name}) }}">update</a>
+                                <a {% if repository.errorCount >= maxErrorCount %}class="text-danger"{% endif %}
+                                   href="{{ path("dokuwiki_translate_extension", {'type': repository.type, "name": repository.name}) }}">
+                                    update
+                                </a>
                             {% endif %}
                         {% else %}
                             processing

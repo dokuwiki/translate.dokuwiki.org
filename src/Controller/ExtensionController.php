@@ -61,7 +61,7 @@ class ExtensionController extends AbstractController {
         $repository = new RepositoryEntity();
         $repository->setEmail('');
         $repository->setUrl('');
-        $repository->setBranch('master');
+        $repository->setBranch('main');
         $repository->setType($type);
         $repository->setEnglishReadonly(true);
 
@@ -169,6 +169,7 @@ class ExtensionController extends AbstractController {
         $data['languages'] = $this->languageRepository->getAvailableLanguages();
         $data['featureImportExport'] = $this->getParameter('app.featureImportExport');
         $data['featureAddTranslation'] = $this->getParameter('app.featureAddTranslation');
+        $data['maxErrorCount'] = $this->getParameter('app.maxErrorCount');
         $data['englishReadonly'] = $request->query->has('englishReadonly');
 
         return $this->render('default/show.html.twig', $data);
@@ -298,6 +299,7 @@ class ExtensionController extends AbstractController {
      */
     private function updateExtension(RepositoryEntity $repositoryEntity, $originalValues, RepositoryManager $repositoryManager) {
         $repositoryEntity->setLastUpdate(0);
+        $repositoryEntity->setErrorCount(0);
         $repositoryEntity->setActivationKey('');
         $this->entityManager->flush();
 
