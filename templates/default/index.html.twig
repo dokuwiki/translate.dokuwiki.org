@@ -4,7 +4,6 @@
 <head>
     <title>{% block title %}DokuWiki Localization{% endblock %}</title>
     {% block stylesheets %}
-{#        <link href="{{ asset('css/compiled-main.css') }}" rel="stylesheet" media="all" />#}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
     <meta charset="utf-8">
@@ -174,9 +173,6 @@
 #}
             </div>
         </div>
-        <div class="col-md-12">
-            <span class="label label-default label-info">Note</span> This tool is currently in BETA.
-        </div>
     </div>
 </div>
 {% endblock %}
@@ -184,8 +180,6 @@
 {{ dokuWikiToolbar() }}
 
 {% block javascripts %}
-{#    <script src="{{ asset('js/jquery-1.9.1.min.js') }}"></script>#}
-{#    <script src="{{ asset('js/bootstrap.min.js') }}"></script>#}
     {{ encore_entry_script_tags('app') }}
 {% endblock %}
 </body>

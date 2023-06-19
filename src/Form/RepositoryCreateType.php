@@ -32,13 +32,12 @@ class RepositoryCreateType extends AbstractType {
 //                ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setDefaults(
-            array(
-                'type' => RepositoryEntity::TYPE_PLUGIN,
-                'validation_groups' => array(RepositoryEntity::TYPE_PLUGIN),
-                'action' => RepositoryCreateType::ACTION_CREATE
-            )
-        );
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'type' => RepositoryEntity::TYPE_PLUGIN,
+            'validation_groups' => [RepositoryEntity::TYPE_PLUGIN],
+            'action' => RepositoryCreateType::ACTION_CREATE
+        ]);
     }
 }
