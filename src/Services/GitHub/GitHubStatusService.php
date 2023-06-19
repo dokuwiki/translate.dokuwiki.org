@@ -25,7 +25,8 @@ class GitHubStatusService {
      */
     private function checkFunctional() {
         // more about the GitHub status api, see: https://www.githubstatus.com/api
-        $content = file_get_contents('https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json');
+        $content = file_get_contents('https://www.githubstatus.com/api/v2/summary.json');
+
         return $this->checkResponse($content);
     }
 
@@ -44,12 +45,15 @@ class GitHubStatusService {
             return false;
         }
 
+        $numberOfWorkingComponents = 0;
         foreach($status->components as $component) {
-            if ($component->name === 'API Requests') {
-                return $component->status === 'operational';
+            if ($component->name === 'API Requests' || $component->name === 'Git Operations') {
+                if($component->status === 'operational') {
+                    $numberOfWorkingComponents++;
+                }
             }
         }
-        return false;
+        return $numberOfWorkingComponents === 2;
     }
 
 }
