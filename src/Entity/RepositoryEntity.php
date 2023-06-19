@@ -171,6 +171,10 @@ class RepositoryEntity {
         return $this->errorMsg;
     }
 
+    public function addErrorMsg($errorMsg) {
+        $this->errorMsg .= "\n" . $errorMsg;
+    }
+
     /**
      * @param string $state
      */

@@ -96,9 +96,7 @@ abstract class Repository {
             }
         } catch (Exception $e) {
             $reporter = new RepositoryErrorReporter($this->mailService, $this->logger);
-
-            $msg = $reporter->handleUpdateError($e, $this);
-            $this->entity->setErrorMsg($msg);
+            $reporter->handleUpdateError($e, $this); //stores error in the repository entity
         }
         $this->entityManager->persist($this->entity);
         $this->entityManager->flush();
@@ -151,7 +149,7 @@ abstract class Repository {
             $this->entity->getEmail(),
             'Your ' . $this->entity->getType() . ' is now active',
             'mail/extensionReady.txt.twig',
-            ['repo' => $this->entity]
+            ['repository' => $this->entity]
         );
     }
 
@@ -412,12 +410,13 @@ abstract class Repository {
             //   GitCheckoutException GitCreatePatchException  GitNoRemoteException
             //   GitPushException  MissingArgumentException
             $reporter = new RepositoryErrorReporter($this->mailService, $this->logger);
-            $msg = $reporter->handleTranslationError($e, $this);
+            $msg = $reporter->handleTranslationError($e, $this); //stores error in the repository entity
+
             $update->setErrorMsg($msg);
             $update->setState(TranslationUpdateEntity::STATE_FAILED);
         }
         $this->rrmdir($tmpDir);
-        $this->entityManager->flush(); //stores changes in RepositoryEntities and TranslationUpdateEntities.
+        $this->entityManager->flush(); //stores changes changed entities i.e. RepositoryEntities and TranslationUpdateEntities.
     }
 
     /**

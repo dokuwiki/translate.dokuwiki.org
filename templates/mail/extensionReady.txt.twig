@@ -1,7 +1,7 @@
 {% extends 'mail/main.txt.twig' %}
 
 {% block content %}
-your {{ repo.displayName }} is now imported and activated!
-You can see it at {{ url('dokuwiki_translator_show_extension', {'type': repo.type, 'name': repo.name}) }}.
+your {{ repository.displayName }} is now imported and activated!
+You can see it at {{ url('dokuwiki_translator_show_extension', {'type': repository.type, 'name': repository.name}) }}.
 {% endblock %}
 

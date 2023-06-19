@@ -5,6 +5,7 @@ namespace App\Services\Repository;
 use App\Services\GitLab\GitLabCreateMergeRequestException;
 use App\Services\GitLab\GitLabForkException;
 use App\Services\GitLab\GitLabServiceException;
+use DateTime;
 use Exception;
 use App\Services\Git\GitCloneException;
 use App\Services\Git\GitPullException;
@@ -42,7 +43,7 @@ class RepositoryErrorReporter {
      */
     private function handleError(Exception $e, Repository $repo, $update) {
         $this->data = [];
-        $this->data['repo'] =  $repo->getEntity();
+        $this->data['repository'] =  $repo->getEntity();
         $this->data['exception'] = $e;
         if ($update) {
             $template = $this->determineEmailTemplateUpdate($e);
@@ -71,11 +72,13 @@ class RepositoryErrorReporter {
                 $template,
                 $this->data
             );
-            $errorMsg = $this->emailService->getLastMessage();
+            $errorMsg = $shortMessage . "\n" . $this->emailService->getLastMessage();
         } else {
-            $errorMsg = 'Unknown error:' .get_class($e);
+            $errorMsg = 'Unknown error:' . $shortMessage;
         }
-        $repo->getEntity()->setErrorMsg($errorMsg);
+        $time = new DateTime();
+        $date = $time->format('D d M Y H:i:s P');
+        $repo->getEntity()->addErrorMsg('--- ' . $date. "\n" . $errorMsg);
         return $shortMessage;
     }
 

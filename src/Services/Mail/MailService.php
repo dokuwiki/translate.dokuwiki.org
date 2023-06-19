@@ -68,7 +68,7 @@ class MailService {
      */
     private function send(TemplatedEmail $message) {
         $this->mailer->send($message);
-        $this->logMail($message); //TODO move to Listener/subscriber? on MessageEvent
+        $this->logMail($message);
     }
 
     /**
@@ -86,12 +86,13 @@ class MailService {
             ->subject($subject)
             ->textTemplate($template)
             ->context($data);
-        $this->lastMessage = "To: $to; Subject: $subject; template: $template, data: " . json_encode($data);
+
+        $this->lastMessage = "To: $to; Subject: $subject; template: $template, data: " . var_export(array_keys($data), true);
         return $message;
     }
 
     /**
-     * Create log line for the sent mail
+     * Create log line for the sent mail  //TODO move to Listener/subscriber? on MessageEvent
      *
      * @param TemplatedEmail $message
      */
@@ -101,7 +102,7 @@ class MailService {
             return $address->getAddress();
         }, $message->getTo()));
         $context['subject'] = $message->getSubject();
-        $context['text'] = $message->getTextTemplate();
+        $context['template'] = $message->getTextTemplate();
 
         $this->logger->debug('Sending mail "{subject}"', $context);
     }
