@@ -24,6 +24,10 @@ class UserTranslationValidator {
      * @var string[]
      */
     private array $errors = [];
+    /**
+     * @var true
+     */
+    private bool $translationChanged;
 
     /**
      * UserTranslationValidator constructor.
@@ -72,22 +76,34 @@ class UserTranslationValidator {
 
     /**
      * Validates the user submitted strings
+     * - errors are stored
+     * - line endings are fixed
+     * - list with LocalText objects is returned
      *
      * @return LocalText[]
      */
     public function validate() {
-        $newTranslation = array();
+        $this->translationChanged = false;
+        $newTranslation = [];
 
         foreach ($this->defaultTranslation as $path => $translation) {
+            //normally userTranslation contains all paths (and keys) from default
             if (!isset($this->userTranslation[$path])) {
+                if(isset($this->previousTranslation[$path])) {
+                    $this->translationChanged = true;
+                }
                 continue;
             }
 
-            if ($translation->getType() !== LocalText::TYPE_ARRAY) {
+            if ($translation->getType() === LocalText::TYPE_MARKUP) {
                 $newTranslation[$path] = $this->validateMarkup($path);
                 continue;
             }
             $newTranslation[$path] = $this->validateArray($path, $translation);
+        }
+
+        if(!$this->translationChanged) {
+            $this->errors['translation'] = 'No changes were made in the translation.';
         }
 
         return $newTranslation;
@@ -101,6 +117,10 @@ class UserTranslationValidator {
      */
     private function validateMarkup($path) {
         $text = $this->fixLineEndings($this->userTranslation[$path]);
+
+        $translationChanged = $this->hasMarkupTranslationChanged($path, $text);
+        $this->storeTranslationChanged($translationChanged);
+
         return new LocalText($text, LocalText::TYPE_MARKUP);
     }
 
@@ -112,38 +132,38 @@ class UserTranslationValidator {
      * @return LocalText
      */
     private function validateArray($path, LocalText $translation) {
-        $newContent = array();
+        $newContent = [];
         $translationChanged = false;
 
         $translationArray = $translation->getContent();
         foreach ($translationArray as $key => $text) {
+            //normally userTranslation contains all existing paths and keys
             if (!isset($this->userTranslation[$path][$key])) {
                 continue;
             }
 
             if ($key !== 'js') {
                 $newContent[$key] = $this->fixLineEndings($this->userTranslation[$path][$key]);
-                if ($this->hasTranslationChanged($path, $key, $translationChanged)) {
+                if ($this->hasTranslationChanged($path, $key, $translationChanged, $newContent[$key])) {
                     $translationChanged = true;
                 }
                 continue;
             }
 
-            $newContent[$key] = array();
+            $newContent[$key] = [];
             foreach ($text as $jsKey => $jsVal) {
+                //normally userTranslation contains all existing paths and keys
                 if (!isset($this->userTranslation[$path][$key][$jsKey])) {
                     continue;
                 }
                 $newContent[$key][$jsKey] = $this->fixLineEndings($this->userTranslation[$path][$key][$jsKey]);
-                if ($this->hasJsTranslationChanged($path, $key, $jsKey, $translationChanged)) {
+                if ($this->hasJsTranslationChanged($path, $key, $jsKey, $translationChanged, $newContent[$key][$jsKey])) {
                     $translationChanged = true;
                 }
             }
         }
 
-        if(!$translationChanged) {
-            $this->errors['translation'] = 'No changes were made in the translation.';
-        }
+        $this->storeTranslationChanged($translationChanged);
 
         $authors = new AuthorList();
         $header = '';
@@ -169,22 +189,24 @@ class UserTranslationValidator {
      * @param string $path
      * @param string $key
      * @param bool $alreadyChanged
-     * @return bool
+     * @return bool has changed
      */
-    private function hasTranslationChanged($path, $key, $alreadyChanged) {
-        if ($alreadyChanged) return false;
+    private function hasTranslationChanged($path, $key, $alreadyChanged, $userTranslation) {
+        if ($alreadyChanged) {
+            return true;
+        }
 
         if (!isset($this->previousTranslation[$path])) {
-            return $this->userTranslation[$path][$key] !== '';
+            return $userTranslation !== '';
         }
 
         $previous = $this->previousTranslation[$path];
         $previousText = $previous->getContent();
 
         if (!isset($previousText[$key])) {
-            return $this->userTranslation[$path][$key] !== '';
+            return $userTranslation !== '';
         }
-        return $this->userTranslation[$path][$key] !== $previousText[$key];
+        return $userTranslation !== $previousText[$key];
     }
 
     /**
@@ -196,25 +218,40 @@ class UserTranslationValidator {
      * @param bool $alreadyChanged
      * @return bool has changed
      */
-    private function hasJsTranslationChanged($path, $key, $jsKey, $alreadyChanged) {
-        if ($alreadyChanged) return false;
+    private function hasJsTranslationChanged($path, $key, $jsKey, $alreadyChanged, $userTranslation) {
+        if ($alreadyChanged) {
+            return true;
+        }
 
         if (!isset($this->previousTranslation[$path])) {
-            return $this->userTranslation[$path][$key][$jsKey] !== '';
+            return $userTranslation !== '';
         }
 
         $previous = $this->previousTranslation[$path];
         $previousText = $previous->getContent();
 
         if (!isset($previousText[$key])) {
-            return $this->userTranslation[$path][$key][$jsKey] !== '';
+            return $userTranslation !== '';
         }
 
         if (!isset($previousText[$key][$jsKey])) {
-            return $this->userTranslation[$path][$key][$jsKey] !== '';
+            return $userTranslation !== '';
+        }
+        return $userTranslation !== $previousText[$key][$jsKey];
+    }
+
+    private function hasMarkupTranslationChanged($path, $userTranslation) {
+        if (!isset($this->previousTranslation[$path])) {
+            return $userTranslation !== '';
         }
 
-        return $this->userTranslation[$path][$key][$jsKey] !== $previousText[$key][$jsKey];
+        $previous = $this->previousTranslation[$path];
+        $previousText = $previous->getContent();
+        //Previous markup translation should not be empty
+        if ($previousText === '') {
+            return $userTranslation !== '';
+        }
+        return $userTranslation !== $previousText;
     }
 
     /**
@@ -225,6 +262,17 @@ class UserTranslationValidator {
      */
     private function fixLineEndings($string) {
         return str_replace("\r\n", "\n", $string);
+    }
+
+    /**
+     * Used for each file to store globally the translation change status
+     *
+     * @param bool $hasChanged
+     */
+    private function storeTranslationChanged(bool $hasChanged) {
+        if($hasChanged) {
+            $this->translationChanged = true;
+        }
     }
 
     /**

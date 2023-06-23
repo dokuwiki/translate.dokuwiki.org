@@ -28,7 +28,7 @@ class TranslationPreparer {
      * Sorted in translatable and, next, already translated strings
      *
      * @param LocalText[] $defaultTranslation
-     * @param array|LocalText[] $targetTranslation
+     * @param array|LocalText[] $targetTranslation if user submitted as array, otherwise LocalText from disk
      * @return array
      */
     public function prepare(array $defaultTranslation, array $targetTranslation) {
@@ -38,23 +38,15 @@ class TranslationPreparer {
         $this->availableTranslations = [];
 
         foreach ($this->defaultTranslation as $path => $translation) {
+            $type = $translation->getType();
 
-            if ($translation instanceof LocalText) { //TODO defaultTranslation could be only LocalText[], only user translation should provide raw arrays??
-                $type = $translation->getType();
-                $arrayMode = false;
-            } else {
-                $type = is_array($translation) ? LocalText::TYPE_ARRAY : LocalText::TYPE_MARKUP;
-                $arrayMode = true;
-            }
-
-            if ($type !== LocalText::TYPE_ARRAY) {
+            if ($type === LocalText::TYPE_MARKUP) {
                 $this->createEntry($path);
                 continue;
             }
 
-            if (!$arrayMode) {
-                $translation = $translation->getContent();
-            }
+            $translation = $translation->getContent();
+
             foreach ($translation as $key => $text) {
                 if ($key !== 'js') {
                     $this->createEntry($path, $key);
