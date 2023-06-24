@@ -10,11 +10,15 @@ use App\Services\Git\GitBranchException;
 use App\Services\Git\GitCheckoutException;
 use App\Services\Git\GitCreatePatchException;
 use App\Services\Git\GitNoRemoteException;
+use App\Services\Git\GitPullException;
 use App\Services\Git\GitPushException;
 use App\Services\Git\GitRepository;
 use App\Services\GitHub\GitHubCreatePullRequestException;
 use App\Services\GitHub\GitHubForkException;
 use App\Services\GitHub\GitHubServiceException;
+use App\Services\GitLab\GitLabCreateMergeRequestException;
+use App\Services\GitLab\GitLabForkException;
+use App\Services\GitLab\GitLabServiceException;
 use Github\Exception\MissingArgumentException;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
@@ -32,9 +36,9 @@ interface RepositoryBehavior {
      * @throws GitCreatePatchException
      * @throws TransportExceptionInterface
      *
-     * Github:
-     * @throws GitHubCreatePullRequestException
-     * @throws GitHubServiceException
+     * Github/GitLab:
+     * @throws GitHubCreatePullRequestException|GitLabCreateMergeRequestException
+     * @throws GitHubServiceException|GitLabServiceException
      * @throws GitAddException
      * @throws GitBranchException
      * @throws GitCheckoutException
@@ -52,13 +56,16 @@ interface RepositoryBehavior {
      * @param RepositoryEntity $repository
      * @return string
      *
-     * @throws GitHubForkException
-     * @throws GitHubServiceException
+     * @throws GitHubForkException|GitLabForkException
+     * @throws GitHubServiceException|GitLabServiceException
      */
     public function createOriginURL(RepositoryEntity $repository) : string;
 
     /**
      * @param GitRepository $git
+     *
+     * @throws GitHubServiceException|GitLabServiceException
+     * @throws GitNoRemoteException
      */
     public function removeRemoteFork(GitRepository $git) : void;
 
@@ -68,6 +75,9 @@ interface RepositoryBehavior {
      * @param GitRepository $git
      * @param RepositoryEntity $repository
      * @return bool true if the repository is changed
+     *
+     * @throws GitPullException
+     * @throws GitPushException
      */
     public function pull(GitRepository $git, RepositoryEntity $repository) : bool;
 
@@ -85,6 +95,8 @@ interface RepositoryBehavior {
      * @param RepositoryEntity $repository
      * @param LanguageNameEntity $language
      * @return array
+     *
+     * @throws GitHubServiceException
      */
     public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language) : array;
 }

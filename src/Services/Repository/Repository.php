@@ -8,6 +8,9 @@ use App\Services\Git\GitCreatePatchException;
 use App\Services\Git\GitNoRemoteException;
 use App\Services\Git\GitPushException;
 use App\Services\GitHub\GitHubCreatePullRequestException;
+use App\Services\GitLab\GitLabCreateMergeRequestException;
+use App\Services\GitLab\GitLabForkException;
+use App\Services\GitLab\GitLabServiceException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
@@ -108,8 +111,8 @@ abstract class Repository {
      *
      * @throws GitCloneException
      * @throws GitException
-     * @throws GitHubForkException
-     * @throws GitHubServiceException
+     * @throws GitHubForkException|GitLabForkException
+     * @throws GitHubServiceException|GitLabServiceException
      * @throws LanguageFileDoesNotExistException
      * @throws LanguageParseException
      * @throws NoDefaultLanguageException
@@ -160,8 +163,8 @@ abstract class Repository {
      *
      * @throws GitCloneException
      * @throws GitException
-     * @throws GitHubForkException
-     * @throws GitHubServiceException
+     * @throws GitHubForkException|GitLabForkException
+     * @throws GitHubServiceException|GitLabServiceException
      */
     private function updateFromRemote() {
         $this->openRepository();
@@ -172,9 +175,9 @@ abstract class Repository {
         //no repository exists yet
         $this->logger->debug('No existing repo, (if applicable fork) and clone. ' . $this->entity->getUrl());
         try {
-            $remote = $this->behavior->createOriginURL($this->entity);
-            $this->git = $this->gitService->createRepositoryFromRemote($remote, $this->getCloneDirectoryPath());
-        } catch (GitCloneException|GitHubForkException $e) {
+            $forkedCloneUrl = $this->behavior->createOriginURL($this->entity);
+            $this->git = $this->gitService->createRepositoryFromRemote($forkedCloneUrl, $this->getCloneDirectoryPath());
+        } catch (GitCloneException|GitHubForkException|GitLabForkException $e) {
             $this->deleteCloneDirectory();
             throw $e;
         }
@@ -403,9 +406,10 @@ abstract class Repository {
             $update->setState(TranslationUpdateEntity::STATE_SENT);
         } catch (Exception $e) {
             // mail for:
-            //   GitHubCreatePullRequestException
+            //   GitHubCreatePullRequestException|GitLabCreateMergeRequestException
             // only logged:
-            //   GitCloneException  GitCommandException  GitCommitException  GitException  GitHubServiceException
+            //   GitCloneException  GitCommandException  GitCommitException  GitException
+            //   GitHubServiceException GitLabServiceException
             //   NoLanguageFileWrittenException  TransportExceptionInterface  GitAddException  GitBranchException
             //   GitCheckoutException GitCreatePatchException  GitNoRemoteException
             //   GitPushException  MissingArgumentException
@@ -426,21 +430,21 @@ abstract class Repository {
      * @param TranslationUpdateEntity $update
      * @param string $tmpDir path to folder of temporary local git repository
      *
-     * @throws GitCloneException
-     * @throws GitCommandException
-     * @throws GitCommitException
-     * @throws GitException
-     * @throws GitHubServiceException
-     * @throws NoLanguageFileWrittenException
-     * @throws TransportExceptionInterface
-     * @throws GitHubCreatePullRequestException
      * @throws GitAddException
      * @throws GitBranchException
      * @throws GitCheckoutException
+     * @throws GitCloneException
+     * @throws GitCommandException
+     * @throws GitCommitException
      * @throws GitCreatePatchException
+     * @throws GitException
+     * @throws GitHubCreatePullRequestException|GitLabCreateMergeRequestException
+     * @throws GitHubServiceException|GitLabServiceException
      * @throws GitNoRemoteException
      * @throws GitPushException
      * @throws MissingArgumentException
+     * @throws NoLanguageFileWrittenException
+     * @throws TransportExceptionInterface
      */
     private function createAndSendPatchWithException(TranslationUpdateEntity $update, $tmpDir) {
         $this->logger->debug('send patch ' . $this->getType() . ' ' . $this->getName() . ' language update ' . $update->getId());
@@ -557,6 +561,8 @@ abstract class Repository {
      * @return void
      *
      * @throws GitException
+     * @throws GitHubServiceException|GitLabServiceException
+     * @throws GitNoRemoteException
      */
     public function removeFork() {
         $this->openRepository();
@@ -579,6 +585,8 @@ abstract class Repository {
      *
      * @param LanguageNameEntity $languageNameEntity
      * @return array with count and list url
+     *
+     * @throws GitHubServiceException
      */
     public function getOpenPRListInfo(LanguageNameEntity $languageNameEntity) {
         return $this->behavior->getOpenPRListInfo($this->entity, $languageNameEntity);

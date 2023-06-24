@@ -63,18 +63,25 @@ class RepositoryErrorReporter {
         );
         $this->logger->error($shortMessage);
         $this->logger->debug($e->getTraceAsString());
-        if ($template !== '' && $repo->isFunctional()) {
-            $repo->getEntity()->setErrorCount($repo->getEntity()->getErrorCount() + 1);
+        if ($template !== '') {
+            if ($repo->isFunctional()) {
+                $repo->getEntity()->setErrorCount($repo->getEntity()->getErrorCount() + 1);
 
-            $this->emailService->sendEmail(
-                $repo->getEntity()->getEmail(),
-                'Error during import of ' . $repo->getEntity()->getDisplayName(),
-                $template,
-                $this->data
-            );
-            $errorMsg = $shortMessage . "\n" . $this->emailService->getLastMessage();
+                $this->emailService->sendEmail(
+                    $repo->getEntity()->getEmail(),
+                    'Error during import of ' . $repo->getEntity()->getDisplayName(),
+                    $template,
+                    $this->data
+                );
+                $errorMsg = $shortMessage . "\n" . $this->emailService->getLastMessage();
+            } else {
+                //no mailing or storing of error needed
+                $this->logger->debug('No error mail sent, GitHub or GitLab is not functional (' . get_class($e) . ')');
+                return $shortMessage;
+            }
+
         } else {
-            $errorMsg = 'Unknown error:' . $shortMessage;
+            $errorMsg = 'Unknown error:' . "\n" . $shortMessage;
         }
         $time = new DateTime();
         $date = $time->format('D d M Y H:i:s P');
