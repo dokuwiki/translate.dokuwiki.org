@@ -9,8 +9,12 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class TranslationUpdateEntityRepository extends ServiceEntityRepository {
 
-    public function __construct(ManagerRegistry $registry) {
+    private int $failedLangUpdateRetryAge;
+
+    public function __construct(ManagerRegistry $registry, int $failedLangUpdateRetryAge) {
         parent::__construct($registry, TranslationUpdateEntity::class);
+
+        $this->failedLangUpdateRetryAge = $failedLangUpdateRetryAge;
     }
 
     /**
@@ -21,9 +25,12 @@ class TranslationUpdateEntityRepository extends ServiceEntityRepository {
             'SELECT job
              FROM App\Entity\TranslationUpdateEntity job
              JOIN job.repository repository
-             WHERE job.state = :state'
+             WHERE job.state = :stateUndone
+                OR (job.state = :stateFailed AND job.updated < :timeToRetry)'
         );
-        $query->setParameter('state', TranslationUpdateEntity::STATE_UNDONE);
+        $query->setParameter('stateUndone', TranslationUpdateEntity::STATE_UNDONE);
+        $query->setParameter('stateFailed', TranslationUpdateEntity::STATE_FAILED);
+        $query->setParameter('timeToRetry', time() - $this->failedLangUpdateRetryAge);
         return $query->getResult();
     }
 

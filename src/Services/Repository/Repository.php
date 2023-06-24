@@ -414,6 +414,7 @@ abstract class Repository {
 
             $update->setErrorMsg($msg);
             $update->setState(TranslationUpdateEntity::STATE_FAILED);
+            $update->setUpdated(time());
         }
         $this->rrmdir($tmpDir);
         $this->entityManager->flush(); //stores changes changed entities i.e. RepositoryEntities and TranslationUpdateEntities.

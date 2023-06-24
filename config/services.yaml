@@ -16,6 +16,7 @@ parameters:
     app.maxRepositoriesToUpdatePerRun: '%env(MAX_REPOSITORIES_TO_UPDATE_PER_RUN)%'
     app.maxErrorCount: '%env(MAX_ERROR_COUNT)%'
     app.commandTimeout: '%env(COMMAND_TIMEOUT)%'
+    app.failedLangUpdateRetryAge: '%env(int:FAILED_LANG_UPDATE_RETRY_AGE)%'
     app.githubApiToken: '%env(GITHUB_API_TOKEN)%'
     app.githubUrl: '%env(GITHUB_URL)%'
     app.gitlabApiToken: '%env(GITLAB_API_TOKEN)%'
@@ -88,5 +89,8 @@ services:
             $dataFolder: '%app.dataDir%'
             $gitLabUrl: '%app.gitlabUrl%'
 
+    App\Repository\TranslationUpdateEntityRepository:
+        arguments:
+            $failedLangUpdateRetryAge: '%app.failedLangUpdateRetryAge%'
     # example of adding aliases, if one does not exist
     # Symfony\Component\Security\Guard\GuardAuthenticatorHandler: '@security.authentication.guard_handler'
