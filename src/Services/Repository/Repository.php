@@ -45,6 +45,9 @@ abstract class Repository {
 
     private string $dataFolder;
     private ?string $basePath = null;
+    /**
+     * @var GitRepository|null cloned git repository of the forked or original repository
+     */
     private ?GitRepository $git = null;
     protected RepositoryEntity $entity;
     /**
@@ -428,7 +431,7 @@ abstract class Repository {
      * Actual creating and sending of patch for submitted translations
      *
      * @param TranslationUpdateEntity $update
-     * @param string $tmpDir path to folder of temporary local git repository
+     * @param string $tmpDir path to folder of temporary local git repository with patch of language update
      *
      * @throws GitAddException
      * @throws GitBranchException
@@ -457,7 +460,6 @@ abstract class Repository {
         // commit files to local temporary git repository
         $author = $this->prepareAuthor($update);
         $tmpGit->commit('translation update', $author);
-
 
         $this->behavior->sendChange($tmpGit, $update, $this->git);
     }
@@ -628,7 +630,7 @@ abstract class Repository {
     /**
      * Check if remote repository is functional
      *
-     * @return mixed
+     * @return bool
      */
     public function isFunctional() {
         return $this->behavior->isFunctional();

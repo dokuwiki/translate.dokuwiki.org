@@ -61,9 +61,9 @@ class GitRepository {
     /**
      * Pull from remote repository
      *
-     * @param string $remote repository alias or url
+     * @param string $remote repository alias or git url
      * @param string $branch remote branch to pull
-     * @return string
+     * @return string GitRepository::PULL_UNCHANGED or GitRepository::PULL_CHANGED
      *
      * @throws GitPullException
      */
@@ -82,8 +82,8 @@ class GitRepository {
     }
 
     /**
-     * @param string $name
-     * @param string $path
+     * @param string $name alias of the remote
+     * @param string $path git url of the remote repository
      * @return ProgramCallResult
      *
      * @throws GitAddException
@@ -98,7 +98,7 @@ class GitRepository {
 
     /**
      * @param string $message
-     * @param string $author
+     * @param string $author name < email >
      * @return ProgramCallResult
      *
      * @throws GitCommitException
@@ -112,8 +112,8 @@ class GitRepository {
     }
 
     /**
-     * @param string $revision
-     * @return string
+     * @param string $revision commits since this revision
+     * @return string patch
      *
      * @throws GitCreatePatchException
      */
@@ -127,7 +127,7 @@ class GitRepository {
     }
 
     /**
-     * @param string $file path
+     * @param string $file path to new/changed file
      * @return ProgramCallResult
      *
      * @throws GitCommandException
@@ -137,8 +137,8 @@ class GitRepository {
     }
 
     /**
-     * @param string $origin
-     * @param string $branch
+     * @param string $origin alias of remote
+     * @param string $branch branch name
      * @return ProgramCallResult
      *
      * @throws GitPushException
@@ -152,7 +152,7 @@ class GitRepository {
     }
 
     /**
-     * @return string git url
+     * @return string git url of configured remote (the first url, does not check which remote)
      *
      * @throws GitNoRemoteException
      */
@@ -169,6 +169,8 @@ class GitRepository {
     }
 
     /**
+     * Creates a branch
+     *
      * @param string $name branch name
      * @return ProgramCallResult
      *

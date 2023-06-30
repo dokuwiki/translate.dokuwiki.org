@@ -32,9 +32,9 @@ class GitLabBehavior implements RepositoryBehavior
     /**
      * Create branch and push it to remote, create subsequently pull request at GitLab
      *
-     * @param GitRepository $tempGit temporary local git repository
+     * @param GitRepository $tempGit temporary local git repository with the patch of the language update
      * @param TranslationUpdateEntity $update
-     * @param GitRepository $originalGit the forked (or otherwise original) repository
+     * @param GitRepository $forkedGit git repository cloned of the fork
      *
      * @throws GitLabCreateMergeRequestException
      * @throws GitLabServiceException
@@ -44,9 +44,9 @@ class GitLabBehavior implements RepositoryBehavior
      * @throws GitNoRemoteException
      * @throws GitPushException
      */
-    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit): void
+    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $forkedGit): void
     {
-        $remoteUrl = $originalGit->getRemoteUrl();
+        $remoteUrl = $forkedGit->getRemoteUrl();
         $tempGit->remoteAdd('gitlab', $remoteUrl);
         $branchName = 'lang_update_' . $update->getId() . '_' . $update->getUpdated();
         $tempGit->branch($branchName);
@@ -64,7 +64,7 @@ class GitLabBehavior implements RepositoryBehavior
      * Fork original repo at GitLab and return url of the fork
      *
      * @param RepositoryEntity $repository
-     * @return string Git URL of the fork
+     * @return string git clone URL of the fork
      *
      * @throws GitLabForkException
      * @throws GitLabServiceException
@@ -76,14 +76,16 @@ class GitLabBehavior implements RepositoryBehavior
 
 
     /**
-     * Remove the fork
+     * Remove the fork on GitLab
+     *
+     * @param GitRepository $forkedGit git repository cloned of the fork repository
      *
      * @throws GitLabServiceException
      * @throws GitNoRemoteException
      */
-    public function removeRemoteFork(GitRepository $git): void
+    public function removeRemoteFork(GitRepository $forkedGit): void
     {
-        $remoteUrl = $git->getRemoteUrl();
+        $remoteUrl = $forkedGit->getRemoteUrl();
 
         $this->api->deleteFork($remoteUrl);
     }
@@ -91,17 +93,17 @@ class GitLabBehavior implements RepositoryBehavior
     /**
      * Update from original and push to fork of translate tool
      *
-     * @param GitRepository $git
+     * @param GitRepository $forkedGit git repository cloned of the fork repository
      * @param RepositoryEntity $repository
      * @return bool true if the repository is changed
      *
      * @throws GitPullException
      * @throws GitPushException
      */
-    public function pull(GitRepository $git, RepositoryEntity $repository): bool
+    public function pull(GitRepository $forkedGit, RepositoryEntity $repository): bool
     {
-        $changed = $git->pull($repository->getUrl(), $repository->getBranch()) === GitRepository::PULL_CHANGED;
-        $git->push('origin', $repository->getBranch());
+        $changed = $forkedGit->pull($repository->getUrl(), $repository->getBranch()) === GitRepository::PULL_CHANGED;
+        $forkedGit->push('origin', $repository->getBranch());
         return $changed;
     }
 

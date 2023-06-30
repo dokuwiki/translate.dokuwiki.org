@@ -20,17 +20,18 @@ class GitLabService
     private Client $client;
     private string $projectIdFolder;
 
-    function __construct($gitLabApiToken, $dataFolder, $gitLabUrl, LoggerInterface $httpLogger, $autoStartup = true) {
+    public function __construct(string $gitLabApiToken, string $dataFolder, string $gitLabUrl, LoggerInterface $httpLogger, bool $autoStartup = true)
+    {
         $this->gitLabUrl = $gitLabUrl;
         if (!$autoStartup) {
             return;
         }
 
         $filesystemAdapter = new Local($dataFolder); // folders are relative to folder set here
-        $filesystem        = new Filesystem($filesystemAdapter);
+        $filesystem = new Filesystem($filesystemAdapter);
 
         $pool = new FilesystemCachePool($filesystem);
-        $pool->setFolder('gitlab_cache');
+        $pool->setFolder('cache/gitlab');
 
 
         $loggerPlugin = new LoggerPlugin($httpLogger); //==new Logger('http')
@@ -42,28 +43,7 @@ class GitLabService
         $this->client->authenticate($gitLabApiToken, Client::AUTH_HTTP_TOKEN);
     }
 
-
-    /**
-     * @param string $url GitLab URL to create the fork from
-     * @return string Git URL of the fork
-     *
-     * @throws GitLabForkException
-     * @throws GitLabServiceException
-     */
-    public function createFork(string $url) : string
-    {
-        [$user, $repository] = $this->getUsernameAndRepositoryFromURL($url);
-        try {
-            $result = $this->client->projects()->fork("$user/$repository");
-        } catch (RuntimeException $e) {
-            throw new GitLabForkException($e->getMessage()." $user/$repository", 0, $e);
-        }
-
-        $this->storeProjectIdOfUpstream($result['forked_from_project']['id']);
-        return $this->gitLabUrlHack($result['ssh_url_to_repo']);
-    }
-
-    public function setProjectIdFolder(string $projectIdFolder)
+    public function setProjectIdFolder(string $projectIdFolder) : void
     {
         $this->projectIdFolder = $projectIdFolder;
     }
@@ -75,7 +55,7 @@ class GitLabService
      * @param int $projectId
      * @return void
      */
-    private function storeProjectIdOfUpstream(int $projectId) : void
+    private function storeProjectIdOfUpstream(int $projectId): void
     {
         if (!is_dir($this->projectIdFolder)) {
             mkdir($this->projectIdFolder, 0777, true);
@@ -83,40 +63,41 @@ class GitLabService
         file_put_contents($this->projectIdFolder . 'gitlab_project_id_upstream', $projectId);
     }
 
-    private function getProjectIdOfUpstream() : int
+    private function getProjectIdOfUpstream(): int
     {
-        return (int) file_get_contents($this->projectIdFolder . 'gitlab_project_id_upstream');
+        return (int)file_get_contents($this->projectIdFolder . 'gitlab_project_id_upstream');
     }
 
     /**
-     * @param string $url
-     * @return array
+     * Create fork in our GitLab account
      *
+     * @param string $url GitLab URL to create the fork from
+     * @return string Git URL of the fork
+     *
+     * @throws GitLabForkException
      * @throws GitLabServiceException
      */
-    public function getUsernameAndRepositoryFromURL(string $url) : array
+    public function createFork(string $url): string
     {
-        $result = preg_replace('#^(https://gitlab.com/|git@.*?gitlab.com:|git://gitlab.com/)(.*)\.git$#', '$2', $url, 1, $counter);
-        if ($counter === 0) {
-            throw new GitLabServiceException('Invalid GitLab clone URL: ' . $url);
+        [$user, $repository] = $this->getUsernameAndRepositoryFromURL($url);
+        try {
+            $result = $this->client->projects()->fork("$user/$repository");
+        } catch (RuntimeException $e) {
+            throw new GitLabForkException($e->getMessage() . " $user/$repository", 0, $e);
         }
-        return explode('/', $result);
-    }
 
-    public function gitLabUrlHack(string $url) : string
-    {
-        if ($this->gitLabUrl === 'gitlab.com') {
-            return $url;
-        }
-        return str_replace('gitlab.com', $this->gitLabUrl, $url);
+        $this->storeProjectIdOfUpstream($result['forked_from_project']['id']);
+        return $this->gitLabUrlHack($result['ssh_url_to_repo']);
     }
 
     /**
-     * @param string $remoteUrl
+     * Delete fork from our GitHub account
+     *
+     * @param string $remoteUrl git url of the forked repository
      *
      * @throws GitLabServiceException
      */
-    public function deleteFork(string $remoteUrl) : void
+    public function deleteFork(string $remoteUrl): void
     {
         [$user, $repository] = $this->getUsernameAndRepositoryFromURL($remoteUrl);
         try {
@@ -125,53 +106,55 @@ class GitLabService
             $fs = new \Symfony\Component\Filesystem\Filesystem();
             $fs->remove($this->projectIdFolder);
         } catch (RuntimeException $e) {
-            throw new GitLabServiceException($e->getMessage()." $user/$repository", 0, $e);
+            throw new GitLabServiceException($e->getMessage() . " $user/$repository", 0, $e);
         }
     }
 
 
     /**
      * @param string $patchBranch name of branch with language update
-     * @param string $branch name of branch at remote
+     * @param string $destinationBranch name of branch at remote
      * @param string $languageCode
-     * @param string $url remote url
+     * @param string $url git url original upstream repository
      * @param string $patchUrl remote url
      *
      * @throws GitLabCreateMergeRequestException
      * @throws GitLabServiceException
      */
-    public function createPullRequest(string $patchBranch, string $branch, string $languageCode, string $url, string $patchUrl) : void
+    public function createPullRequest(string $patchBranch, string $destinationBranch, string $languageCode, string $url, string $patchUrl): void
     {
         [$userUpstream, $repositoryUpstream] = $this->getUsernameAndRepositoryFromURL($url);
+        $idUpstream = $this->getProjectIdOfUpstream();
         [$userFork, $repositoryFork] = $this->getUsernameAndRepositoryFromURL($patchUrl);
 
         try {
             $this->client->mergeRequests()->create(
                 "$userFork/$repositoryFork",
                 $patchBranch,
-                $branch,
+                $destinationBranch,
                 "Translation update ($languageCode)",
                 [
                     'description' => 'This pull request contains some translation updates.',
-                    'target_project_id' => $this->getProjectIdOfUpstream(),
+                    'target_project_id' => $idUpstream,
                     'remove_source_branch' => true
                 ]
             );
         } catch (RuntimeException $e) {
-            throw new GitLabCreateMergeRequestException($e->getMessage() . " $userUpstream/$repositoryUpstream", 0, $e);
+            throw new GitLabCreateMergeRequestException($e->getMessage() . " $userUpstream/$repositoryUpstream (id: $idUpstream)", 0, $e);
         }
     }
 
     /**
      * Get information about the open pull requests i.e. url and count
      *
-     * @param string $urlUpstream remote url
+     * @param string $urlUpstream original git clone url
      * @param string $languageCode
      * @return array
      *
      * @throws GitLabServiceException
+     * @throws Exception only if in 'test' environment
      */
-    public function getOpenPRListInfo(string $urlUpstream, string $languageCode) : array
+    public function getOpenPRListInfo(string $urlUpstream, string $languageCode): array
     {
         [$user, $repository] = $this->getUsernameAndRepositoryFromURL($urlUpstream);
 
@@ -196,10 +179,39 @@ class GitLabService
                 'count' => count($results)
             ];
         } catch (Exception $e) {
-            // skip intentionally
-            // throw new GitLabServiceException($e->getMessage());
+            // skip intentionally, shown only for testing
+            if($_ENV['APP_ENV'] === 'test') {
+                throw $e;
+            }
         }
         return $info;
     }
 
+
+    /**
+     * @param string $url git clone url
+     * @return array with user's account name, repository name
+     *
+     * @throws GitLabServiceException
+     */
+    private function getUsernameAndRepositoryFromURL(string $url): array
+    {
+        $result = preg_replace('#^(https://gitlab.com/|git@.*?gitlab.com:|git://gitlab.com/)(.*)\.git$#', '$2', $url, 1, $counter);
+        if ($counter === 0) {
+            throw new GitLabServiceException('Invalid GitLab clone URL: ' . $url);
+        }
+        return explode('/', $result);
+    }
+
+    /**
+     * @param string $url git clone url
+     * @return string modified git clone url
+     */
+    private function gitLabUrlHack(string $url): string
+    {
+        if ($this->gitLabUrl === 'gitlab.com') {
+            return $url;
+        }
+        return str_replace('gitlab.com', $this->gitLabUrl, $url);
+    }
 }

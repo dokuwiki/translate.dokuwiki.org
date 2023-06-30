@@ -23,14 +23,14 @@ class PlainBehavior implements RepositoryBehavior {
     /**
      * No possibility available to open pull request to remote repository, therefore a patch is sent by email
      *
-     * @param GitRepository $tempGit
+     * @param GitRepository $tempGit temporary local git repository with the patch of the language update
      * @param TranslationUpdateEntity $update
-     * @param GitRepository $originalGit
+     * @param GitRepository $forkedGit git repository cloned the original repository
      *
      * @throws GitCreatePatchException
      * @throws TransportExceptionInterface
      */
-    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit): void
+    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $forkedGit): void
     {
         $patch = $tempGit->createPatch();
 
@@ -44,17 +44,17 @@ class PlainBehavior implements RepositoryBehavior {
     }
 
     /**
-     * Return url of 'origin' repository, which is the original repository given
+     * Return url of 'origin' repository, which is here the original repository given
      *
      * @param RepositoryEntity $repository
-     * @return string
+     * @return string git clone url
      */
     public function createOriginURL(RepositoryEntity $repository): string
     {
         return $repository->getUrl();
     }
 
-    public function removeRemoteFork(GitRepository $git): void
+    public function removeRemoteFork(GitRepository $forkedGit): void
     {
         //no fork to delete
     }
@@ -62,15 +62,15 @@ class PlainBehavior implements RepositoryBehavior {
     /**
      * Update repository from remote
      *
-     * @param GitRepository $git
+     * @param GitRepository $forkedGit
      * @param RepositoryEntity $repository
      * @return bool true if the repository is changed
      *
      * @throws GitPullException
      */
-    public function pull(GitRepository $git, RepositoryEntity $repository): bool
+    public function pull(GitRepository $forkedGit, RepositoryEntity $repository): bool
     {
-        return $git->pull('origin', $repository->getBranch()) === GitRepository::PULL_CHANGED;
+        return $forkedGit->pull('origin', $repository->getBranch()) === GitRepository::PULL_CHANGED;
     }
 
     public function isFunctional(): bool

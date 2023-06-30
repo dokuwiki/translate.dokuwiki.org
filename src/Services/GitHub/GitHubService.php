@@ -18,7 +18,8 @@ class GitHubService {
     private Client $client;
     private string $gitHubUrl;
 
-    function __construct($gitHubApiToken, $dataFolder, $gitHubUrl, $autoStartup = true) {
+    public function __construct(string $gitHubApiToken, string $dataFolder, string $gitHubUrl, bool $autoStartup = true)
+    {
         $this->gitHubUrl = $gitHubUrl;
         if (!$autoStartup) {
             return;
@@ -28,7 +29,7 @@ class GitHubService {
         $filesystem        = new Filesystem($filesystemAdapter);
 
         $pool = new FilesystemCachePool($filesystem);
-        $pool->setFolder('githubcache');
+        $pool->setFolder('cache/github');
 
         $this->client = Client::createWithHttpClient(
             new HttplugClient()
@@ -39,13 +40,16 @@ class GitHubService {
     }
 
     /**
+     * Create fork in our GitHub account
+     *
      * @param string $url GitHub URL to create the fork from
      * @return string Git URL of the fork
      *
      * @throws GitHubForkException
      * @throws GitHubServiceException
      */
-    public function createFork($url) {
+    public function createFork(string $url): string
+    {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
         try {
             $result = $this->client->api('repo')->forks()->create($user, $repository);
@@ -56,58 +60,41 @@ class GitHubService {
     }
 
     /**
-     * @param string $remoteUrl
+     * Delete fork from our GitHub account
+     *
+     * @param string $remoteUrl git url of the forked repository
      *
      * @throws GitHubServiceException
      */
-    public function deleteFork(string $remoteUrl) {
+    public function deleteFork(string $remoteUrl): void
+    {
          [$user, $repository] = $this->getUsernameAndRepositoryFromURL($remoteUrl);
         try {
-            $result = $this->client->api('repo')->remove($user, $repository);
+            $this->client->api('repo')->remove($user, $repository);
         } catch (RuntimeException $e) {
             throw new GitHubServiceException($e->getMessage()." $user/$repository", 0, $e);
         }
     }
 
     /**
-     * @param $url
-     * @return array
-     *
-     * @throws GitHubServiceException
-     */
-    public function getUsernameAndRepositoryFromURL($url) {
-        $result = preg_replace('#^(https://github.com/|git@.*?github.com:|git://github.com/)(.*)\.git$#', '$2', $url, 1, $counter);
-        if ($counter === 0) {
-            throw new GitHubServiceException('Invalid GitHub clone URL: ' . $url);
-        }
-        return explode('/', $result);
-    }
-
-    public function gitHubUrlHack($url) {
-        if ($this->gitHubUrl === 'github.com') {
-            return $url;
-        }
-        return str_replace('github.com', $this->gitHubUrl, $url);
-    }
-
-    /**
      * @param string $patchBranch name of branch with language update
-     * @param string $branch name of branch at remote
+     * @param string $destinationBranch name of branch at remote
      * @param string $languageCode
-     * @param string $url remote url
+     * @param string $url git url original upstream repository
      * @param string $patchUrl remote url
      *
      * @throws GitHubCreatePullRequestException
      * @throws GitHubServiceException
      * @throws MissingArgumentException
      */
-    public function createPullRequest($patchBranch, $branch, $languageCode, $url, $patchUrl) {
+    public function createPullRequest(string $patchBranch, string $destinationBranch, string $languageCode, string $url, $patchUrl): void
+    {
         list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
         list($repoName,) = $this->getUsernameAndRepositoryFromURL($patchUrl);
 
         try {
             $this->client->api('pull_request')->create($user, $repository, array(
-                'base'  => $branch,
+                'base'  => $destinationBranch,
                 'head'  => $repoName.':'.$patchBranch,
                 'title' => 'Translation update ('.$languageCode.')',
                 'body'  => 'This pull request contains some translation updates.'
@@ -120,13 +107,15 @@ class GitHubService {
     /**
      * Get information about the open pull requests i.e. url and count
      *
-     * @param string $url remote url
+     * @param string $url original git clone url
      * @param string $languageCode
      * @return array
      *
      * @throws GitHubServiceException
+     * @throws Exception only if in 'test' environment
      */
-    public function getOpenPRListInfo($url, $languageCode) {
+    public function getOpenPRListInfo(string $url, string $languageCode): array
+    {
         [$user, $repository] = $this->getUsernameAndRepositoryFromURL($url);
 
         $info = [
@@ -145,10 +134,39 @@ class GitHubService {
                 'count' => (int) $results['total_count']
             ];
         } catch (Exception $e) {
-            // skip intentionally
-            // throw new GitHubServiceException($e->getMessage());
+            // skip intentionally, shown only for testing
+            if($_ENV['APP_ENV'] === 'test') {
+                throw $e;
+            }
         }
 
         return $info;
+    }
+
+    /**
+     * @param string $url git clone url
+     * @return array with user's account name, repository name
+     *
+     * @throws GitHubServiceException
+     */
+    private function getUsernameAndRepositoryFromURL(string $url): array
+    {
+        $result = preg_replace('#^(https://github.com/|git@.*?github.com:|git://github.com/)(.*)\.git$#', '$2', $url, 1, $counter);
+        if ($counter === 0) {
+            throw new GitHubServiceException('Invalid GitHub clone URL: ' . $url);
+        }
+        return explode('/', $result);
+    }
+
+    /**
+     * @param string $url git clone url
+     * @return string modified git clone url
+     */
+    private function gitHubUrlHack(string $url): string
+    {
+        if ($this->gitHubUrl === 'github.com') {
+            return $url;
+        }
+        return str_replace('github.com', $this->gitHubUrl, $url);
     }
 }

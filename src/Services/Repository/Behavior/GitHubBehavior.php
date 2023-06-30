@@ -32,9 +32,9 @@ class GitHubBehavior implements RepositoryBehavior {
     /**
      * Create branch and push it to remote, create subsequently pull request at Github
      *
-     * @param GitRepository $tempGit temporary local git repository
+     * @param GitRepository $tempGit temporary local git repository with the patch of the language update
      * @param TranslationUpdateEntity $update
-     * @param GitRepository $originalGit  the forked (or otherwise original) repository
+     * @param GitRepository $forkedGit git repository cloned of the forked repository
      *
      * @throws GitHubCreatePullRequestException
      * @throws GitHubServiceException
@@ -45,10 +45,10 @@ class GitHubBehavior implements RepositoryBehavior {
      * @throws GitPushException
      * @throws MissingArgumentException
      */
-    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit): void
+    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $forkedGit): void
     {
 
-        $remoteUrl = $originalGit->getRemoteUrl();
+        $remoteUrl = $forkedGit->getRemoteUrl();
         $tempGit->remoteAdd('github', $remoteUrl);
         $branchName = 'lang_update_' . $update->getId() . '_' . $update->getUpdated();
         $tempGit->branch($branchName);
@@ -64,7 +64,7 @@ class GitHubBehavior implements RepositoryBehavior {
      * Fork original repo at Github and return url of the fork
      *
      * @param RepositoryEntity $repository
-     * @return string Git URL of the fork
+     * @return string Git clone URL of the fork
      *
      * @throws GitHubForkException
      * @throws GitHubServiceException
@@ -75,29 +75,33 @@ class GitHubBehavior implements RepositoryBehavior {
     }
 
     /**
+     * Remove the fork on GitHub
+     *
+     * @param GitRepository $forkedGit git repository cloned of the forked repository
+     *
      * @throws GitHubServiceException
      * @throws GitNoRemoteException
      */
-    public function removeRemoteFork(GitRepository $git) : void
+    public function removeRemoteFork(GitRepository $forkedGit) : void
     {
-        $remoteUrl = $git->getRemoteUrl();
+        $remoteUrl = $forkedGit->getRemoteUrl();
         $this->api->deleteFork($remoteUrl);
     }
 
     /**
      * Update from original and push to fork of translate tool
      *
-     * @param GitRepository $git
+     * @param GitRepository $forkedGit git repository cloned of the forked repository
      * @param RepositoryEntity $repository
      * @return bool true if the repository is changed
      *
      * @throws GitPullException
      * @throws GitPushException
      */
-    public function pull(GitRepository $git, RepositoryEntity $repository): bool
+    public function pull(GitRepository $forkedGit, RepositoryEntity $repository): bool
     {
-        $changed = $git->pull($repository->getUrl(), $repository->getBranch()) === GitRepository::PULL_CHANGED;
-        $git->push('origin', $repository->getBranch());
+        $changed = $forkedGit->pull($repository->getUrl(), $repository->getBranch()) === GitRepository::PULL_CHANGED;
+        $forkedGit->push('origin', $repository->getBranch());
         return $changed;
     }
 

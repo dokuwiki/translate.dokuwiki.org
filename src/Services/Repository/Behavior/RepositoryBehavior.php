@@ -28,9 +28,9 @@ interface RepositoryBehavior {
     /**
      * Sent request to author of remote repository to include the change, applies the best method available
      *
-     * @param GitRepository $tempGit
+     * @param GitRepository $tempGit temporary local git repository with the patch of the language update
      * @param TranslationUpdateEntity $update
-     * @param GitRepository $originalGit
+     * @param GitRepository $forkedGit git repository cloned of the fork or the original repository
      *
      * Plain:
      * @throws GitCreatePatchException
@@ -46,7 +46,7 @@ interface RepositoryBehavior {
      * @throws GitPushException
      * @throws MissingArgumentException
      */
-    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $originalGit) : void;
+    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $forkedGit) : void;
 
     /**
      * Return url of 'origin' repository
@@ -54,7 +54,7 @@ interface RepositoryBehavior {
      * in a translator tool account from the original)
      *
      * @param RepositoryEntity $repository
-     * @return string
+     * @return string git clone URL of the fork or original repository
      *
      * @throws GitHubForkException|GitLabForkException
      * @throws GitHubServiceException|GitLabServiceException
@@ -62,30 +62,30 @@ interface RepositoryBehavior {
     public function createOriginURL(RepositoryEntity $repository) : string;
 
     /**
-     * @param GitRepository $git
+     * @param GitRepository $forkedGit git repository cloned of the fork or the original repository
      *
      * @throws GitHubServiceException|GitLabServiceException
      * @throws GitNoRemoteException
      */
-    public function removeRemoteFork(GitRepository $git) : void;
+    public function removeRemoteFork(GitRepository $forkedGit) : void;
 
     /**
-     * Update repository from remote
+     * Update repository from original, and when applicable push to remote fork
      *
-     * @param GitRepository $git
+     * @param GitRepository $forkedGit git repository cloned of the forked or the original repository
      * @param RepositoryEntity $repository
      * @return bool true if the repository is changed
      *
      * @throws GitPullException
      * @throws GitPushException
      */
-    public function pull(GitRepository $git, RepositoryEntity $repository) : bool;
+    public function pull(GitRepository $forkedGit, RepositoryEntity $repository) : bool;
 
 
     /**
      * Check if remote repository is functional
      *
-     * @return bool
+     * @return bool true if operational
      */
     public function isFunctional() : bool;
 
@@ -94,7 +94,7 @@ interface RepositoryBehavior {
      *
      * @param RepositoryEntity $repository
      * @param LanguageNameEntity $language
-     * @return array
+     * @return array url, hosting name as url title, count
      *
      * @throws GitHubServiceException
      */

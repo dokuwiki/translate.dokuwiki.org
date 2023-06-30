@@ -5,15 +5,39 @@ namespace App\Tests\Services\GitHub;
 use App\Services\GitHub\GitHubService;
 use App\Services\GitHub\GitHubServiceException;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
+use ReflectionObject;
 
 class GitHubServiceTest extends TestCase {
 
-    function testGetUsernameAndRepositoryFromURLWithHTTP() {
-        $api = new GitHubService('', '', '', false);
+    /**
+     *
+     * @param GitHubService $api
+     * @param string $method
+     * @param mixed ...$args
+     * @return mixed
+     *
+     * @throws ReflectionException
+     */
+    private function callPrivateMethod(GitHubService $api, string $method, ...$args)
+    {
+        $reflection = new ReflectionObject($api);
+        $method = $reflection->getMethod($method);
+        $method->setAccessible(true);
+        return $method->invoke($api, ...$args);
+    }
 
-        $result = $api->getUsernameAndRepositoryFromURL('https://github.com/dokuwiki/dokuwiki.git');
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetUsernameAndRepositoryFromURLWithHTTP() {
+        $api = new GitHubService('', '', '', false);
+        $result = $this->callPrivateMethod($api, 'getUsernameAndRepositoryFromURL',
+            'https://github.com/dokuwiki/dokuwiki.git');
         $this->assertEquals(['dokuwiki', 'dokuwiki'], $result);
-        $result = $api->getUsernameAndRepositoryFromURL('https://github.com/dom-mel/dokuwiki.git');
+
+        $result = $this->callPrivateMethod($api, 'getUsernameAndRepositoryFromURL',
+            'https://github.com/dom-mel/dokuwiki.git');
         $this->assertEquals(['dom-mel', 'dokuwiki'], $result);
     }
 
@@ -25,6 +49,8 @@ class GitHubServiceTest extends TestCase {
             ['git@sub.github.com:dom-mel/dokuwiki.git',     ['dom-mel', 'dokuwiki']],
             ['git://github.com/dokuwiki/dokuwiki.git',    ['dokuwiki', 'dokuwiki']],
             ['git://github.com/dom-mel/dokuwiki.git',       ['dom-mel', 'dokuwiki']],
+            ['https://github.com/dom-mel/dokuwiki.git',       ['dom-mel', 'dokuwiki']],
+            ['https://github.com/dom-mel/dokuwiki.git',       ['dom-mel', 'dokuwiki']]
         ];
     }
 
@@ -34,53 +60,47 @@ class GitHubServiceTest extends TestCase {
      * @param $url
      * @param $expected
      *
-     * @throws GitHubServiceException
+     * @throws ReflectionException
      */
-    function testGetUsernameAndRepositoryFromURLWithGit($url, $expected) {
+    public function testGetUsernameAndRepositoryFromURLWithGit($url, $expected) {
         $api = new GitHubService('', '', '', false);
-
-        $result = $api->getUsernameAndRepositoryFromURL($url);
+        $result = $this->callPrivateMethod($api, 'getUsernameAndRepositoryFromURL', $url);
         $this->assertEquals($expected, $result);
-
-        $result = $api->getUsernameAndRepositoryFromURL('git@github.com:splitbrain/dokuwiki.git');
-        $this->assertEquals(array('splitbrain', 'dokuwiki'), $result);
-
-        $result = $api->getUsernameAndRepositoryFromURL('git@github.com:dom-mel/dokuwiki.git');
-        $this->assertEquals(array('dom-mel', 'dokuwiki'), $result);
-
-        $result = $api->getUsernameAndRepositoryFromURL('git@sub.github.com:splitbrain/dokuwiki.git');
-        $this->assertEquals(array('splitbrain', 'dokuwiki'), $result);
-
-        $result = $api->getUsernameAndRepositoryFromURL('git@sub.github.com:dom-mel/dokuwiki.git');
-        $this->assertEquals(array('dom-mel', 'dokuwiki'), $result);
-
-        $result = $api->getUsernameAndRepositoryFromURL('git://github.com/splitbrain/dokuwiki.git');
-        $this->assertEquals(array('splitbrain', 'dokuwiki'), $result);
-
-        $result = $api->getUsernameAndRepositoryFromURL('git://github.com/dom-mel/dokuwiki.git');
-        $this->assertEquals(array('dom-mel', 'dokuwiki'), $result);
     }
 
-    function testGetUsernameAndRepositoryFromURLWithError() {
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetUsernameAndRepositoryFromURLWithError() {
         $api = new GitHubService('', '', '', false);
 
         $this->expectException(GitHubServiceException::class);
-        $api->getUsernameAndRepositoryFromURL('Wrong:dokuwiki/dokuwiki.git');
+        $this->callPrivateMethod($api, 'getUsernameAndRepositoryFromURL',
+            'Wrong:dokuwiki/dokuwiki.git');
+
     }
 
-    function testGetUsernameAndRepositoryFromURLWithErrorNoGitExtension() {
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetUsernameAndRepositoryFromURLWithErrorNoGitExtension() {
         $api = new GitHubService('', '', '', false);
 
         $this->expectException(GitHubServiceException::class);
-        $api->getUsernameAndRepositoryFromURL('https://github.com/Klap-in/dokuwiki-plugin-docnavigation');
+        $this->callPrivateMethod($api, 'getUsernameAndRepositoryFromURL', 'https://github.com/Klap-in/dokuwiki-plugin-docnavigation');
     }
 
-    function testGitHubUrlHack() {
+    /**
+     * @throws ReflectionException
+     */
+    public function testGitHubUrlHack() {
         $api = new GitHubService('', '', 'github.com', false);
-        $this->assertEquals('github.com something', $api->gitHubUrlHack('github.com something'));
+        $result = $this->callPrivateMethod($api, 'gitHubUrlHack','github.com something');
+        $this->assertEquals('github.com something', $result);
 
         $api = new GitHubService('', '', 'some.github.com', false);
-        $this->assertEquals('git@some.github.com', $api->gitHubUrlHack('git@github.com'));
+        $result = $this->callPrivateMethod($api, 'gitHubUrlHack','git@github.com');
+        $this->assertEquals('git@some.github.com', $result);
     }
 
 }
