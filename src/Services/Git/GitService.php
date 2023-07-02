@@ -4,7 +4,8 @@ namespace App\Services\Git;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class GitService {
+class GitService
+{
 
     private $gitBinary;
     private float $commandTimeout;
@@ -12,11 +13,12 @@ class GitService {
     /**
      * GitService constructor.
      */
-    public function __construct(ParameterBagInterface $params) {
+    public function __construct(ParameterBagInterface $params)
+    {
         //path to the git executable
         $this->gitBinary = $params->get('app.gitBinary');
         //max time a git command can run in sec
-        $this->commandTimeout = (float) $params->get('app.commandTimeout');
+        $this->commandTimeout = (float)$params->get('app.commandTimeout');
     }
 
     /**
@@ -25,14 +27,16 @@ class GitService {
      * @param string $path folder containing the git repository
      * @return bool
      */
-    public function isRepository($path) {
-        return (file_exists($path));
+    public function isRepository($path): bool
+    {
+        return file_exists($path);
     }
 
     /**
      * @return string
      */
-    public function getGitBinary() {
+    public function getGitBinary(): string
+    {
         return $this->gitBinary;
     }
 
@@ -44,7 +48,8 @@ class GitService {
      *
      * @throws GitException
      */
-    public function openRepository($path) {
+    public function openRepository($path): GitRepository
+    {
         if (!$this->isRepository($path)) {
             throw new GitException("no git repository", $path);
         }
@@ -60,7 +65,8 @@ class GitService {
      *
      * @throws GitCloneException
      */
-    public function createRepositoryFromRemote($source, $destination) {
+    public function createRepositoryFromRemote($source, $destination): GitRepository
+    {
         $repository = new GitRepository($this, $destination, $this->commandTimeout);
         $repository->cloneFrom($source, $destination);
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Repository;
 
 use App\Services\GitLab\GitLabService;
@@ -17,7 +18,8 @@ use App\Services\Repository\Behavior\PlainBehavior;
 use App\Services\Repository\Behavior\RepositoryBehavior;
 use Psr\Log\LoggerInterface;
 
-class RepositoryManager {
+class RepositoryManager
+{
 
     /**
      * @var string Path to the data folder. Configured in .env/.env.local/etc files
@@ -46,7 +48,8 @@ class RepositoryManager {
                          GitService $gitService, MailService $mailService, LoggerInterface $logger,
                          GitHubService $gitHubService, GitHubStatusService $gitHubStatus,
                          GitLabService $gitLabService, GitLabStatusService $gitLabStatus
-                ) {
+    )
+    {
 
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
@@ -69,7 +72,8 @@ class RepositoryManager {
      *
      * @return Repository[]
      */
-    public function getRepositoriesToUpdate() {
+    public function getRepositoriesToUpdate(): array
+    {
         $repositories = $this->findRepositoriesToUpdate();
         $result = array();
         foreach ($repositories as $repository) {
@@ -84,7 +88,8 @@ class RepositoryManager {
      *
      * @return RepositoryEntity[]
      */
-    private function findRepositoriesToUpdate() {
+    private function findRepositoriesToUpdate(): array
+    {
         return $this->repositoryRepository->getRepositoriesToUpdate($this->repositoryAgeToUpdate, $this->maxRepositoriesToUpdatePerRun, $this->maxErrors);
     }
 
@@ -94,19 +99,20 @@ class RepositoryManager {
      * @param RepositoryEntity $repository
      * @return Repository
      */
-    public function getRepository(RepositoryEntity $repository) {
+    public function getRepository(RepositoryEntity $repository): Repository
+    {
         $behavior = $this->getRepositoryBehavior($repository);
 
         if ($repository->getType() === RepositoryEntity::TYPE_PLUGIN) {
             return new PluginRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats,
-                    $this->gitService, $behavior, $this->logger, $this->mailService);
+                $this->gitService, $behavior, $this->logger, $this->mailService);
         }
         if ($repository->getType() === RepositoryEntity::TYPE_TEMPLATE) {
             return new TemplateRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats,
-                                        $this->gitService, $behavior, $this->logger, $this->mailService);
+                $this->gitService, $behavior, $this->logger, $this->mailService);
         }
         return new CoreRepository($this->dataFolder, $this->entityManager, $repository, $this->repositoryStats,
-                $this->gitService, $behavior, $this->logger, $this->mailService);
+            $this->gitService, $behavior, $this->logger, $this->mailService);
     }
 
     /**
@@ -115,7 +121,8 @@ class RepositoryManager {
      * @param RepositoryEntity $repository
      * @return RepositoryBehavior
      */
-    private function getRepositoryBehavior(RepositoryEntity $repository) {
+    private function getRepositoryBehavior(RepositoryEntity $repository): RepositoryBehavior
+    {
         $url = $repository->getUrl();
         if (preg_match('/^(git:\/\/|https:\/\/|git@)github\.com/i', $url)) {
             return new GitHubBehavior($this->gitHubService, $this->gitHubStatus);

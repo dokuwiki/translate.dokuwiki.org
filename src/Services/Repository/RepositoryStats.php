@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Repository;
 
 
@@ -14,7 +15,8 @@ use App\Entity\RepositoryEntity;
 use App\Services\Language\LocalText;
 use Doctrine\ORM\OptimisticLockException;
 
-class RepositoryStats {
+class RepositoryStats
+{
 
     /**
      * @var EntityManager
@@ -23,7 +25,8 @@ class RepositoryStats {
     private LanguageStatsEntityRepository $languageStatsRepository;
     private LanguageNameEntityRepository $languageNameRepository;
 
-    function __construct(EntityManagerInterface $entityManager) {
+    function __construct(EntityManagerInterface $entityManager)
+    {
         $this->entityManager = $entityManager;
         $this->languageStatsRepository = $entityManager->getRepository(LanguageStatsEntity::class);
         $this->languageNameRepository = $entityManager->getRepository(LanguageNameEntity::class);
@@ -34,7 +37,8 @@ class RepositoryStats {
      *
      * @param RepositoryEntity $entity
      */
-    public function clearStats(RepositoryEntity $entity) {
+    public function clearStats(RepositoryEntity $entity): void
+    {
         $this->languageStatsRepository->clearStats($entity);
     }
 
@@ -47,7 +51,8 @@ class RepositoryStats {
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function createStats($translations, RepositoryEntity $repository) {
+    public function createStats($translations, RepositoryEntity $repository): void
+    {
         $scores = [];
         if (!isset($translations['en'])) {
             echo 'none created ';
@@ -58,7 +63,7 @@ class RepositoryStats {
             $scores[$language] = $this->calcStatsForLanguage($translation);
         }
 
-        if($scores['en'] === 0 ) {
+        if ($scores['en'] === 0) {
             echo 'zero English strings available ';
             return;
         }
@@ -67,7 +72,7 @@ class RepositoryStats {
         foreach ($scores as $language => $score) {
             $statsEntity = new LanguageStatsEntity();
             $statsEntity->setRepository($repository);
-            $statsEntity->setCompletionPercent(floor((100*$score) / $max));
+            $statsEntity->setCompletionPercent(floor((100 * $score) / $max));
             $statsEntity->setLanguage($this->getLanguageEntityByCode($language));
             $this->entityManager->persist($statsEntity);
         }
@@ -82,7 +87,8 @@ class RepositoryStats {
      * @return LanguageNameEntity
      * @throws ORMException
      */
-    private function getLanguageEntityByCode($languageCode) {
+    private function getLanguageEntityByCode($languageCode): LanguageNameEntity
+    {
         try {
             return $this->languageNameRepository->getLanguageByCode($languageCode);
         } catch (NoResultException $e) {
@@ -100,7 +106,8 @@ class RepositoryStats {
      * @param LocalText $translation
      * @return int
      */
-    private function calcStatsForLanguage($translation) {
+    private function calcStatsForLanguage($translation): int
+    {
         $value = 0;
         foreach ($translation as $path => $languageFile) {
             $value += $this->getTranslationValue($languageFile);
@@ -114,7 +121,8 @@ class RepositoryStats {
      * @param LocalText $languageFile
      * @return int
      */
-    private function getTranslationValue($languageFile) {
+    private function getTranslationValue($languageFile): int
+    {
         if ($languageFile->getType() == LocalText::TYPE_MARKUP) {
             return 1;
         }

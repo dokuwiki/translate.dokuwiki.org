@@ -22,7 +22,8 @@ use App\Services\GitLab\GitLabServiceException;
 use Github\Exception\MissingArgumentException;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
-interface RepositoryBehavior {
+interface RepositoryBehavior
+{
 
 
     /**
@@ -46,7 +47,7 @@ interface RepositoryBehavior {
      * @throws GitPushException
      * @throws MissingArgumentException
      */
-    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $forkedGit) : void;
+    public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $forkedGit): void;
 
     /**
      * Return url of 'origin' repository
@@ -59,7 +60,7 @@ interface RepositoryBehavior {
      * @throws GitHubForkException|GitLabForkException
      * @throws GitHubServiceException|GitLabServiceException
      */
-    public function createOriginURL(RepositoryEntity $repository) : string;
+    public function createOriginURL(RepositoryEntity $repository): string;
 
     /**
      * @param GitRepository $forkedGit git repository cloned of the fork or the original repository
@@ -67,7 +68,7 @@ interface RepositoryBehavior {
      * @throws GitHubServiceException|GitLabServiceException
      * @throws GitNoRemoteException
      */
-    public function removeRemoteFork(GitRepository $forkedGit) : void;
+    public function removeRemoteFork(GitRepository $forkedGit): void;
 
     /**
      * Update repository from original, and when applicable push to remote fork
@@ -79,7 +80,7 @@ interface RepositoryBehavior {
      * @throws GitPullException
      * @throws GitPushException
      */
-    public function pull(GitRepository $forkedGit, RepositoryEntity $repository) : bool;
+    public function pull(GitRepository $forkedGit, RepositoryEntity $repository): bool;
 
 
     /**
@@ -87,7 +88,7 @@ interface RepositoryBehavior {
      *
      * @return bool true if operational
      */
-    public function isFunctional() : bool;
+    public function isFunctional(): bool;
 
     /**
      * Get information about the open pull requests i.e. url and count
@@ -98,5 +99,5 @@ interface RepositoryBehavior {
      *
      * @throws GitHubServiceException
      */
-    public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language) : array;
+    public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language): array;
 }

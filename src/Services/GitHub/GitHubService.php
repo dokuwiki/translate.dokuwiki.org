@@ -13,7 +13,8 @@ use League\Flysystem\Filesystem;
 use Symfony\Component\HttpClient\HttplugClient;
 
 
-class GitHubService {
+class GitHubService
+{
 
     private Client $client;
     private string $gitHubUrl;
@@ -26,7 +27,7 @@ class GitHubService {
         }
 
         $filesystemAdapter = new Local($dataFolder); // folders are relative to folder set here
-        $filesystem        = new Filesystem($filesystemAdapter);
+        $filesystem = new Filesystem($filesystemAdapter);
 
         $pool = new FilesystemCachePool($filesystem);
         $pool->setFolder('cache/github');
@@ -54,7 +55,7 @@ class GitHubService {
         try {
             $result = $this->client->api('repo')->forks()->create($user, $repository);
         } catch (RuntimeException $e) {
-            throw new GitHubForkException($e->getMessage()." $user/$repository", 0, $e);
+            throw new GitHubForkException($e->getMessage() . " $user/$repository", 0, $e);
         }
         return $this->gitHubUrlHack($result['ssh_url']);
     }
@@ -68,11 +69,11 @@ class GitHubService {
      */
     public function deleteFork(string $remoteUrl): void
     {
-         [$user, $repository] = $this->getUsernameAndRepositoryFromURL($remoteUrl);
+        [$user, $repository] = $this->getUsernameAndRepositoryFromURL($remoteUrl);
         try {
             $this->client->api('repo')->remove($user, $repository);
         } catch (RuntimeException $e) {
-            throw new GitHubServiceException($e->getMessage()." $user/$repository", 0, $e);
+            throw new GitHubServiceException($e->getMessage() . " $user/$repository", 0, $e);
         }
     }
 
@@ -94,10 +95,10 @@ class GitHubService {
 
         try {
             $this->client->api('pull_request')->create($user, $repository, array(
-                'base'  => $destinationBranch,
-                'head'  => $repoName.':'.$patchBranch,
-                'title' => 'Translation update ('.$languageCode.')',
-                'body'  => 'This pull request contains some translation updates.'
+                'base' => $destinationBranch,
+                'head' => $repoName . ':' . $patchBranch,
+                'title' => 'Translation update (' . $languageCode . ')',
+                'body' => 'This pull request contains some translation updates.'
             ));
         } catch (RuntimeException $e) {
             throw new GitHubCreatePullRequestException($e->getMessage() . " $user/$repository", 0, $e);
@@ -125,17 +126,17 @@ class GitHubService {
         ];
 
         try {
-            $q = 'Translation update ('.$languageCode.') in:title repo:'.$user.'/'.$repository.' type:pr state:open';
+            $q = 'Translation update (' . $languageCode . ') in:title repo:' . $user . '/' . $repository . ' type:pr state:open';
             $results = $this->client->api('search')->issues($q);
 
             $info = [
-                'listURL' => 'https://github.com/'.$user.'/'.$repository.'/pulls?q=is%3Apr+is%3Aopen+Translation+update+%28'.$languageCode.'%29',
+                'listURL' => 'https://github.com/' . $user . '/' . $repository . '/pulls?q=is%3Apr+is%3Aopen+Translation+update+%28' . $languageCode . '%29',
                 'title' => 'GitHub',
-                'count' => (int) $results['total_count']
+                'count' => (int)$results['total_count']
             ];
         } catch (Exception $e) {
             // skip intentionally, shown only for testing
-            if($_ENV['APP_ENV'] === 'test') {
+            if ($_ENV['APP_ENV'] === 'test') {
                 throw $e;
             }
         }

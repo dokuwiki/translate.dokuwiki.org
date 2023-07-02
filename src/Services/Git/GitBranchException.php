@@ -2,6 +2,6 @@
 
 namespace App\Services\Git;
 
-class GitBranchException extends GitException {
-
+class GitBranchException extends GitException
+{
 }

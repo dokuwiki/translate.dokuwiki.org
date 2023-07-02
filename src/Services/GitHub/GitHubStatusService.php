@@ -2,7 +2,8 @@
 
 namespace App\Services\GitHub;
 
-class GitHubStatusService {
+class GitHubStatusService
+{
 
     private ?bool $status = null;
 
@@ -11,7 +12,8 @@ class GitHubStatusService {
      *
      * @return bool true if status is good, otherwise false
      */
-    public function isFunctional() {
+    public function isFunctional(): bool
+    {
         if ($this->status === null) {
             $this->status = $this->checkFunctional();
         }
@@ -23,7 +25,8 @@ class GitHubStatusService {
      *
      * @return bool true if status is good, otherwise false
      */
-    private function checkFunctional() {
+    private function checkFunctional(): bool
+    {
         // more about the GitHub status api, see: https://www.githubstatus.com/api
         // (same api as https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json) https://www.githubstatus.com/api/v2/summary.json
         $content = file_get_contents('https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json');
@@ -37,7 +40,8 @@ class GitHubStatusService {
      * @param string|false $content
      * @return bool
      */
-    protected function checkResponse($content) {
+    protected function checkResponse($content): bool
+    {
         if (!$content) {
             return false;
         }
@@ -47,9 +51,9 @@ class GitHubStatusService {
         }
 
         $numberOfWorkingComponents = 0;
-        foreach($status->components as $component) {
+        foreach ($status->components as $component) {
             if ($component->name === 'API Requests' || $component->name === 'Git Operations') {
-                if($component->status === 'operational') {
+                if ($component->status === 'operational') {
                     $numberOfWorkingComponents++;
                 }
             }

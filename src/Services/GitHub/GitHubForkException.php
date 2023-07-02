@@ -4,6 +4,6 @@ namespace App\Services\GitHub;
 
 use Exception;
 
-class GitHubForkException extends Exception{
-
+class GitHubForkException extends Exception
+{
 }

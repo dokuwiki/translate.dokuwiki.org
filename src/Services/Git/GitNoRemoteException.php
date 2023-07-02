@@ -2,6 +2,6 @@
 
 namespace App\Services\Git;
 
-class GitNoRemoteException extends GitException {
-
+class GitNoRemoteException extends GitException
+{
 }

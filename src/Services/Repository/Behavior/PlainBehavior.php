@@ -11,11 +11,13 @@ use App\Services\Git\GitRepository;
 use App\Services\Mail\MailService;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
-class PlainBehavior implements RepositoryBehavior {
+class PlainBehavior implements RepositoryBehavior
+{
 
     private MailService $mailService;
 
-    public function __construct($mailService) {
+    public function __construct($mailService)
+    {
         $this->mailService = $mailService;
     }
 

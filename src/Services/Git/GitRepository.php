@@ -4,7 +4,8 @@ namespace App\Services\Git;
 
 use Symfony\Component\Process\Process;
 
-class GitRepository {
+class GitRepository
+{
 
     public const PULL_CHANGED = 'changed';
     public const PULL_UNCHANGED = 'unchanged';
@@ -20,7 +21,8 @@ class GitRepository {
      * @param string $path folder containing git repository
      * @param float $commandTimeout max time a git command can run in sec
      */
-    public function __construct(GitService $gitService, $path, $commandTimeout) {
+    public function __construct(GitService $gitService, $path, $commandTimeout)
+    {
         $this->gitService = $gitService;
         $this->path = $path;
         $this->commandTimeout = $commandTimeout;
@@ -36,7 +38,8 @@ class GitRepository {
      *
      * @throws GitCloneException
      */
-    public function cloneFrom($source, $destination, $retries = 3) {
+    public function cloneFrom($source, $destination, $retries = 3): ProgramCallResult
+    {
         try {
             $result = $this->run('clone', $source, $destination);
         } catch (GitCommandException $e) {
@@ -67,7 +70,8 @@ class GitRepository {
      *
      * @throws GitPullException
      */
-    public function pull($remote = 'origin', $branch = 'master') {
+    public function pull($remote = 'origin', $branch = 'master'): string
+    {
         try {
             $result = $this->run('pull', '-f', $remote, $branch);
         } catch (GitCommandException $e) {
@@ -88,7 +92,8 @@ class GitRepository {
      *
      * @throws GitAddException
      */
-    public function remoteAdd($name, $path) {
+    public function remoteAdd($name, $path): ProgramCallResult
+    {
         try {
             return $this->run('remote', 'add', $name, $path);
         } catch (GitCommandException $e) {
@@ -103,7 +108,8 @@ class GitRepository {
      *
      * @throws GitCommitException
      */
-    public function commit($message, $author) {
+    public function commit($message, $author): ProgramCallResult
+    {
         try {
             return $this->run('commit', '-m', $message, '--author', $author);
         } catch (GitCommandException $e) {
@@ -117,7 +123,8 @@ class GitRepository {
      *
      * @throws GitCreatePatchException
      */
-    public function createPatch($revision = 'HEAD~1') {
+    public function createPatch($revision = 'HEAD~1'): string
+    {
         try {
             $result = $this->run('format-patch', '--stdout', $revision);
             return $result->getOutput();
@@ -132,7 +139,8 @@ class GitRepository {
      *
      * @throws GitCommandException
      */
-    public function add($file) {
+    public function add($file): ProgramCallResult
+    {
         return $this->run('add', $file);
     }
 
@@ -143,7 +151,8 @@ class GitRepository {
      *
      * @throws GitPushException
      */
-    public function push($origin, $branch) {
+    public function push($origin, $branch): ProgramCallResult
+    {
         try {
             return $this->run('push', '-f', $origin, $branch);
         } catch (GitCommandException $e) {
@@ -156,7 +165,8 @@ class GitRepository {
      *
      * @throws GitNoRemoteException
      */
-    public function getRemoteUrl() {
+    public function getRemoteUrl(): string
+    {
         $config = $this->path . '/.git/config';
         if (!file_exists($config)) throw new GitNoRemoteException('Repo has no config', $this->path);
 
@@ -176,7 +186,8 @@ class GitRepository {
      *
      * @throws GitBranchException
      */
-    public function branch($name) {
+    public function branch($name): ProgramCallResult
+    {
         try {
             return $this->run('branch', $name);
         } catch (GitCommandException $e) {
@@ -190,7 +201,8 @@ class GitRepository {
      *
      * @throws GitCheckoutException
      */
-    public function checkout($name) {
+    public function checkout($name): ProgramCallResult
+    {
         try {
             return $this->run('checkout', $name);
         } catch (GitCommandException $e) {
@@ -204,7 +216,8 @@ class GitRepository {
      *
      * @throws GitCommandException
      */
-    private function run(...$arguments) {
+    private function run(...$arguments): ProgramCallResult
+    {
         $command = [$this->gitService->getGitBinary()];
 
         foreach ($arguments as $argument) {
@@ -224,7 +237,8 @@ class GitRepository {
      * @param array $command
      * @return ProgramCallResult
      */
-    private function runCommand($command) {
+    private function runCommand($command): ProgramCallResult
+    {
         if (file_exists($this->path)) {
             $process = new Process($command, $this->path);
         } elseif (file_exists(dirname($this->path))) {
@@ -234,7 +248,7 @@ class GitRepository {
         }
         $process->setTimeout($this->commandTimeout);
         $process->start();
-        while($process->isRunning()) {
+        while ($process->isRunning()) {
             $process->checkTimeout();
             usleep(1000000);
         }

@@ -43,7 +43,7 @@ class GitLabService
         $this->client->authenticate($gitLabApiToken, Client::AUTH_HTTP_TOKEN);
     }
 
-    public function setProjectIdFolder(string $projectIdFolder) : void
+    public function setProjectIdFolder(string $projectIdFolder): void
     {
         $this->projectIdFolder = $projectIdFolder;
     }
@@ -180,7 +180,7 @@ class GitLabService
             ];
         } catch (Exception $e) {
             // skip intentionally, shown only for testing
-            if($_ENV['APP_ENV'] === 'test') {
+            if ($_ENV['APP_ENV'] === 'test') {
                 throw $e;
             }
         }

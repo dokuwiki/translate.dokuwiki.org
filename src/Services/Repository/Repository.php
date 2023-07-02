@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Repository;
 
 use App\Services\Git\GitAddException;
@@ -41,7 +42,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
-abstract class Repository {
+abstract class Repository
+{
 
     private string $dataFolder;
     private ?string $basePath = null;
@@ -64,17 +66,18 @@ abstract class Repository {
     /**
      * Repository constructor.
      *
-     * @param string                 $dataFolder
+     * @param string $dataFolder
      * @param EntityManagerInterface $entityManager
-     * @param RepositoryEntity       $entity
-     * @param RepositoryStats        $repositoryStats
-     * @param GitService             $gitService
-     * @param RepositoryBehavior     $behavior
-     * @param LoggerInterface        $logger
-     * @param MailService            $mailService
+     * @param RepositoryEntity $entity
+     * @param RepositoryStats $repositoryStats
+     * @param GitService $gitService
+     * @param RepositoryBehavior $behavior
+     * @param LoggerInterface $logger
+     * @param MailService $mailService
      */
     public function __construct($dataFolder, EntityManagerInterface $entityManager, RepositoryEntity $entity, RepositoryStats $repositoryStats,
-                                GitService $gitService, RepositoryBehavior $behavior,  LoggerInterface $logger, MailService $mailService) {
+                                GitService $gitService, RepositoryBehavior $behavior, LoggerInterface $logger, MailService $mailService)
+    {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
         $this->entity = $entity;
@@ -92,7 +95,8 @@ abstract class Repository {
      * @throws OptimisticLockException
      * @throws TransportExceptionInterface
      */
-    public function update() {
+    public function update(): void
+    {
         try {
             $this->updateWithException();
             $this->entity->setLastUpdate(time());
@@ -123,7 +127,8 @@ abstract class Repository {
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    private function updateWithException() {
+    private function updateWithException(): void
+    {
         $this->logger->debug('updating ' . $this->entity->getType() . ' ' . $this->entity->getName());
         $path = $this->buildBasePath();
         if (!is_dir($path)) {
@@ -132,7 +137,7 @@ abstract class Repository {
 
         if ($this->isLocked()) {
             $this->logger->debug(sprintf(
-                    'Repository %s (%d) is locked - skipping', $this->entity->getName(), $this->entity->getId()));
+                'Repository %s (%d) is locked - skipping', $this->entity->getName(), $this->entity->getId()));
             return;
         }
         $this->lock();
@@ -148,7 +153,8 @@ abstract class Repository {
      *
      * @throws TransportExceptionInterface
      */
-    private function initialized() {
+    private function initialized(): void
+    {
         $this->logger->debug('Initializing ' . $this->entity->getType() . ' ' . $this->entity->getName());
         $this->entity->setState(RepositoryEntity::STATE_ACTIVE);
         $this->mailService->sendEmail(
@@ -169,7 +175,8 @@ abstract class Repository {
      * @throws GitHubForkException|GitLabForkException
      * @throws GitHubServiceException|GitLabServiceException
      */
-    private function updateFromRemote() {
+    private function updateFromRemote(): bool
+    {
         $this->openRepository();
         if ($this->git) {
             return $this->behavior->pull($this->git, $this->entity);
@@ -192,7 +199,8 @@ abstract class Repository {
      *
      * @throws GitException
      */
-    private function openRepository() {
+    private function openRepository(): void
+    {
         $cloneRepositoryPath = $this->getCloneDirectoryPath();
         if ($this->gitService->isRepository($cloneRepositoryPath)) {
             $this->git = $this->gitService->openRepository($cloneRepositoryPath);
@@ -204,7 +212,8 @@ abstract class Repository {
      *
      * @return string
      */
-    private function getCloneDirectoryPath() {
+    private function getCloneDirectoryPath(): string
+    {
         return $this->buildBasePath() . 'repository/';
     }
 
@@ -213,13 +222,14 @@ abstract class Repository {
      *
      * @return string path
      */
-    private function buildBasePath() {
+    private function buildBasePath(): string
+    {
         $path = $this->buildDataPath();
         $type = $this->getType();
         if ($type !== '') {
             $path .= "$type/";
         }
-        $path .= $this->getName().'/';
+        $path .= $this->getName() . '/';
         return $path;
     }
 
@@ -228,7 +238,8 @@ abstract class Repository {
      *
      * @return string path
      */
-    private function buildDataPath() {
+    private function buildDataPath(): string
+    {
         if ($this->basePath === null) {
             $base = $this->dataFolder;
             $base = str_replace('\\', '/', $base);
@@ -249,7 +260,8 @@ abstract class Repository {
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function updateLanguage() {
+    public function updateLanguage(): void
+    {
         $languageFolders = $this->getLanguageFolder();
 
         $translations = array();
@@ -272,7 +284,8 @@ abstract class Repository {
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    private function updateTranslationStatistics($translations) {
+    private function updateTranslationStatistics($translations): void
+    {
         $this->repositoryStats->clearStats($this->entity);
         $this->repositoryStats->createStats($translations, $this->entity);
     }
@@ -282,7 +295,8 @@ abstract class Repository {
      *
      * @param LocalText[] $translations
      */
-    private function saveLanguage($translations) {
+    private function saveLanguage($translations): void
+    {
         $langFolder = $this->buildBasePath() . 'lang/';
 
         // delete entire folder to ensure clean up deleted files
@@ -303,7 +317,8 @@ abstract class Repository {
      * @param string $code language code
      * @return LocalText[] array language data. array will be empty, if no language data is available
      */
-    public function getLanguage($code) {
+    public function getLanguage($code): array
+    {
         $code = strtolower($code);
         if (!preg_match('/^[a-z-]+$/i', $code)) {
             return array();
@@ -319,21 +334,24 @@ abstract class Repository {
     /**
      * @return bool True when repository is locked
      */
-    public function isLocked() {
+    public function isLocked(): bool
+    {
         return file_exists($this->getLockPath());
     }
 
     /**
      * Set lock in base folder of repository
      */
-    private function lock() {
+    private function lock(): void
+    {
         touch($this->getLockPath());
     }
 
     /**
      * Remove the lock
      */
-    private function unlock() {
+    private function unlock(): void
+    {
         @unlink($this->getLockPath());
     }
 
@@ -342,7 +360,8 @@ abstract class Repository {
      *
      * @return string
      */
-    private function getLockPath() {
+    private function getLockPath(): string
+    {
         $path = $this->buildBasePath();
         $path .= 'locked';
         return $path;
@@ -360,7 +379,8 @@ abstract class Repository {
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    public function addTranslationUpdate($translation, $author, $email, $language) {
+    public function addTranslationUpdate($translation, $author, $email, $language): int
+    {
         $translationUpdate = new TranslationUpdateEntity();
         $translationUpdate->setAuthor($author);
         $translationUpdate->setEmail($email);
@@ -384,7 +404,8 @@ abstract class Repository {
      * @param int $id
      * @return string
      */
-    private function getUpdatePath($id) {
+    private function getUpdatePath($id): string
+    {
         $path = $this->buildBasePath() . 'updates/';
         if (!file_exists($path)) {
             mkdir($path, 0777, true);
@@ -402,7 +423,8 @@ abstract class Repository {
      * @throws OptimisticLockException
      * @throws TransportExceptionInterface
      */
-    public function createAndSendPatch(TranslationUpdateEntity $update) {
+    public function createAndSendPatch(TranslationUpdateEntity $update): void
+    {
         $tmpDir = $this->buildTempPath($update->getId());
         try {
             $this->createAndSendPatchWithException($update, $tmpDir);
@@ -449,7 +471,8 @@ abstract class Repository {
      * @throws NoLanguageFileWrittenException
      * @throws TransportExceptionInterface
      */
-    private function createAndSendPatchWithException(TranslationUpdateEntity $update, $tmpDir) {
+    private function createAndSendPatchWithException(TranslationUpdateEntity $update, $tmpDir): void
+    {
         $this->logger->debug('send patch ' . $this->getType() . ' ' . $this->getName() . ' language update ' . $update->getId());
         $this->openRepository();
 
@@ -469,7 +492,8 @@ abstract class Repository {
      *
      * @param $folder
      */
-    private function rrmdir($folder) {
+    private function rrmdir($folder): void
+    {
         $fs = new Filesystem();
         // some files are write-protected by git - this removes write protection
         $fs->chmod($folder, 0777, 0000, true);
@@ -483,7 +507,8 @@ abstract class Repository {
      * @param string|int $id
      * @return string
      */
-    private function buildTempPath($id) {
+    private function buildTempPath($id): string
+    {
         $path = $this->buildBasePath();
         $path .= "tmp";
         if (!file_exists($path)) {
@@ -498,7 +523,8 @@ abstract class Repository {
      * @param TranslationUpdateEntity $update
      * @return string
      */
-    private function prepareAuthor(TranslationUpdateEntity $update) {
+    private function prepareAuthor(TranslationUpdateEntity $update): string
+    {
         $author = $update->getAuthor();
         $email = $update->getEmail();
         if (empty($author)) {
@@ -521,7 +547,8 @@ abstract class Repository {
      * @throws NoLanguageFileWrittenException
      * @throws GitCommandException
      */
-    private function applyChanges(GitRepository $git, $folder, TranslationUpdateEntity $update) {
+    private function applyChanges(GitRepository $git, $folder, TranslationUpdateEntity $update): void
+    {
         /** @var LocalText[] $translations */
         $translations = unserialize(file_get_contents($this->getUpdatePath($update->getId())));
 
@@ -552,7 +579,8 @@ abstract class Repository {
     /**
      * Deletes the folder with the git repository checkout
      */
-    public function deleteCloneDirectory() {
+    public function deleteCloneDirectory(): void
+    {
         $path = $this->getCloneDirectoryPath();
         if (!file_exists($path)) return;
         $this->rrmdir($path);
@@ -566,7 +594,8 @@ abstract class Repository {
      * @throws GitHubServiceException|GitLabServiceException
      * @throws GitNoRemoteException
      */
-    public function removeFork() {
+    public function removeFork(): void
+    {
         $this->openRepository();
         if ($this->git) {
             $this->behavior->removeRemoteFork($this->git);
@@ -578,7 +607,8 @@ abstract class Repository {
      *
      * @return bool
      */
-    public function hasGit() {
+    public function hasGit(): bool
+    {
         return is_dir($this->getCloneDirectoryPath());
     }
 
@@ -590,56 +620,63 @@ abstract class Repository {
      *
      * @throws GitHubServiceException
      */
-    public function getOpenPRListInfo(LanguageNameEntity $languageNameEntity) {
+    public function getOpenPRListInfo(LanguageNameEntity $languageNameEntity): array
+    {
         return $this->behavior->getOpenPRListInfo($this->entity, $languageNameEntity);
     }
 
     /**
      * @return string The url to the remote Git repository
      */
-    protected function getRepositoryUrl() {
+    protected function getRepositoryUrl(): string
+    {
         return $this->entity->getUrl();
     }
 
     /**
      * @return string The default branch to pull
      */
-    protected function getBranch() {
+    protected function getBranch(): string
+    {
         return $this->entity->getBranch();
     }
 
     /**
      * @return string The name of the extension
      */
-    protected function getName() {
+    protected function getName(): string
+    {
         return $this->entity->getName();
     }
 
     /**
      * @return string Type of repository.
      */
-    protected function getType() {
+    protected function getType(): string
+    {
         return $this->entity->getType();
     }
 
     /**
      * @return string[] Array with relative path to the language folder. i.e. lang/ for plugins and templates
      */
-    protected abstract function getLanguageFolder();
+    protected abstract function getLanguageFolder(): array;
 
     /**
      * Check if remote repository is functional
      *
      * @return bool
      */
-    public function isFunctional() {
+    public function isFunctional(): bool
+    {
         return $this->behavior->isFunctional();
     }
 
     /**
      * @return RepositoryEntity
      */
-    public function getEntity() {
+    public function getEntity(): RepositoryEntity
+    {
         return $this->entity;
     }
 }

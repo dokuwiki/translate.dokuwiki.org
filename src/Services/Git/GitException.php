@@ -1,16 +1,19 @@
 <?php
+
 namespace App\Services\Git;
 
 
 use Exception;
 
-class GitException extends Exception {
+class GitException extends Exception
+{
 
-    function __construct($msg, $path='', Exception $previous = null) {
-        if($path) {
+    function __construct($msg, $path = '', Exception $previous = null)
+    {
+        if ($path) {
             $msg .= "\nPath: $path";
         }
-        if($previous) {
+        if ($previous) {
             $msg .= "\n" . $previous->getMessage();
         }
 

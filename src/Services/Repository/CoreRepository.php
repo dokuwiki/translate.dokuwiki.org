@@ -1,13 +1,16 @@
 <?php
+
 namespace App\Services\Repository;
 
-class CoreRepository extends Repository {
+class CoreRepository extends Repository
+{
 
     /**
      * @return string[] Relative path to the language folder. i.e. lang/ for plugins
      */
-    protected function getLanguageFolder() {
-        return array(
+    protected function getLanguageFolder(): array
+    {
+        return [
             'inc/lang',
             'lib/plugins/acl/lang',
             'lib/plugins/authad/lang',
@@ -22,6 +25,6 @@ class CoreRepository extends Repository {
             'lib/plugins/styling/lang',
             'lib/plugins/usermanager/lang',
             'lib/tpl/dokuwiki/lang'
-        );
+        ];
     }
 }

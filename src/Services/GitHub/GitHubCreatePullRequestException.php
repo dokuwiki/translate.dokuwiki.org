@@ -5,6 +5,6 @@ namespace App\Services\GitHub;
 
 use Exception;
 
-class GitHubCreatePullRequestException extends Exception {
-
+class GitHubCreatePullRequestException extends Exception
+{
 }

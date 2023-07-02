@@ -2,11 +2,13 @@
 
 namespace App\Services\Repository;
 
-class TemplateRepository extends Repository {
+class TemplateRepository extends Repository
+{
 
-    protected function getLanguageFolder() {
-        return array(
+    protected function getLanguageFolder(): array
+    {
+        return [
             'lang/'
-        );
+        ];
     }
 }

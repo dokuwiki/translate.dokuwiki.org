@@ -19,12 +19,14 @@ use App\Services\GitHub\GitHubService;
 use App\Services\GitHub\GitHubServiceException;
 use App\Services\GitHub\GitHubStatusService;
 
-class GitHubBehavior implements RepositoryBehavior {
+class GitHubBehavior implements RepositoryBehavior
+{
 
     private GitHubService $api;
     private GitHubStatusService $gitHubStatus;
 
-    public function __construct(GitHubService $api, GitHubStatusService $gitHubStatus) {
+    public function __construct(GitHubService $api, GitHubStatusService $gitHubStatus)
+    {
         $this->api = $api;
         $this->gitHubStatus = $gitHubStatus;
     }
@@ -82,7 +84,7 @@ class GitHubBehavior implements RepositoryBehavior {
      * @throws GitHubServiceException
      * @throws GitNoRemoteException
      */
-    public function removeRemoteFork(GitRepository $forkedGit) : void
+    public function removeRemoteFork(GitRepository $forkedGit): void
     {
         $remoteUrl = $forkedGit->getRemoteUrl();
         $this->api->deleteFork($remoteUrl);

@@ -24,7 +24,8 @@ class GitLabBehavior implements RepositoryBehavior
     private GitLabService $api;
     private GitLabStatusService $gitLabStatus;
 
-    public function __construct(GitLabService $api, GitLabStatusService $gitLabStatus) {
+    public function __construct(GitLabService $api, GitLabStatusService $gitLabStatus)
+    {
         $this->api = $api;
         $this->gitLabStatus = $gitLabStatus;
     }

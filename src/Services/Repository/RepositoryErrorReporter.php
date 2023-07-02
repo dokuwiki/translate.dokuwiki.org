@@ -20,13 +20,15 @@ use App\Services\Mail\MailService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
-class RepositoryErrorReporter {
+class RepositoryErrorReporter
+{
 
     private MailService $emailService;
     private LoggerInterface $logger;
     private array $data;
 
-    function __construct(MailService $emailService, LoggerInterface $logger) {
+    function __construct(MailService $emailService, LoggerInterface $logger)
+    {
         $this->emailService = $emailService;
         $this->logger = $logger;
     }
@@ -41,9 +43,10 @@ class RepositoryErrorReporter {
      *
      * @throws TransportExceptionInterface
      */
-    private function handleError(Exception $e, Repository $repo, $update) {
+    private function handleError(Exception $e, Repository $repo, $update): string
+    {
         $this->data = [];
-        $this->data['repository'] =  $repo->getEntity();
+        $this->data['repository'] = $repo->getEntity();
         $this->data['exception'] = $e;
         if ($update) {
             $template = $this->determineEmailTemplateUpdate($e);
@@ -52,11 +55,11 @@ class RepositoryErrorReporter {
         }
 
         $file = '';
-        if(isset($this->data['fileName'])) {
+        if (isset($this->data['fileName'])) {
             $file = 'in file: ' . $this->data['fileName'] . '(' . $this->data['lineNumber'] . ')';
         }
         $shortMessage = sprintf(
-            'Error during ' . ( $update ? 'repository' : 'translation') . ' update (%s: %s) %s',
+            'Error during ' . ($update ? 'repository' : 'translation') . ' update (%s: %s) %s',
             get_class($e),
             $e->getMessage(),
             $file
@@ -85,7 +88,7 @@ class RepositoryErrorReporter {
         }
         $time = new DateTime();
         $date = $time->format('D d M Y H:i:s P');
-        $repo->getEntity()->addErrorMsg('--- ' . $date. "\n" . $errorMsg);
+        $repo->getEntity()->addErrorMsg('--- ' . $date . "\n" . $errorMsg);
         return $shortMessage;
     }
 
@@ -98,7 +101,8 @@ class RepositoryErrorReporter {
      *
      * @throws TransportExceptionInterface
      */
-    public function handleTranslationError(Exception $e, Repository $repo) {
+    public function handleTranslationError(Exception $e, Repository $repo): string
+    {
         return $this->handleError($e, $repo, false);
     }
 
@@ -111,16 +115,19 @@ class RepositoryErrorReporter {
      *
      * @throws TransportExceptionInterface
      */
-    public function handleUpdateError(Exception $e, Repository $repo) {
+    public function handleUpdateError(Exception $e, Repository $repo): string
+    {
         return $this->handleError($e, $repo, true);
     }
+
     /**
      * Returns an email template for exceptions that needs attention of extension author
      *
      * @param Exception $e
      * @return string template referrer
      */
-    private function determineEmailTemplateTranslation(Exception $e) {
+    private function determineEmailTemplateTranslation(Exception $e): string
+    {
         if ($e instanceof GitHubCreatePullRequestException) {
             return 'mail/translationErrorPullRequest.txt.twig';
         }
@@ -136,7 +143,8 @@ class RepositoryErrorReporter {
      * @param Exception $e
      * @return string template referrer
      */
-    private function determineEmailTemplateUpdate(Exception $e) {
+    private function determineEmailTemplateUpdate(Exception $e): string
+    {
         if ($e instanceof GitPullException) {
             return 'mail/importErrorUpdate.txt.twig';
         }
