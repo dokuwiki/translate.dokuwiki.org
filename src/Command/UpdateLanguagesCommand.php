@@ -37,7 +37,7 @@ class UpdateLanguagesCommand extends Command {
         $output->writeln('found ' . count($repositories) . ' repositories');
         foreach ($repositories as $repoEntity) {
             try {
-                $output->write('creating ' . $repoEntity->getDisplayName() . ' ... ');
+                $output->write('update ' . $repoEntity->getDisplayName() . ' ... ');
                 $repo = $this->repositoryManager->getRepository($repoEntity);
                 if (!$repo->hasGit()) {
                     $output->writeln('no local checkout found - skipping');

@@ -499,6 +499,79 @@ abstract class Repository
     }
 
     /**
+     * Remove incomplete update files, sent updates
+     * and failed updates(older than 10 min)
+     *
+     * @param bool $dry true returns only summary, false deletes as well
+     * @return array summary
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function removeOldTranslationUpdates(bool $dry): array
+    {
+        $directory = $this->buildUpdateDirectoryPath();
+        $deleted = [];
+
+        $updateFiles = [];
+        if (is_dir($directory)) {
+            $files = scandir($directory);
+            foreach ($files as $updateFile) {
+                if ($updateFile === '.' || $updateFile === '..') {
+                    continue;
+                }
+
+                $id = (int)rtrim($updateFile, '.update');
+                $updateFiles[$id] = [
+                    'created' => filemtime($directory . $updateFile)
+                ];
+            }
+        }
+
+        /** @var TranslationUpdateEntity[] $updateEntities */
+        $updateEntities = [];
+        $translationUpdates = $this->entityManager->getRepository(TranslationUpdateEntity::class)
+            ->findBy(['repository' => $this->entity]);
+        foreach ($translationUpdates as $update) {
+            $updateEntities[$update->getId()] = $update;
+        }
+
+        $fs = new Filesystem();
+        foreach ($updateFiles as $id => $data) {
+            if (!isset($updateEntities[$id])) {
+                //remove update file without an updateEntity
+                if (!$dry) {
+                    $fs->remove($this->buildUpdateFilePath($id));
+                }
+                $deleted[] = ' delete ' . $this->buildUpdateFilePath($id) . ' no entity';
+            }
+        }
+        foreach ($updateEntities as $id => $updateEntity) {
+            if ($updateEntity->getState() === TranslationUpdateEntity::STATE_SENT) {
+                // SENT: update was sent (by mail or opened a pull/merge request, does not mean it is merged)
+                if (!$dry) {
+                    $fs->remove($this->buildUpdateFilePath($id));
+                    $this->entityManager->remove($updateEntity);
+                }
+                $deleted[] = ' delete ' . $this->buildUpdateFilePath($id) . ' and its updateEntity (sent)';
+            }
+
+            if ($updateEntity->getState() === TranslationUpdateEntity::STATE_FAILED
+                && isset($updateFiles[$id]) && $updateFiles[$id]['created'] < time() - 10 * 60) {
+                // FAILED: error occurred, not sent
+                // older than 10 min, to prevent deleting just failed updates
+                if (!$dry) {
+                    $fs->remove($this->buildUpdateFilePath($id));
+                    $this->entityManager->remove($updateEntity);
+                }
+                $deleted[] = ' delete ' . $this->buildUpdateFilePath($id) . ' and its updateEntity (failed <10min)';
+            }
+        }
+        $this->entityManager->flush();
+        return $deleted;
+    }
+
+    /**
      * Recursively remove entire folder
      *
      * @param $folder
