@@ -2,8 +2,7 @@
 
 namespace App\Command;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\TranslationUpdateEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Exception\ORMException;
 use App\Entity\TranslationUpdateEntity;
@@ -21,18 +20,15 @@ class UpdateCommand extends Command {
 
     private RepositoryManager $repositoryManager;
     private LoggerInterface $logger;
-    /**
-     * @var EntityManager
-     */
-    private EntityManagerInterface $entityManager;
+    private TranslationUpdateEntityRepository $translationUpdateEntityRepository;
     private ParameterBagInterface $parameterBag;
 
     protected static $defaultName = 'dokuwiki:updateGit';
     protected static $defaultDescription = 'Update local git repositories (and eventually the fork) and send pending translations';
 
-    public function __construct(EntityManagerInterface $entityManager, RepositoryManager $repositoryManager, ParameterBagInterface $parameterBag, LoggerInterface $logger) {
-        $this->entityManager = $entityManager;
+    public function __construct(TranslationUpdateEntityRepository $translationUpdateEntityRepository, RepositoryManager $repositoryManager, ParameterBagInterface $parameterBag, LoggerInterface $logger) {
         $this->repositoryManager = $repositoryManager;
+        $this->translationUpdateEntityRepository = $translationUpdateEntityRepository;
         $this->parameterBag = $parameterBag;
         $this->logger = $logger;
 
@@ -88,8 +84,7 @@ class UpdateCommand extends Command {
      * @throws TransportExceptionInterface
      */
     private function processPendingTranslations() {
-        $updates = $this->entityManager->getRepository(TranslationUpdateEntity::class)
-            ->getPendingTranslationUpdates();
+        $updates = $this->translationUpdateEntityRepository->getPendingTranslationUpdates();
 
         foreach ($updates as $update) {
             /**
@@ -115,8 +110,9 @@ class UpdateCommand extends Command {
 
         // If lock file exists, check if stale.  If exists and is not stale, return TRUE
         // else, create lock file and return FALSE.
-        if(@symlink("/proc/".getmypid(), $lockFile) !== false)
+        if(@symlink("/proc/".getmypid(), $lockFile) !== false) {
             return true;
+        }
 
         // link already exists, check if it's stale
         if(is_link($lockFile) && !is_dir($lockFile)) {
