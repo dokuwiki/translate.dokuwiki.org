@@ -130,7 +130,7 @@ abstract class Repository
     private function updateWithException(): void
     {
         $this->logger->debug('updating ' . $this->entity->getType() . ' ' . $this->entity->getName());
-        $path = $this->buildBasePath();
+        $path = $this->buildBaseDirectoryPath();
         if (!is_dir($path)) {
             mkdir($path, 0777, true);
         }
@@ -208,13 +208,13 @@ abstract class Repository
     }
 
     /**
-     * Path to folder of git repository for this repository
+     * Path to folder of cloned git repository for this repository
      *
      * @return string
      */
     private function getCloneDirectoryPath(): string
     {
-        return $this->buildBasePath() . 'repository/';
+        return $this->buildBaseDirectoryPath() . 'repository/';
     }
 
     /**
@@ -222,9 +222,9 @@ abstract class Repository
      *
      * @return string path
      */
-    private function buildBasePath(): string
+    private function buildBaseDirectoryPath(): string
     {
-        $path = $this->buildDataPath();
+        $path = $this->buildDataDirectoryPath();
         $type = $this->getType();
         if ($type !== '') {
             $path .= "$type/";
@@ -238,7 +238,7 @@ abstract class Repository
      *
      * @return string path
      */
-    private function buildDataPath(): string
+    private function buildDataDirectoryPath(): string
     {
         if ($this->basePath === null) {
             $base = $this->dataFolder;
@@ -262,13 +262,13 @@ abstract class Repository
      */
     public function updateLanguage(): void
     {
-        $languageFolders = $this->getLanguageFolder();
+        $languageFolders = $this->getLanguageFolders();
 
         $translations = array();
         foreach ($languageFolders as $languageFolder) {
             $languageFolder = rtrim($languageFolder, '/');
 
-            $translated = LanguageManager::readLanguages($this->buildBasePath() . "repository/$languageFolder", $languageFolder);
+            $translated = LanguageManager::readLanguages($this->buildBaseDirectoryPath() . "repository/$languageFolder", $languageFolder);
             $translations = array_merge_recursive($translations, $translated);
         }
 
@@ -297,11 +297,11 @@ abstract class Repository
      */
     private function saveLanguage($translations): void
     {
-        $langFolder = $this->buildBasePath() . 'lang/';
+        $langFolder = $this->buildBaseDirectoryPath() . 'lang/';
 
         // delete entire folder to ensure clean up deleted files
         if (file_exists($langFolder)) {
-            $this->rrmdir($langFolder);
+            $this->recursiveRemoveDirectory($langFolder);
         }
 
         mkdir($langFolder, 0777, true);
@@ -324,7 +324,7 @@ abstract class Repository
             return array();
         }
 
-        $langFile = $this->buildBasePath() . "lang/$code.ser";
+        $langFile = $this->buildBaseDirectoryPath() . "lang/$code.ser";
         if (!file_exists($langFile)) {
             return array();
         }
@@ -362,7 +362,7 @@ abstract class Repository
      */
     private function getLockPath(): string
     {
-        $path = $this->buildBasePath();
+        $path = $this->buildBaseDirectoryPath();
         $path .= 'locked';
         return $path;
     }
@@ -392,7 +392,7 @@ abstract class Repository
         $this->entityManager->persist($translationUpdate);
         $this->entityManager->flush();
 
-        $path = $this->getUpdatePath($translationUpdate->getId());
+        $path = $this->buildUpdateFilePath($translationUpdate->getId());
         file_put_contents($path, serialize($translation));
 
         return $translationUpdate->getId();
@@ -401,15 +401,26 @@ abstract class Repository
     /**
      * Path to folder were submitted user translations are stored
      *
-     * @param int $id
      * @return string
      */
-    private function getUpdatePath($id): string
+    private function buildUpdateDirectoryPath(): string
     {
-        $path = $this->buildBasePath() . 'updates/';
+        $path = $this->buildBaseDirectoryPath() . 'updates/';
         if (!file_exists($path)) {
             mkdir($path, 0777, true);
         }
+        return $path;
+    }
+
+    /**
+     * Path to file where submitted user translations are stored
+     *
+     * @param int $id
+     * @return string
+     */
+    private function buildUpdateFilePath($id): string
+    {
+        $path = $this->buildUpdateDirectoryPath();
         $path .= $id . '.update';
         return $path;
     }
@@ -425,7 +436,7 @@ abstract class Repository
      */
     public function createAndSendPatch(TranslationUpdateEntity $update): void
     {
-        $tmpDir = $this->buildTempPath($update->getId());
+        $tmpDir = $this->buildTempFolderPath($update->getId());
         try {
             $this->createAndSendPatchWithException($update, $tmpDir);
             $update->setState(TranslationUpdateEntity::STATE_SENT);
@@ -445,7 +456,7 @@ abstract class Repository
             $update->setState(TranslationUpdateEntity::STATE_FAILED);
             $update->setUpdated(time());
         }
-        $this->rrmdir($tmpDir);
+        $this->recursiveRemoveDirectory($tmpDir);
         $this->entityManager->flush(); //stores changes changed entities i.e. RepositoryEntities and TranslationUpdateEntities.
     }
 
@@ -492,7 +503,7 @@ abstract class Repository
      *
      * @param $folder
      */
-    private function rrmdir($folder): void
+    private function recursiveRemoveDirectory($folder): void
     {
         $fs = new Filesystem();
         // some files are write-protected by git - this removes write protection
@@ -507,9 +518,9 @@ abstract class Repository
      * @param string|int $id
      * @return string
      */
-    private function buildTempPath($id): string
+    private function buildTempFolderPath($id): string
     {
-        $path = $this->buildBasePath();
+        $path = $this->buildBaseDirectoryPath();
         $path .= "tmp";
         if (!file_exists($path)) {
             mkdir($path, 0777, true);
@@ -550,7 +561,7 @@ abstract class Repository
     private function applyChanges(GitRepository $git, $folder, TranslationUpdateEntity $update): void
     {
         /** @var LocalText[] $translations */
-        $translations = unserialize(file_get_contents($this->getUpdatePath($update->getId())));
+        $translations = unserialize(file_get_contents($this->buildUpdateFilePath($update->getId())));
 
         $languageFileWritten = false;
         foreach ($translations as $path => $translation) {
@@ -583,7 +594,7 @@ abstract class Repository
     {
         $path = $this->getCloneDirectoryPath();
         if (!file_exists($path)) return;
-        $this->rrmdir($path);
+        $this->recursiveRemoveDirectory($path);
     }
 
     /**
@@ -658,9 +669,9 @@ abstract class Repository
     }
 
     /**
-     * @return string[] Array with relative path to the language folder. i.e. lang/ for plugins and templates
+     * @return string[] Array with relative path to the language folder(s). i.e. lang/ for plugins and templates
      */
-    protected abstract function getLanguageFolder(): array;
+    protected abstract function getLanguageFolders(): array;
 
     /**
      * Check if remote repository is functional

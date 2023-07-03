@@ -8,7 +8,7 @@ class CoreRepository extends Repository
     /**
      * @return string[] Relative path to the language folder. i.e. lang/ for plugins
      */
-    protected function getLanguageFolder(): array
+    protected function getLanguageFolders(): array
     {
         return [
             'inc/lang',
