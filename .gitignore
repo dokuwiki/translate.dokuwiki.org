@@ -1,6 +1,5 @@
 .idea
 *.iml
-composer.lock
 composer.phar
 
 ###> phpunit/phpunit ###
@@ -36,3 +35,6 @@ yarn-error.log
 
 /tools/php-cs-fixer/vendor/
 /.php-cs-fixer.cache
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
