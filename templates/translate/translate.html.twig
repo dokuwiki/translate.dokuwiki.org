@@ -1,0 +1,212 @@
+{% extends 'default/index.html.twig' %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('translate') }}
+{% endblock %}
+
+{% block content %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a></li>
+        <li>
+            {% if repository.type == 'core' %}
+                <a href="{{ path("dokuwiki_translator_show") }} ">{{ repository.displayName|capitalize }}</a>
+            {% else %}
+                <a href="{{ path("dokuwiki_translator_show_extension", {'type': repository.type, 'name': repository.name}) }} ">{{ repository.displayName|capitalize }}</a>
+            {% endif %}
+        </li>
+        <li class="active">Translate</li>
+    </ol>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h1>Translate {{ repository.displayName }}</h1>
+                </div>
+
+                <p>
+                    Thank you for translating {{ repository.displayName }}! This tool helps you to send translations to the developers.
+                </p>
+                <p>
+                    <b>Don't be discouraged by the amount of strings!</b>
+                    If you don't feel like translating it all, just do a few strings and submit the translation.
+                    Each tiny step helps. Strings at top of the list are more important than those at the bottom,
+                    so please start at the top.
+                </p>
+                <p>
+                    When you're done click the submit button. Your changes will be automatically submitted to the developers.
+                    {% if openPR.count == 0 %}
+                        {% if openPR.listURL == '' %}
+                            You can find your changes <a href="https://github.com/dokuwiki-translate?tab=repositories">here</a>.
+                        {% else %}
+                            You can find previous {{ targetLanguage.name }} translation submissions
+                            <a href="{{ openPR.listURL }}">here</a>.
+                        {% endif %}
+                    {% endif %}
+                </p>
+
+                {% if openPR.count > 0 %}
+                    <div class="alert alert-info">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        There
+                        {% if openPR.count == 1%}
+                            is <b>1 translation</b>
+                        {% else %}
+                            are <b>{{ openPR.count }} translations</b>
+                        {% endif %}
+                        not merged for the {{ targetLanguage.name }} translation of the {{ repository.displayName }}.
+                        You can find open submissions at: <a href="{{ openPR.listURL }}">{{ openPR.title }}</a>.
+                    </div>
+                {% endif %}
+                {% if repository.errorCount >= maxErrorCount %}
+                    <div class="alert alert-danger">
+                        Updating of the English base translation is paused, because {{ maxErrorCount|format_number(style='spellout')}}
+                        times errors occurred during updating of the source code or processing of the submitted
+                        translations for
+                        {% if repository.type == 'core' %}
+                            DokuWiki.
+                        {% else %}
+                            this {{ repository.type }}.
+                            See further the <a href="{{ path("dokuwiki_translator_extension_settings", {"type": repository.type, "name":repository.name }) }}">settings</a>
+                            page.
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <h2>{{ targetLanguage.name }} translation</h2>
+
+
+                    <form action="{{ path('dokuwiki_translate_save') }}" method="post">
+                        <input type="hidden" name="repositoryType" value="{{ repository.type }}" />
+                        <input type="hidden" name="repositoryName" value="{{ repository.name }}" />
+                        <div class="form-horizontal well">
+                            <p>
+                                <strong>Important</strong>: To be properly credited in the language files, give your name and email address here.
+                            </p>
+
+                            <div class="form-group{% if "author" in errors|keys %} has-error{% endif %}">
+                                <label class="col-sm-3 control-label" for="author">Name</label>
+                                <div class="col-sm-9">
+                                    <input name="name" type="text" id="author" placeholder="Your name" value="{{ author }}" class="form-control" />
+
+                                    {% if "author" in errors|keys %}
+                                        <span class="help-block">
+                                            {{ errors.author }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="form-group{% if "email" in errors|keys %} has-error{% endif %}">
+                                <label class="col-sm-3 control-label" for="email">E-mail</label>
+                                <div class="col-sm-9">
+                                    <input name="email" type="email" id="email" placeholder="you@example.com"
+                                           value="{{ authorMail }}" class="form-control" />
+                                    {% if "email" in errors|keys %}
+                                        <span class="help-block">
+                                            {{ errors.email }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            {{ form_widget(captcha) }}
+                        </div>
+
+
+                        <div class="row translation-filter">
+
+                        </div>
+
+                        {% if "translation" in errors|keys %}
+                            <div class="form-group has-error">
+                                <span class="help-block">
+                                    <strong>Translations:</strong> {{ errors.translation }}
+                                </span>
+                            </div>
+                        {% endif %}
+
+                        {% if repository.type == 'core' %}
+                            {% set codesearchUrlParam = 'project=dokuwiki&path=-inc%2Flang+-lib%2Fplugins%2Flang+-lib%2Ftpl%2Fdokuwiki%2Flang' %}
+                        {% else %}
+                            {% set codesearchUrlParam = 'project=' ~ repository.type ~ '&path=' ~ repository.type ~ '%2F' ~ repository.name ~ '+-' ~ repository.type ~ '%2F' ~ repository.name ~ '%2Flang' %}
+                        {% endif %}
+
+                        <table class="table table-striped table-hover table-translate-markup"
+                               {% if targetLanguage.rtl %}dir="rtl"{% endif %}>
+                            <thead>
+                            <tr>
+                                <th>English</th>
+                                <th>{{ targetLanguage.name }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for translation in translations %}
+                                <tr
+                                        data-translation-key="{{ translation.key }}"
+                                        {% if translation.target is empty %}
+                                            class="translation-missing"
+                                        {% endif %}>
+                                    <td dir="ltr" class="translation-original">{{ translation.default|highlight_whitespace }}<a
+                                                href="https://codesearch.dokuwiki.org/search?full={{ translation.searchkey|escape('url') }}&{{ codesearchUrlParam }}"
+                                                class="btn btn-default btn-xs search-key-in-source" target="_blank"
+                                                title="Search in source code for the key '{{ translation.searchkey|escape }}' of this localizable string"
+                                        >
+                                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                        </a></td>
+                                    <td>
+                                        <textarea
+                                                name="{{ translation.key }}"
+                                                {% if translation.type == 'markup' %}
+                                                    rows="5"
+                                                {% else %}
+                                                    rows="3"
+                                                {% endif %}
+                                                 class="form-control"
+                                                >{{ translation.target }}</textarea>
+                                        {% if translation.type == 'markup' %}
+                                            <span class="help-block">
+                                                <small>
+                                                    <a href="https://www.dokuwiki.org/syntax" target="_blank" tabindex="-1">
+                                                        DokuWiki markup allowed</a>
+                                                </small>
+                                            </span>
+                                        {% endif %}
+                                    </td>
+
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <nav aria-label="Pages with translatable strings">
+                            <div class="pag-nav text-center"></div>
+                        </nav>
+
+                        <p id="pagination__note">
+                            <span class="label label-default label-info">Info</span>
+                            You don't need to hit the &ldquo;Submit Translation&rdquo; button before using the pagination.
+                        </p>
+
+                        <div class="form-group">
+                            <button name="action[save]" id="save__button" type="submit"
+                                   class="btn btn-primary"
+                                   title="This will save your translation and send a patch to the {{ repository.type }} author">
+                                Submit Translation
+                            </button>
+                            <button name="action[cancel]" type="submit" class="btn btn-link">
+                                Abort translation - this will discard all changes
+                            </button>
+                        </div>
+                    </form>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+{#    {{ parent() }} #}
+    {{ encore_entry_script_tags('translate') }}
+{% endblock %}

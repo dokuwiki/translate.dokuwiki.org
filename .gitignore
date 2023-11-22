@@ -1,13 +1,40 @@
 .idea
 *.iml
-app/cache
-app/logs
-app/config/parameters.yml
-app/bootstrap.php.cache
-web/bundles/
-web/css/
-web/js/
-vendor
-composer.lock
 composer.phar
-*~
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
+
+###> symfony/phpunit-bridge ###
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+/bin/.phpunit
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+!var/cache/.gitkeep
+!var/log/.gitkeep
+/vendor/
+###< symfony/framework-bundle ###
+
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###
+
+
+/tools/php-cs-fixer/vendor/
+/.php-cs-fixer.cache
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###

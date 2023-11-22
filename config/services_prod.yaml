@@ -1,0 +1,13 @@
+
+# configure 'request context' for the console to generate urls
+# https://symfony.com/doc/4.2/console/request_context.html
+
+# Uncomment for production - set real hostname and scheme
+parameters:
+    router.request_context.host: translate.dokuwiki.org
+    router.request_context.scheme: http
+
+    #TODO should be replaced in config/routig.yaml  by??
+#    framework:
+#        router:
+             #default_uri: http://localhost

@@ -1,0 +1,64 @@
+@import '~bootstrap'; /* ~ means import from node_modules directory */
+
+
+img#logo {
+    float: left;
+    padding: 0 1em;
+}
+
+.table {
+    .progress {
+        margin-bottom:0;
+    }
+
+    td.translation-progress {
+        width:200px;
+    }
+
+    td.translation-update {
+        width:5.5em;
+    }
+}
+/* darker color when having warning popovers, default lighter warning color is used for the empty fields */
+.table > tbody > tr.warning-msg > td {
+    background-color: #ffeeaf;
+}
+.table-hover > tbody > tr.warning-msg:hover > td {
+    background-color: #ffe790;
+}
+
+.table-hover > tbody > tr:hover > td > a.search-key-in-source {
+    display: inline-block;
+}
+.table-translate-array,
+.table-translate-markup{
+    tr {
+        td {
+            width: 50%;
+        }
+
+        td.translation-original {
+            white-space: pre-wrap;
+            span.highlight-whitespace {
+                cursor: help;
+                background-color: @state-danger-text;
+            }
+            position: relative;
+            .search-key-in-source {
+                position: absolute;
+                right: 8px;
+                bottom: 8px;
+                display: none;
+            }
+        }
+    }
+    margin-top: 20px;
+}
+
+.pagination li a {
+    cursor: pointer;
+}
+
+#pagination__note {
+    display: none;
+}

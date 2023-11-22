@@ -1,0 +1,25 @@
+
+App\Entity\RepositoryEntity:
+  properties:
+    url:
+      - NotBlank: ~
+      - Url: { protocols: [http, https, git, ssh] }
+    branch:
+      - NotBlank: ~
+      - Regex: '/^\S+$/'
+    email:
+      - NotBlank: ~
+      - Email: ~
+    name:
+      - NotBlank: ~
+      - Regex: '/^[a-z0-9]+$/'
+      - App\Validator\PluginName:
+          groups: [plugin]
+      - App\Validator\TemplateName:
+          groups: [template]
+  constraints:
+    - App\Validator\CustomUniqueEntity:
+        fields: [name, type]
+        #            errorPath: name
+        message: "There is already a registered {{ type }} with the name \"{{ name }}\"."
+

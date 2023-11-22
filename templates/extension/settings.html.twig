@@ -1,0 +1,66 @@
+{% extends 'default/index.html.twig' %}
+
+{% form_theme form 'form/bootstrap_3_horizontal_smallcolumn.html.twig' %}
+
+{% block content %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a></li>
+        <li>
+            {% if repository.type == 'core' %}
+                <a href="{{ path("dokuwiki_translator_show") }} ">{{ repository.displayName|capitalize }}</a>
+            {% else %}
+                <a href="{{ path("dokuwiki_translator_show_extension", {'type': repository.type, 'name': repository.name}) }} ">{{ repository.displayName|capitalize }}</a>
+            {% endif %}
+        </li>
+        <li class="active">Settings</li>
+    </ol>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h1>{{ repository.type|capitalize }} Settings</h1>
+                </div>
+            </div>
+            {% if urlSent %}
+            <div class="col-md-12">
+                <div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    An one-time edit url is sent to your last provided e-mail address.
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                {% include 'template/box.html.twig' %}
+            </div>
+        </div>
+        {% if not urlSent and repository.state != 'waiting' %}
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Request One-time Edit</h2>
+                <p>
+                    For modifying the e-mail, git clone URL, branch or English read-only setting, or resetting the
+                    error count you have to request a one-time edit URL. This URL is sent to the earlier provided
+                    e-mail address.
+                </p>
+
+                {% if errors is defined %}
+                    <ul>
+                        {% for error in errors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <form action="{{ path('dokuwiki_translator_extension_settings', {'type': repository.type, 'name': repository.name}) }}" class="form-horizontal" method="post">
+                    {{ form_widget(form) }}
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+
+
+{% endblock %}

@@ -1,7 +1,0 @@
-{% extends 'dokuwikiTranslatorBundle:Mail:main.txt.twig' %}
-
-{% block content %}
-your {{ repo.displayName }} is now imported and activated!
-You can see it at {{ url('dokuwiki_translator_show_extension', {'type': repo.type, 'name': repo.name}) }}.
-{% endblock %}
-

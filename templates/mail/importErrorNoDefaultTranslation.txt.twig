@@ -1,0 +1,10 @@
+{% extends 'mail/main.txt.twig' %}
+
+{% block content %}
+the import of your {{ repository.displayName }} failed.
+The default language folder is missing.
+Please note: the default language is always english (en)
+
+Please note that the DokuWiki translation tool only supports DokuWiki localization format.
+For further information on localization read https://www.dokuwiki.org/devel:localization.
+{% endblock %}

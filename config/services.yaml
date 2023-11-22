@@ -1,0 +1,96 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+
+    # make environment variables from .env, .env.local, etc available as parameter
+    # refer to these files for details
+    # eventually env var processors can be applied: https://symfony.com/doc/current/configuration/env_var_processors.html
+
+    app.mailerFromAddress: '%env(MAILER_FROM)%'
+    app.gitBinary: '%env(GIT_BINARY)%'
+    app.dataDir: '%env(DATA_DIR)%'
+    app.repositoryUpdateAge: '%env(int:REPOSITORY_UPDATE_AGE)%'
+    app.failedLangUpdateRetryAge: '%env(int:FAILED_LANG_UPDATE_RETRY_AGE)%'
+    app.maxRepositoriesToUpdatePerRun: '%env(int:MAX_REPOSITORIES_TO_UPDATE_PER_RUN)%'
+    app.maxErrorCount: '%env(int:MAX_ERROR_COUNT)%'
+    app.commandTimeout: '%env(int:COMMAND_TIMEOUT)%'
+    app.githubApiToken: '%env(GITHUB_API_TOKEN)%'
+    app.githubUrl: '%env(GITHUB_URL)%'
+    app.gitlabApiToken: '%env(GITLAB_API_TOKEN)%'
+    app.gitlabUrl: '%env(GITLAB_URL)%'
+    app.featureImportExport: '%env(FEATURE_IMPORT_EXPORT_BY_USER)%'
+    app.featureAddTranslation: '%env(FEATURE_ADD_TRANSLATION_BY_USER)%'
+
+
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/org/dokuwiki/translatorBundle' #exclude old bundle, temporary
+
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+
+    # explicit commands registration
+    App\Command\:
+        resource: '../src/Command/*'
+        tags: [ 'console.command' ]
+
+    App\Services\Repository\RepositoryManager:
+        arguments:
+            $dataFolder: '%app.dataDir%'
+            $repositoryAgeToUpdate: '%app.repositoryUpdateAge%'
+            $maxRepositoriesToUpdatePerRun: '%app.maxRepositoriesToUpdatePerRun%'
+            $maxErrors: '%app.maxErrorCount%'
+
+    App\Services\Repository\RepositoryStats:
+
+    App\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI:
+        arguments:
+            $dataFolder: '%app.dataDir%'
+
+    App\Validator\PluginNameValidator:
+        calls:
+            - [ setApi, [ '@App\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI' ] ]
+
+    App\Validator\TemplateNameValidator:
+        calls:
+            - [ setApi, [ '@App\Services\DokuWikiRepositoryAPI\DokuWikiRepositoryAPI' ] ]
+
+    App\Validator\CustomUniqueEntityValidator:
+        tags:
+            - { name: validator.constraint_validator }
+
+    App\Services\GitHub\GitHubService:
+        arguments:
+            $gitHubApiToken: '%app.githubApiToken%'
+            $dataFolder: '%app.dataDir%'
+            $gitHubUrl: '%app.githubUrl%'
+
+    App\Services\GitLab\GitLabService:
+        arguments:
+            $gitLabApiToken: '%app.gitlabApiToken%'
+            $dataFolder: '%app.dataDir%'
+            $gitLabUrl: '%app.gitlabUrl%'
+
+    App\Repository\TranslationUpdateEntityRepository:
+        arguments:
+            $failedLangUpdateRetryAge: '%app.failedLangUpdateRetryAge%'
+    # example of adding aliases, if one does not exist
+    # Symfony\Component\Security\Guard\GuardAuthenticatorHandler: '@security.authentication.guard_handler'

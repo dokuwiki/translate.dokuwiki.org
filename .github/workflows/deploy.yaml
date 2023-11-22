@@ -1,0 +1,60 @@
+name: "Build and Deploy"
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          extensions: mbstring, intl, PDO, pdo_mysql, bz2
+
+      - name: Create Production Settings
+        run: |
+          echo "APP_ENV=prod" > .env.local
+          echo "DATA_DIR=/var/www/translate/data" >> .env.local
+          echo "DATABASE_PASSWORD=${{ secrets.MYSQL_PASS }}" >> .env.local
+          echo "GITHUB_API_TOKEN=${{ secrets.TOKEN_FOR_GITHUB }}" >> .env.local
+
+      - name: Run composer install
+        run: |
+          wget -q https://getcomposer.org/composer-stable.phar -O composer.phar && chmod 755 composer.phar
+          ./composer.phar install --no-interaction --no-progress --no-suggest --no-dev
+
+      - name: Run yarn
+        run: |
+          yarn install --frozen-lockfile --no-progress
+          yarn run build
+          rm -rf node_modules
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+      - name: Backup Database
+        run: |
+          ssh translate@translate.dokuwiki.org "mysqldump --opt -u translate -p${{ secrets.MYSQL_PASS }} translate > backup/dump-`date +'%Y%m%d-%H%M%S'`.sql"
+
+      - name: Rsync to Server
+        run: |
+          rsync --delete-after -avz ./ translate@translate.dokuwiki.org:/var/www/translate/application/
+
+      - name: Migrate
+        run: |
+          ssh translate@translate.dokuwiki.org "php application/bin/console doctrine:migrations:migrate --no-interaction"
+
+      - name: House Keeping
+        run: |
+          ssh translate@translate.dokuwiki.org "php application/bin/console dokuwiki:updateLanguages"
+          ssh translate@translate.dokuwiki.org "php application/bin/console cache:clear"

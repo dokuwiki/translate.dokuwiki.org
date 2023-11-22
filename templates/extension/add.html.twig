@@ -1,0 +1,58 @@
+{% extends 'default/index.html.twig' %}
+
+{% form_theme form 'form/bootstrap_3_horizontal_smallcolumn.html.twig' %}
+
+
+{% block content %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a></li>
+        <li class="active">Add a {{ form.vars.data.type|capitalize }}</li>
+    </ol>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h1>{{ form.vars.data.type|capitalize }} Translation</h1>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <p>
+                    The DokuWiki translation tool allows you to add your DokuWiki
+                    {{ form.vars.data.type }} to be translated by end users.
+                    Everybody will be able to use this tool and create a translation
+                    of your {{ form.vars.data.type }}.<br />
+                    After adding your {{ form.vars.data.type }} you will receive translations as git patch via email or as
+                    <a href="https://help.github.com/articles/using-pull-requests" target="_blank">GitHub pull
+                        request</a>.
+                </p>
+
+                {% if errors is defined %}
+                    <ul>
+                        {% for error in errors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <form action="{{ path('dokuwiki_translator_extension_add', {'type': form.vars.data.type}) }}" class="form-horizontal" method="post">
+                    {{ form_widget(form) }}
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Add my {{ form.vars.data.type }}!</button>
+                        <a href="{{ path('dokuwiki_translator_homepage') }}" class="btn btn-default">
+                            Abort
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-6">
+                {% include 'template/explanation.html.twig'
+                    with { 'showname': true }
+                %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

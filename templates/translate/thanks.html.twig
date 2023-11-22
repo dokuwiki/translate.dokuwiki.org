@@ -1,0 +1,23 @@
+{% extends 'default/index.html.twig' %}
+
+{% block content %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a></li>
+        <li class="active">Thanks</li>
+    </ol>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h1>Thank you for your contribution!</h1>
+                </div>
+                <p>
+                    Thank you for your contribution. Your translation will be sent to the developers for a review.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}

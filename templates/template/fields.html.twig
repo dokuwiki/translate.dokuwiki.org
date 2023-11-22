@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block form_row %}
+    {% apply spaceless %}
+        <div class="form-group {% if errors|length %}has-error{% endif %}">
+            {{ form_label(form) }}
+            <div class="col-sm-9">
+                {{ form_widget(form) }}
+                {{ form_errors(form) }}
+            </div>
+        </div>
+    {% endapply %}
+{% endblock form_row %}
+
+{% block form_label %}
+    {% apply spaceless %}
+        {% if not compound %}
+            {% set label_attr = label_attr|merge({'for': id}) %}
+        {% endif %}
+        {% if required %}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+        {% endif %}
+        {% if label is empty %}
+            {% set label = name|humanize %}
+        {% endif %}
+        {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' col-sm-3 control-label ')|trim}) %}
+        <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label }}</label>
+    {% endapply %}
+{% endblock form_label %}
+
+{% block form_errors %}
+    {% apply spaceless %}
+        {% if errors|length > 0 %}
+            <span class="help-block more">
+                    {% for error in errors %}
+                        {{ error.message }}
+                    {% endfor %}
+            </span>
+        {% endif %}
+    {% endapply %}
+{% endblock form_errors %}

@@ -1,0 +1,13 @@
+{% macro color(percent) %}
+    {% apply spaceless %}
+        {% if percent < 15 %}
+            progress-bar-danger
+        {% else %}
+            {% if percent < 80 %}
+                progress-bar-warning
+            {% else %}
+                progress-bar-success
+            {% endif %}
+        {% endif %}
+    {% endapply %}
+{% endmacro %}

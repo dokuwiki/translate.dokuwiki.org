@@ -1,0 +1,188 @@
+{% import 'template/progressColor.html.twig' as progressbar %}
+{% extends 'default/index.html.twig' %}
+
+{% block content %}
+    <ol class="breadcrumb">
+        <li><a href="{{ path('dokuwiki_translator_homepage') }}">Home</a></li>
+        <li class="active">{{ repository.displayName|capitalize }}</li>
+    </ol>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h1>{{ repository.displayName|capitalize }}</h1>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            {% if englishReadonly %}
+                <div class="col-md-12">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        The English translation is marked as read-only. Improvements cannot be submitted via this tool.
+                        Please use the issue tracker or create a pull request for proposing your changes for
+                        {% if repository.type == 'core' %}
+                            DokuWiki.
+                        {% else %}
+                            this {{ repository.type }}.
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+            {% if repository.errorCount >= maxErrorCount %}
+                <div class="col-md-12">
+                    <div class="alert alert-danger">
+                        Updating of the English base translation is paused, because {{ maxErrorCount|format_number(style='spellout')}}
+                        times errors occurred during updating of the source code or processing of the submitted
+                        translations for
+                        {% if repository.type == 'core' %}
+                            DokuWiki.
+                        {% else %}
+                            this {{ repository.type }}.
+                            See further the <a href="{{ path("dokuwiki_translator_extension_settings", {"type": repository.type, "name":repository.name }) }}">settings</a>
+                            page.
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="col-md-8">
+                <p>
+                    This page shows the translation progress of {{ repository.displayName|capitalize }}.
+                    English is the master language which has always 100% progress.
+                    Please help by adding translations.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <div class="well well-small">
+                    <form action="{% if repository.type == 'core' %}{{  path("dokuwiki_translate") }}{% else %}{{ path("dokuwiki_translate_extension", {"type": repository.type, "name":repository.name }) }}{% endif %}" method="get" class="form-inline">
+                        <label for="language">Show the translatable strings for</label>
+                        <select id="language" name="lang" class="form-control">
+                            {% for language in languages %}
+                                <option value="{{ language.code }}"
+                                        {% if language.code == currentLanguage %} selected="selected"{% endif %}>
+                                    {{ language.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-primary" >Go</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="row">
+                    {% if featureAddTranslation %}
+                        <div class="col-md-4">
+                            <form class="well">
+                                <fieldset>
+                                    <legend>Add a new Language</legend>
+                                    <p>
+                                        Your language isn't listed? Just start translating!
+                                    </p>
+                                    <label for="new-language">
+                                        <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" target="_blank">
+                                            Two letter language code</a>
+                                    </label>
+                                    <input type="text" placeholder="en" id="new-language" class="form-control" />
+                                    <button type="submit" class="btn btn-primary">Add</button>
+                                </fieldset>
+                            </form>
+                        </div>
+                    {% endif %}
+                    {% if featureImportExport %}
+                        <div class="col-md-4">
+                            <form class="well">
+                                <fieldset>
+                                    <legend>Export translation</legend>
+                                    <label for="export-language">Language</label>
+                                    <select id="export-language" class="form-control"><option>English</option></select>
+                                    <label for="export-format" class="control-label">Format</label>
+                                    <select id="export-format" class="form-control"><option>json</option></select>
+                                    <button type="submit" value="Download" class="btn btn-primary">Download</button>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <div class="col-md-4">
+                            <form class="well">
+                                <fieldset>
+                                    <legend>Import translation</legend>
+                                    <label for="import-language">Language</label>
+                                    <select id="import-language" class="form-control"><option>English</option></select>
+                                    <label for="import-format">Format</label>
+                                    <select id="import-format" class="form-control"><option>json</option></select>
+                                    <input type="file" />
+                                    <button type="submit" class="btn btn-primary" >Translate</button>
+                                </fieldset>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Language</th>
+                        <th colspan="2">Progress</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for translation in repository.translations %}
+                    <tr>
+                        <td>{{ translation.language.code }}</td>
+                        <td>{{ translation.language.name }}</td>
+                        <td class="translation-progress">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped {{ progressbar.color(translation.completionPercent) }}" style="width: {{ translation.completionPercent }}%"></div>
+                            </div>
+                        </td>
+                        <td class="translation-progress-text">
+                            {{ translation.completionPercent }}%
+                        </td>
+                        <td class="translation-update">
+                            {% if repository.state == 'active' %}
+                                {% if repository.englishReadonly and translation.language.code == 'en' %}
+                                    <abbr title="Improvements cannot be submitted via this tool. Please use the issue tracker or an pull request for proposing your changes.">
+                                        read-only
+                                    </abbr>
+                                {% else %}
+                                    {% if repository.type == 'core' %}
+                                        <a href="{{ path("dokuwiki_translate", {"lang":translation.language.code }) }}">update</a>
+                                    {% else %}
+                                        <a href="{{ path("dokuwiki_translate_extension", {"type": repository.type, "lang":translation.language.code, "name":repository.name }) }}">update</a>
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                processing
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-8">
+                <p>
+                    <span class="label label-default label-info">Note</span>
+                    These statistics were last updated at
+                    {% if repository.lastUpdate == 0 %}
+                        <em>unknown</em>
+                    {% else %}
+                        {{ repository.lastupdate|date("m/d/Y") }}
+                    {% endif %}
+                </p>
+            </div>
+            {% if repository.type != 'core'%}
+            <div class="col-md-4 text-right">
+                <p>
+                    <a href="{{ path("dokuwiki_translator_extension_settings", {"type": repository.type, "name":repository.name }) }}">show settings</a> for {{ repository.displayName|capitalize }}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

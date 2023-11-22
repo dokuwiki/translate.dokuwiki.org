@@ -1,9 +1,0 @@
-{% extends 'dokuwikiTranslatorBundle:Mail:main.txt.twig' %}
-
-{% block content %}
-the initial import of your {{ repo.displayName }} failed.
-I wasn't able to clone from the given Repository.
-Please ensure that the given URL is public accessible.
-
-The git URL was {{ repo.url }}
-{% endblock %}

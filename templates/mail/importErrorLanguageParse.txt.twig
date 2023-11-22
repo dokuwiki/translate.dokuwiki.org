@@ -1,0 +1,13 @@
+{% extends 'mail/main.txt.twig' %}
+
+{% block content %}
+the import of your {{ repository.displayName }} failed.
+There was an error parsing a php language file.
+
+Filename: {{ fileName }}
+Line: {{ lineNumber }}
+Message: {{ message }}
+
+Please ensure that you are using the correct language format.
+For further information read https://www.dokuwiki.org/devel:localization.
+{% endblock %}
