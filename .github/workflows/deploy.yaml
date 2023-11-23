@@ -24,6 +24,7 @@ jobs:
           echo "DATA_DIR=/var/www/translate/data" >> .env.local
           echo "DATABASE_PASSWORD=${{ secrets.MYSQL_PASS }}" >> .env.local
           echo "GITHUB_API_TOKEN=${{ secrets.TOKEN_FOR_GITHUB }}" >> .env.local
+          echo "GITLAB_API_TOKEN=${{ secrets.TOKEN_FOR_GITLAB }}" >> .env.local
 
       - name: Run composer install
         run: |
