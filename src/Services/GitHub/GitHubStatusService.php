@@ -29,7 +29,7 @@ class GitHubStatusService
     {
         // more about the GitHub status api, see: https://www.githubstatus.com/api
         // (same api as https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json) https://www.githubstatus.com/api/v2/summary.json
-        $content = file_get_contents('https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json');
+        $content = file_get_contents('https://www.githubstatus.com/api/v2/summary.json');
 
         return $this->checkResponse($content);
     }

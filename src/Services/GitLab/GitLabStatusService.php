@@ -30,7 +30,8 @@ class GitLabStatusService
         // GitLab status page, see: https://status.gitlab.com/ (or https://status.io/pages/5b36dc6502d06804c08349f7)
 
         // more about the status.io status api, see: https://kb.status.io/developers/public-status-api/
-        $content = file_get_contents('https://4888742015139690.hostedstatus.com/1.0/status/5b36dc6502d06804c08349f7');
+        // https://4888742015139690.hostedstatus.com/1.0/status/5b36dc6502d06804c08349f7
+        $content = file_get_contents('http://hostedstatus.com/1.0/status/5b36dc6502d06804c08349f7');
 
         return $this->checkResponse($content);
     }
