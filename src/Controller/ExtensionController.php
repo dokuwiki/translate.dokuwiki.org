@@ -299,7 +299,7 @@ class ExtensionController extends AbstractController {
      */
     private function updateExtension(RepositoryEntity $repositoryEntity, $originalValues, RepositoryManager $repositoryManager) {
         $repositoryEntity->setLastUpdate(0);
-        $repositoryEntity->setErrorCount(0);
+        $repositoryEntity->setErrorCount(0); //save of edit form resets error count on purpose
         $repositoryEntity->setActivationKey('');
         $this->entityManager->flush();
 

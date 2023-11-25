@@ -27,7 +27,11 @@
                 <p>
                     Here you can edit the settings of your {{ form.vars.data.type }}. You can
                     use this edit URL one time. After a successful save of this form you need to
-                    request a new edit URL for any additional edits. Saving this form will reset the Error count as well.
+                    request a new edit URL for any additional edits.
+                </p>
+                <p>
+                    Saving this form (no change needed) will reset the Error count as well, after which the tool
+                    retries doing updates.
                 </p>
 
                 {% if errors is defined %}
