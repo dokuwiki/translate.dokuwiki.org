@@ -179,7 +179,9 @@ abstract class Repository
     {
         $this->openRepository();
         if ($this->git) {
-            return $this->behavior->pull($this->git, $this->entity);
+            // reset to latest fetch, anything else is discarded
+            // (Assumes no local change, so nothing to merge with pull, while pull does not handle conflicts well)
+            return $this->behavior->reset($this->git, $this->entity);
         }
 
         //no repository exists yet

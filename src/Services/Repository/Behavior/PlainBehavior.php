@@ -75,6 +75,20 @@ class PlainBehavior implements RepositoryBehavior
         return $forkedGit->pull('origin', $repository->getBranch()) === GitRepository::PULL_CHANGED;
     }
 
+    /**
+     * Update repository from remote (assumes there ar no local changes)
+     *
+     * @param GitRepository $forkedGit
+     * @param RepositoryEntity $repository
+     * @return bool true if the repository is changed
+     *
+     * @throws GitPullException
+     */
+    public function reset(GitRepository $forkedGit, RepositoryEntity $repository): bool
+    {
+        return $forkedGit->reset('origin', $repository->getBranch()) === GitRepository::PULL_CHANGED;
+    }
+
     public function isFunctional(): bool
     {
         return true;

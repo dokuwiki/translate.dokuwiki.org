@@ -94,7 +94,7 @@ class GitLabBehavior implements RepositoryBehavior
     /**
      * Update from original and push to fork of translate tool
      *
-     * @param GitRepository $forkedGit git repository cloned of the fork repository
+     * @param GitRepository $forkedGit git repository cloned of the forked repository
      * @param RepositoryEntity $repository
      * @return bool true if the repository is changed
      *
@@ -104,6 +104,23 @@ class GitLabBehavior implements RepositoryBehavior
     public function pull(GitRepository $forkedGit, RepositoryEntity $repository): bool
     {
         $changed = $forkedGit->pull($repository->getUrl(), $repository->getBranch()) === GitRepository::PULL_CHANGED;
+        $forkedGit->push('origin', $repository->getBranch());
+        return $changed;
+    }
+
+    /**
+     * Update from original and push to fork of translate tool (assumes there are no local changes)
+     *
+     * @param GitRepository $forkedGit git repository cloned of the forked repository
+     * @param RepositoryEntity $repository
+     * @return bool true if the repository is changed
+     *
+     * @throws GitPullException
+     * @throws GitPushException
+     */
+    public function reset(GitRepository $forkedGit, RepositoryEntity $repository): bool
+    {
+        $changed = $forkedGit->reset($repository->getUrl(), $repository->getBranch()) === GitRepository::PULL_CHANGED;
         $forkedGit->push('origin', $repository->getBranch());
         return $changed;
     }

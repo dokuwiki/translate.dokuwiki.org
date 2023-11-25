@@ -86,6 +86,38 @@ class GitRepository
     }
 
     /**
+     * Reset to fetch from remote repository, anything else is discarded. Assumes no changes locally.
+     *
+     * @param string $remote repository alias or git url
+     * @param string $branch remote branch to pull
+     * @return string GitRepository::PULL_UNCHANGED or GitRepository::PULL_CHANGED
+     *
+     * @throws GitPullException
+     */
+    public function reset($remote = 'origin', $branch = 'master'): string
+    {
+        $fetchHeadBefore = '';
+        $fetchHeadFile = $this->path . '/.git/FETCH_HEAD';
+        if (file_exists($fetchHeadFile)) {
+            $fetchHeadBefore = file_get_contents($fetchHeadFile);
+        }
+
+        try {
+            $this->run('fetch', $remote, $branch);
+            $this->run('reset', '--hard', 'FETCH_HEAD');
+        } catch (GitCommandException $e) {
+            throw new GitPullException("Failed to reset (pull) from $remote/$branch", $this->path, $e);
+        }
+
+        // compare FETCH_HEAD before and after to observe changes
+        $fetchHeadAfter = file_get_contents($fetchHeadFile);
+        if ($fetchHeadBefore === $fetchHeadAfter) {
+            return GitRepository::PULL_UNCHANGED;
+        }
+        return GitRepository::PULL_CHANGED;
+    }
+
+    /**
      * @param string $name alias of the remote
      * @param string $path git url of the remote repository
      * @return ProgramCallResult

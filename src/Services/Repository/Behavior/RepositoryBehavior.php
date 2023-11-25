@@ -82,6 +82,19 @@ interface RepositoryBehavior
      */
     public function pull(GitRepository $forkedGit, RepositoryEntity $repository): bool;
 
+    /**
+     * Update repository from original, and when applicable push to remote fork
+     * Note: By using git reset --hard instead of pull, conflicts are prevented, it ASSUMES there are NO local changes
+     * which needs merging.
+     *
+     * @param GitRepository $forkedGit git repository cloned of the forked or the original repository
+     * @param RepositoryEntity $repository
+     * @return bool true if the repository is changed
+     *
+     * @throws GitPullException
+     * @throws GitPushException
+     */
+    public function reset(GitRepository $forkedGit, RepositoryEntity $repository): bool;
 
     /**
      * Check if remote repository is functional
