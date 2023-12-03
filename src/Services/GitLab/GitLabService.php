@@ -176,7 +176,7 @@ class GitLabService
             $info = [
                 'listURL' => "https://gitlab.com/$user/$repository/-/merge_requests?scope=all&state=opened&search=Translation+update+%28$languageCode%29",
                 'title' => 'GitLab',
-                'count' => count($results)
+                'count' => is_countable($results) ? count($results) : 0
             ];
         } catch (Exception $e) {
             // skip intentionally, shown only for testing

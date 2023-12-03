@@ -19,37 +19,37 @@ class TranslationUpdateEntity {
      * @ORM\GeneratedValue(strategy="AUTO")
      * @var int|null
      */
-    protected ?int $id;
+    protected ?int $id = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="RepositoryEntity")
      * @var RepositoryEntity
      */
-    protected RepositoryEntity $repository;
+    protected ?RepositoryEntity $repository = null;
 
     /**
      * @ORM\Column(type="string", length=300)
      * @var string|null
      */
-    protected ?string $author;
+    protected ?string $author = null;
 
     /**
      * @ORM\Column(type="string", length=300)
      * @var string|null
      */
-    protected ?string $email;
+    protected ?string $email = null;
 
     /**
      * @ORM\Column(type="integer")
      * @var int|null
      */
-    protected ?int $updated;
+    protected ?int $updated = null;
 
     /**
      * @ORM\Column(type="string", length=300)
      * @var string|null
      */
-    protected ?string $state;
+    protected ?string $state = null;
 
     /**
      * @ORM\Column(type="text")
@@ -61,7 +61,7 @@ class TranslationUpdateEntity {
      * @ORM\Column(type="string", length=100)
      * @var string|null
      */
-    protected ?string $language;
+    protected ?string $language = null;
 
     /**
      * @param string $author

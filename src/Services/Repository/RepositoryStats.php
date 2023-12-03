@@ -126,7 +126,7 @@ class RepositoryStats
         if ($languageFile->getType() == LocalText::TYPE_MARKUP) {
             return 1;
         }
-        return count($languageFile->getContent());
+        return is_countable($languageFile->getContent()) ? count($languageFile->getContent()) : 0;
     }
 
 }

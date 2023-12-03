@@ -51,7 +51,7 @@ class GitHubService
      */
     public function createFork(string $url): string
     {
-        list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
+        [$user, $repository] = $this->getUsernameAndRepositoryFromURL($url);
         try {
             $result = $this->client->api('repo')->forks()->create($user, $repository);
         } catch (RuntimeException $e) {
@@ -90,16 +90,16 @@ class GitHubService
      */
     public function createPullRequest(string $patchBranch, string $destinationBranch, string $languageCode, string $url, $patchUrl): void
     {
-        list($user, $repository) = $this->getUsernameAndRepositoryFromURL($url);
-        list($repoName,) = $this->getUsernameAndRepositoryFromURL($patchUrl);
+        [$user, $repository] = $this->getUsernameAndRepositoryFromURL($url);
+        [$repoName, ] = $this->getUsernameAndRepositoryFromURL($patchUrl);
 
         try {
-            $this->client->api('pull_request')->create($user, $repository, array(
+            $this->client->api('pull_request')->create($user, $repository, [
                 'base' => $destinationBranch,
                 'head' => $repoName . ':' . $patchBranch,
                 'title' => 'Translation update (' . $languageCode . ')',
                 'body' => 'This pull request contains some translation updates.'
-            ));
+            ]);
         } catch (RuntimeException $e) {
             throw new GitHubCreatePullRequestException($e->getMessage() . " $user/$repository", 0, $e);
         }
@@ -152,7 +152,10 @@ class GitHubService
      */
     private function getUsernameAndRepositoryFromURL(string $url): array
     {
-        $result = preg_replace('#^(https://github.com/|git@.*?github.com:|git://github.com/)(.*)\.git$#', '$2', $url, 1, $counter);
+        $result = preg_replace(
+            '#^(https://github.com/|git@.*?github.com:|git://github.com/)(.*)\.git$#',
+            '$2', $url, 1, $counter
+        );
         if ($counter === 0) {
             throw new GitHubServiceException('Invalid GitHub clone URL: ' . $url);
         }

@@ -70,7 +70,7 @@ class TranslationPreparer {
      * @param string|null $jsKey js-key
      */
     private function createEntry($path, $key = null, $jsKey = null) {
-        $entry = array();
+        $entry = [];
         $entry['key'] = $this->createEntryKey($path, $key, $jsKey);
         $entry['searchkey'] = $this->createSearchKey($path, $key, $jsKey);
         $entry['default'] = $this->createEntryGetTranslation($this->defaultTranslation, $path, $key, $jsKey);

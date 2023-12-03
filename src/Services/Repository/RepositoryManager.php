@@ -75,7 +75,7 @@ class RepositoryManager
     public function getRepositoriesToUpdate(): array
     {
         $repositories = $this->findRepositoriesToUpdate();
-        $result = array();
+        $result = [];
         foreach ($repositories as $repository) {
             $result[] = $this->getRepository($repository);
         }

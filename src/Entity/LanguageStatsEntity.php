@@ -16,28 +16,24 @@ class LanguageStatsEntity {
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @var int|null
      */
-    protected ?int $id;
+    protected ?int $id = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="LanguageNameEntity")
      * @ORM\JoinColumn(name="language", referencedColumnName="code")
-     * @var LanguageNameEntity
      */
-    private LanguageNameEntity $language;
+    private ?LanguageNameEntity $language = null;
 
     /**
      * @ORM\Column(type="integer")
-     * @var int|null
      */
-    private ?int $completionPercent;
+    private ?int $completionPercent = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="RepositoryEntity" , inversedBy="translations")
-     * @var RepositoryEntity
      */
-    private RepositoryEntity $repository;
+    private ?RepositoryEntity $repository = null;
 
     /**
      * @param int $completionPercent

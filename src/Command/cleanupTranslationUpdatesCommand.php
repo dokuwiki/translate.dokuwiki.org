@@ -37,6 +37,7 @@ class cleanupTranslationUpdatesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $repositories = [];
         $type = $input->getArgument('type');
         $name = $input->getArgument('name');
 

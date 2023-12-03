@@ -27,7 +27,7 @@ class LanguageManager {
         }
 
         $folders = scandir($langFolder);
-        $languages = array();
+        $languages = [];
         foreach ($folders as $language) {
             if ($language === '.' || $language === '..') {
                 continue;
@@ -51,7 +51,7 @@ class LanguageManager {
      * @throws LanguageParseException
      */
     private static function readLanguage($languageFolder, $prefix) {
-        $language = array();
+        $language = [];
 
         $folders = scandir($languageFolder);
         foreach ($folders as $file) {

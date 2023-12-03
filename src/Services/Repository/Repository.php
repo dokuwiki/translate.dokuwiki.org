@@ -266,7 +266,7 @@ abstract class Repository
     {
         $languageFolders = $this->getLanguageFolders();
 
-        $translations = array();
+        $translations = [];
         foreach ($languageFolders as $languageFolder) {
             $languageFolder = rtrim($languageFolder, '/');
 
@@ -323,12 +323,12 @@ abstract class Repository
     {
         $code = strtolower($code);
         if (!preg_match('/^[a-z-]+$/i', $code)) {
-            return array();
+            return [];
         }
 
         $langFile = $this->buildBaseDirectoryPath() . "lang/$code.ser";
         if (!file_exists($langFile)) {
-            return array();
+            return [];
         }
         return unserialize(file_get_contents($langFile));
     }

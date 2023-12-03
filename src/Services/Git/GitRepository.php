@@ -282,7 +282,7 @@ class GitRepository
         $process->start();
         while ($process->isRunning()) {
             $process->checkTimeout();
-            usleep(1000000);
+            usleep(1_000_000);
         }
 
         return new ProgramCallResult(

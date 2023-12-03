@@ -17,7 +17,7 @@ class TemplateNameValidator extends ConstraintValidator {
     public function validate($value, Constraint $constraint) {
 
         if ($this->api->getExtensionInfo(RepositoryEntity::TYPE_TEMPLATE, $value) === false) {
-            $this->context->addViolation($constraint->message, array('%string%' => $value));
+            $this->context->addViolation($constraint->message, ['%string%' => $value]);
         }
     }
 

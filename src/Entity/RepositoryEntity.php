@@ -26,81 +26,69 @@ class RepositoryEntity {
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @var int|null
      */
     protected ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=300)
-     * @var string|null
      */
-    protected ?string $url;
+    protected ?string $url = null;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @var string|null
      */
-    protected ?string $branch;
+    protected ?string $branch = null;
 
     /**
      * @ORM\Column(type="integer")
-     * @var int|null
      */
-    protected ?int $lastUpdate;
+    protected ?int $lastUpdate = null;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @var string|null
      */
-    protected ?string $name;
+    protected ?string $name = null;
 
     /**
      * @ORM\Column(type="integer")
-     * @var int|null
      */
-    protected ?int $popularity;
+    protected ?int $popularity = null;
 
     /**
      * @ORM\Column(type="string", length=200)
-     * @var string|null
      */
-    protected ?string $displayName;
+    protected ?string $displayName = null;
 
     /**
      * @ORM\Column(type="string", length=355)
-     * @var string|null
      */
-    protected ?string $email;
+    protected ?string $email = null;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @var string|null
      */
-    protected ?string $author;
+    protected ?string $author = null;
 
     /**
      * @ORM\Column(type="string", length=500)
-     * @var string|null
      */
-    protected ?string $description;
+    protected ?string $description = null;
 
     /**
      * @ORM\Column(type="string", length=200)
-     * @var string|null
      */
-    protected ?string $tags;
+    protected ?string $tags = null;
 
     /**
      * @ORM\Column(type="string", length=50)
-     * @var string|null
      */
-    protected ?string $type;
+    protected ?string $type = null;
 
     /**
      * @ORM\Column(type="string", length=100)
      * @var string|null
      */
-    protected ?string $state;
+    protected ?string $state = null;
 
     /**
      * @ORM\Column(type="text")

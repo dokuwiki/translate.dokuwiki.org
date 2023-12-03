@@ -35,7 +35,9 @@ class ExtensionController extends AbstractController {
      */
     private EntityManagerInterface $entityManager;
 
-    public function __construct(RepositoryEntityRepository $repositoryRepository, LanguageNameEntityRepository $languageRepository, EntityManagerInterface $entityManager) {
+    public function __construct(RepositoryEntityRepository $repositoryRepository,
+                                LanguageNameEntityRepository $languageRepository,
+                                EntityManagerInterface $entityManager) {
         $this->repositoryRepository = $repositoryRepository;
         $this->languageRepository = $languageRepository;
         $this->entityManager = $entityManager;
@@ -55,8 +57,7 @@ class ExtensionController extends AbstractController {
      * @throws TransportExceptionInterface
      */
     public function index(Request $request, $type, DokuWikiRepositoryAPI $api, MailService $mailer) {
-
-        $data = array();
+        $data = [];
 
         $repository = new RepositoryEntity();
         $repository->setEmail('');
@@ -65,8 +66,9 @@ class ExtensionController extends AbstractController {
         $repository->setType($type);
         $repository->setEnglishReadonly(true);
 
+        $options = [];
         $options['type'] = $type;
-        $options['validation_groups'] = array('Default', $type);
+        $options['validation_groups'] = ['Default', $type];
         $options['action'] = RepositoryCreateType::ACTION_CREATE;
         $form = $this->createForm(RepositoryCreateType::class, $repository, $options);
 
@@ -129,7 +131,7 @@ class ExtensionController extends AbstractController {
      * @throws ORMException
      */
     public function activate($type, $name, $key) {
-
+        $data = [];
         try {
             $repository = $this->repositoryRepository->getRepositoryByNameAndActivationKey($type, $name, $key);
 
@@ -157,7 +159,7 @@ class ExtensionController extends AbstractController {
      * @throws NonUniqueResultException
      */
     public function show(Request $request, $type, $name, LanguageManager $languageManager) {
-        $data = array();
+        $data = [];
 
         try {
             $data['repository'] = $this->repositoryRepository->getExtensionTranslation($type, $name);
@@ -189,7 +191,7 @@ class ExtensionController extends AbstractController {
      * @throws TransportExceptionInterface
      */
     public function settings(Request $request, $type, $name, MailerInterface $mailer) {
-        $data = array();
+        $data = [];
 
         try {
             $repository = $this->repositoryRepository->getRepository($type, $name);
@@ -199,8 +201,9 @@ class ExtensionController extends AbstractController {
 
         $data['urlSent'] = false;
         if($repository->getState() !== RepositoryEntity::STATE_WAITING_FOR_APPROVAL) {
+            $options = [];
             $options['type'] = $type;
-            $options['validation_groups'] = array('Default', $type);
+            $options['validation_groups'] = ['Default', $type];
             $form = $this->createForm(RepositoryRequestEditType::class, $repository, $options);
 
             $form->handleRequest($request);
@@ -255,7 +258,9 @@ class ExtensionController extends AbstractController {
      * @throws OptimisticLockException
      */
     public function edit(Request $request, $type, $name, $key, RepositoryManager $repositoryManager) {
-        $data = array();
+        $options = [];
+        $param = [];
+        $data = [];
 
         try {
             $repository = $this->repositoryRepository->getRepositoryByNameAndEditKey($type, $name, $key);
@@ -263,13 +268,13 @@ class ExtensionController extends AbstractController {
             return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
 
-        $originalValues = array(
+        $originalValues = [
             'url' => $repository->getUrl(),
             'branch' => $repository->getBranch()
-        );
+        ];
 
         $options['type'] = $type;
-        $options['validation_groups'] = array('Default', $type);
+        $options['validation_groups'] = ['Default', $type];
         $options['action'] = RepositoryCreateType::ACTION_EDIT;
         $form = $this->createForm(RepositoryCreateType::class, $repository, $options);
 

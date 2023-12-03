@@ -24,10 +24,7 @@ class CustomUniqueEntityValidator extends UniqueEntityValidator {
     public function validate($entity, Constraint $constraint) {
         $constraint->message = strtr(
             $constraint->message,
-            array(
-                '{{ type }}' => $entity->getType(),
-                '{{ name }}' => $entity->getName()
-            )
+            ['{{ type }}' => $entity->getType(), '{{ name }}' => $entity->getName()]
         );
 
         parent::validate($entity, $constraint);

@@ -36,7 +36,8 @@ class TranslationController extends AbstractController {
     private TranslationPreparer $translationPreparer;
     private RepositoryEntityRepository $repoRepository;
 
-    public function __construct(RepositoryManager $repositoryManager, LanguageManager $languageManager, TranslationPreparer $translationPreparer, EntityManagerInterface $entityManager) {
+    public function __construct(RepositoryManager $repositoryManager, LanguageManager $languageManager,
+                                TranslationPreparer $translationPreparer, EntityManagerInterface $entityManager) {
         $this->repositoryManager = $repositoryManager;
         $this->languageManager = $languageManager;
         $this->translationPreparer = $translationPreparer;
@@ -87,13 +88,17 @@ class TranslationController extends AbstractController {
         $previousTranslation = $repository->getLanguage($language);
 
         if($repositoryEntity->getEnglishReadonly() && $language == 'en') {
+            $param = [];
             $param['type'] = $data['repositoryType'];
             $param['name'] = $data['repositoryName'];
             $param['englishReadonly'] = true;
             return $this->redirectToRoute('dokuwiki_translator_show_extension', $param);
         }
 
-        $validator = $this->getUserTranslationValidator($defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email'], $validatorFactory);
+        $validator = $this->getUserTranslationValidator(
+            $defaultTranslation, $previousTranslation, $data['translation'], $data['name'], $data['email'],
+            $validatorFactory
+        );
         $newTranslation = $validator->validate();
         $errors = $validator->getErrors();
 
@@ -131,7 +136,9 @@ class TranslationController extends AbstractController {
      * @param UserTranslationValidatorFactory $validatorFactory
      * @return UserTranslationValidator
      */
-    protected function getUserTranslationValidator(array $defaultTranslation, array $previousTranslation, array $userTranslation, $author, $authorEmail, UserTranslationValidatorFactory $validatorFactory) {
+    protected function getUserTranslationValidator(array $defaultTranslation, array $previousTranslation,
+                                                   array $userTranslation, $author, $authorEmail,
+                                                   UserTranslationValidatorFactory $validatorFactory) {
         return $validatorFactory->getInstance($defaultTranslation, $previousTranslation,
                 $userTranslation, $author, $authorEmail);
     }
@@ -171,7 +178,9 @@ class TranslationController extends AbstractController {
      * @param FormInterface|null $captchaForm
      * @return RedirectResponse|Response
      */
-    private function translate(Request $request, $type, $name, array $userInput = array(), $captchaForm = null) {
+    private function translate(Request $request, $type, $name, array $userInput = [], $captchaForm = null) {
+        $data = [];
+        $param = [];
         $language = $this->getLanguage($request);
         try {
             $repositoryEntity = $this->repoRepository->getRepository($type, $name);
@@ -229,7 +238,7 @@ class TranslationController extends AbstractController {
 
         $data['openPR'] = $this->getOpenPRListInfo($repositoryEntity, $data['targetLanguage']);
 
-        $captchaForm = $captchaForm ?? $this->getCaptchaForm();
+        $captchaForm ??= $this->getCaptchaForm();
         $data['captcha'] = $captchaForm->createView();
 
         return $this->render('translate/translate.html.twig', $data);

@@ -13,8 +13,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RepositoryCreateType extends AbstractType {
 
-    const ACTION_CREATE = 'create';
-    const ACTION_EDIT = 'edit';
+    public const ACTION_CREATE = 'create';
+    public const ACTION_EDIT = 'edit';
 
 
     public function buildForm(FormBuilderInterface $builder, array $options) {

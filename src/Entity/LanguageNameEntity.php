@@ -14,13 +14,13 @@ class LanguageNameEntity {
      * @ORM\Column(type="string", length=50)
      * @var string|null
      */
-    protected ?string $code;
+    protected ?string $code = null;
 
     /**
      * @ORM\Column(type="string", length=150)
      * @var string|null
      */
-    protected ?string $name;
+    protected ?string $name = null;
 
     /**
      * @ORM\Column(type="boolean")

@@ -98,9 +98,7 @@ class MailService {
      */
     private function logMail(TemplatedEmail $message) {
         $context = [];
-        $context['to'] = implode(', ', array_map(function (Address $address) {
-            return $address->getAddress();
-        }, $message->getTo()));
+        $context['to'] = implode(', ', array_map(fn(Address $address) => $address->getAddress(), $message->getTo()));
         $context['subject'] = $message->getSubject();
         $context['template'] = $message->getTextTemplate();
 

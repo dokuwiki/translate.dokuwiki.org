@@ -39,9 +39,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @throws NoResultException
      */
     public function getRepository($type, $name) {
-        $repository = $this->findOneBy(
-            array('type' => $type, 'name' => $name)
-        );
+        $repository = $this->findOneBy(['type' => $type, 'name' => $name]);
         if (!$repository) {
             throw new NoResultException();
         }
@@ -71,9 +69,10 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
         } catch (NoResultException $e) {
             return [
                 'completionPercent' => 0,
-                'displayName' => 'DokuWiki',
+                'displayName' => 'DokuWiki', //TODO why guessing the properties for repository.* if a language does not exist?
                 'state' => RepositoryEntity::STATE_ACTIVE,
-                'englishReadonly' => true
+                'englishReadonly' => true,
+                'errorCount' => 0
             ];
         }
     }

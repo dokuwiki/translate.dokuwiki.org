@@ -4,7 +4,7 @@ namespace App\Services\GitLab;
 
 class GitLabStatusService
 {
-    const STATUS_OPERATIONAL = 100;
+    public const STATUS_OPERATIONAL = 100;
     private ?bool $status = null;
 
     /**
@@ -47,7 +47,7 @@ class GitLabStatusService
         if (!$content) {
             return false;
         }
-        $status = json_decode($content);
+        $status = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
         if ($status === null || !isset($status->result) || !isset($status->result->status)) {
             return false;
         }

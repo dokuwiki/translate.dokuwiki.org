@@ -41,7 +41,7 @@ class DokuWikiRepositoryAPI {
             return false;
         }
 
-        $cache = array();
+        $cache = [];
         foreach ($content->plugin as $extension) {
             $repository = new RepositoryEntity();
             if(substr($extension->id, 0, 9) == 'template:') {
@@ -78,7 +78,7 @@ class DokuWikiRepositoryAPI {
      * @return string
      */
     private function mergeExtensionTags(SimpleXMLElement $tags) {
-        $result = array();
+        $result = [];
         foreach ($tags->tag as $tag) {
             $result[] = strval($tag);
         }

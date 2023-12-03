@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ShowInfoCommand extends Command
 {
-    const NEWLINE = true;
+    public const NEWLINE = true;
     private RepositoryManager $repositoryManager;
     private RepositoryEntityRepository $repositoryEntityRepository;
     private TranslationUpdateEntityRepository $translationUpdateEntityRepository;
@@ -46,6 +46,7 @@ class ShowInfoCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $repositories = [];
         $name = $input->getArgument('name');
         $type = $input->getArgument('type');
         $showMore = $input->getArgument('showmore') === 'showmore';

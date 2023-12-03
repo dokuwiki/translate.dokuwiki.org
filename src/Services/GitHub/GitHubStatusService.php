@@ -45,7 +45,7 @@ class GitHubStatusService
         if (!$content) {
             return false;
         }
-        $status = json_decode($content);
+        $status = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
         if ($status === null || !isset($status->components)) {
             return false;
         }

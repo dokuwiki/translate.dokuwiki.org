@@ -8,9 +8,7 @@ use Twig\TwigFunction;
 class DokuWikiToolbarExtension extends AbstractExtension {
 
     public function getFunctions() : array {
-        return array(
-            new TwigFunction('dokuWikiToolbar', array(&$this, 'dokuWikiToolbar')),
-        );
+        return [new TwigFunction('dokuWikiToolbar', [&$this, 'dokuWikiToolbar'])];
     }
 
     public function dokuWikiToolbar() {

@@ -191,7 +191,7 @@ class LanguageFileParser {
      */
     public function getFirstString() {
         $stringDelimiter = $this->content[0];
-        if (!in_array($stringDelimiter, array('\'', '"'))) {
+        if (!in_array($stringDelimiter, ['\'', '"'])) {
             throw $this->createException("Content won't start with a string.");
         }
         $this->shortContentBy(1);
@@ -311,13 +311,13 @@ class LanguageFileParser {
     public function determineNextMode() {
         $this->content = ltrim($this->content);
 
-        $modes = array(
+        $modes = [
             '/*' => LanguageFileParser::MODE_COMMENT_MULTI_LINE,
             '//' => LanguageFileParser::MODE_COMMENT_SINGLE_LINE,
             '#' => LanguageFileParser::MODE_COMMENT_SINGLE_LINE,
             '$lang[' => LanguageFileParser::MODE_LANG,
             '?>' => LanguageFileParser::MODE_PHP_END
-        );
+        ];
 
         foreach ($modes as $startsWith => $result) {
             if ($this->contentStartsWith($startsWith)) {

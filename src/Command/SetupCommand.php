@@ -95,6 +95,7 @@ class SetupCommand extends Command {
      */
     private function addLanguageNames(): void
     {
+        $count = [];
         $names = [
             'af' => 'Afrikaans',
             'ar' => 'Arabic',

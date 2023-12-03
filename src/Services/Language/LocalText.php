@@ -20,10 +20,7 @@ class LocalText {
      */
     private $content;
 
-    /**
-     * @var AuthorList
-     */
-    private $authors;
+    private AuthorList $authors;
 
     /**
      * @var string

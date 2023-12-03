@@ -25,7 +25,8 @@ class DefaultController extends AbstractController {
      *
      * @throws NonUniqueResultException
      */
-    public function index(Request $request, LanguageManager $languageManager, RepositoryEntityRepository $repoEntityRepo, LanguageNameEntityRepository $langNameEntityRepo) {
+    public function index(Request $request, LanguageManager $languageManager, RepositoryEntityRepository $repoEntityRepo,
+                          LanguageNameEntityRepository $langNameEntityRepo) {
         $lang = $request->query->get('lang');
 
         if (!empty($lang)) {
@@ -37,6 +38,7 @@ class DefaultController extends AbstractController {
             }
         }
 
+        $data = [];
         $data['currentLanguage'] = $languageManager->getLanguage($request);
         $data['coreRepository'] = $repoEntityRepo->getCoreRepositoryInformation($data['currentLanguage']);
         $data['repositories'] = $repoEntityRepo->getExtensionRepositoryInformation($data['currentLanguage']);
@@ -60,7 +62,8 @@ class DefaultController extends AbstractController {
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function show(Request $request, LanguageManager $languageManager, RepositoryEntityRepository $repoEntityRepo, LanguageNameEntityRepository $langNameEntityRepo) {
+    public function show(Request $request, LanguageManager $languageManager, RepositoryEntityRepository $repoEntityRepo,
+                         LanguageNameEntityRepository $langNameEntityRepo) {
         $data = [];
         $data['repository'] = $repoEntityRepo->getCoreTranslation();
         $data['currentLanguage'] = $languageManager->getLanguage($request);

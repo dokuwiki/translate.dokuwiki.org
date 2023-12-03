@@ -20,9 +20,7 @@ class LanguageNameEntityRepository extends ServiceEntityRepository {
      * @throws NoResultException
      */
     public function getLanguageByCode($code) {
-        $result = $this->findOneBy(
-            array('code' => $code)
-        );
+        $result = $this->findOneBy(['code' => $code]);
 
         if (!$result) {
             throw new NoResultException();
