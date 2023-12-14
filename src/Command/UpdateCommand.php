@@ -26,7 +26,9 @@ class UpdateCommand extends Command {
     protected static $defaultName = 'dokuwiki:updateGit';
     protected static $defaultDescription = 'Update local git repositories (and eventually the fork) and send pending translations';
 
-    public function __construct(TranslationUpdateEntityRepository $translationUpdateEntityRepository, RepositoryManager $repositoryManager, ParameterBagInterface $parameterBag, LoggerInterface $logger) {
+    public function __construct(TranslationUpdateEntityRepository $translationUpdateEntityRepository,
+                                RepositoryManager $repositoryManager, ParameterBagInterface $parameterBag,
+                                LoggerInterface $logger) {
         $this->repositoryManager = $repositoryManager;
         $this->translationUpdateEntityRepository = $translationUpdateEntityRepository;
         $this->parameterBag = $parameterBag;
@@ -71,7 +73,7 @@ class UpdateCommand extends Command {
      * @throws OptimisticLockException
      * @throws TransportExceptionInterface
      */
-    private function runUpdateOfRepositories() {
+    private function runUpdateOfRepositories(): void {
         $repositories = $this->repositoryManager->getRepositoriesToUpdate();
         foreach($repositories as $repository) {
             $repository->update();
@@ -83,7 +85,7 @@ class UpdateCommand extends Command {
      * @throws OptimisticLockException
      * @throws TransportExceptionInterface
      */
-    private function processPendingTranslations() {
+    private function processPendingTranslations(): void {
         $updates = $this->translationUpdateEntityRepository->getPendingTranslationUpdates();
 
         foreach ($updates as $update) {
@@ -123,7 +125,7 @@ class UpdateCommand extends Command {
         return false;
     }
 
-    private function unlock() {
+    private function unlock(): void {
         unlink($this->getLockFilePath());
     }
 

@@ -31,7 +31,8 @@ class TranslationPreparer {
      * @param array|LocalText[] $targetTranslation if user submitted as array, otherwise LocalText from disk
      * @return array
      */
-    public function prepare(array $defaultTranslation, array $targetTranslation) {
+    public function prepare(array $defaultTranslation, array $targetTranslation): array
+    {
         $this->defaultTranslation = $defaultTranslation;
         $this->targetTranslation = $targetTranslation;
         $this->missingTranslations = [];
@@ -69,7 +70,8 @@ class TranslationPreparer {
      * @param string|null $key key of the language string
      * @param string|null $jsKey js-key
      */
-    private function createEntry($path, $key = null, $jsKey = null) {
+    private function createEntry(string $path, ?string $key = null, ?string $jsKey = null): void
+    {
         $entry = [];
         $entry['key'] = $this->createEntryKey($path, $key, $jsKey);
         $entry['searchkey'] = $this->createSearchKey($path, $key, $jsKey);
@@ -92,7 +94,8 @@ class TranslationPreparer {
      * @param string|null $jsKey js key of language string
      * @return string
      */
-    function createEntryKey($path, $key = null, $jsKey = null) {
+    function createEntryKey(string $path, ?string $key = null, ?string $jsKey = null): string
+    {
         $entryKey = sprintf('translation[%s]', $path);
         if ($key === null) return $entryKey;
 
@@ -111,7 +114,8 @@ class TranslationPreparer {
      * @param string|null $jsKey js key of language string
      * @return string
      */
-    function createSearchKey($path, $key = null, $jsKey = null) {
+    function createSearchKey(string $path, ?string $key = null, ?string $jsKey = null): string
+    {
         if ($key === null) {
             $path = explode('/', $path); // e.g. lang/<filename>.txt or inc/lang/<filename>.txt, etc
             $filename = end($path);
@@ -130,7 +134,8 @@ class TranslationPreparer {
      * @param string|null $jsKey js key of language string
      * @return string
      */
-    function createEntryGetTranslation($translation, $path, $key = null, $jsKey = null) {
+    function createEntryGetTranslation(array $translation, string $path, ?string $key = null, ?string $jsKey = null): string
+    {
         if (!isset($translation[$path])) {
             return '';
         }
@@ -150,7 +155,5 @@ class TranslationPreparer {
         if (!isset($translation[$key][$jsKey])) return '';
         return $translation[$key][$jsKey];
     }
-
-
 
 }

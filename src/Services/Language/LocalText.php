@@ -34,7 +34,8 @@ class LocalText {
      *                            Always empty on markup mode.
      * @param string $header the other lines than the list of authors
      */
-    function __construct($content, $type, AuthorList $authors = null, $header = '') {
+    function __construct($content, string $type, AuthorList $authors = null, string $header = '')
+    {
         $this->content = $content;
         $this->type = $type;
         if ($authors === null) {
@@ -58,7 +59,8 @@ class LocalText {
      *
      * @return string
      */
-    public function getType() {
+    public function getType(): string
+    {
         return $this->type;
     }
 
@@ -67,7 +69,8 @@ class LocalText {
      *
      * @return AuthorList
      */
-    public function getAuthors() {
+    public function getAuthors(): AuthorList
+    {
         return $this->authors;
     }
 
@@ -76,7 +79,8 @@ class LocalText {
      *
      * @return string
      */
-    public function getHeader() {
+    public function getHeader(): string
+    {
         return $this->header;
     }
 
@@ -87,7 +91,8 @@ class LocalText {
      *
      * @throws LanguageFileIsEmptyException
      */
-    public function render() {
+    public function render(): string
+    {
         if ($this->type === LocalText::TYPE_MARKUP) {
             return $this->getContent();
         }
@@ -104,7 +109,8 @@ class LocalText {
      *
      * @return string
      */
-    private function renderHeader() {
+    private function renderHeader(): string
+    {
         $php = "/**\n";
         $end = strpos($this->header, '@license');
         if ($end === false) {
@@ -132,7 +138,8 @@ class LocalText {
      *
      * @return string
      */
-    private function renderAuthors() {
+    private function renderAuthors(): string
+    {
         $php = '';
 
         $authors = $this->authors->getAll();
@@ -162,7 +169,8 @@ class LocalText {
      * @param string $str
      * @return string
      */
-    private function escapeComment($str) {
+    private function escapeComment(string $str): string
+    {
         return str_replace('*/', '', $str);
     }
 
@@ -176,7 +184,8 @@ class LocalText {
      *
      * @throws LanguageFileIsEmptyException
      */
-    private function renderArray($array, $prefix = '', &$elementsWritten = false) {
+    private function renderArray(array $array, string $prefix = '', bool &$elementsWritten = false): string
+    {
         $php = '';
 
         foreach ($array as $key => $text) {
@@ -208,7 +217,7 @@ class LocalText {
      * @param string $text
      * @return string
      */
-    private function escapeText($text) {
+    private function escapeText(string $text): string {
         return str_replace("'", '\\\'', $text);
     }
 
@@ -216,26 +225,26 @@ class LocalText {
     /**
      * Check if string starts with the needle
      *
-     * @param $haystack
-     * @param $needle
+     * @param string $haystack
+     * @param string $needle
      * @return bool
      */
-    private function startsWith($haystack, $needle) {
+    private function startsWith(string $haystack, string $needle): bool {
         $length = strlen($needle);
-        return (substr($haystack, 0, $length) === $needle);
+        return substr($haystack, 0, $length) === $needle;
     }
 
     /**
      * Check if string ends with needle
      *
-     * @param $haystack
-     * @param $needle
+     * @param string $haystack
+     * @param string $needle
      * @return bool
      */
-    private function endsWith($haystack, $needle) {
+    private function endsWith(string $haystack, string $needle): bool {
         $length = strlen($needle);
 
         return $length === 0 ||
-        (substr($haystack, -$length) === $needle);
+            substr($haystack, -$length) === $needle;
     }
 }

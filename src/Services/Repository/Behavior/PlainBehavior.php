@@ -16,7 +16,7 @@ class PlainBehavior implements RepositoryBehavior
 
     private MailService $mailService;
 
-    public function __construct($mailService)
+    public function __construct(MailService $mailService)
     {
         $this->mailService = $mailService;
     }
@@ -99,7 +99,7 @@ class PlainBehavior implements RepositoryBehavior
      *
      * @param RepositoryEntity $repository
      * @param LanguageNameEntity $language
-     * @return array
+     * @return array{count: int, listURL: string, title: string}
      */
     public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language): array
     {

@@ -43,18 +43,19 @@ class LanguageFileParser {
     public const MODE_PHP_END = 'php end';
     public const MODE_PHP_UNKNOWN = 'php unknown';
 
-    public function __construct($prefix) {
+    public function __construct(string $prefix) {
         $this->prefix = $prefix;
     }
 
     /**
      * Load content from file
      *
-     * @param $file
+     * @param string $file
      *
      * @throws LanguageFileDoesNotExistException
      */
-    public function loadFile($file) {
+    public function loadFile(string $file): void
+    {
         if (!is_file($file)) {
             throw new LanguageFileDoesNotExistException();
         }
@@ -73,12 +74,14 @@ class LanguageFileParser {
      * Parse a .php language file
      *
      * @param string $file
+     * @param string $prefix
      * @return LanguageFileParser
      *
      * @throws LanguageFileDoesNotExistException
      * @throws LanguageParseException
      */
-    public static function parseLangPHP($file, $prefix) {
+    public static function parseLangPHP(string $file, string $prefix): LanguageFileParser
+    {
         $parser = new LanguageFileParser($prefix);
         $parser->loadFile($file);
         return $parser->parse();
@@ -87,11 +90,12 @@ class LanguageFileParser {
     /**
      * Parse the loaded content
      *
-     * @return $this
+     * @return LanguageFileParser
      *
      * @throws LanguageParseException
      */
-    public function parse() {
+    public function parse(): LanguageFileParser
+    {
         $this->author = new AuthorList();
         $this->lang = [];
         $this->header = '';
@@ -128,7 +132,7 @@ class LanguageFileParser {
      *
      * @throws LanguageParseException
      */
-    public function processLang() {
+    public function processLang(): string {
         $key = $this->getString();
         $this->content = rtrim($this->content);
 
@@ -168,7 +172,8 @@ class LanguageFileParser {
      *
      * @throws LanguageParseException
      */
-    public function getString() {
+    public function getString(): string
+    {
         $string = '';
         while (true) {
             $string .= $this->getFirstString();
@@ -189,7 +194,8 @@ class LanguageFileParser {
      *
      * @throws LanguageParseException
      */
-    public function getFirstString() {
+    public function getFirstString(): string
+    {
         $stringDelimiter = $this->content[0];
         if (!in_array($stringDelimiter, ['\'', '"'])) {
             throw $this->createException("Content won't start with a string.");
@@ -225,7 +231,7 @@ class LanguageFileParser {
      *
      * @return string
      */
-    public function processSingleLineComment() {
+    public function processSingleLineComment(): string {
         $endOfLine = strpos($this->content, "\n");
         if ($endOfLine === false) {
             $this->content = '';
@@ -243,7 +249,7 @@ class LanguageFileParser {
      *
      * @throws LanguageParseException
      */
-    public function processMultiLineComment() {
+    public function processMultiLineComment(): string {
         $end = strpos($this->content, '*/');
         if ($end === false) {
             throw $this->createException('multi line comment not closed');
@@ -308,7 +314,7 @@ class LanguageFileParser {
      *
      * @return string one of the LanguageFileParser::$MODE_* modes
      */
-    public function determineNextMode() {
+    public function determineNextMode(): string {
         $this->content = ltrim($this->content);
 
         $modes = [
@@ -334,7 +340,7 @@ class LanguageFileParser {
      *
      * @throws LanguageParseException
      */
-    function goToStart() {
+    function goToStart(): void {
         $phpStart = strpos($this->content, '<?php');
         if ($phpStart === -1) {
             throw $this->createException('No PHP start found');
@@ -348,7 +354,7 @@ class LanguageFileParser {
      * @param string $needle
      * @return bool
      */
-    private function contentStartsWith($needle) {
+    private function contentStartsWith(string $needle): bool {
         return $this->stringStartsWith($this->content, $needle);
     }
 
@@ -359,16 +365,16 @@ class LanguageFileParser {
      * @param string $needle search for this text in string
      * @return bool
      */
-    private function stringStartsWith($haystack, $needle) {
+    private function stringStartsWith(string $haystack, string $needle): bool {
         return !strncmp($haystack, $needle, strlen($needle));
     }
 
     /**
      * Shorten the content from the begin with the given length
      *
-     * @param $length
+     * @param int $length
      */
-    private function shortContentBy($length) {
+    private function shortContentBy(int $length): void {
         $this->content = substr($this->content, $length);
     }
 
@@ -379,27 +385,19 @@ class LanguageFileParser {
      * @param string $delimiter ' or "
      * @return string escaped string
      */
-    public function escapeString($string, $delimiter) {
+    public function escapeString(string $string, string $delimiter): string {
         if ($delimiter === "'") {
             return $this->escapeSingleQuoted($string);
         }
         return $this->escapeDoubleQuoted($string);
     }
 
-    /**
-     * @param $string
-     * @return string
-     */
-    private function escapeSingleQuoted($string) {
+    private function escapeSingleQuoted(string $string): string {
         $string = str_replace('\\\\', '\\', $string);
         return str_replace('\\\'', '\'', $string);
     }
 
-    /**
-     * @param $string
-     * @return string
-     */
-    private function escapeDoubleQuoted($string) {
+    private function escapeDoubleQuoted(string $string): string {
         $string = str_replace('\\\\', '\\', $string);
         $string = str_replace('\\n', "\n", $string);
         $string = str_replace('\\r', "\r", $string);
@@ -427,31 +425,20 @@ class LanguageFileParser {
         return $string;
     }
 
-    /**
-     * @return string
-     */
-    public function getHeader() {
+    public function getHeader(): string {
         return $this->header;
     }
 
-    /**
-     * @return AuthorList
-     */
-    public function getAuthor() {
+    public function getAuthor(): AuthorList
+    {
         return $this->author;
     }
 
-    /**
-     * @return string
-     */
-    public function getContent() {
+    public function getContent(): string {
         return $this->content;
     }
 
-    /**
-     * @return array
-     */
-    public function getLang() {
+    public function getLang(): array {
         return $this->lang;
     }
 
@@ -461,7 +448,8 @@ class LanguageFileParser {
      * @param string $message
      * @return LanguageParseException
      */
-    private function createException($message) {
+    private function createException(string $message): LanguageParseException
+    {
         $remaining = $this->content . $this->trimmedEnding;
         $remaining = explode("\n", $remaining);
         $remainingLines = count($remaining) - 1;

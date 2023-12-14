@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class GitService
 {
 
-    private $gitBinary;
+    private string $gitBinary;
     private float $commandTimeout;
 
     /**
@@ -27,7 +27,7 @@ class GitService
      * @param string $path folder containing the git repository
      * @return bool
      */
-    public function isRepository($path): bool
+    public function isRepository(string $path): bool
     {
         return file_exists($path);
     }
@@ -48,7 +48,7 @@ class GitService
      *
      * @throws GitException
      */
-    public function openRepository($path): GitRepository
+    public function openRepository(string $path): GitRepository
     {
         if (!$this->isRepository($path)) {
             throw new GitException("no git repository", $path);
@@ -65,7 +65,7 @@ class GitService
      *
      * @throws GitCloneException
      */
-    public function createRepositoryFromRemote($source, $destination): GitRepository
+    public function createRepositoryFromRemote(string $source, string $destination): GitRepository
     {
         $repository = new GitRepository($this, $destination, $this->commandTimeout);
         $repository->cloneFrom($source, $destination);

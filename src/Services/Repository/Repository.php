@@ -75,8 +75,9 @@ abstract class Repository
      * @param LoggerInterface $logger
      * @param MailService $mailService
      */
-    public function __construct($dataFolder, EntityManagerInterface $entityManager, RepositoryEntity $entity, RepositoryStats $repositoryStats,
-                                GitService $gitService, RepositoryBehavior $behavior, LoggerInterface $logger, MailService $mailService)
+    public function __construct(string $dataFolder, EntityManagerInterface $entityManager, RepositoryEntity $entity,
+                                RepositoryStats $repositoryStats, GitService $gitService, RepositoryBehavior $behavior,
+                                LoggerInterface $logger, MailService $mailService)
     {
         $this->dataFolder = $dataFolder;
         $this->entityManager = $entityManager;
@@ -286,7 +287,7 @@ abstract class Repository
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    private function updateTranslationStatistics($translations): void
+    private function updateTranslationStatistics(array $translations): void
     {
         $this->repositoryStats->clearStats($this->entity);
         $this->repositoryStats->createStats($translations, $this->entity);
@@ -297,7 +298,7 @@ abstract class Repository
      *
      * @param LocalText[] $translations
      */
-    private function saveLanguage($translations): void
+    private function saveLanguage(array $translations): void
     {
         $langFolder = $this->buildBaseDirectoryPath() . 'lang/';
 
@@ -319,7 +320,7 @@ abstract class Repository
      * @param string $code language code
      * @return LocalText[] array language data. array will be empty, if no language data is available
      */
-    public function getLanguage($code): array
+    public function getLanguage(string $code): array
     {
         $code = strtolower($code);
         if (!preg_match('/^[a-z-]+$/i', $code)) {
@@ -381,7 +382,7 @@ abstract class Repository
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    public function addTranslationUpdate($translation, $author, $email, $language): int
+    public function addTranslationUpdate(array $translation, string $author, string $email, string $language): int
     {
         $translationUpdate = new TranslationUpdateEntity();
         $translationUpdate->setAuthor($author);
@@ -420,7 +421,7 @@ abstract class Repository
      * @param int $id
      * @return string
      */
-    private function buildUpdateFilePath($id): string
+    private function buildUpdateFilePath(int $id): string
     {
         $path = $this->buildUpdateDirectoryPath();
         $path .= $id . '.update';
@@ -484,7 +485,7 @@ abstract class Repository
      * @throws NoLanguageFileWrittenException
      * @throws TransportExceptionInterface
      */
-    private function createAndSendPatchWithException(TranslationUpdateEntity $update, $tmpDir): void
+    private function createAndSendPatchWithException(TranslationUpdateEntity $update, string $tmpDir): void
     {
         $this->logger->debug('send patch ' . $this->getType() . ' ' . $this->getName() . ' language update ' . $update->getId());
         $this->openRepository();
@@ -576,9 +577,9 @@ abstract class Repository
     /**
      * Recursively remove entire folder
      *
-     * @param $folder
+     * @param string $folder
      */
-    private function recursiveRemoveDirectory($folder): void
+    private function recursiveRemoveDirectory(string $folder): void
     {
         $fs = new Filesystem();
         // some files are write-protected by git - this removes write protection
@@ -590,10 +591,10 @@ abstract class Repository
     /**
      * path to tmp folder for e.g. storing branch for creating patch
      *
-     * @param string|int $id
+     * @param int $id
      * @return string
      */
-    private function buildTempFolderPath($id): string
+    private function buildTempFolderPath(int $id): string
     {
         $path = $this->buildBaseDirectoryPath();
         $path .= "tmp";
@@ -633,7 +634,7 @@ abstract class Repository
      * @throws NoLanguageFileWrittenException
      * @throws GitCommandException
      */
-    private function applyChanges(GitRepository $git, $folder, TranslationUpdateEntity $update): void
+    private function applyChanges(GitRepository $git, string $folder, TranslationUpdateEntity $update): void
     {
         /** @var LocalText[] $translations */
         $translations = unserialize(file_get_contents($this->buildUpdateFilePath($update->getId())));

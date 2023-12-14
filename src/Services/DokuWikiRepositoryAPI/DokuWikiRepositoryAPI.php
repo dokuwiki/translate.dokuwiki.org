@@ -35,7 +35,7 @@ class DokuWikiRepositoryAPI {
      * @return bool
      * @throws ORMException
      */
-    public function updateCache() {
+    public function updateCache(): bool {
         $content = simplexml_load_file('https://www.dokuwiki.org/lib/plugins/pluginrepo/repository.php?includetemplates=yes');
         if ($content === false) {
             return false;
@@ -77,7 +77,7 @@ class DokuWikiRepositoryAPI {
      * @param SimpleXMLElement $tags
      * @return string
      */
-    private function mergeExtensionTags(SimpleXMLElement $tags) {
+    private function mergeExtensionTags(SimpleXMLElement $tags): string {
         $result = [];
         foreach ($tags->tag as $tag) {
             $result[] = strval($tag);
@@ -92,7 +92,7 @@ class DokuWikiRepositoryAPI {
      * @param RepositoryEntity $repository entity with data set from the API
      * @return void
      */
-    private function updateRepositoryInformation(RepositoryEntity $repository) {
+    private function updateRepositoryInformation(RepositoryEntity $repository): void {
         try {
             $current = $this->repositoryRepository->getRepository($repository->getType(), $repository->getName());
         } catch (NoResultException $ignored) {
@@ -109,7 +109,7 @@ class DokuWikiRepositoryAPI {
      * @param string $name
      * @return false|RepositoryEntity
      */
-    public function getExtensionInfo($type, $name) {
+    public function getExtensionInfo(string $type, string $name) {
         if(!$this->loadCache()) {
             return false;
         }
@@ -128,7 +128,7 @@ class DokuWikiRepositoryAPI {
      * @param RepositoryEntity $entity
      * @return void
      */
-    public function mergeExtensionInfo(RepositoryEntity $entity) {
+    public function mergeExtensionInfo(RepositoryEntity $entity): void {
         $info = $this->getExtensionInfo($entity->getType(), $entity->getName());
         $this->mergeRepository($entity, $info);
     }
@@ -140,7 +140,7 @@ class DokuWikiRepositoryAPI {
      * @param RepositoryEntity $apiInfo entity with data from API
      * @return void
      */
-    private function mergeRepository(RepositoryEntity $left, RepositoryEntity $apiInfo) {
+    private function mergeRepository(RepositoryEntity $left, RepositoryEntity $apiInfo): void {
         $left->setAuthor($apiInfo->getAuthor());
         $left->setDescription($apiInfo->getDescription());
         $left->setType($apiInfo->getType()); //TODO should not be touched from the api?
@@ -154,7 +154,7 @@ class DokuWikiRepositoryAPI {
      *
      * @return bool cache is loaded
      */
-    private function loadCache() {
+    private function loadCache(): bool {
         if ($this->cache !== null) {
             return true;
         }

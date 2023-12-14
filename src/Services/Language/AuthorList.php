@@ -12,7 +12,7 @@ class AuthorList {
      *
      * @param Author $author
      */
-    public function add(Author $author) {
+    public function add(Author $author): void {
         if (!$this->has($author)) {
             $this->authors[] = $author;
         }
@@ -24,9 +24,11 @@ class AuthorList {
      * @param Author $author
      * @return bool true if Author already exists
      */
-    public function has(Author $author) {
+    public function has(Author $author): bool {
         foreach ($this->authors as $otherAuthor) {
-            if ($author->equals($otherAuthor)) return true;
+            if ($author->equals($otherAuthor)) {
+                return true;
+            }
         }
         return false;
     }
@@ -36,7 +38,7 @@ class AuthorList {
      *
      * @return Author[]
      */
-    public function getAll() {
+    public function getAll(): array {
         return $this->authors;
     }
 

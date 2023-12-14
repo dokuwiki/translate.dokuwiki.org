@@ -149,7 +149,7 @@ class GitLabService
      *
      * @param string $urlUpstream original git clone url
      * @param string $languageCode
-     * @return array
+     * @return array{count: int, listURL: string, title: string}
      *
      * @throws GitLabServiceException
      * @throws Exception only if in 'test' environment

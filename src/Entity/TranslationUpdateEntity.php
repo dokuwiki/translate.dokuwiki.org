@@ -17,161 +17,106 @@ class TranslationUpdateEntity {
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @var int|null
      */
     protected ?int $id = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="RepositoryEntity")
-     * @var RepositoryEntity
      */
     protected ?RepositoryEntity $repository = null;
 
     /**
      * @ORM\Column(type="string", length=300)
-     * @var string|null
      */
     protected ?string $author = null;
 
     /**
      * @ORM\Column(type="string", length=300)
-     * @var string|null
      */
     protected ?string $email = null;
 
     /**
      * @ORM\Column(type="integer")
-     * @var int|null
      */
     protected ?int $updated = null;
 
     /**
      * @ORM\Column(type="string", length=300)
-     * @var string|null
      */
     protected ?string $state = null;
 
     /**
      * @ORM\Column(type="text")
-     * @var string|null
      */
     protected ?string $errorMsg = '';
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @var string|null
      */
     protected ?string $language = null;
 
-    /**
-     * @param string $author
-     */
-    public function setAuthor($author) {
+    public function setAuthor(string $author): void {
         $this->author = $author;
     }
 
-    /**
-     * @return string
-     */
-    public function getAuthor() {
+    public function getAuthor(): ?string {
         return $this->author;
     }
 
-    /**
-     * @param string $email
-     */
-    public function setEmail($email) {
+    public function setEmail(string $email): void {
         $this->email = $email;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail() {
+    public function getEmail(): ?string {
         return $this->email;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id) {
+    public function setId(int $id): void {
         $this->id = $id;
     }
 
-    /**
-     * @return int
-     */
-    public function getId() {
+    public function getId(): ?int {
         return $this->id;
     }
 
-    /**
-     * @param RepositoryEntity $repository
-     */
-    public function setRepository($repository) {
+    public function setRepository(RepositoryEntity $repository): void {
         $this->repository = $repository;
     }
 
-    /**
-     * @return RepositoryEntity
-     */
-    public function getRepository() {
+    public function getRepository(): ?RepositoryEntity
+    {
         return $this->repository;
     }
 
-    /**
-     * @param string $state
-     */
-    public function setState($state) {
+    public function setState(string $state): void {
         $this->state = $state;
     }
 
-    /**
-     * @return string
-     */
-    public function getState() {
+    public function getState(): ?string {
         return $this->state;
     }
 
-    /**
-     * @param int $updated
-     */
-    public function setUpdated($updated) {
+    public function setUpdated(int $updated): void {
         $this->updated = $updated;
     }
 
-    /**
-     * @return int
-     */
-    public function getUpdated() {
+    public function getUpdated(): ?int {
         return $this->updated;
     }
 
-    /**
-     * @param string $language
-     */
-    public function setLanguage($language) {
+    public function setLanguage(string $language): void {
         $this->language = $language;
     }
 
-    /**
-     * @return string
-     */
-    public function getLanguage() {
+    public function getLanguage(): ?string {
         return $this->language;
     }
 
-    /**
-     * @param string $errorMsg
-     */
     public function setErrorMsg(string $errorMsg): void
     {
         $this->errorMsg = $errorMsg;
     }
 
-    /**
-     * @return string
-     */
     public function getErrorMsg(): string
     {
         return $this->errorMsg;

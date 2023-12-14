@@ -20,7 +20,8 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @throws NonUniqueResultException If the query result is not unique.
      * @throws NoResultException        If the query returned no result.
      */
-    public function getCoreRepository() {
+    public function getCoreRepository(): RepositoryEntity
+    {
         $query = $this->getEntityManager()->createQuery(/** @lang DQL */
             'SELECT repository
              FROM App\Entity\RepositoryEntity repository
@@ -38,7 +39,8 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      *
      * @throws NoResultException
      */
-    public function getRepository($type, $name) {
+    public function getRepository($type, $name): RepositoryEntity
+    {
         $repository = $this->findOneBy(['type' => $type, 'name' => $name]);
         if (!$repository) {
             throw new NoResultException();
@@ -52,7 +54,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      *
      * @throws NonUniqueResultException If the query result is not unique.
      */
-    public function getCoreRepositoryInformation($language) {
+    public function getCoreRepositoryInformation($language): array {
         $query = $this->getEntityManager()->createQuery(/** @lang DQL */
             'SELECT stats.completionPercent, repository.displayName, repository.state, repository.englishReadonly,
                         repository.errorCount
@@ -81,7 +83,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @param $language
      * @return array
      */
-    public function getExtensionRepositoryInformation($language) {
+    public function getExtensionRepositoryInformation($language): array {
         $query = $this->getEntityManager()->createQuery(/** @lang DQL */'
             SELECT stats.completionPercent, repository.name, repository.type, repository.displayName, repository.state,
                    repository.englishReadonly, repository.errorCount
@@ -103,36 +105,39 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
     }
 
     /**
-     * @return array
+     * @return RepositoryEntity
      *
+     * @throws NoResultException If the query returned no result.
      * @throws NonUniqueResultException If the query result is not unique.
-     * @throws NoResultException        If the query returned no result.
      */
-    public function getCoreTranslation() {
+    public function getCoreTranslation(): RepositoryEntity
+    {
         return $this->getTranslation(RepositoryEntity::TYPE_CORE, 'dokuwiki');
     }
 
     /**
-     * @param $type
-     * @param $name
-     * @return array
+     * @param string $type
+     * @param string $name
+     * @return RepositoryEntity
      *
+     * @throws NoResultException If the query returned no result.
      * @throws NonUniqueResultException If the query result is not unique.
-     * @throws NoResultException        If the query returned no result.
      */
-    public function getExtensionTranslation($type, $name) {
+    public function getExtensionTranslation($type, $name): RepositoryEntity
+    {
         return $this->getTranslation($type, $name);
     }
 
     /**
-     * @param $type
-     * @param $name
-     * @return array
+     * @param string $type
+     * @param string $name
+     * @return RepositoryEntity
      *
+     * @throws NoResultException If the query returned no result.
      * @throws NonUniqueResultException If the query result is not unique.
-     * @throws NoResultException        If the query returned no result.
      */
-    private function getTranslation($type, $name) {
+    private function getTranslation($type, $name): RepositoryEntity
+    {
         $query = $this->getEntityManager()->createQuery(/** @lang DQL */'
         SELECT repository, translations, lang
             FROM App\Entity\RepositoryEntity repository
@@ -159,7 +164,8 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @throws NonUniqueResultException If the query result is not unique.
      * @throws NoResultException        If the query returned no result.
      */
-    public function getRepositoryByNameAndActivationKey($type, $name, $activationKey) {
+    public function getRepositoryByNameAndActivationKey($type, $name, $activationKey): RepositoryEntity
+    {
         return $this->getRepositoryByNameAndKey($type, $name, $activationKey);
     }
 
@@ -174,7 +180,8 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @throws NonUniqueResultException If the query result is not unique.
      * @throws NoResultException        If the query returned no result.
      */
-    public function getRepositoryByNameAndEditKey($type, $name, $editKey) {
+    public function getRepositoryByNameAndEditKey($type, $name, $editKey): RepositoryEntity
+    {
         return $this->getRepositoryByNameAndKey($type, $name, $editKey, false);
     }
 
@@ -190,7 +197,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @throws NonUniqueResultException If the query result is not unique.
      * @throws NoResultException        If the query returned no result.
      */
-    private function getRepositoryByNameAndKey($type, $name, $key, $isActivation = true) {
+    private function getRepositoryByNameAndKey($type, $name, $key, bool $isActivation = true): RepositoryEntity {
         $qb = $this->createQueryBuilder('repository')
             ->where('repository.type = :type')
             ->andWhere('repository.name = :name')
@@ -220,7 +227,7 @@ class RepositoryEntityRepository extends ServiceEntityRepository {
      * @param int $maxErrors
      * @return RepositoryEntity[]
      */
-    public function getRepositoriesToUpdate($maxAge, $maxResults, $maxErrors) {
+    public function getRepositoriesToUpdate($maxAge, $maxResults, $maxErrors): array {
         $query = $this->getEntityManager()->createQuery(/** @lang DQL */
             'SELECT repository
              FROM App\Entity\RepositoryEntity repository

@@ -17,7 +17,7 @@ class RepositoryCreateType extends AbstractType {
     public const ACTION_EDIT = 'edit';
 
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         if($options['action'] == RepositoryCreateType::ACTION_CREATE) {
             $builder->add('name', TextType::class, ['label' => ucfirst($options['type']) . ' name']);
         }
@@ -32,7 +32,7 @@ class RepositoryCreateType extends AbstractType {
 //                ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'type' => RepositoryEntity::TYPE_PLUGIN,

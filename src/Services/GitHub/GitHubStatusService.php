@@ -2,6 +2,8 @@
 
 namespace App\Services\GitHub;
 
+use JsonException;
+
 class GitHubStatusService
 {
 
@@ -45,8 +47,12 @@ class GitHubStatusService
         if (!$content) {
             return false;
         }
-        $status = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
-        if ($status === null || !isset($status->components)) {
+        try {
+            $status = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            return false;
+        }
+        if (!isset($status->components)) {
             return false;
         }
 

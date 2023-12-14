@@ -19,9 +19,9 @@ class GitRepository
      *
      * @param GitService $gitService
      * @param string $path folder containing git repository
-     * @param float $commandTimeout max time a git command can run in sec
+     * @param float|null $commandTimeout max time a git command can run in sec, null disables timeout
      */
-    public function __construct(GitService $gitService, $path, $commandTimeout)
+    public function __construct(GitService $gitService, string $path, ?float $commandTimeout)
     {
         $this->gitService = $gitService;
         $this->path = $path;
@@ -38,7 +38,7 @@ class GitRepository
      *
      * @throws GitCloneException
      */
-    public function cloneFrom($source, $destination, $retries = 3): ProgramCallResult
+    public function cloneFrom(string $source, string $destination, int $retries = 3): ProgramCallResult
     {
         try {
             $result = $this->run('clone', $source, $destination);
@@ -70,7 +70,7 @@ class GitRepository
      *
      * @throws GitPullException
      */
-    public function pull($remote = 'origin', $branch = 'master'): string
+    public function pull(string $remote = 'origin', string $branch = 'master'): string
     {
         try {
             $result = $this->run('pull', '-f', $remote, $branch);
@@ -94,7 +94,7 @@ class GitRepository
      *
      * @throws GitPullException
      */
-    public function reset($remote = 'origin', $branch = 'master'): string
+    public function reset(string $remote = 'origin', string $branch = 'master'): string
     {
         $fetchHeadBefore = '';
         $fetchHeadFile = $this->path . '/.git/FETCH_HEAD';
@@ -124,7 +124,7 @@ class GitRepository
      *
      * @throws GitAddException
      */
-    public function remoteAdd($name, $path): ProgramCallResult
+    public function remoteAdd(string $name, string $path): ProgramCallResult
     {
         try {
             return $this->run('remote', 'add', $name, $path);
@@ -140,7 +140,7 @@ class GitRepository
      *
      * @throws GitCommitException
      */
-    public function commit($message, $author): ProgramCallResult
+    public function commit(string $message, string $author): ProgramCallResult
     {
         try {
             return $this->run('commit', '-m', $message, '--author', $author);
@@ -155,7 +155,7 @@ class GitRepository
      *
      * @throws GitCreatePatchException
      */
-    public function createPatch($revision = 'HEAD~1'): string
+    public function createPatch(string $revision = 'HEAD~1'): string
     {
         try {
             $result = $this->run('format-patch', '--stdout', $revision);
@@ -171,7 +171,7 @@ class GitRepository
      *
      * @throws GitCommandException
      */
-    public function add($file): ProgramCallResult
+    public function add(string $file): ProgramCallResult
     {
         return $this->run('add', $file);
     }
@@ -183,7 +183,7 @@ class GitRepository
      *
      * @throws GitPushException
      */
-    public function push($origin, $branch): ProgramCallResult
+    public function push(string $origin, string $branch): ProgramCallResult
     {
         try {
             return $this->run('push', '-f', $origin, $branch);
@@ -218,7 +218,7 @@ class GitRepository
      *
      * @throws GitBranchException
      */
-    public function branch($name): ProgramCallResult
+    public function branch(string $name): ProgramCallResult
     {
         try {
             return $this->run('branch', $name);
@@ -233,7 +233,7 @@ class GitRepository
      *
      * @throws GitCheckoutException
      */
-    public function checkout($name): ProgramCallResult
+    public function checkout(string $name): ProgramCallResult
     {
         try {
             return $this->run('checkout', $name);
@@ -269,7 +269,7 @@ class GitRepository
      * @param array $command
      * @return ProgramCallResult
      */
-    private function runCommand($command): ProgramCallResult
+    private function runCommand(array $command): ProgramCallResult
     {
         if (file_exists($this->path)) {
             $process = new Process($command, $this->path);

@@ -139,7 +139,7 @@ class GitHubBehavior implements RepositoryBehavior
      *
      * @param RepositoryEntity $repository
      * @param LanguageNameEntity $language
-     * @return array
+     * @return array{count: int, listURL: string, title: string}
      *
      * @throws GitHubServiceException
      */

@@ -39,7 +39,8 @@ class UserTranslationValidator {
      * @param string $authorEmail
      * @param ValidatorInterface $validator
      */
-    function __construct(array $defaultTranslation, array $previousTranslation, array $userTranslation, $author, $authorEmail, ValidatorInterface $validator) {
+    public function __construct(array $defaultTranslation, array $previousTranslation, array $userTranslation,
+                                string $author, string $authorEmail, ValidatorInterface $validator) {
         $this->defaultTranslation = $defaultTranslation;
         $this->userTranslation = $userTranslation;
         $this->previousTranslation = $previousTranslation;
@@ -53,7 +54,7 @@ class UserTranslationValidator {
     /**
      * Validate the email of author of this submission
      */
-    private function validateAuthorEmail() {
+    private function validateAuthorEmail(): void {
         if ($this->authorEmail === '') {
             $this->errors['email'] = 'No email address given.';
             return;
@@ -68,7 +69,7 @@ class UserTranslationValidator {
     /**
      * Validate the name of author of this submission
      */
-    private function validateAuthorName() {
+    private function validateAuthorName(): void {
         if ($this->author === '') {
             $this->errors['author'] = 'No author name given.';
         }
@@ -82,7 +83,7 @@ class UserTranslationValidator {
      *
      * @return LocalText[]
      */
-    public function validate() {
+    public function validate(): array {
         $this->translationChanged = false;
         $newTranslation = [];
 
@@ -112,10 +113,11 @@ class UserTranslationValidator {
     /**
      * Validate strings with wiki syntax for txt-files
      *
-     * @param $path
+     * @param string $path
      * @return LocalText
      */
-    private function validateMarkup($path) {
+    private function validateMarkup(string $path): LocalText
+    {
         $text = $this->fixLineEndings($this->userTranslation[$path]);
 
         $translationChanged = $this->hasMarkupTranslationChanged($path, $text);
@@ -131,7 +133,8 @@ class UserTranslationValidator {
      * @param LocalText $translation
      * @return LocalText
      */
-    private function validateArray($path, LocalText $translation) {
+    private function validateArray(string $path, LocalText $translation): LocalText
+    {
         $newContent = [];
         $translationChanged = false;
 
@@ -189,9 +192,10 @@ class UserTranslationValidator {
      * @param string $path
      * @param string $key
      * @param bool $alreadyChanged
+     * @param string $userTranslation
      * @return bool has changed
      */
-    private function hasTranslationChanged($path, $key, $alreadyChanged, $userTranslation) {
+    private function hasTranslationChanged(string $path, string $key, bool $alreadyChanged, string $userTranslation): bool {
         if ($alreadyChanged) {
             return true;
         }
@@ -216,9 +220,11 @@ class UserTranslationValidator {
      * @param string $key
      * @param string $jsKey
      * @param bool $alreadyChanged
+     * @param string $userTranslation
      * @return bool has changed
      */
-    private function hasJsTranslationChanged($path, $key, $jsKey, $alreadyChanged, $userTranslation) {
+    private function hasJsTranslationChanged(string $path, string $key, string $jsKey, bool $alreadyChanged,
+                                             string $userTranslation): bool {
         if ($alreadyChanged) {
             return true;
         }
@@ -240,7 +246,7 @@ class UserTranslationValidator {
         return $userTranslation !== $previousText[$key][$jsKey];
     }
 
-    private function hasMarkupTranslationChanged($path, $userTranslation) {
+    private function hasMarkupTranslationChanged(string $path, string $userTranslation): bool {
         if (!isset($this->previousTranslation[$path])) {
             return $userTranslation !== '';
         }
@@ -257,10 +263,10 @@ class UserTranslationValidator {
     /**
      * Fixes line endings by replacing
      *
-     * @param $string
+     * @param string $string
      * @return string
      */
-    private function fixLineEndings($string) {
+    private function fixLineEndings(string $string) {
         return str_replace("\r\n", "\n", $string);
     }
 
@@ -269,7 +275,7 @@ class UserTranslationValidator {
      *
      * @param bool $hasChanged
      */
-    private function storeTranslationChanged(bool $hasChanged) {
+    private function storeTranslationChanged(bool $hasChanged): void {
         if($hasChanged) {
             $this->translationChanged = true;
         }
@@ -280,7 +286,7 @@ class UserTranslationValidator {
      *
      * @return string[] of error messages
      */
-    public function getErrors() {
+    public function getErrors(): array {
         return $this->errors;
     }
 

@@ -11,7 +11,7 @@ class DokuWikiToolbarExtension extends AbstractExtension {
         return [new TwigFunction('dokuWikiToolbar', [&$this, 'dokuWikiToolbar'])];
     }
 
-    public function dokuWikiToolbar() {
+    public function dokuWikiToolbar(): void {
         $template = '/var/www/wiki/htdocs/lib/tpl/dokuwiki/dwtb.html';
         if (file_exists($template)) {
             include $template;

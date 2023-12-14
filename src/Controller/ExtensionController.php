@@ -56,7 +56,8 @@ class ExtensionController extends AbstractController {
      * @throws OptimisticLockException
      * @throws TransportExceptionInterface
      */
-    public function index(Request $request, $type, DokuWikiRepositoryAPI $api, MailService $mailer) {
+    public function index(Request $request, string $type, DokuWikiRepositoryAPI $api, MailService $mailer): Response
+    {
         $data = [];
 
         $repository = new RepositoryEntity();
@@ -96,7 +97,7 @@ class ExtensionController extends AbstractController {
      * @throws TransportExceptionInterface
      * @throws OptimisticLockException
      */
-    private function addExtension(RepositoryEntity $repository, DokuWikiRepositoryAPI $api, MailService $mailer) {
+    private function addExtension(RepositoryEntity $repository, DokuWikiRepositoryAPI $api, MailService $mailer): void {
         $api->mergeExtensionInfo($repository);
         $repository->setLastUpdate(0);
         $repository->setState(RepositoryEntity::STATE_WAITING_FOR_APPROVAL);
@@ -115,7 +116,7 @@ class ExtensionController extends AbstractController {
         );
     }
 
-    private function generateActivationKey(RepositoryEntity $repository) {
+    private function generateActivationKey(RepositoryEntity $repository): string {
         return md5($repository->getType() . ':' . $repository->getName() . time());
     }
 
@@ -130,7 +131,8 @@ class ExtensionController extends AbstractController {
      * @throws NonUniqueResultException
      * @throws ORMException
      */
-    public function activate($type, $name, $key) {
+    public function activate(string $type, string $name, string $key): RedirectResponse
+    {
         $data = [];
         try {
             $repository = $this->repositoryRepository->getRepositoryByNameAndActivationKey($type, $name, $key);
@@ -158,7 +160,7 @@ class ExtensionController extends AbstractController {
      *
      * @throws NonUniqueResultException
      */
-    public function show(Request $request, $type, $name, LanguageManager $languageManager) {
+    public function show(Request $request, string $type, string $name, LanguageManager $languageManager): Response {
         $data = [];
 
         try {
@@ -190,7 +192,7 @@ class ExtensionController extends AbstractController {
      * @throws OptimisticLockException
      * @throws TransportExceptionInterface
      */
-    public function settings(Request $request, $type, $name, MailerInterface $mailer) {
+    public function settings(Request $request, string $type, string $name, MailerInterface $mailer): Response {
         $data = [];
 
         try {
@@ -229,7 +231,7 @@ class ExtensionController extends AbstractController {
      * @throws OptimisticLockException
      * @throws TransportExceptionInterface
      */
-    private function createAndSentEditKey(RepositoryEntity $repository, MailerInterface $mailer) {
+    private function createAndSentEditKey(RepositoryEntity $repository, MailerInterface $mailer): void {
         $repository->setActivationKey($this->generateActivationKey($repository));
         $this->entityManager->flush();
 
@@ -257,7 +259,8 @@ class ExtensionController extends AbstractController {
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function edit(Request $request, $type, $name, $key, RepositoryManager $repositoryManager) {
+    public function edit(Request $request, string $type, string $name, string $key, RepositoryManager $repositoryManager): Response
+    {
         $options = [];
         $param = [];
         $data = [];
@@ -302,7 +305,7 @@ class ExtensionController extends AbstractController {
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    private function updateExtension(RepositoryEntity $repositoryEntity, $originalValues, RepositoryManager $repositoryManager) {
+    private function updateExtension(RepositoryEntity $repositoryEntity, array $originalValues, RepositoryManager $repositoryManager): void {
         $repositoryEntity->setLastUpdate(0);
         $repositoryEntity->setErrorCount(0); //save of edit form resets error count on purpose
         $repositoryEntity->setActivationKey('');

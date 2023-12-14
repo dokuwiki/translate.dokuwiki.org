@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\LanguageNameEntity;
+use App\Services\GitHub\GitHubServiceException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
@@ -55,8 +56,9 @@ class TranslationController extends AbstractController {
      * @throws NoResultException
      * @throws ORMException
      * @throws OptimisticLockException
+     * @throws GitHubServiceException
      */
-    public function save(Request $request, UserTranslationValidatorFactory $validatorFactory) {
+    public function save(Request $request, UserTranslationValidatorFactory $validatorFactory): Response {
         if ($request->getMethod() !== 'POST') {
             return $this->redirectToRoute('dokuwiki_translator_homepage');
         }
@@ -137,8 +139,9 @@ class TranslationController extends AbstractController {
      * @return UserTranslationValidator
      */
     protected function getUserTranslationValidator(array $defaultTranslation, array $previousTranslation,
-                                                   array $userTranslation, $author, $authorEmail,
-                                                   UserTranslationValidatorFactory $validatorFactory) {
+                                                   array $userTranslation, string $author, string $authorEmail,
+                                                   UserTranslationValidatorFactory $validatorFactory): UserTranslationValidator
+    {
         return $validatorFactory->getInstance($defaultTranslation, $previousTranslation,
                 $userTranslation, $author, $authorEmail);
     }
@@ -148,8 +151,10 @@ class TranslationController extends AbstractController {
      *
      * @param Request $request
      * @return RedirectResponse|Response
+     *
+     * @throws GitHubServiceException
      */
-    public function translateCore(Request $request) {
+    public function translateCore(Request $request): Response {
         return $this->translate($request, RepositoryEntity::TYPE_CORE, 'dokuwiki');
     }
 
@@ -160,8 +165,10 @@ class TranslationController extends AbstractController {
      * @param string $type
      * @param string $name
      * @return RedirectResponse|Response
+     *
+     * @throws GitHubServiceException
      */
-    public function translateExtension(Request $request, $type, $name) {
+    public function translateExtension(Request $request, string $type, string $name): Response {
         return $this->translate($request, $type, $name);
     }
 
@@ -177,8 +184,10 @@ class TranslationController extends AbstractController {
      *                  - (string) authorMail
      * @param FormInterface|null $captchaForm
      * @return RedirectResponse|Response
+     *
+     * @throws GitHubServiceException
      */
-    private function translate(Request $request, $type, $name, array $userInput = [], $captchaForm = null) {
+    private function translate(Request $request, string $type, string $name, array $userInput = [], $captchaForm = null): Response {
         $data = [];
         $param = [];
         $language = $this->getLanguage($request);
@@ -244,13 +253,13 @@ class TranslationController extends AbstractController {
         return $this->render('translate/translate.html.twig', $data);
     }
 
-    private function getCaptchaForm() {
+    private function getCaptchaForm(): FormInterface {
         return $this->createFormBuilder()
             ->add('captcha', CaptchaType::class)
             ->getForm();
     }
 
-    private function prepareLanguages($language, $repositoryEntity, array $userTranslation) {
+    private function prepareLanguages(string $language, RepositoryEntity $repositoryEntity, array $userTranslation): array {
         $repository = $this->repositoryManager->getRepository($repositoryEntity);
 
         $defaultTranslation = $repository->getLanguage('en');
@@ -266,18 +275,20 @@ class TranslationController extends AbstractController {
     /**
      * @return LanguageNameEntityRepository
      */
-    private function getLanguageNameEntityRepository() {
+    private function getLanguageNameEntityRepository(): LanguageNameEntityRepository {
         return $this->entityManager->getRepository(LanguageNameEntity::class);
     }
 
     /**
      * Get information about the open pull requests of the given language
      *
-     * @param $repositoryEntity
-     * @param $languageNameEntity
+     * @param RepositoryEntity $repositoryEntity
+     * @param LanguageNameEntity $languageNameEntity
      * @return array with string listURL and int count
+     *
+     * @throws GitHubServiceException
      */
-    private function getOpenPRListInfo($repositoryEntity, $languageNameEntity) {
+    private function getOpenPRListInfo(RepositoryEntity $repositoryEntity, LanguageNameEntity $languageNameEntity): array {
         $repository = $this->repositoryManager->getRepository($repositoryEntity);
         return $repository->getOpenPRListInfo($languageNameEntity);
     }
@@ -287,11 +298,12 @@ class TranslationController extends AbstractController {
      *
      * @return Response
      */
-    public function thanks() {
+    public function thanks(): Response
+    {
         return $this->render('translate/thanks.html.twig');
     }
 
-    private function getLanguage($request) {
+    private function getLanguage(Request $request): string {
         return $this->languageManager->getLanguage($request);
     }
 }

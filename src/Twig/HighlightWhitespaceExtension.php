@@ -17,7 +17,7 @@ class HighlightWhitespaceExtension extends AbstractExtension {
         ];
     }
 
-    public function highlightWhitespace($text) {
+    public function highlightWhitespace(string $text) {
 
         $tagStart = '<span class="highlight-whitespace" title="Here are whitespaces - don\'t forget them in your translation">';
 

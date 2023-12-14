@@ -93,7 +93,7 @@ class EditRepoCommand extends Command {
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    protected function editRepo(RepositoryEntity $repo, $property, $value): int {
+    protected function editRepo(RepositoryEntity $repo, string $property, string $value): int {
 
         switch($property) {
             case 'giturl':
@@ -136,7 +136,7 @@ class EditRepoCommand extends Command {
         return Command::SUCCESS;
     }
 
-    protected function showValue(RepositoryEntity $repo, $property): int
+    protected function showValue(RepositoryEntity $repo, string $property): int
     {
         switch($property) {
             case 'giturl':

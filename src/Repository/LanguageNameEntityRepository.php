@@ -19,7 +19,7 @@ class LanguageNameEntityRepository extends ServiceEntityRepository {
      *
      * @throws NoResultException
      */
-    public function getLanguageByCode($code) {
+    public function getLanguageByCode(string $code): LanguageNameEntity {
         $result = $this->findOneBy(['code' => $code]);
 
         if (!$result) {
@@ -31,7 +31,7 @@ class LanguageNameEntityRepository extends ServiceEntityRepository {
     /**
      * @return array
      */
-    public function getAvailableLanguages() {
+    public function getAvailableLanguages(): array {
         return $this->getEntityManager()->createQuery(/** @lang DQL */'
             SELECT languageName
             FROM App\Entity\LanguageNameEntity languageName

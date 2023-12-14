@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RepositoryRequestEditType extends AbstractType {
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder->add('captcha', CaptchaType::class)
                 ->add('add', SubmitType::class, [
                     'label' => "Request Setting Edit URL",
@@ -21,7 +21,7 @@ class RepositoryRequestEditType extends AbstractType {
                 ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver) {
+    public function configureOptions(OptionsResolver $resolver): void {
         $resolver->setDefaults([
             'type' => RepositoryEntity::TYPE_PLUGIN,
             'validation_groups' => [RepositoryEntity::TYPE_PLUGIN]

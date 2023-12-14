@@ -45,13 +45,13 @@ class RepositoryStats
     /**
      * Create new language statistics for this repository
      *
-     * @param LocalText[] $translations combined array with all translations
+     * @param array $translations array with per language all translations as array of LocalText objects
      * @param RepositoryEntity $repository Repository the translation belongs to
      *
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function createStats($translations, RepositoryEntity $repository): void
+    public function createStats(array $translations, RepositoryEntity $repository): void
     {
         $scores = [];
         if (!isset($translations['en'])) {
@@ -87,7 +87,7 @@ class RepositoryStats
      * @return LanguageNameEntity
      * @throws ORMException
      */
-    private function getLanguageEntityByCode($languageCode): LanguageNameEntity
+    private function getLanguageEntityByCode(string $languageCode): LanguageNameEntity
     {
         try {
             return $this->languageNameRepository->getLanguageByCode($languageCode);
@@ -103,13 +103,13 @@ class RepositoryStats
     /**
      * Count strings from all language files of language
      *
-     * @param LocalText $translation
+     * @param LocalText[] $translation (array with file => LocalText())
      * @return int
      */
-    private function calcStatsForLanguage($translation): int
+    private function calcStatsForLanguage(array $translation): int
     {
         $value = 0;
-        foreach ($translation as $path => $languageFile) {
+        foreach ($translation as $languageFile) {
             $value += $this->getTranslationValue($languageFile);
         }
         return $value;
@@ -121,7 +121,7 @@ class RepositoryStats
      * @param LocalText $languageFile
      * @return int
      */
-    private function getTranslationValue($languageFile): int
+    private function getTranslationValue(LocalText $languageFile): int
     {
         if ($languageFile->getType() == LocalText::TYPE_MARKUP) {
             return 1;

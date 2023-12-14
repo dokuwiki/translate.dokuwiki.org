@@ -12,8 +12,11 @@ class UserTranslationValidatorFactory {
         $this->validator = $validator;
     }
 
-    public function getInstance(array $defaultTranslation, array $previousTranslation, array $userTranslation, $author, $authorEmail) {
-        return new UserTranslationValidator($defaultTranslation, $previousTranslation, $userTranslation, $author, $authorEmail, $this->validator);
+    public function getInstance(array $defaultTranslation, array $previousTranslation, array $userTranslation,
+                                string $author, string $authorEmail): UserTranslationValidator
+    {
+        return new UserTranslationValidator($defaultTranslation, $previousTranslation, $userTranslation, $author,
+            $authorEmail, $this->validator);
     }
 
 

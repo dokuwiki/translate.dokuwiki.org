@@ -119,324 +119,185 @@ class RepositoryEntity {
      */
     protected bool $englishReadonly = false;
 
-    function __construct() {
+    public function __construct() {
         $this->translations = new ArrayCollection();
     }
 
-    public function setTranslations($translations) {
+    public function setTranslations(Collection $translations): void {
         $this->translations = $translations;
     }
 
-    public function getTranslations() {
+    public function getTranslations(): Collection
+    {
         return $this->translations;
     }
 
-    /**
-     * @param int $errorCount
-     */
-    public function setErrorCount($errorCount) {
+    public function setErrorCount(int $errorCount): void {
         $this->errorCount = $errorCount;
     }
 
-    /**
-     * @return int
-     */
-    public function getErrorCount() {
+    public function getErrorCount(): ?int {
         return $this->errorCount;
     }
 
-    /**
-     * @param string $errorMsg
-     */
-    public function setErrorMsg($errorMsg) {
+    public function setErrorMsg(string $errorMsg): void {
         $this->errorMsg = $errorMsg;
     }
 
-    /**
-     * @return string
-     */
-    public function getErrorMsg() {
+    public function getErrorMsg(): ?string {
         return $this->errorMsg;
     }
 
-    public function addErrorMsg($errorMsg) {
+    public function addErrorMsg(string $errorMsg): void {
         $this->errorMsg .= "\n" . $errorMsg;
     }
 
-    /**
-     * @param string $state
-     */
-    public function setState($state) {
+    public function setState(string $state): void {
         $this->state = $state;
     }
 
-    /**
-     * @return string
-     */
-    public function getState() {
+    public function getState(): ?string {
         return $this->state;
     }
-    /**
-     * @param string $displayName
-     */
-    public function setDisplayName($displayName) {
+
+    public function setDisplayName(string $displayName): void {
         $this->displayName = $displayName;
     }
 
-    /**
-     * @return string
-     */
-    public function getDisplayName() {
+    public function getDisplayName(): ?string {
         return $this->displayName;
     }
 
-    /**
-     * @param int $popularity
-     */
-    public function setPopularity($popularity) {
+    public function setPopularity(int $popularity): void {
         $this->popularity = $popularity;
     }
 
-    /**
-     * @return int
-     */
-    public function getPopularity() {
+    public function getPopularity(): ?int {
         return $this->popularity;
     }
 
-    /**
-     * @param string $email
-     */
-    public function setEmail($email) {
+     public function setEmail(string $email): void {
         $this->email = $email;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail() {
+    public function getEmail(): ?string {
         return $this->email;
     }
 
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * Set url
-     *
-     * @param string $url
-     * @return RepositoryEntity
-     */
-    public function setUrl($url)
+    public function setUrl(string $url): RepositoryEntity
     {
         $this->url = $url;
     
         return $this;
     }
 
-    /**
-     * Get url
-     *
-     * @return string 
-     */
-    public function getUrl()
+    public function getUrl(): ?string
     {
         return $this->url;
     }
 
-    /**
-     * Set branch
-     *
-     * @param string $branch
-     * @return RepositoryEntity
-     */
-    public function setBranch($branch)
+    public function setBranch(string $branch): RepositoryEntity
     {
         $this->branch = $branch;
     
         return $this;
     }
 
-    /**
-     * Get branch
-     *
-     * @return string 
-     */
-    public function getBranch()
+    public function getBranch(): ?string
     {
         return $this->branch;
     }
 
-    /**
-     * Set lastUpdate
-     *
-     * @param integer $lastUpdate
-     * @return RepositoryEntity
-     */
-    public function setLastUpdate($lastUpdate)
+    public function setLastUpdate(int $lastUpdate): RepositoryEntity
     {
         $this->lastUpdate = $lastUpdate;
     
         return $this;
     }
 
-    /**
-     * Get lastUpdate
-     *
-     * @return integer 
-     */
-    public function getLastUpdate()
+    public function getLastUpdate(): ?int
     {
         return $this->lastUpdate;
     }
 
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return RepositoryEntity
-     */
-    public function setName($name)
+    public function setName(string $name): RepositoryEntity
     {
         $this->name = $name;
     
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string 
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * Set author
-     *
-     * @param string $author
-     * @return RepositoryEntity
-     */
-    public function setAuthor($author)
+    public function setAuthor(string $author): RepositoryEntity
     {
         $this->author = $author;
     
         return $this;
     }
 
-    /**
-     * Get author
-     *
-     * @return string 
-     */
-    public function getAuthor()
+    public function getAuthor(): ?string
     {
         return $this->author;
     }
 
-    /**
-     * Set description
-     *
-     * @param string $description
-     * @return RepositoryEntity
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): RepositoryEntity
     {
         $this->description = $description;
     
         return $this;
     }
 
-    /**
-     * Get description
-     *
-     * @return string 
-     */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * Set tags
-     *
-     * @param string $tags
-     * @return RepositoryEntity
-     */
-    public function setTags($tags)
+    public function setTags(string $tags): RepositoryEntity
     {
         $this->tags = $tags;
     
         return $this;
     }
 
-    /**
-     * Get tags
-     *
-     * @return string 
-     */
-    public function getTags()
+    public function getTags(): ?string
     {
         return $this->tags;
     }
 
-    /**
-     * Set type
-     *
-     * @param string $type
-     * @return RepositoryEntity
-     */
-    public function setType($type)
+    public function setType(string $type): RepositoryEntity
     {
         $this->type = $type;
     
         return $this;
     }
 
-    /**
-     * Get type
-     *
-     * @return string 
-     */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $activationKey
-     */
-    public function setActivationKey($activationKey) {
+    public function setActivationKey(string $activationKey): void {
         $this->activationKey = $activationKey;
     }
 
-    /**
-     * @return string
-     */
-    public function getActivationKey() {
+    public function getActivationKey(): ?string {
         return $this->activationKey;
     }
 
-    /**
-     * @param bool $englishReadonly
-     */
-    public function setEnglishReadonly($englishReadonly) {
+    public function setEnglishReadonly(bool $englishReadonly): void {
         $this->englishReadonly = $englishReadonly;
     }
 
-    /**
-     * @return bool
-     */
-    public function getEnglishReadonly() {
+    public function getEnglishReadonly(): bool {
         return $this->englishReadonly;
     }
 

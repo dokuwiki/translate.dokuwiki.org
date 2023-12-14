@@ -35,7 +35,7 @@ class MailService {
      *
      * @throws TransportExceptionInterface
      */
-    public function sendEmail($to, $subject, $template, $data = []) {
+    public function sendEmail(string $to, string $subject, string $template, array $data = []): void {
         if ($to === '') return;
         $email = $this->createEmail($to, $subject, $template, $data);
 
@@ -53,7 +53,7 @@ class MailService {
      *
      * @throws TransportExceptionInterface
      */
-    public function sendPatchEmail($to, $subject, $patch, $template, $data = []) {
+    public function sendPatchEmail(string $to, string $subject, string $patch, string $template, array $data = []): void {
         $email = $this->createEmail($to, $subject, $template, $data);
         $email->attach($patch, 'language.patch', 'text/plain');
         $this->send($email);
@@ -66,7 +66,7 @@ class MailService {
      *
      * @throws TransportExceptionInterface
      */
-    private function send(TemplatedEmail $message) {
+    private function send(TemplatedEmail $message): void {
         $this->mailer->send($message);
         $this->logMail($message);
     }
@@ -76,11 +76,11 @@ class MailService {
      *
      * @param string $to E-mail address
      * @param string $subject Subject of the mail
-     * @param string $template The template name
+     * @param string|null $template The template name
      * @param array $data data for the template placeholders
      * @return TemplatedEmail
      */
-    private function createEmail($to, $subject, $template, $data = []) {
+    private function createEmail(string $to, string $subject, ?string $template, array $data = []) {
         $message = (new TemplatedEmail())
             ->to($to)
             ->subject($subject)
@@ -96,9 +96,9 @@ class MailService {
      *
      * @param TemplatedEmail $message
      */
-    private function logMail(TemplatedEmail $message) {
+    private function logMail(TemplatedEmail $message): void {
         $context = [];
-        $context['to'] = implode(', ', array_map(fn(Address $address) => $address->getAddress(), $message->getTo()));
+        $context['to'] = implode(', ', array_map(fn(Address $address): string => $address->getAddress(), $message->getTo()));
         $context['subject'] = $message->getSubject();
         $context['template'] = $message->getTextTemplate();
 
@@ -108,7 +108,7 @@ class MailService {
     /**
      * @return String
      */
-    public function getLastMessage() {
+    public function getLastMessage(): string {
         return $this->lastMessage;
     }
 

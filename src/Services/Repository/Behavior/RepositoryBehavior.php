@@ -108,7 +108,7 @@ interface RepositoryBehavior
      *
      * @param RepositoryEntity $repository
      * @param LanguageNameEntity $language
-     * @return array url, hosting name as url title, count
+     * @return array{count: int, listURL: string, title: string} count, url, hosting name as url title
      *
      * @throws GitHubServiceException
      */

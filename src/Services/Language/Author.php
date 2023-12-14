@@ -8,12 +8,12 @@ class Author {
     private string $name;
     private string $email;
 
-    public function __construct($name, $email) {
+    public function __construct(string $name, string $email) {
         $this->email = $email;
         $this->name = $name;
     }
 
-    public function equals(Author $author) {
+    public function equals(Author $author): bool {
         if($author->getName() === '' && $this->name === '' ) {
             return mb_strtolower($author->getEmail()) === mb_strtolower($this->email);
         }
@@ -27,11 +27,11 @@ class Author {
         return true;
     }
 
-    public function getEmail() {
+    public function getEmail(): string {
         return $this->email;
     }
 
-    public function getName() {
+    public function getName(): string {
         return $this->name;
     }
 }

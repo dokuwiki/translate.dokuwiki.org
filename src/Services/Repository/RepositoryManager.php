@@ -43,7 +43,7 @@ class RepositoryManager
     private GitLabStatusService $gitLabStatus;
 
 
-    function __construct($dataFolder, $repositoryAgeToUpdate, $maxErrors, $maxRepositoriesToUpdatePerRun,
+    function __construct(string $dataFolder, int $repositoryAgeToUpdate, int $maxErrors, int $maxRepositoriesToUpdatePerRun,
                          EntityManagerInterface $entityManager, RepositoryStats $repositoryStats,
                          GitService $gitService, MailService $mailService, LoggerInterface $logger,
                          GitHubService $gitHubService, GitHubStatusService $gitHubStatus,
@@ -59,7 +59,7 @@ class RepositoryManager
         $this->repositoryStats = $repositoryStats;
         $this->gitService = $gitService;
         $this->mailService = $mailService;
-        $this->repositoryRepository = $entityManager->getRepository(RepositoryEntity::class);;
+        $this->repositoryRepository = $entityManager->getRepository(RepositoryEntity::class);
         $this->logger = $logger;
         $this->gitHubService = $gitHubService;
         $this->gitHubStatus = $gitHubStatus;

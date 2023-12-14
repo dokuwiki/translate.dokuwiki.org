@@ -13,7 +13,7 @@ class LanguageStatsEntityRepository extends ServiceEntityRepository {
         parent::__construct($registry, LanguageStatsEntity::class);
     }
 
-    public function clearStats(RepositoryEntity $repository) {
+    public function clearStats(RepositoryEntity $repository): void {
         $query = $this->getEntityManager()->createQuery(/** @lang DQL */'
             DELETE FROM App\Entity\LanguageStatsEntity langStats
             WHERE langStats.repository = :repository

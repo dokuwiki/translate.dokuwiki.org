@@ -8,7 +8,7 @@ use Exception;
 class GitException extends Exception
 {
 
-    function __construct($msg, $path = '', Exception $previous = null)
+    function __construct(string $msg, string $path = '', Exception $previous = null)
     {
         if ($path) {
             $msg .= "\nPath: $path";

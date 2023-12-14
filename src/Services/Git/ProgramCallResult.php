@@ -6,6 +6,9 @@ class ProgramCallResult
 {
 
     private string $output;
+    /**
+     * @var int|null exit status code, null if not terminated
+     */
     private ?int $exitCode;
     private string $error;
     private string $command;

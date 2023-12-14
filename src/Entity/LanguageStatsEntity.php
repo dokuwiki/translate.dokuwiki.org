@@ -35,59 +35,37 @@ class LanguageStatsEntity {
      */
     private ?RepositoryEntity $repository = null;
 
-    /**
-     * @param int $completionPercent
-     */
-    public function setCompletionPercent($completionPercent) {
+    public function setCompletionPercent(int $completionPercent): void {
         $this->completionPercent = $completionPercent;
     }
 
-    /**
-     * @return int
-     */
-    public function getCompletionPercent() {
+    public function getCompletionPercent(): ?int {
         return $this->completionPercent;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id) {
+    public function setId(int $id): void {
         $this->id = $id;
     }
 
-    /**
-     * @return int
-     */
-    public function getId() {
+    public function getId(): ?int {
         return $this->id;
     }
 
-    /**
-     * @param LanguageNameEntity $language
-     */
-    public function setLanguage($language) {
+    public function setLanguage(LanguageNameEntity $language): void {
         $this->language = $language;
     }
 
-    /**
-     * @return LanguageNameEntity
-     */
-    public function getLanguage() {
+    public function getLanguage(): ?LanguageNameEntity
+    {
         return $this->language;
     }
 
-    /**
-     * @param RepositoryEntity $repository
-     */
-    public function setRepository($repository) {
+    public function setRepository(RepositoryEntity $repository): void {
         $this->repository = $repository;
     }
 
-    /**
-     * @return RepositoryEntity
-     */
-    public function getRepository() {
+    public function getRepository(): ?RepositoryEntity
+    {
         return $this->repository;
     }
 

@@ -2,6 +2,8 @@
 
 namespace App\Services\GitLab;
 
+use JsonException;
+
 class GitLabStatusService
 {
     public const STATUS_OPERATIONAL = 100;
@@ -47,8 +49,12 @@ class GitLabStatusService
         if (!$content) {
             return false;
         }
-        $status = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
-        if ($status === null || !isset($status->result) || !isset($status->result->status)) {
+        try {
+            $status = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            return false;
+        }
+        if (!isset($status->result) || !isset($status->result->status)) {
             return false;
         }
 

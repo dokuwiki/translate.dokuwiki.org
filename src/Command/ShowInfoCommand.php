@@ -27,7 +27,9 @@ class ShowInfoCommand extends Command
     protected static $defaultName = 'dokuwiki:showInfo';
     protected static $defaultDescription = 'Show status for maintenance for all or a specific repo, or basic info for all';
 
-    public function __construct(RepositoryEntityRepository $repositoryEntityRepository, TranslationUpdateEntityRepository $translationUpdateEntityRepository, RepositoryManager $repositoryManager, ParameterBagInterface $parameterBag)
+    public function __construct(RepositoryEntityRepository $repositoryEntityRepository,
+                                TranslationUpdateEntityRepository $translationUpdateEntityRepository,
+                                RepositoryManager $repositoryManager, ParameterBagInterface $parameterBag)
     {
         $this->repositoryEntityRepository = $repositoryEntityRepository;
         $this->translationUpdateEntityRepository = $translationUpdateEntityRepository;
@@ -102,7 +104,7 @@ class ShowInfoCommand extends Command
      * @param bool $newline Whether to add a newline
      * @return void
      */
-    private function writeJustified(OutputInterface $output, int $length, string $message, bool $newline = false)
+    private function writeJustified(OutputInterface $output, int $length, string $message, bool $newline = false): void
     {
         $output->write(sprintf("%-{$length}s", $message), $newline);
     }
@@ -110,10 +112,10 @@ class ShowInfoCommand extends Command
     /**
      * @param OutputInterface $output
      * @param RepositoryEntity[] $repositories
-     * @param $type
+     * @param string|null $type
      * @return void
      */
-    private function showStatusInfo(OutputInterface $output, array $repositories, $type): void
+    private function showStatusInfo(OutputInterface $output, array $repositories, ?string $type): void
     {
         // header
         $dashLine = str_repeat('-', 35 - 1) . ' '
@@ -216,7 +218,7 @@ class ShowInfoCommand extends Command
      * @param RepositoryEntity[] $repositories
      * @return void
      */
-    private function showBasicInfoRepositories(OutputInterface $output, array $repositories)
+    private function showBasicInfoRepositories(OutputInterface $output, array $repositories): void
     {
         // Table
         // header
@@ -253,7 +255,7 @@ class ShowInfoCommand extends Command
         $output->writeln('found ' . $countTotal . ' repositories');
     }
 
-    private function showExtendedInfoRepository(OutputInterface $output, RepositoryEntity $repoEntity, bool $showMore){
+    private function showExtendedInfoRepository(OutputInterface $output, RepositoryEntity $repoEntity, bool $showMore): void {
         //list
         try {
             $dashLine = str_repeat('-', 30 - 1) . ' '

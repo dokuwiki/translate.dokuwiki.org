@@ -63,7 +63,8 @@ class DefaultController extends AbstractController {
      * @throws NonUniqueResultException
      */
     public function show(Request $request, LanguageManager $languageManager, RepositoryEntityRepository $repoEntityRepo,
-                         LanguageNameEntityRepository $langNameEntityRepo) {
+                         LanguageNameEntityRepository $langNameEntityRepo): Response
+    {
         $data = [];
         $data['repository'] = $repoEntityRepo->getCoreTranslation();
         $data['currentLanguage'] = $languageManager->getLanguage($request);

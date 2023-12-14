@@ -5,6 +5,9 @@ namespace App\Command;
 use App\Entity\LanguageStatsEntity;
 use App\Entity\TranslationUpdateEntity;
 use App\Services\Git\GitException;
+use App\Services\Git\GitNoRemoteException;
+use App\Services\GitHub\GitHubServiceException;
+use App\Services\GitLab\GitLabServiceException;
 use App\Services\Repository\RepositoryManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -50,9 +53,12 @@ class DeleteRepoCommand extends Command
      * @param OutputInterface $output
      * @return int
      *
-     * @throws OptimisticLockException
-     * @throws ORMException
      * @throws GitException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws GitHubServiceException
+     * @throws GitLabServiceException
+     * @throws GitNoRemoteException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

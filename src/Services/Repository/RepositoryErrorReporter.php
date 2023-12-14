@@ -43,7 +43,7 @@ class RepositoryErrorReporter
      *
      * @throws TransportExceptionInterface
      */
-    private function handleError(Exception $e, Repository $repo, $update): string
+    private function handleError(Exception $e, Repository $repo, bool $update): string
     {
         $this->data = [];
         $this->data['repository'] = $repo->getEntity();

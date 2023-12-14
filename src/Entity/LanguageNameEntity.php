@@ -28,27 +28,27 @@ class LanguageNameEntity {
      */
     protected bool $rtl = false;
 
-    public function setCode($code) {
+    public function setCode(string $code): void {
         $this->code = $code;
     }
 
-    public function getCode() {
+    public function getCode(): ?string {
         return $this->code;
     }
 
-    public function setName($name) {
+    public function setName(string $name): void {
         $this->name = $name;
     }
 
-    public function getName() {
+    public function getName(): ?string {
         return $this->name;
     }
 
-    public function setRtl($rtl) {
+    public function setRtl(bool $rtl): void {
         $this->rtl = $rtl;
     }
 
-    public function getRtl() {
+    public function getRtl(): bool {
         return $this->rtl;
     }
 

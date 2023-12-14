@@ -10,14 +10,14 @@ class LanguageManager {
      *
      * @param string $langFolder Lang folder
      * @param string $prefix Prefix string for item keys in language array.
-     * @return LocalText[]
+     * @return array<string, LocalText[]>  $language[<langcode>][file]=LocalText()
      *
      * @throws LanguageFileDoesNotExistException
      * @throws LanguageParseException
      * @throws NoDefaultLanguageException
      * @throws NoLanguageFolderException
      */
-    public static function readLanguages($langFolder, $prefix = '') {
+    public static function readLanguages(string $langFolder, string $prefix = ''): array {
         if (!is_dir($langFolder)) {
             throw new NoLanguageFolderException("$langFolder/ is not a directory");
         }
@@ -50,7 +50,7 @@ class LanguageManager {
      * @throws LanguageFileDoesNotExistException
      * @throws LanguageParseException
      */
-    private static function readLanguage($languageFolder, $prefix) {
+    private static function readLanguage(string $languageFolder, string $prefix): array {
         $language = [];
 
         $folders = scandir($languageFolder);
@@ -85,7 +85,7 @@ class LanguageManager {
      * @param Request $request
      * @return string
      */
-    public function getLanguage(Request $request) {
+    public function getLanguage(Request $request): string {
         $language = $request->query->get('lang');
         if ($language !== null) {
             $request->getSession()->set('language', $language);

@@ -20,7 +20,7 @@ class TranslationUpdateEntityRepository extends ServiceEntityRepository {
     /**
      * @return TranslationUpdateEntity[]
      */
-    public function getPendingTranslationUpdates() {
+    public function getPendingTranslationUpdates(): array {
         $query = $this->getEntityManager()->createQuery(/** @lang DQL */
             'SELECT job
              FROM App\Entity\TranslationUpdateEntity job
@@ -34,7 +34,7 @@ class TranslationUpdateEntityRepository extends ServiceEntityRepository {
         return $query->getResult();
     }
 
-    public function clearUpdates(RepositoryEntity $repository)
+    public function clearUpdates(RepositoryEntity $repository): void
     {
         $query = $this->getEntityManager()->createQuery(/** @lang DQL */'
             DELETE FROM App\Entity\TranslationUpdateEntity updates

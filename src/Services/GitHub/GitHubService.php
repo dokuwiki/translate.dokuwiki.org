@@ -88,7 +88,7 @@ class GitHubService
      * @throws GitHubServiceException
      * @throws MissingArgumentException
      */
-    public function createPullRequest(string $patchBranch, string $destinationBranch, string $languageCode, string $url, $patchUrl): void
+    public function createPullRequest(string $patchBranch, string $destinationBranch, string $languageCode, string $url, string $patchUrl): void
     {
         [$user, $repository] = $this->getUsernameAndRepositoryFromURL($url);
         [$repoName, ] = $this->getUsernameAndRepositoryFromURL($patchUrl);
@@ -110,7 +110,7 @@ class GitHubService
      *
      * @param string $url original git clone url
      * @param string $languageCode
-     * @return array
+     * @return array{count: int, listURL: string, title: string}
      *
      * @throws GitHubServiceException
      * @throws Exception only if in 'test' environment
