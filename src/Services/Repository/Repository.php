@@ -7,6 +7,7 @@ use App\Services\Git\GitBranchException;
 use App\Services\Git\GitCheckoutException;
 use App\Services\Git\GitCreatePatchException;
 use App\Services\Git\GitNoRemoteException;
+use App\Services\Git\GitPullException;
 use App\Services\Git\GitPushException;
 use App\Services\GitHub\GitHubCreatePullRequestException;
 use App\Services\GitLab\GitLabCreateMergeRequestException;
@@ -121,6 +122,8 @@ abstract class Repository
      * @throws GitException
      * @throws GitHubForkException|GitLabForkException
      * @throws GitHubServiceException|GitLabServiceException
+     * @throws GitPullException
+     * @throws GitPushException
      * @throws LanguageFileDoesNotExistException
      * @throws LanguageParseException
      * @throws NoDefaultLanguageException
@@ -175,6 +178,8 @@ abstract class Repository
      * @throws GitException
      * @throws GitHubForkException|GitLabForkException
      * @throws GitHubServiceException|GitLabServiceException
+     * @throws GitPullException
+     * @throws GitPushException
      */
     private function updateFromRemote(): bool
     {
@@ -241,7 +246,7 @@ abstract class Repository
      *
      * @return string path
      */
-    private function buildDataDirectoryPath(): string
+    public function buildDataDirectoryPath(): string
     {
         if ($this->basePath === null) {
             $base = $this->dataFolder;

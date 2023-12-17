@@ -67,7 +67,8 @@ class RepositoryErrorReporter
         $this->logger->error($shortMessage);
         $this->logger->debug($e->getTraceAsString());
         if ($template !== '') {
-            if ($repo->isFunctional()) {
+            $isNormal = true;
+            if ($repo->isFunctional() && $isNormal = $this->isNormalErrorRate($repo)) {
                 $repo->getEntity()->setErrorCount($repo->getEntity()->getErrorCount() + 1);
 
                 $this->emailService->sendEmail(
@@ -79,7 +80,10 @@ class RepositoryErrorReporter
                 $errorMsg = $shortMessage . "\n" . $this->emailService->getLastMessage();
             } else {
                 //no mailing or storing of error needed
-                $this->logger->debug('No error mail sent, GitHub or GitLab is not functional (' . get_class($e) . ')');
+                $message = $isNormal ?
+                    'No error mail sent, GitHub or GitLab is not functional'
+                    : 'No error mail sent, too high error rate (more than 5 per 8 min)';
+                $this->logger->debug($message . ' (' . get_class($e) . ')');
                 return $shortMessage;
             }
 
@@ -189,5 +193,59 @@ class RepositoryErrorReporter
             return 'mail/importErrorLanguageParse.txt.twig';
         }
         return '';
+    }
+
+    /**
+     * If error rate is too high (>counts within certain delta time) it returns false.
+     * It extends it upto the point that no other error occur in the delta time.
+     *
+     * @param Repository $repo
+     * @return bool
+     */
+    private function isNormalErrorRate(Repository $repo): bool
+    {
+        $maxErrorCount = 5; //tool tries max 10 per run
+        $maxDeltaTime = 8 * 60; //tool tries every 5 min new run
+
+        //reset if too long ago
+        [$count, $startTime] = $this->getCounterData($repo);
+        if (time() - $startTime > $maxDeltaTime) {
+            $count = 0;
+        }
+
+        //count is zero resets time as well
+        if ($count === 0) {
+            $startTime = time();
+        }
+
+        $count++;
+
+        $isNormal = true;
+        // if too many in given delta time
+        if ($count > $maxErrorCount) {
+            // if rate is too high, reset time to extend period
+            // (occurs up to the point that the delta time becomes too large.)
+            $startTime = time();
+
+            $isNormal = false;
+        }
+        $this->storeCounterData($repo, $count, $startTime);
+        return $isNormal;
+    }
+
+    private function getCounterData(Repository $repo): array
+    {
+        $file = $repo->buildDataDirectoryPath() . 'errorcountertime';
+        if (file_exists($file)) {
+            $data = array_pad(explode('#', file_get_contents($file)), 2, 0);
+            return [(int)$data[0], (int)$data[1]];
+        } else {
+            return [0, 0];
+        }
+    }
+
+    private function storeCounterData(Repository $repo, $count, $startTime): void
+    {
+        file_put_contents($repo->buildDataDirectoryPath() . 'errorcountertime', $count . '#' . $startTime);
     }
 }
