@@ -100,7 +100,7 @@
         },
         "sort-packages": true,
         "platform": {
-            "php": "7.4.15"
+            "php": "8.4"
         }
     }
 }
