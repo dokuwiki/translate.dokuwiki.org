@@ -4,7 +4,6 @@ namespace App\Services\Repository;
 
 use App\Services\GitLab\GitLabCreateMergeRequestException;
 use App\Services\GitLab\GitLabForkException;
-use App\Services\GitLab\GitLabServiceException;
 use DateTime;
 use Exception;
 use App\Services\Git\GitCloneException;
@@ -12,7 +11,7 @@ use App\Services\Git\GitPullException;
 use App\Services\Git\GitPushException;
 use App\Services\GitHub\GitHubCreatePullRequestException;
 use App\Services\GitHub\GitHubForkException;
-use App\Services\GitHub\GitHubServiceException;
+use App\Services\GitHostingProviderException;
 use App\Services\Language\LanguageParseException;
 use App\Services\Language\NoDefaultLanguageException;
 use App\Services\Language\NoLanguageFolderException;
@@ -157,12 +156,10 @@ class RepositoryErrorReporter
             return 'mail/importErrorUpdate.txt.twig';
         }
 
-        if ($e instanceof GitHubServiceException) {
-            return 'mail/importErrorGitHubUrl.txt.twig';
-        }
+        if ($e instanceof GitHostingProviderException) {
+            $this->data['provider'] = $e->getProvider();
 
-        if ($e instanceof GitLabServiceException) {
-            return 'mail/importErrorGitLabUrl.txt.twig';
+            return 'mail/importErrorGitHostingUrl.txt.twig';
         }
 
         if ($e instanceof GitCloneException) {

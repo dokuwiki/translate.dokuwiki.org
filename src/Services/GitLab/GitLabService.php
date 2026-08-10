@@ -3,6 +3,7 @@
 namespace App\Services\GitLab;
 
 use App\Services\GitHostingProviderService;
+use App\Services\GitHostingProviderException;
 use Exception;
 use Gitlab\Api\MergeRequests;
 use Gitlab\Client;
@@ -10,6 +11,7 @@ use Gitlab\Exception\RuntimeException;
 use Gitlab\HttpClient\Builder;
 use Http\Client\Common\Plugin\LoggerPlugin;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 
 class GitLabService extends GitHostingProviderService
@@ -17,7 +19,6 @@ class GitLabService extends GitHostingProviderService
     const REGEX_REPO_USER = '#^(https://gitlab.com/|git@.*?gitlab.com:|git://gitlab.com/)(.*)\.git$#';
 
     protected string $provider = 'GitLab';
-    protected string $exceptionType = GitLabServiceException::class;
 
     /**
      * @var Client
@@ -71,7 +72,7 @@ class GitLabService extends GitHostingProviderService
      * @inheritDoc
      *
      * @throws GitLabForkException
-     * @throws GitLabServiceException
+     * @throws GitHostingProviderException
      */
     public function createFork(string $url): string
     {
@@ -89,7 +90,7 @@ class GitLabService extends GitHostingProviderService
     /**
      * @inheritDoc
      *
-     * @throws GitLabServiceException
+     * @throws GitHostingProviderException
      */
     public function deleteFork(string $remoteUrl): void
     {
@@ -97,10 +98,10 @@ class GitLabService extends GitHostingProviderService
         try {
             $this->client->projects()->remove("$user/$repository");
 
-            $fs = new \Symfony\Component\Filesystem\Filesystem();
+            $fs = new Filesystem();
             $fs->remove($this->projectIdFolder);
         } catch (RuntimeException $e) {
-            throw new GitLabServiceException($e->getMessage() . " $user/$repository", 0, $e);
+            throw new GitHostingProviderException($e->getMessage() . " $user/$repository", $this->provider, 0, $e);
         }
     }
 
@@ -109,7 +110,7 @@ class GitLabService extends GitHostingProviderService
      * @inheritDoc
      *
      * @throws GitLabCreateMergeRequestException
-     * @throws GitLabServiceException
+     * @throws GitHostingProviderException
      */
     public function createPullRequest(string $patchBranch, string $destinationBranch, string $url, string $patchUrl, string $title, string $body): void
     {
@@ -137,8 +138,8 @@ class GitLabService extends GitHostingProviderService
     /**
      * @inheritDoc
      *
-     * @throws GitLabServiceException
      * @throws Exception only if in 'test' environment
+     * @throws GitHostingProviderException
      */
     public function getOpenPRListInfo(string $urlUpstream, string $languageCode): array
     {

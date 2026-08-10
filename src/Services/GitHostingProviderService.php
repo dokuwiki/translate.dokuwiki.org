@@ -2,10 +2,16 @@
 
 namespace App\Services;
 
+use App\Services\GitHub\GitHubCreatePullRequestException;
+use App\Services\GitHub\GitHubForkException;
 use App\Services\GitHub\GitHubService;
+use App\Services\GitLab\GitLabCreateMergeRequestException;
+use App\Services\GitLab\GitLabForkException;
 use App\Services\GitLab\GitLabService;
 use Cache\Adapter\Filesystem\FilesystemCachePool;
+use Exception;
 use Github\Client as GithubClient;
+use Github\Exception\MissingArgumentException;
 use Gitlab\Client as GitlabClient;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
@@ -30,11 +36,6 @@ abstract class GitHostingProviderService
      * Must be defined by child class.
      */
     protected string $provider;
-
-    /**
-     * Hosting provider-specific Exception to be thrown.
-     */
-    protected string $exceptionType;
 
     /**
      * Git Repository client API.
@@ -70,13 +71,18 @@ abstract class GitHostingProviderService
      *
      * @param string $url URL to create the fork from
      * @return string Git URL of the fork
-     */
+     *
+     * @throws GitHubForkException|GitLabForkException
+     * @throws GitHostingProviderException
+ */
     abstract public function createFork(string $url): string;
 
     /**
      * Delete fork from our Hosting Provider account
      *
      * @param string $remoteUrl Git url of the forked repository
+     *
+     * @throws GitHostingProviderException
      */
     abstract public function deleteFork(string $remoteUrl): void;
 
@@ -87,7 +93,11 @@ abstract class GitHostingProviderService
      * @param string $patchUrl remote url
      * @param string $title Title for the pull request
      * @param string $body Text to be inserted as description for the pull request
-     */
+     *
+     * @throws GitHubCreatePullRequestException|GitLabCreateMergeRequestException
+     * @throws MissingArgumentException
+     * @throws GitHostingProviderException
+ */
     abstract public function createPullRequest(string $patchBranch, string $destinationBranch, string $url, string $patchUrl, string $title, string $body): void;
 
     /**
@@ -96,18 +106,23 @@ abstract class GitHostingProviderService
      * @param string $urlUpstream original git clone url
      * @param string $languageCode
      * @return array{count: int, listURL: string, title: string}
+     *
+     * @throws GitHostingProviderException
+     * @throws Exception only if in 'test' environment
      */
     abstract public function getOpenPRListInfo(string $urlUpstream, string $languageCode): array;
 
     /**
      * @param string $url git clone url
      * @return array with user's account name, repository name
+     *
+     * @throws GitHostingProviderException
      */
     protected function getUsernameAndRepositoryFromURL(string $url): array
     {
         $result = preg_replace($this::REGEX_REPO_USER, '$2', $url, 1, $counter);
         if ($counter === 0) {
-            throw new $this->exceptionType('Invalid ' . $this->provider . ' clone URL: ' . $url);
+            throw new GitHostingProviderException('Invalid ' . $this->provider . ' clone URL: ' . $url, $this->provider);
         }
         return explode('/', $result);
     }

@@ -14,6 +14,12 @@ use App\Services\Git\GitPushException;
 use App\Services\Git\GitRepository;
 use App\Services\GitHostingProviderService;
 use App\Services\GitHostingProviderStatusService;
+use App\Services\GitHostingProviderException;
+use App\Services\GitHub\GitHubCreatePullRequestException;
+use App\Services\GitHub\GitHubForkException;
+use App\Services\GitLab\GitLabCreateMergeRequestException;
+use App\Services\GitLab\GitLabForkException;
+use Github\Exception\MissingArgumentException;
 
 class GitHostingProviderBehavior implements RepositoryBehavior
 {
@@ -54,6 +60,9 @@ class GitHostingProviderBehavior implements RepositoryBehavior
      * @throws GitCheckoutException
      * @throws GitNoRemoteException
      * @throws GitPushException
+     * @throws GitHubCreatePullRequestException|GitLabCreateMergeRequestException
+     * @throws MissingArgumentException
+     * @throws GitHostingProviderException
      */
     public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $forkedGit): void
     {
@@ -80,6 +89,9 @@ class GitHostingProviderBehavior implements RepositoryBehavior
      *
      * @param RepositoryEntity $repository
      * @return string Git clone URL of the fork
+     *
+     * @throws GitHubForkException|GitLabForkException
+     * @throws GitHostingProviderException
      */
     public function createOriginURL(RepositoryEntity $repository): string
     {
@@ -92,6 +104,7 @@ class GitHostingProviderBehavior implements RepositoryBehavior
      * @param GitRepository $forkedGit git repository cloned of the forked repository
      *
      * @throws GitNoRemoteException
+     * @throws GitHostingProviderException
      */
     public function removeRemoteFork(GitRepository $forkedGit): void
     {
@@ -149,6 +162,8 @@ class GitHostingProviderBehavior implements RepositoryBehavior
      * @param RepositoryEntity $repository
      * @param LanguageNameEntity $language
      * @return array{count: int, listURL: string, title: string}
+     *
+     * @throws GitHostingProviderException
      */
     public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language): array
     {

@@ -3,9 +3,11 @@
 namespace App\Services\GitHub;
 
 use App\Services\GitHostingProviderService;
+use App\Services\GitHostingProviderException;
 use Exception;
 use Github\AuthMethod;
 use Github\Client;
+use Github\Exception\InvalidArgumentException;
 use Github\Exception\MissingArgumentException;
 use Github\Exception\RuntimeException;
 use Symfony\Component\HttpClient\HttplugClient;
@@ -16,7 +18,6 @@ class GitHubService extends GitHostingProviderService
     const REGEX_REPO_USER = '#^(https://github.com/|git@.*?github.com:|git://github.com/)(.*)\.git$#';
 
     protected string $provider = 'GitHub';
-    protected string $exceptionType = GitHubServiceException::class;
 
     /**
      * @var Client
@@ -43,7 +44,7 @@ class GitHubService extends GitHostingProviderService
      * @inheritDoc
      *
      * @throws GitHubForkException
-     * @throws GitHubServiceException
+     * @throws GitHostingProviderException
      */
     public function createFork(string $url): string
     {
@@ -59,7 +60,7 @@ class GitHubService extends GitHostingProviderService
     /**
      * @inheritDoc
      *
-     * @throws GitHubServiceException
+     * @throws GitHostingProviderException
      */
     public function deleteFork(string $remoteUrl): void
     {
@@ -67,16 +68,16 @@ class GitHubService extends GitHostingProviderService
         try {
             $this->client->api('repo')->remove($user, $repository);
         } catch (RuntimeException $e) {
-            throw new GitHubServiceException($e->getMessage() . " $user/$repository", 0, $e);
+            throw new GitHostingProviderException($e->getMessage() . " $user/$repository", $this->provider, 0, $e);
         }
     }
 
     /**
      * @inheritDoc
      *
-     * @throws GitHubCreatePullRequestException
-     * @throws GitHubServiceException
+     * @throws InvalidArgumentException
      * @throws MissingArgumentException
+     * @throws GitHostingProviderException
      */
     public function createPullRequest(string $patchBranch, string $destinationBranch, string $url, string $patchUrl, string $title, string $body): void
     {
@@ -98,7 +99,7 @@ class GitHubService extends GitHostingProviderService
     /**
      * @inheritDoc
      *
-     * @throws GitHubServiceException
+     * @throws GitHostingProviderException
      * @throws Exception only if in 'test' environment
      */
     public function getOpenPRListInfo(string $urlUpstream, string $languageCode): array
