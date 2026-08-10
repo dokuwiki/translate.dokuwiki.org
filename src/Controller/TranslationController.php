@@ -187,7 +187,7 @@ class TranslationController extends AbstractController {
      *
      * @throws GitHostingProviderException
      */
-    private function translate(Request $request, string $type, string $name, array $userInput = [], $captchaForm = null): Response {
+    private function translate(Request $request, string $type, string $name, array $userInput = [], FormInterface $captchaForm = null): Response {
         $data = [];
         $param = [];
         $language = $this->getLanguage($request);

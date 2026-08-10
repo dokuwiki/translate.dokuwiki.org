@@ -266,7 +266,8 @@ class UserTranslationValidator {
      * @param string $string
      * @return string
      */
-    private function fixLineEndings(string $string) {
+    private function fixLineEndings(string $string): string
+    {
         return str_replace("\r\n", "\n", $string);
     }
 

@@ -26,7 +26,8 @@ class DefaultController extends AbstractController {
      * @throws NonUniqueResultException
      */
     public function index(Request $request, LanguageManager $languageManager, RepositoryEntityRepository $repoEntityRepo,
-                          LanguageNameEntityRepository $langNameEntityRepo) {
+                          LanguageNameEntityRepository $langNameEntityRepo): Response
+    {
         $lang = $request->query->get('lang');
 
         if (!empty($lang)) {
