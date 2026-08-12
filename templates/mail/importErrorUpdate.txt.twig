@@ -5,5 +5,12 @@ the automatic update of your {{ repository.displayName }} failed.
 I wasn't able to pull from the given repository.
 Please ensure that the given URL is publicly accessible and the correct branch name is provided.
 
-The git URL was {{ repository.url }} and branch {{ repository.branch }}
+The git URL was {{ repository.url }} and branch {{ repository.branch }}.
+
+If an update was possible before, it might be that this error is caused by a temporary connection problem. If the
+problem persists, review the setting page of the {{ repository.type }}:
+{{ url('dokuwiki_translator_extension_settings', {'type': repository.type, 'name': repository.name}) }}
+
+If further support is needed, open an issue at https://github.com/dokuwiki/translate.dokuwiki.org/issues
+
 {% endblock %}
