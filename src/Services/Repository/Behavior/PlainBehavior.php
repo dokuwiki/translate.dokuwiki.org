@@ -38,7 +38,7 @@ class PlainBehavior implements RepositoryBehavior
 
         $this->mailService->sendPatchEmail(
             $update->getRepository()->getEmail(),
-            'Language Update',
+            $update->getSubject(),
             $patch,
             'mail/languageUpdate.txt.twig',
             ['update' => $update]

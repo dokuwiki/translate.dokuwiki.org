@@ -1,49 +1,28 @@
 <?php
 
+/** @noinspection PhpMultipleClassDeclarationsInspection */
+
 namespace App\Services\GitLab;
 
+use App\Services\GitHostingProviderStatusService;
 use JsonException;
 
-class GitLabStatusService
+class GitLabStatusService extends GitHostingProviderStatusService
 {
+    /**
+     * GitLab status page.
+     *
+     * The URL to retrieve the status information in JSON is documented in the
+     * status.io knowledge base article for the Web Status Widget.
+     * @see https://status.gitlab.com/
+     * @see https://status.io/pages/5b36dc6502d06804c08349f7
+     * @see https://kb.status.io/developers/public-status-api/
+     * @see https://kb.status.io/miscellaneous/status-widget/
+     * @see https://kb.status.io/developers/status-codes/
+     */
+    protected const STATUS_URL = 'http://hostedstatus.com/1.0/status/5b36dc6502d06804c08349f7';
     public const STATUS_OPERATIONAL = 100;
-    private ?bool $status = null;
 
-    /**
-     * Check if GitLab is functional
-     *
-     * @return bool true if status is good, otherwise false
-     */
-    public function isFunctional(): bool
-    {
-        if ($this->status === null) {
-            $this->status = $this->checkFunctional();
-        }
-        return $this->status;
-    }
-
-    /**
-     * Retrieve status and check if GitLab is functional
-     *
-     * @return bool true if status is good, otherwise false
-     */
-    private function checkFunctional(): bool
-    {
-        // GitLab status page, see: https://status.gitlab.com/ (or https://status.io/pages/5b36dc6502d06804c08349f7)
-
-        // more about the status.io status api, see: https://kb.status.io/developers/public-status-api/
-        // https://4888742015139690.hostedstatus.com/1.0/status/5b36dc6502d06804c08349f7
-        $content = file_get_contents('http://hostedstatus.com/1.0/status/5b36dc6502d06804c08349f7');
-
-        return $this->checkResponse($content);
-    }
-
-    /**
-     * Returns true if response status of API Requests is good, otherwise false
-     *
-     * @param string|false $content
-     * @return bool
-     */
     protected function checkResponse($content): bool
     {
         if (!$content) {

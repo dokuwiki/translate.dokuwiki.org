@@ -22,7 +22,8 @@ class LanguageFileParserTestDummy extends LanguageFileParser {
         $this->totalLineNumbers = count($lines) - 1;
     }
 
-    public function getContent() {
+    public function getContent(): string
+    {
         return $this->content;
     }
 
@@ -30,7 +31,8 @@ class LanguageFileParserTestDummy extends LanguageFileParser {
         $this->author = $author;
     }
 
-    public function getAuthor() {
+    public function getAuthor(): AuthorList
+    {
         return $this->author;
     }
 
@@ -38,7 +40,8 @@ class LanguageFileParserTestDummy extends LanguageFileParser {
         return $this->lang[$key];
     }
 
-    public function getLang() {
+    public function getLang(): array
+    {
         return $this->lang;
     }
 

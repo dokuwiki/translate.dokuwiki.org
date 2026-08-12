@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\LanguageNameEntity;
-use App\Services\GitHub\GitHubServiceException;
+use App\Services\GitHostingProviderException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
@@ -56,7 +56,7 @@ class TranslationController extends AbstractController {
      * @throws NoResultException
      * @throws ORMException
      * @throws OptimisticLockException
-     * @throws GitHubServiceException
+     * @throws GitHostingProviderException
      */
     public function save(Request $request, UserTranslationValidatorFactory $validatorFactory): Response {
         if ($request->getMethod() !== 'POST') {
@@ -152,7 +152,7 @@ class TranslationController extends AbstractController {
      * @param Request $request
      * @return RedirectResponse|Response
      *
-     * @throws GitHubServiceException
+     * @throws GitHostingProviderException
      */
     public function translateCore(Request $request): Response {
         return $this->translate($request, RepositoryEntity::TYPE_CORE, 'dokuwiki');
@@ -166,7 +166,7 @@ class TranslationController extends AbstractController {
      * @param string $name
      * @return RedirectResponse|Response
      *
-     * @throws GitHubServiceException
+     * @throws GitHostingProviderException
      */
     public function translateExtension(Request $request, string $type, string $name): Response {
         return $this->translate($request, $type, $name);
@@ -185,9 +185,9 @@ class TranslationController extends AbstractController {
      * @param FormInterface|null $captchaForm
      * @return RedirectResponse|Response
      *
-     * @throws GitHubServiceException
+     * @throws GitHostingProviderException
      */
-    private function translate(Request $request, string $type, string $name, array $userInput = [], $captchaForm = null): Response {
+    private function translate(Request $request, string $type, string $name, array $userInput = [], FormInterface $captchaForm = null): Response {
         $data = [];
         $param = [];
         $language = $this->getLanguage($request);
@@ -286,7 +286,7 @@ class TranslationController extends AbstractController {
      * @param LanguageNameEntity $languageNameEntity
      * @return array with string listURL and int count
      *
-     * @throws GitHubServiceException
+     * @throws GitHostingProviderException
      */
     private function getOpenPRListInfo(RepositoryEntity $repositoryEntity, LanguageNameEntity $languageNameEntity): array {
         $repository = $this->repositoryManager->getRepository($repositoryEntity);

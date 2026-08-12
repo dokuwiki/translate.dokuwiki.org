@@ -3,7 +3,7 @@
 namespace App\Tests\Services\GitHub;
 
 use App\Services\GitHub\GitHubService;
-use App\Services\GitHub\GitHubServiceException;
+use App\Services\GitHostingProviderException;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionObject;
@@ -74,7 +74,7 @@ class GitHubServiceTest extends TestCase {
     public function testGetUsernameAndRepositoryFromURLWithError() {
         $api = new GitHubService('', '', '', false);
 
-        $this->expectException(GitHubServiceException::class);
+        $this->expectException(GitHostingProviderException::class);
         $this->callPrivateMethod($api, 'getUsernameAndRepositoryFromURL',
             'Wrong:dokuwiki/dokuwiki.git');
 
@@ -86,7 +86,7 @@ class GitHubServiceTest extends TestCase {
     public function testGetUsernameAndRepositoryFromURLWithErrorNoGitExtension() {
         $api = new GitHubService('', '', '', false);
 
-        $this->expectException(GitHubServiceException::class);
+        $this->expectException(GitHostingProviderException::class);
         $this->callPrivateMethod($api, 'getUsernameAndRepositoryFromURL', 'https://github.com/Klap-in/dokuwiki-plugin-docnavigation');
     }
 

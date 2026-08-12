@@ -15,10 +15,9 @@ use App\Services\Git\GitPushException;
 use App\Services\Git\GitRepository;
 use App\Services\GitHub\GitHubCreatePullRequestException;
 use App\Services\GitHub\GitHubForkException;
-use App\Services\GitHub\GitHubServiceException;
+use App\Services\GitHostingProviderException;
 use App\Services\GitLab\GitLabCreateMergeRequestException;
 use App\Services\GitLab\GitLabForkException;
-use App\Services\GitLab\GitLabServiceException;
 use Github\Exception\MissingArgumentException;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
@@ -39,7 +38,7 @@ interface RepositoryBehavior
      *
      * Github/GitLab:
      * @throws GitHubCreatePullRequestException|GitLabCreateMergeRequestException
-     * @throws GitHubServiceException|GitLabServiceException
+     * @throws GitHostingProviderException
      * @throws GitAddException
      * @throws GitBranchException
      * @throws GitCheckoutException
@@ -58,14 +57,14 @@ interface RepositoryBehavior
      * @return string git clone URL of the fork or original repository
      *
      * @throws GitHubForkException|GitLabForkException
-     * @throws GitHubServiceException|GitLabServiceException
+     * @throws GitHostingProviderException
      */
     public function createOriginURL(RepositoryEntity $repository): string;
 
     /**
      * @param GitRepository $forkedGit git repository cloned of the fork or the original repository
      *
-     * @throws GitHubServiceException|GitLabServiceException
+     * @throws GitHostingProviderException
      * @throws GitNoRemoteException
      */
     public function removeRemoteFork(GitRepository $forkedGit): void;
@@ -110,7 +109,7 @@ interface RepositoryBehavior
      * @param LanguageNameEntity $language
      * @return array{count: int, listURL: string, title: string} count, url, hosting name as url title
      *
-     * @throws GitHubServiceException
+     * @throws GitHostingProviderException
      */
     public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language): array;
 }

@@ -55,6 +55,13 @@ class TranslationUpdateEntity {
      */
     protected ?string $language = null;
 
+    /**
+     * Subject message.
+     * @see getSubject()
+     */
+    private string $subject = 'Translation update';
+
+
     public function setAuthor(string $author): void {
         $this->author = $author;
     }
@@ -110,6 +117,22 @@ class TranslationUpdateEntity {
 
     public function getLanguage(): ?string {
         return $this->language;
+    }
+
+    /**
+     * Returns a standard subject for translation updates.
+     *
+     * This can be used e.g. as commit message, pull request title or email subject.
+     * If defined, the language code is added as a suffix.
+     *
+     * @return string
+     */
+    public function getSubject(): string {
+        $subject = $this->subject;
+        if ($this->language) {
+            $subject .= ' (' . $this->language . ')';
+        }
+        return $subject;
     }
 
     public function setErrorMsg(string $errorMsg): void

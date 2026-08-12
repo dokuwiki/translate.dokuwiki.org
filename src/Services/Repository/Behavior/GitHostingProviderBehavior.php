@@ -2,7 +2,6 @@
 
 namespace App\Services\Repository\Behavior;
 
-use Github\Exception\MissingArgumentException;
 use App\Entity\LanguageNameEntity;
 use App\Entity\RepositoryEntity;
 use App\Entity\TranslationUpdateEntity;
@@ -13,63 +12,86 @@ use App\Services\Git\GitNoRemoteException;
 use App\Services\Git\GitPullException;
 use App\Services\Git\GitPushException;
 use App\Services\Git\GitRepository;
+use App\Services\GitHostingProviderService;
+use App\Services\GitHostingProviderStatusService;
+use App\Services\GitHostingProviderException;
 use App\Services\GitHub\GitHubCreatePullRequestException;
 use App\Services\GitHub\GitHubForkException;
-use App\Services\GitHub\GitHubService;
-use App\Services\GitHub\GitHubServiceException;
-use App\Services\GitHub\GitHubStatusService;
+use App\Services\GitLab\GitLabCreateMergeRequestException;
+use App\Services\GitLab\GitLabForkException;
+use Github\Exception\MissingArgumentException;
 
-class GitHubBehavior implements RepositoryBehavior
+class GitHostingProviderBehavior implements RepositoryBehavior
 {
+    /**
+     * Git Service api, provider specific
+     */
+    protected GitHostingProviderService $api;
 
-    private GitHubService $api;
-    private GitHubStatusService $gitHubStatus;
+    /**
+     * Service for status of the api
+     */
+    protected GitHostingProviderStatusService $status;
 
-    public function __construct(GitHubService $api, GitHubStatusService $gitHubStatus)
+    /**
+     * Text to be inserted as description for the pull request.
+     * @see sendChange()
+     */
+    protected string $prBody = <<< EOT
+        This pull request contains some translation updates.
+        EOT;
+
+
+    public function __construct(GitHostingProviderService $api, GitHostingProviderStatusService $statusService)
     {
         $this->api = $api;
-        $this->gitHubStatus = $gitHubStatus;
+        $this->status = $statusService;
     }
 
     /**
-     * Create branch and push it to remote, create subsequently pull request at Github
+     * Create branch and push it to the remote fork, then submit a pull request
      *
      * @param GitRepository $tempGit temporary local git repository with the patch of the language update
      * @param TranslationUpdateEntity $update
      * @param GitRepository $forkedGit git repository cloned of the forked repository
      *
-     * @throws GitHubCreatePullRequestException
-     * @throws GitHubServiceException
      * @throws GitAddException
      * @throws GitBranchException
      * @throws GitCheckoutException
      * @throws GitNoRemoteException
      * @throws GitPushException
+     * @throws GitHubCreatePullRequestException|GitLabCreateMergeRequestException
      * @throws MissingArgumentException
+     * @throws GitHostingProviderException
      */
     public function sendChange(GitRepository $tempGit, TranslationUpdateEntity $update, GitRepository $forkedGit): void
     {
-
         $remoteUrl = $forkedGit->getRemoteUrl();
-        $tempGit->remoteAdd('github', $remoteUrl);
+        $tempGit->remoteAdd('remote_fork', $remoteUrl);
         $branchName = 'lang_update_' . $update->getId() . '_' . $update->getUpdated();
         $tempGit->branch($branchName);
         $tempGit->checkout($branchName);
 
-        $tempGit->push('github', $branchName);
+        $tempGit->push('remote_fork', $branchName);
 
-        $this->api->createPullRequest($branchName, $update->getRepository()->getBranch(),
-                $update->getLanguage(), $update->getRepository()->getUrl(), $remoteUrl);
+        $this->api->createPullRequest(
+            $branchName,
+            $update->getRepository()->getBranch(),
+            $update->getRepository()->getUrl(),
+            $remoteUrl,
+            $update->getSubject(),
+            $this->prBody
+        );
     }
 
     /**
-     * Fork original repo at Github and return url of the fork
+     * Fork original repo and return the fork's url.
      *
      * @param RepositoryEntity $repository
      * @return string Git clone URL of the fork
      *
-     * @throws GitHubForkException
-     * @throws GitHubServiceException
+     * @throws GitHubForkException|GitLabForkException
+     * @throws GitHostingProviderException
      */
     public function createOriginURL(RepositoryEntity $repository): string
     {
@@ -77,12 +99,12 @@ class GitHubBehavior implements RepositoryBehavior
     }
 
     /**
-     * Remove the fork on GitHub
+     * Remove the fork.
      *
      * @param GitRepository $forkedGit git repository cloned of the forked repository
      *
-     * @throws GitHubServiceException
      * @throws GitNoRemoteException
+     * @throws GitHostingProviderException
      */
     public function removeRemoteFork(GitRepository $forkedGit): void
     {
@@ -125,13 +147,13 @@ class GitHubBehavior implements RepositoryBehavior
     }
 
     /**
-     * Check if GitHub is functional
+     * Check if Git Hosting provider is functional.
      *
      * @return bool
      */
     public function isFunctional(): bool
     {
-        return $this->gitHubStatus->isFunctional();
+        return $this->status->isFunctional();
     }
 
     /**
@@ -141,7 +163,7 @@ class GitHubBehavior implements RepositoryBehavior
      * @param LanguageNameEntity $language
      * @return array{count: int, listURL: string, title: string}
      *
-     * @throws GitHubServiceException
+     * @throws GitHostingProviderException
      */
     public function getOpenPRListInfo(RepositoryEntity $repository, LanguageNameEntity $language): array
     {

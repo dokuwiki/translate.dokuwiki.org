@@ -107,7 +107,8 @@ class UpdateCommand extends Command {
      * @link http://de1.php.net/manual/en/function.getmypid.php#112782
      * @return bool false if still locked
      */
-    private function lock() {
+    private function lock(): bool
+    {
         $lockFile = $this->getLockFilePath();
 
         // If lock file exists, check if stale.  If exists and is not stale, return TRUE
@@ -129,7 +130,8 @@ class UpdateCommand extends Command {
         unlink($this->getLockFilePath());
     }
 
-    private function getLockFilePath() {
+    private function getLockFilePath(): string
+    {
         $path = $this->parameterBag->get('app.dataDir');
         $path .= '/dokuwiki-importer.lock';
         return $path;

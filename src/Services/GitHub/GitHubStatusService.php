@@ -1,47 +1,22 @@
 <?php
 
+/** @noinspection PhpMultiplecClassDeclarationsInspection */
+
 namespace App\Services\GitHub;
 
+use App\Services\GitHostingProviderStatusService;
 use JsonException;
 
-class GitHubStatusService
+class GitHubStatusService extends GitHostingProviderStatusService
 {
-
-    private ?bool $status = null;
-
     /**
-     * Check if GitHub is functional
-     *
-     * @return bool true if status is good, otherwise false
+     * GitHub status API.
+     * @see https://www.githubstatus.com/api for more about the GitHub status api
+     * (same api as https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json)
      */
-    public function isFunctional(): bool
-    {
-        if ($this->status === null) {
-            $this->status = $this->checkFunctional();
-        }
-        return $this->status;
-    }
+     protected const STATUS_URL = 'https://www.githubstatus.com/api/v2/summary.json';
 
-    /**
-     * Retrieve status and check if GitHub is functional
-     *
-     * @return bool true if status is good, otherwise false
-     */
-    private function checkFunctional(): bool
-    {
-        // more about the GitHub status api, see: https://www.githubstatus.com/api
-        // (same api as https://kctbh9vrtdwd.statuspage.io/api/v2/summary.json) https://www.githubstatus.com/api/v2/summary.json
-        $content = file_get_contents('https://www.githubstatus.com/api/v2/summary.json');
 
-        return $this->checkResponse($content);
-    }
-
-    /**
-     * Returns true if response status of API Requests is good, otherwise false
-     *
-     * @param string|false $content
-     * @return bool
-     */
     protected function checkResponse($content): bool
     {
         if (!$content) {

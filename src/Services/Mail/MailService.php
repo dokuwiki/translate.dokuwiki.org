@@ -80,7 +80,8 @@ class MailService {
      * @param array $data data for the template placeholders
      * @return TemplatedEmail
      */
-    private function createEmail(string $to, string $subject, ?string $template, array $data = []) {
+    private function createEmail(string $to, string $subject, ?string $template, array $data = []): TemplatedEmail
+    {
         $message = (new TemplatedEmail())
             ->to($to)
             ->subject($subject)

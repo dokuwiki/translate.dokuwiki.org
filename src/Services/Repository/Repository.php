@@ -12,7 +12,6 @@ use App\Services\Git\GitPushException;
 use App\Services\GitHub\GitHubCreatePullRequestException;
 use App\Services\GitLab\GitLabCreateMergeRequestException;
 use App\Services\GitLab\GitLabForkException;
-use App\Services\GitLab\GitLabServiceException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
@@ -28,7 +27,7 @@ use App\Services\Git\GitException;
 use App\Services\Git\GitRepository;
 use App\Services\Git\GitService;
 use App\Services\GitHub\GitHubForkException;
-use App\Services\GitHub\GitHubServiceException;
+use App\Services\GitHostingProviderException;
 use App\Services\Language\LanguageFileDoesNotExistException;
 use App\Services\Language\LanguageFileIsEmptyException;
 use App\Services\Language\LanguageManager;
@@ -121,7 +120,7 @@ abstract class Repository
      * @throws GitCloneException
      * @throws GitException
      * @throws GitHubForkException|GitLabForkException
-     * @throws GitHubServiceException|GitLabServiceException
+     * @throws GitHostingProviderException
      * @throws GitPullException
      * @throws GitPushException
      * @throws LanguageFileDoesNotExistException
@@ -177,7 +176,7 @@ abstract class Repository
      * @throws GitCloneException
      * @throws GitException
      * @throws GitHubForkException|GitLabForkException
-     * @throws GitHubServiceException|GitLabServiceException
+     * @throws GitHostingProviderException
      * @throws GitPullException
      * @throws GitPushException
      */
@@ -483,7 +482,7 @@ abstract class Repository
      * @throws GitCreatePatchException
      * @throws GitException
      * @throws GitHubCreatePullRequestException|GitLabCreateMergeRequestException
-     * @throws GitHubServiceException|GitLabServiceException
+     * @throws GitHostingProviderException
      * @throws GitNoRemoteException
      * @throws GitPushException
      * @throws MissingArgumentException
@@ -500,7 +499,7 @@ abstract class Repository
         // add files to local temporary git repository
         $this->applyChanges($tmpGit, $tmpDir, $update);
         // commit files to local temporary git repository
-        $message = 'Translation update (' . $update->getLanguage() . ')';
+        $message = $update->getSubject();
         $author = $this->prepareAuthor($update);
         $tmpGit->commit($message, $author);
 
@@ -684,7 +683,7 @@ abstract class Repository
      * @return void
      *
      * @throws GitException
-     * @throws GitHubServiceException|GitLabServiceException
+     * @throws GitHostingProviderException
      * @throws GitNoRemoteException
      */
     public function removeFork(): void
@@ -711,7 +710,7 @@ abstract class Repository
      * @param LanguageNameEntity $languageNameEntity
      * @return array with count and list url
      *
-     * @throws GitHubServiceException
+     * @throws GitHostingProviderException
      */
     public function getOpenPRListInfo(LanguageNameEntity $languageNameEntity): array
     {

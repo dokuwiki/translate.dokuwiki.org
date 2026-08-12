@@ -79,15 +79,15 @@ services:
 
     App\Services\GitHub\GitHubService:
         arguments:
-            $gitHubApiToken: '%app.githubApiToken%'
+            $apiToken: '%app.githubApiToken%'
             $dataFolder: '%app.dataDir%'
-            $gitHubUrl: '%app.githubUrl%'
+            $url: '%app.githubUrl%'
 
     App\Services\GitLab\GitLabService:
         arguments:
-            $gitLabApiToken: '%app.gitlabApiToken%'
+            $apiToken: '%app.gitlabApiToken%'
             $dataFolder: '%app.dataDir%'
-            $gitLabUrl: '%app.gitlabUrl%'
+            $url: '%app.gitlabUrl%'
 
     App\Repository\TranslationUpdateEntityRepository:
         arguments:

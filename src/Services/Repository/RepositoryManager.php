@@ -4,7 +4,6 @@ namespace App\Services\Repository;
 
 use App\Services\GitLab\GitLabService;
 use App\Services\GitLab\GitLabStatusService;
-use App\Services\Repository\Behavior\GitLabBehavior;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\RepositoryEntity;
@@ -13,7 +12,7 @@ use App\Services\Git\GitService;
 use App\Services\GitHub\GitHubService;
 use App\Services\GitHub\GitHubStatusService;
 use App\Services\Mail\MailService;
-use App\Services\Repository\Behavior\GitHubBehavior;
+use App\Services\Repository\Behavior\GitHostingProviderBehavior;
 use App\Services\Repository\Behavior\PlainBehavior;
 use App\Services\Repository\Behavior\RepositoryBehavior;
 use Psr\Log\LoggerInterface;
@@ -125,13 +124,13 @@ class RepositoryManager
     {
         $url = $repository->getUrl();
         if (preg_match('/^(git:\/\/|https:\/\/|git@)github\.com/i', $url)) {
-            return new GitHubBehavior($this->gitHubService, $this->gitHubStatus);
+            return new GitHostingProviderBehavior($this->gitHubService, $this->gitHubStatus);
         }
         if (preg_match('/^(git:\/\/|https:\/\/|git@)gitlab\.com/i', $url)) {
             //build manually as Repository is not yet available..
             $repoFolder = $this->dataFolder . '/gitlab_projectids/' . $repository->getType() . '/' . $repository->getName() . '/';
             $this->gitLabService->setProjectIdFolder($repoFolder);
-            return new GitLabBehavior($this->gitLabService, $this->gitLabStatus);
+            return new GitHostingProviderBehavior($this->gitLabService, $this->gitLabStatus);
         }
         return new PlainBehavior($this->mailService);
     }
