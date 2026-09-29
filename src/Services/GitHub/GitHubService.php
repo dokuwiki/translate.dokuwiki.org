@@ -10,7 +10,7 @@ use Github\Client;
 use Github\Exception\InvalidArgumentException;
 use Github\Exception\MissingArgumentException;
 use Github\Exception\RuntimeException;
-use Symfony\Component\HttpClient\HttplugClient;
+use Symfony\Component\HttpClient\Psr18Client;
 
 
 class GitHubService extends GitHostingProviderService
@@ -33,7 +33,7 @@ class GitHubService extends GitHostingProviderService
         }
 
         $this->client = Client::createWithHttpClient(
-            new HttplugClient()
+            new Psr18Client()
         );
 
         $this->client->addCache($this->getCachePool($dataFolder));
